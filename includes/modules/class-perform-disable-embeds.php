@@ -1,0 +1,70 @@
+<?php
+/**
+ * Perform Functions
+ *
+ * @since 1.0.0
+ */
+
+// Bail out, if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Class Perform_Disable_Embeds
+ *
+ * @since 1.0.0
+ */
+class Perform_Disable_Embeds {
+	
+	/**
+	 * Perform_Disable_Embeds constructor.
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 */
+	public function __construct() {
+		
+		global $wp;
+		$wp->public_query_vars = array_diff( $wp->public_query_vars, array( 'embed' ) );
+		
+		// Remove filters to disable embeds.
+		remove_action( 'rest_api_init', 'wp_oembed_register_route' );
+		remove_action( 'wp_head', 'wp_oembed_add_discovery_links' );
+		remove_action( 'wp_head', 'wp_oembed_add_host_js' );
+		
+		// Remove Filters to disable embeds.
+		remove_filter( 'oembed_dataparse', 'wp_filter_oembed_result', 10 );
+		remove_filter( 'pre_oembed_result', 'wp_filter_pre_oembed_result', 10 );
+		
+		// Add filters to disable embeds.
+		add_filter( 'embed_oembed_discover', '__return_false' );
+		add_filter( 'tiny_mce_plugins', array( $this, 'disable_embeds_from_tinymce' ) );
+		add_filter( 'rewrite_rules_array', array( $this, 'disable_embeds_from_rewrites' ) );
+		
+	}
+	
+	/**
+	 * @param $plugins
+	 * @return array
+	 */
+	function disable_embeds_from_tinymce( $plugins ) {
+		return array_diff( $plugins, array( 'wpembed' ) );
+	}
+	
+	/**
+	 * @param $rules
+	 * @return mixed
+	 */
+	function disable_embeds_from_rewrites( $rules ) {
+		
+		foreach( $rules as $rule => $rewrite ) {
+			if ( false !== strpos( $rewrite, 'embed=true' ) ) {
+				unset( $rules[$rule] );
+			}
+		}
+		
+		return $rules;
+	}
+	
+}

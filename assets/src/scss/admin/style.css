@@ -1,0 +1,627 @@
+.perform-admin h2 {
+	font-size: 24px;
+	line-height: normal;
+	margin: 25px 0px 0px 0px;
+}
+
+.perform-admin p.perform-subheading {
+	font-size: 12px;
+	line-height: normal;
+	font-style: italic;
+	margin: 5px 0px 0px 0px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #dddddd;
+}
+
+.perform-admin .switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 28px;
+  font-size: 1px;
+}
+
+.perform-admin .switch input {
+  display: block;
+  margin: 0px;
+}
+
+.perform-admin .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.perform-admin .slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.perform-admin input:checked + .slider {
+  background-color: #2196F3;
+}
+
+.perform-admin input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+.perform-admin input:checked + .slider:before {
+  -webkit-transform: translateX(20px);
+  -ms-transform: translateX(20px);
+  transform: translateX(20px);
+}
+
+.perform-admin input[type="text"], .perform-admin select, .perform-admin textarea {
+  min-width: 300px;
+}
+
+.perform-admin textarea {
+  resize: both;
+  min-height: 150px;
+}
+
+.perform-admin .form-table th label {
+  vertical-align: top;
+}
+
+.perform-admin .perform-tooltip{
+  /*position: relative;*/
+  display: inline-block;
+  margin-left: 5px;
+  height: 15px;
+  width: 15px;
+  vertical-align: top;
+  text-align: center;
+  line-height: 15px;
+  font-size: 12px;
+  background: #e7e7e7;
+  color: #bbbbbb;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  text-decoration: none;
+}
+.perform-admin .perform-tooltip:hover {
+  background: #cccccc;
+  color:#777777;
+}
+.perform-admin .perform-input-wrapper {
+  white-space: nowrap;
+}
+.perform-admin .perform-tooltip-text-wrapper {
+  position: relative;
+  display: table-cell;
+  width: 100%;
+}
+.perform-admin .perform-tooltip-text-container {
+  display: none;
+  position: absolute;
+  z-index: 1;
+  top: 0px;
+  bottom: 0px;
+  left: 15px;
+  right: 0px;
+}
+.perform-admin .perform-tooltip-text {
+  display: inline-block;
+  background-color: #23282D;
+  color: #fff;
+  padding: 10px;
+  border-radius: 3px;
+  text-align: left;
+  font-size: 12px;
+  line-height: 20px;
+  font-style: italic;
+}
+
+.perform-admin .perform-tooltip-text::after {
+  content: " ";
+  position: absolute;
+  top: 10px;
+  right: 100%;
+  margin-top: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent black transparent transparent;
+}
+
+.perform-beta {
+  background: #ED5464;
+  color: #ffffff;
+  padding: 5px;
+  vertical-align: middle;
+  font-size: 10px;
+  margin-left: 3px;
+}
+
+.perform-admin p.submit, .wp-coupons-admin #perform-restore {
+  margin: 0px;
+  padding: 0px;
+  float: left;
+}
+
+.perform-admin p.submit .button, .perform-admin #perform-restore .button {
+  margin: 10px 10px 0px 0px;
+}
+
+.perform-admin #perform-legend {
+  float: right;
+  padding-top: 20px;
+  font-size: 12px;
+  line-height: 15px;
+  font-style: italic;
+  color: #aaaaaa;
+}
+
+.perform-admin #perform-tooltip-legend span {
+  display: inline-block;
+  margin-right: 5px;
+  height: 15px;
+  width: 15px;
+  vertical-align: top;
+  text-align: center;
+  line-height: 15px;
+  font-size: 12px;
+  background: #e7e7e7;
+  color: #bbbbbb;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  text-decoration: none;
+  font-style: normal;
+  font-weight: bold;
+}
+
+html, body {
+  overflow: hidden !important;
+}
+#perform-assets-manager-wrapper {
+  display: none;
+  position: fixed;
+  z-index: 99999999;
+  top: 32px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  background: rgba(0,0,0,0.5);
+  overflow-y: auto;
+}
+#perform-assets-manager {
+  background: #EEF2F5;
+  padding: 20px 20px 20px 320px;
+  font-size: 14px;
+  line-height: 1.5em;
+  color: #4a545a;
+  min-height: 100%;
+}
+#perform-assets-manager a {
+  color: #4A89DD;
+  text-decoration: none;
+  border: none;
+}
+#perform-assets-manager-header {
+  position: fixed;
+  top: 32px;
+  left: 0px;
+  bottom: 0px;
+  width: 300px;
+  background: #282E34;
+}
+#perform-assets-manager-header #perform-logo {
+  display: block;
+  margin: 20px auto;
+  width: 200px;
+}
+#perform-assets-manager-header h2 {
+  font-size: 24px;
+  margin: 0px 0px 10px 0px;
+  color: #4a545a;
+  font-weight: bold;
+}
+#perform-assets-manager-header h2 span {
+  background: #ED5464;
+  color: #ffffff;
+  padding: 5px;
+  vertical-align: middle;
+  font-size: 10px;
+  margin-left: 5px;
+}
+#perform-assets-manager-header p {
+  font-size: 14px;
+  color: #4a545a;
+  font-style: italic;
+  margin: 0px auto 15px auto;
+}
+#perform-assets-manager-close {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  height: 26px;
+  width: 26px;
+}
+#perform-assets-manager-close img {
+  height: 26px;
+  width: 26px;
+}
+#perform-assets-manager-tabs button {
+  display: block;
+  float: left;
+  padding: 15px 45px;
+  width: 100%;
+  font-size: 17px;
+  line-height: normal;
+  text-align: center;
+  background: #222222;
+  color: #ffffff;
+  font-weight: normal;
+}
+#perform-assets-manager-tabs {
+  overflow: hidden;
+}
+#perform-assets-manager-tabs button span {
+  display: block;
+  font-size: 12px;
+  margin-top: 5px;
+}
+#perform-assets-manager-tabs button.active {
+  background: #4A89DD;
+  color: #ffffff;
+}
+#perform-assets-manager-tabs button:hover {
+  background: #ffffff;
+  color: #4A89DD;
+}
+#perform-assets-manager-tabs button.active:hover {
+  background: #4A89DD;
+  color: #ffffff;
+}
+#perform-assets-manager-disclaimer {
+  background: #ffffff;
+  padding: 20px 20px 10px 20px;
+  margin: 0px 0px 20px 0px;
+}
+#perform-assets-manager-disclaimer p {
+  margin: 0px 0px 10px 0px;
+}
+#perform-assets-manager-container {
+  max-width: 1000px;
+  margin: 0px auto;
+}
+#perform-assets-manager-container .perform-assets-manager-title-bar {
+  margin-bottom: 13px;
+  text-align: center;
+}
+#perform-assets-manager-container .perform-assets-manager-title-bar h1 {
+  font-size: 28px;
+  font-weight: 400;
+  margin: 0px;
+  color: #282E34;
+}
+#perform-assets-manager-container .perform-assets-manager-title-bar p {
+  margin: 0px;
+  color: #282E34;
+}
+#perform-assets-manager h3 {
+  padding: 10px;
+  margin: 0px;
+  font-size: 18px;
+  background: #282E34;
+  color: #ffffff;
+  text-transform: capitalize;
+  font-weight: 400;
+}
+.perform-assets-manager-group {
+  box-shadow: 0 1px 6px 0 rgba(40,46,52,.3);
+  margin: 0px 0px 20px 0px;
+}
+.perform-assets-manager-group h4 {
+  font-size: 24px;
+  line-height: 40px;
+  margin: 0px;
+  padding: 10px;
+  background: #edf3f9;
+  font-weight: 700;
+}
+.perform-assets-manager-section {
+  padding: 10px;
+  background: #ffffff;
+  margin: 0px 0px 0px 0px;
+}
+#perform-assets-manager table {
+  table-layout: fixed;
+  width: 100%;
+  margin: 0px;
+  padding: 0px;
+  border: none;
+  text-align: left;
+  font-size: 14px;
+  border-collapse: collapse;
+}
+#perform-assets-manager table thead {
+  background: none;
+  color: #282E34;
+  font-weight: bold;
+  border: none;
+}
+#perform-assets-manager table thead tr {
+  border: none;
+  border-bottom: 2px solid #dddddd;
+}
+#perform-assets-manager table thead th {
+  font-size: 14px;
+  padding: 8px 5px;
+  vertical-align: middle;
+  border: none;
+}
+#perform-assets-manager table tr {
+  border: none;
+  border-bottom: 1px solid #eeeeee;
+  background: #ffffff;
+}
+#perform-assets-manager table tbody tr:last-child {
+  border-bottom: 0px;
+}
+#perform-assets-manager table td {
+  padding: 8px 5px;
+  border: none;
+  vertical-align: top;
+  font-size: 14px;
+}
+#perform-assets-manager table td.perform-assets-manager-type {
+  font-size: 14px;
+  text-align: center;
+  padding-top: 16px;
+  text-transform: uppercase;
+}
+#perform-assets-manager table td.perform-assets-manager-size {
+  font-size: 14px;
+  text-align: center;
+  padding-top: 16px;
+}
+#perform-assets-manager table td.perform-assets-manager-script a {
+  white-space: nowrap;
+}
+#perform-assets-manager .perform-assets-manager-script span {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 3px;
+}
+#perform-assets-manager .perform-assets-manager-script a {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 10px;
+  color: #4A89DD;
+  line-height: normal;
+}
+#perform-assets-manager .perform-assets-manager-disable, #perform-assets-manager .perform-assets-manager-enable {
+  margin: 10px 0px 0px 0px;
+}
+#perform-assets-manager table .perform-assets-manager-disable *:after, #perform-assets-manager table .perform-assets-manager-disable *:before {
+  display: none;
+}
+#perform-assets-manager select {
+  display: block;
+  position: relative;
+  height: auto;
+  width: auto;
+  background: #ffffff;
+  background-color: #ffffff;
+  padding: 7px 10px;
+  margin: 0px;
+  font-size: 14px;
+  appearance: menulist;
+  -webkit-appearance: menulist;
+  -moz-appearance: menulist;
+}
+#perform-assets-manager select.perform-disable-select, #perform-assets-manager select.perform-status-select {
+  border: 2px solid #27ae60;
+}
+#perform-assets-manager select.perform-disable-select.everywhere, #perform-assets-manager select.perform-status-select.disabled {
+  border: 2px solid #ED5464;
+}
+#perform-assets-manager select.perform-disable-select.current {
+  border: 2px solid #f1c40f;
+}
+#perform-assets-manager select.perform-disable-select.hide {
+  display: none;
+}
+#perform-assets-manager .perform-assets-manager-enable-placeholder {
+  color: #bbbbbb;
+  font-style: italic;
+  font-size: 14px;
+}
+#perform-assets-manager input[type='radio'] {
+  position: relative;
+  display: inline-block;
+  margin: 0px 3px 0px 0px;
+  vertical-align: middle;
+  opacity: 1;
+  appearance: radio;
+  -webkit-appearance: radio;
+  -moz-appearance: radio;
+}
+#perform-assets-manager input[type='checkbox'] {
+  position: relative;
+  display: inline-block;
+  margin: 0px 3px 0px 0px;
+  vertical-align: middle;
+  opacity: 1;
+  appearance: checkbox;
+  -webkit-appearance: checkbox;
+  -moz-appearance: checkbox;
+}
+#perform-assets-manager .perform-assets-manager-controls label {
+  display: inline-block;
+  margin: 0px 10px 0px 0px;
+  width: auto;
+  font-size: 12px;
+}
+#perform-assets-manager input[type='submit'] {
+  background: #4a89dd;
+  color: #ffffff;
+  cursor: pointer;
+  border: none;
+  font-size: 14px;
+  margin: 10px auto 0px auto;
+  padding: 15px 20px;
+  font-weight: 700;
+}
+#perform-assets-manager input[type='submit']:hover {
+  background: #5A93E0;
+}
+/* On/Off Toggle Switch */
+#perform-assets-manager .perform-assets-manager-switch {
+  position: relative;
+  display: block;
+  /*width: 48px;
+  height: 28px;*/
+  width: 76px;
+  height: 40px;
+  font-size: 1px;
+}
+#perform-assets-manager .perform-assets-manager-switch input[type='checkbox'] {
+  display: block;
+  margin: 0px;
+}
+#perform-assets-manager .perform-assets-manager-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #27ae60;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+#perform-assets-manager .perform-assets-manager-slider:before {
+  position: absolute;
+  content: '';
+  /*height: 20px;
+  width: 20px;
+  right: 4px;
+  bottom: 4px;*/
+  width: 30px;
+  top: 5px;
+  right: 5px;
+  bottom: 5px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+#perform-assets-manager .perform-assets-manager-switch input:checked + .perform-assets-manager-slider {
+  background-color: #ED5464;
+}
+#perform-assets-manager .perform-assets-manager-switch input:focus + .perform-assets-manager-slider {
+  box-shadow: 0 0 1px #ED5464;
+}
+#perform-assets-manager .perform-assets-manager-switch input:checked + .perform-assets-manager-slider:before {
+  /*-webkit-transform: translateX(-20px);
+  -ms-transform: translateX(-20px);
+  transform: translateX(-20px);*/
+  -webkit-transform: translateX(-36px);
+  -ms-transform: translateX(-36px);
+  transform: translateX(-36px);
+}
+
+#perform-assets-manager .perform-assets-manager-slider:after {
+
+  color: white;
+  display: block;
+  position: absolute;
+  transform: translate(-50%,-50%);
+  top: 50%;
+  left: 27%;
+  font-size: 10px;
+  font-family: Verdana, sans-serif;
+}
+
+#perform-assets-manager .perform-assets-manager-switch input:checked + .perform-assets-manager-slider:after {
+  left: unset;
+  right: 0%;
+
+}
+
+#perform-assets-manager .perform-assets-manager-assets-disabled p {
+  margin: 20px 0px 0px 0px;
+  text-align: center;
+  font-size: 12px;
+  padding: 10px 0px 0px 0px;
+  border-top: 1px solid #f8f8f8;
+}
+/*Settings View*/
+#assets-manager-settings table th {
+  width: 200px;
+  vertical-align: top;
+  border: none;
+}
+#assets-manager-settings .switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 28px;
+  font-size: 1px;
+}
+#assets-manager-settings .switch input {
+  display: block;
+  margin: 0px;
+}
+#assets-manager-settings .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+#assets-manager-settings .slider:before {
+  position: absolute;
+  content: '';
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+#assets-manager-settings input:checked + .slider {
+  background-color: #2196F3;
+}
+
+#assets-manager-settings input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+#assets-manager-settings input:checked + .slider:before {
+  -webkit-transform: translateX(20px);
+  -ms-transform: translateX(20px);
+  transform: translateX(20px);
+}
+#jquery-message {
+  font-size: 12px;
+  font-style: italic;
+  color: #27ae60;
+  margin-top: 5px;
+}
