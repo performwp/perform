@@ -3,6 +3,10 @@
  * Perform Module - Remove jQuery Migrate JS.
  *
  * @since 1.0.0
+ *
+ * @package    Perform
+ * @subpackage Remove jQuery Migrate.
+ * @author     Mehul Gohil
  */
 
 // Bail out, if accessed directly.
