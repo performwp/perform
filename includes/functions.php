@@ -23,11 +23,11 @@ function perform_load_modules_on_init() {
 	 * @since 1.0.0
 	 */
 	$is_emojis_disabled = perform_get_option( 'disable_emojis', 'perform_common' );
-	
+
 	if ( $is_emojis_disabled ) {
 		
 		// Load Module.
-		require_once './modules/class-perform-disable-emojis.php';
+		require_once PERFORM_PLUGIN_DIR . 'includes/modules/class-perform-disable-emojis.php';
 		
 		// Init Module.
 		new Perform_Disable_Emojis();
@@ -43,7 +43,7 @@ function perform_load_modules_on_init() {
 	if ( $is_embeds_disabled ) {
 
 		// Load Module.
-		require_once './modules/class-perform-disable-embeds.php';
+		require_once PERFORM_PLUGIN_DIR . 'includes/modules/class-perform-disable-embeds.php';
 
 		// Init Module.
 		new Perform_Disable_Embeds();
