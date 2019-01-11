@@ -65,6 +65,21 @@ function perform_load_modules_on_init() {
 		new Perform_Remove_Query_Strings();
 	}
 
+	/**
+	 * Disable XML-RPC.
+	 *
+	 * @since 1.0.0
+	 */
+	$is_xmlrpc_disabled = perform_get_option( 'disable_xmlrpc', 'perform_common' );
+
+	if ( $is_xmlrpc_disabled ) {
+
+		// Load Module.
+		require_once PERFORM_PLUGIN_DIR . 'includes/modules/class-perform-disable-xmlrpc.php';
+
+		// Init Module.
+		new Perform_Disable_XMLRPC();
+	}
 }
 
 add_action( 'init', 'perform_load_modules_on_init' );
