@@ -48,6 +48,23 @@ function perform_load_modules_on_init() {
 		// Init Module.
 		new Perform_Disable_Embeds();
 	}
+
+	/**
+	 * Remove Query Strings.
+	 *
+	 * @since 1.0.0
+	 */
+	$is_query_strings_removed = perform_get_option( 'remove_query_strings', 'perform_common' );
+
+	if ( $is_query_strings_removed ) {
+
+		// Load Module.
+		require_once PERFORM_PLUGIN_DIR . 'includes/modules/class-perform-remove-query-strings.php';
+
+		// Init Module.
+		new Perform_Remove_Query_Strings();
+	}
+
 }
 
 add_action( 'init', 'perform_load_modules_on_init' );
