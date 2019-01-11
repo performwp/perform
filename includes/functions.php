@@ -80,6 +80,22 @@ function perform_load_modules_on_init() {
 		// Init Module.
 		new Perform_Disable_XMLRPC();
 	}
+
+	/**
+	 * Remove jQuery Migrate.
+	 *
+	 * @since 1.0.0
+	 */
+	$is_migrate_js_removed = perform_get_option( 'remove_jquery_migrate', 'perform_common' );
+
+	if ( $is_migrate_js_removed ) {
+
+		// Load Module.
+		require_once PERFORM_PLUGIN_DIR . 'includes/modules/class-perform-remove-jquery-migrate.php';
+
+		// Init Module.
+		new Perform_Remove_jQuery_Migrate();
+	}
 }
 
 add_action( 'init', 'perform_load_modules_on_init' );
