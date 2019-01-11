@@ -96,6 +96,22 @@ function perform_load_modules_on_init() {
 		// Init Module.
 		new Perform_Remove_jQuery_Migrate();
 	}
+
+	/**
+	 * Hide WP Version.
+	 *
+	 * @since 1.0.0
+	 */
+	$is_wp_version_hidden = perform_get_option( 'hide_wp_version', 'perform_common' );
+
+	if ( $is_wp_version_hidden ) {
+
+		// Load Module.
+		require_once PERFORM_PLUGIN_DIR . 'includes/modules/class-perform-hide-wp-version.php';
+
+		// Init Module.
+		new Perform_Hide_WP_Version();
+	}
 }
 
 add_action( 'init', 'perform_load_modules_on_init' );
