@@ -3,6 +3,10 @@
  * Perform Module - Remove Query Strings
  *
  * @since 1.0.0
+ *
+ * @package    Perform
+ * @subpackage Remove Query Strings
+ * @author     Mehul Gohil
  */
 
 // Bail out, if accessed directly.
