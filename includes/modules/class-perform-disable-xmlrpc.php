@@ -3,6 +3,10 @@
  * Perform Module - Disable XMLRPC
  *
  * @since 1.0.0
+ *
+ * @package    Perform
+ * @subpackage Disable XML-RPC.
+ * @author     Mehul Gohil
  */
 
 // Bail out, if accessed directly.
