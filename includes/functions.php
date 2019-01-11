@@ -32,6 +32,22 @@ function perform_load_modules_on_init() {
 		// Init Module.
 		new Perform_Disable_Emojis();
 	}
+
+	/**
+	 * Disable Embed's
+	 *
+	 * @since 1.0.0
+	 */
+	$is_embeds_disabled = perform_get_option( 'disable_embeds', 'perform_common' );
+
+	if ( $is_embeds_disabled ) {
+
+		// Load Module.
+		require_once './modules/class-perform-disable-embeds.php';
+
+		// Init Module.
+		new Perform_Disable_Embeds();
+	}
 }
 
 add_action( 'init', 'perform_load_modules_on_init' );
