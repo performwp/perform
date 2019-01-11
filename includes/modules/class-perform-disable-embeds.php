@@ -1,8 +1,12 @@
 <?php
 /**
- * Perform Functions
+ * Perform Module - Disable Embeds.
  *
  * @since 1.0.0
+ *
+ * @package    Perform
+ * @subpackage Disable Embeds Module
+ * @author     Mehul Gohil
  */
 
 // Bail out, if accessed directly.
@@ -45,18 +49,30 @@ class Perform_Disable_Embeds {
 	}
 	
 	/**
-	 * @param $plugins
+	 * This function will disable embeds from tinymce.
+	 *
+	 * @param array $plugins List of tinymce plugins.
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 *
 	 * @return array
 	 */
-	function disable_embeds_from_tinymce( $plugins ) {
+	public function disable_embeds_from_tinymce( $plugins ) {
 		return array_diff( $plugins, array( 'wpembed' ) );
 	}
 	
 	/**
-	 * @param $rules
+	 * This function will remove embeds from rewrites.
+	 *
+	 * @param array $rules List of rewrite rules.
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 *
 	 * @return mixed
 	 */
-	function disable_embeds_from_rewrites( $rules ) {
+	public function disable_embeds_from_rewrites( $rules ) {
 		
 		foreach( $rules as $rule => $rewrite ) {
 			if ( false !== strpos( $rewrite, 'embed=true' ) ) {
