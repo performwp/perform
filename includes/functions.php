@@ -27,10 +27,11 @@ function perform_load_modules_on_init() {
 	if ( $is_emojis_disabled ) {
 		
 		// Load Module.
-		require_once './modules/class.disable-emojis.php';
+		require_once './modules/class-perform-disable-emojis.php';
 		
 		// Init Module.
 		new Perform_Disable_Emojis();
 	}
 }
+
 add_action( 'init', 'perform_load_modules_on_init' );
