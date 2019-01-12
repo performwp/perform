@@ -3,6 +3,10 @@
  * Perform Module - Remove RSD Link.
  *
  * @since 1.0.0
+ *
+ * @package    Perform
+ * @subpackage Remove RSD link
+ * @author     Mehul Gohil
  */
 
 // Bail out, if accessed directly.
