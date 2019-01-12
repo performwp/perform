@@ -1,8 +1,12 @@
 <?php
 /**
- * Perform Module - Heartbeat API Module.
+ * Perform Module - Heartbeat Manager.
  *
  * @since 1.0.0
+ *
+ * @package    Perform
+ * @subpackage Heartbeat Manager
+ * @author     Mehul Gohil
  */
 
 // Bail out, if accessed directly.
@@ -11,21 +15,39 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Perform_Heartbeat_Module
+ * Class Perform_Heartbeat_Manager
  *
  * @since 1.0.0
  */
-class Perform_Heartbeat_Module {
-	
+class Perform_Heartbeat_Manager {
+
 	/**
-	 * Perform_Heartbeat_Module constructor.
+	 * Is Heartbeat Disabled?
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 *
+	 * @var bool
+	 */
+	public $is_disabled = false;
+
+	/**
+	 * Perform_Heartbeat_Manager constructor.
 	 *
 	 * @since  1.0.0
 	 * @access public
 	 */
 	public function __construct() {
-		
-		add_action( 'init', array( $this, 'disable_heartbeat' ) );
+
+		$this->is_disabled = perform_get_option( 'disable_heartbeat', 'perform_common' );
+
+		// Disable Hearbeat based on the settings.
+		$this->disable_heartbeat();
+
+		// Proceed, only if Heartbeat API is not disabled.
+		if ( 'disable_everywhere' !== $this->is_disabled ) {
+			add_filter( 'heartbeat_settings', array( $this, 'heartbeat_frequency' ) );
+		}
 		
 	}
 	
@@ -39,18 +61,17 @@ class Perform_Heartbeat_Module {
 	 */
 	public function disable_heartbeat() {
 		
-		$disable_heartbeat = perform_get_option( 'disable_heartbeat', 'perform_common' );
-		
-		if( 'disable_everywhere' === $disable_heartbeat ) {
+		if ( 'disable_everywhere' === $this->is_disabled ) {
 			
 			// Disable Heartbeat API everywhere.
 			wp_deregister_script('heartbeat');
-		} elseif ( 'allow_posts' === $disable_heartbeat ) {
+
+		} elseif ( 'allow_posts' === $this->is_disabled ) {
 			
 			// Allow Heartbeat API, only on posts pages in admin.
 			global $pagenow;
 			
-			if( 'post.php' !== $pagenow && 'post-new.php' !== $pagenow ) {
+			if ( 'post.php' !== $pagenow && 'post-new.php' !== $pagenow ) {
 				wp_deregister_script('heartbeat');
 			}
 		}
@@ -66,7 +87,7 @@ class Perform_Heartbeat_Module {
 	 *
 	 * @return mixed
 	 */
-	public function heartbeat_frequency($settings) {
+	public function heartbeat_frequency( $settings ) {
 		
 		$heartbeat_frequency = perform_get_option( 'heartbeat_frequency', 'perform_common' );
 		
