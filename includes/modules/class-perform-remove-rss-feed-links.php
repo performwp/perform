@@ -3,6 +3,10 @@
  * Perform Module - Remove RSS Feed Links
  *
  * @since 1.0.0
+ *
+ * @package    Perform
+ * @subpackage Remove RSS Feed Links
+ * @author     Mehul Gohil
  */
 
 // Bail out, if accessed directly.
