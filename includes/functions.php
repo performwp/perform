@@ -128,6 +128,134 @@ function perform_load_modules_on_init() {
 		// Init Module.
 		new Perform_Remove_WLWManifest_Link();
 	}
+
+	/**
+	 * Remove RSD link.
+	 *
+	 * @since 1.0.0
+	 */
+	$is_rsd_link_removed = perform_get_option( 'remove_rsd_link', 'perform_common' );
+
+	if ( $is_rsd_link_removed ) {
+
+		// Load Module.
+		require_once PERFORM_PLUGIN_DIR . 'includes/modules/class-perform-remove-rsd-link.php';
+
+		// Init Module.
+		new Perform_Remove_RSD_Link();
+	}
+
+	/**
+	 * Remove Shortlink.
+	 *
+	 * @since 1.0.0
+	 */
+	$is_shortlink_removed = perform_get_option( 'remove_wlwmanifest_link', 'perform_common' );
+
+	if ( $is_shortlink_removed ) {
+
+		// Load Module.
+		require_once PERFORM_PLUGIN_DIR . 'includes/modules/class-perform-remove-shortlink.php';
+
+		// Init Module.
+		new Perform_Remove_Shortlink();
+	}
+
+	/**
+	 * Disable RSS Feeds.
+	 *
+	 * @since 1.0.0
+	 */
+	$is_rss_feeds_disabled = perform_get_option( 'disable_rss_feeds', 'perform_common' );
+
+	if ( $is_rss_feeds_disabled ) {
+
+		// Load Module.
+		require_once PERFORM_PLUGIN_DIR . 'includes/modules/class-perform-disable-rss-feeds.php';
+
+		// Init Module.
+		new Perform_Disable_RSS_Feeds();
+	}
+
+	/**
+	 * Remove RSS Feed Links.
+	 *
+	 * @since 1.0.0
+	 */
+	$is_rss_feed_links_removed = perform_get_option( 'remove_feed_links', 'perform_common' );
+
+	if ( $is_rss_feed_links_removed ) {
+
+		// Load Module.
+		require_once PERFORM_PLUGIN_DIR . 'includes/modules/class-perform-remove-rss-feed-links.php';
+
+		// Init Module.
+		new Perform_Remove_RSS_Feed_Links();
+	}
+
+	/**
+	 * Disable Self Pingbacks.
+	 *
+	 * @since 1.0.0
+	 */
+	$is_self_pingbacks_disabled = perform_get_option( 'disable_self_pingbacks', 'perform_common' );
+
+	if ( $is_self_pingbacks_disabled ) {
+
+		// Load Module.
+		require_once PERFORM_PLUGIN_DIR . 'includes/modules/class-perform-disable-self-pingbacks.php';
+
+		// Init Module.
+		new Perform_Disable_Self_Pingbacks();
+	}
+
+	/**
+	 * Remove REST API Links.
+	 *
+	 * @since 1.0.0
+	 */
+	$is_rest_api_links_removed = perform_get_option( 'remove_rest_api_links', 'perform_common' );
+
+	if ( $is_rest_api_links_removed ) {
+
+		// Load Module.
+		require_once PERFORM_PLUGIN_DIR . 'includes/modules/class-perform-remove-rest-api-links.php';
+
+		// Init Module.
+		new Perform_Remove_Rest_API_Links();
+	}
+
+	/**
+	 * Disable Dashicons.
+	 *
+	 * @since 1.0.0
+	 */
+	$is_dashicons_disabled = perform_get_option( 'disable_dashicons', 'perform_common' );
+
+	if ( $is_dashicons_disabled ) {
+
+		// Load Module.
+		require_once PERFORM_PLUGIN_DIR . 'includes/modules/class-perform-disable-dashicons.php';
+
+		// Init Module.
+		new Perform_Disable_Dashicons();
+	}
+
+	/**
+	 * Disable Password Strength Meter.
+	 *
+	 * @since 1.0.0
+	 */
+	$is_password_strength_meter_disabled = perform_get_option( 'disable_password_strength_meter', 'perform_common' );
+
+	if ( $is_password_strength_meter_disabled ) {
+
+		// Load Module.
+		require_once PERFORM_PLUGIN_DIR . 'includes/modules/class-perform-disable-password-strength-meter.php';
+
+		// Init Module.
+		new Perform_Disable_Password_Strength_Meter();
+	}
 }
 
 add_action( 'init', 'perform_load_modules_on_init' );
