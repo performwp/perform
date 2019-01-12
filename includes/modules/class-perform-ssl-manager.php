@@ -1,10 +1,12 @@
 <?php
 /**
- * Perform Module - SSL Manager Module.
+ * Perform Module - SSL Manager.
  *
  * @since 1.0.0
  *
- * @package Perform
+ * @package    Perform
+ * @subpackage SSL Manager
+ * @author     Mehul Gohil
  */
 
 // Bail out, if accessed directly.
@@ -29,12 +31,15 @@ class Perform_SSL_Manager {
 	 */
 	public function __construct() {
 
-		add_action( 'wp', array( $this, 'wp_redirect_to_ssl' ), 40, 3 );
+		// Proceed, only if site accessed with non-HTTP url.
+		if ( ! is_ssl() ) {
+			$this->wp_redirect_to_ssl();
+		}
 
 	}
 
 	/**
-	 * Redirect using wp_redirect()
+	 * Auto Redirect users to HTTPS using wp_safe_redirect()
 	 *
 	 * @since  1.0.0
 	 * @access public
@@ -50,10 +55,9 @@ class Perform_SSL_Manager {
 			return;
 		}
 
-		$is_ssl_enabled = perform_is_setting_enabled( perform_get_option( 'enable_ssl', 'perform_ssl', false ) );
+		$is_ssl_enabled = perform_get_option( 'enable_ssl', 'perform_ssl', false );
 
 		if ( ! is_ssl() && $is_ssl_enabled ) {
-
 			$redirect_url = "https://{$server_data['HTTP_HOST']}{$server_data['REQUEST_URI']}";
 			$redirect_url = apply_filters( 'perform_wp_redirect_url_to_ssl', $redirect_url );
 
