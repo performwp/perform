@@ -3,6 +3,10 @@
  * Perform Module - Disable RSS Feeds
  *
  * @since 1.0.0
+ *
+ * @package    Perform
+ * @subpackage Disable RSS Feeds
+ * @author     Mehul Gohil
  */
 
 // Bail out, if accessed directly.
