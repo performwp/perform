@@ -3,6 +3,10 @@
  * Perform Module - Disable Dashicons JS
  *
  * @since 1.0.0
+ *
+ * @package    Perform
+ * @subpackage Disable Dashicons
+ * @author     Mehul Gohil
  */
 
 // Bail out, if accessed directly.
