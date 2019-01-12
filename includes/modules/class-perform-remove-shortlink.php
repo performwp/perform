@@ -3,6 +3,10 @@
  * Perform Module - Remove Shortlink
  *
  * @since 1.0.0
+ *
+ * @package    Perform
+ * @subpackage Remove Shortlink
+ * @author     Mehul Gohil
  */
 
 // Bail out, if accessed directly.
