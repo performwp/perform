@@ -331,15 +331,15 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			);
 
 			// Change Login URL.
-			$this->add_field(
-				"{$this->prefix}common",
-				array(
-					'id'   => 'login_url',
-					'type' => 'url',
-					'name' => __( 'Change Login URL', 'perform' ),
-					'desc' => __( 'When set, this will change your WordPress login URL (slug) to the provided string and will block wp-admin and wp-login endpoints from being directly accessed.', 'perform' ),
-				)
-			);
+//			$this->add_field(
+//				"{$this->prefix}common",
+//				array(
+//					'id'   => 'login_url',
+//					'type' => 'url',
+//					'name' => __( 'Change Login URL', 'perform' ),
+//					'desc' => __( 'When set, this will change your WordPress login URL (slug) to the provided string and will block wp-admin and wp-login endpoints from being directly accessed.', 'perform' ),
+//				)
+//			);
 
 			// Enable SSL.
 			$this->add_field(
