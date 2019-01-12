@@ -3,6 +3,10 @@
  * Perform Module - Disable Self Pingbacks.
  *
  * @since 1.0.0
+ *
+ * @package    Perform
+ * @subpackage Disable Self Pingbacks
+ * @author     Mehul Gohil
  */
 
 // Bail out, if accessed directly.
