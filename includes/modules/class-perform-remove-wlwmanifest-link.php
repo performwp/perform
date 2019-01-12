@@ -3,6 +3,10 @@
  * Perform Module - Remove wlwmanifest Link.
  *
  * @since 1.0.0
+ *
+ * @package    Perform
+ * @subpackage Remove wlwmanifest Link
+ * @author     Mehul Gohil
  */
 
 // Bail out, if accessed directly.
