@@ -112,6 +112,22 @@ function perform_load_modules_on_init() {
 		// Init Module.
 		new Perform_Hide_WP_Version();
 	}
+
+	/**
+	 * Remove wlwmanifest link.
+	 *
+	 * @since 1.0.0
+	 */
+	$is_wlwmanifest_link_removed = perform_get_option( 'remove_wlwmanifest_link', 'perform_common' );
+
+	if ( $is_wlwmanifest_link_removed ) {
+
+		// Load Module.
+		require_once PERFORM_PLUGIN_DIR . 'includes/modules/class-perform-remove-wlwmanifest-link.php';
+
+		// Init Module.
+		new Perform_Remove_WLWManifest_Link();
+	}
 }
 
 add_action( 'init', 'perform_load_modules_on_init' );
