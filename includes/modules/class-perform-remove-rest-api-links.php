@@ -3,6 +3,10 @@
  * Perform Module - Remove REST API Links.
  *
  * @since 1.0.0
+ *
+ * @package    Perform
+ * @subpackage Remove REST API Links
+ * @author     Mehul Gohil
  */
 
 // Bail out, if accessed directly.
