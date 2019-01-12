@@ -295,3 +295,17 @@ function perform_load_modules_on_init() {
 }
 
 add_action( 'init', 'perform_load_modules_on_init' );
+
+/**
+ * Load SSL Manager.
+ */
+function load_ssl_manager_module() {
+
+	// Load Module.
+	require_once PERFORM_PLUGIN_DIR . 'includes/modules/class-perform-ssl-manager.php';
+
+	// Init Module.
+	new Perform_SSL_Manager();
+
+}
+add_action( 'wp', 'load_ssl_manager', 40, 3 );
