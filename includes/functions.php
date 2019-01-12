@@ -256,6 +256,42 @@ function perform_load_modules_on_init() {
 		// Init Module.
 		new Perform_Disable_Password_Strength_Meter();
 	}
+
+	/**
+	 * Disable Heartbeat API.
+	 *
+	 * @since 1.0.0
+	 */
+	$is_heartbeat_disabled = perform_get_option( 'disable_heartbeat', 'perform_common' );
+	if ( ! empty( $is_heartbeat_disabled ) ) {
+
+		// Load Module.
+		require_once PERFORM_PLUGIN_DIR . 'includes/modules/class-perform-heartbeat-manager.php';
+
+		// Init Module.
+		new Perform_Heartbeat_Manager();
+
+	}
+
+	/**
+	 * Set Post Revisions Limit.
+	 *
+	 * @since 1.0.0
+	 */
+	$post_revisions_limit = perform_get_option( 'limit_post_revisions', 'perform_common' );
+	if ( ! empty( $post_revisions_limit ) ) {
+		define( 'WP_POST_REVISIONS', $post_revisions_limit );
+	}
+
+	/**
+	 * Set Autosave Interval.
+	 *
+	 * @since 1.0.0
+	 */
+	$autosave_interval = perform_get_option( 'autosave_interval', 'perform_common' );
+	if ( ! empty( $autosave_interval ) ) {
+		define( 'AUTOSAVE_INTERVAL', $autosave_interval );
+	}
 }
 
 add_action( 'init', 'perform_load_modules_on_init' );
