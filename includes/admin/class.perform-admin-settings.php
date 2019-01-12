@@ -96,7 +96,7 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'id'      => 'disable_emojis',
 					'type'    => 'checkbox',
 					'name'    => __( 'Disable Emoji\'s', 'perform' ),
-					'desc'    => __( 'Enabling this will disabled the usage of emoji\'s in WordPress Posts, Pages, and Custom Post Types.', 'perform' ),
+					'desc'    => __( 'Enabling this will disable the usage of emoji\'s in WordPress Posts, Pages, and Custom Post Types.', 'perform' ),
 				)
 			);
 
