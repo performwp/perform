@@ -292,6 +292,19 @@ function perform_load_modules_on_init() {
 	if ( ! empty( $autosave_interval ) ) {
 		define( 'AUTOSAVE_INTERVAL', $autosave_interval );
 	}
+
+	/**
+	 * Load WooCommerce Modules using WooCommerce Manager.
+	 *
+	 * @since 1.0.0
+	 */
+	// Load Module.
+	require_once PERFORM_PLUGIN_DIR . 'includes/modules/class-perform-woocommerce-manager.php';
+
+	// Init Module.
+	new Perform_WooCommerce_Manager();
+
+
 }
 
 add_action( 'init', 'perform_load_modules_on_init' );
