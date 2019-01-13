@@ -298,6 +298,8 @@ add_action( 'init', 'perform_load_modules_on_init' );
 
 /**
  * Load SSL Manager.
+ *
+ * @since 1.0.0
  */
 function load_ssl_manager_module() {
 
@@ -308,4 +310,5 @@ function load_ssl_manager_module() {
 	new Perform_SSL_Manager();
 
 }
+
 add_action( 'wp', 'load_ssl_manager', 40, 3 );
