@@ -314,7 +314,7 @@ add_action( 'init', 'perform_load_modules_on_init' );
  *
  * @since 1.0.0
  */
-function load_ssl_manager_module() {
+function perform_load_ssl_manager() {
 
 	// Load Module.
 	require_once PERFORM_PLUGIN_DIR . 'includes/modules/class-perform-ssl-manager.php';
@@ -324,4 +324,40 @@ function load_ssl_manager_module() {
 
 }
 
-add_action( 'wp', 'load_ssl_manager', 40, 3 );
+add_action( 'wp', 'perform_load_ssl_manager', 40, 3 );
+
+/**
+ * Load DNS Prefetch.
+ *
+ * @since 1.0.0
+ */
+function perform_load_dns_prefetch() {
+
+	$dns_prefetch = perform_get_option( 'dns_prefetch', 'perform_advanced' );
+	if ( ! empty( $dns_prefetch ) && is_array( $dns_prefetch ) ) {
+		foreach ( $dns_prefetch as $url ) {
+			echo "<link rel='dns-prefetch' href='{$url}'>" . "\n";
+		}
+	}
+
+}
+
+add_action( 'wp_head', 'perform_load_dns_prefetch', 1 );
+
+/**
+ * Load Preconnect.
+ *
+ * @since 1.0.0
+ */
+function perform_load_preconnect() {
+
+	$preconnect = perform_get_option( 'preconnect', 'perform_advanced' );
+	if ( ! empty( $preconnect ) && is_array( $preconnect ) ) {
+		foreach ( $preconnect as $url ) {
+			echo "<link rel='preconnect' href='{$url}' crossorigin>" . "\n";
+		}
+	}
+
+}
+
+add_action( 'wp_head', 'perform_load_preconnect', 1 );
