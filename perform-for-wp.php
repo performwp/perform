@@ -206,6 +206,7 @@ if ( ! class_exists( 'Perform' ) ) {
 			require_once PERFORM_PLUGIN_DIR . '/includes/actions.php';
 			require_once PERFORM_PLUGIN_DIR . '/includes/functions.php';
 			require_once PERFORM_PLUGIN_DIR . '/includes/misc-functions.php';
+			require_once PERFORM_PLUGIN_DIR . '/includes/admin/admin-filters.php';
 //			require_once PERFORM_PLUGIN_DIR . '/includes/assets-manager.php';
 //			require_once PERFORM_PLUGIN_DIR . '/includes/network.php';
 
