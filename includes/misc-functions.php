@@ -3,6 +3,10 @@
  * Miscellaneous Functions
  *
  * @since 1.0.0
+ *
+ * @package    Perform
+ * @subpackage Miscellaneous Functions.
+ * @author     Mehul Gohil
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,7 +27,7 @@ function perform_has_network_access() {
 		return true;
 	}
 
-	$network = get_site_option('perform_network' );
+	$network = get_site_option( 'perform_network' );
 	if (
 		! is_super_admin() &&
 		! empty( $network['access'] ) &&
@@ -45,15 +49,15 @@ function perform_has_network_access() {
  * @return string
  */
 function perform_get_option( $option, $section, $default = '' ) {
-	
+
 	$options = get_option( $section );
-	
+
 	if ( isset( $options[ $option ] ) ) {
 		return $options[ $option ];
 	}
-	
+
 	return $default;
-	
+
 }
 
 /**
@@ -88,6 +92,6 @@ function perform_is_setting_enabled( $value, $compare_with = null ) {
  * @return bool
  */
 function perform_is_assets_manager_enabled() {
-	return perform_get_option( 'enable_assets_manager', 'perform_advanced' ,false );
+	return perform_get_option( 'enable_assets_manager', 'perform_advanced', false );
 }
 
