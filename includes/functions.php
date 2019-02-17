@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 function perform_load_modules_on_init() {
-	
+
 	/**
 	 * Disable Emoji's
 	 *
@@ -25,10 +25,10 @@ function perform_load_modules_on_init() {
 	$is_emojis_disabled = perform_get_option( 'disable_emojis', 'perform_common' );
 
 	if ( $is_emojis_disabled ) {
-		
+
 		// Load Module.
 		require_once PERFORM_PLUGIN_DIR . 'includes/modules/class-perform-disable-emojis.php';
-		
+
 		// Init Module.
 		new Perform_Disable_Emojis();
 	}
@@ -304,6 +304,20 @@ function perform_load_modules_on_init() {
 	// Init Module.
 	new Perform_WooCommerce_Manager();
 
+	/**
+	 * Load Assets Manager module to optimise assets on frontend of the WordPress site.
+	 *
+	 * @since 1.0.0
+	 */
+	$is_assets_manager_enabled = perform_get_option( 'enable_assets_manager', 'perform_advanced' );
+	if ( $is_assets_manager_enabled ) {
+
+		 // Load Module.
+		 require_once PERFORM_PLUGIN_DIR . 'includes/modules/assets-manager/class-perform-assets-manager.php';
+
+		 // Init Module.
+		 new Perform_Assets_Manager();
+	}
 
 }
 
