@@ -45,13 +45,13 @@
     "cssnano": "^3.10.0",
     "eslint": "^4.19.1",
     "eslint-config-wordpress": "^2.0.0",
-    "eslint-plugin-react": "^7.11.1",
+    "eslint-plugin-react": "^7.12.4",
     "expose-loader": "latest",
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^1.1.11",
     "imagemin-webpack-plugin": "^1.6.1",
     "jest": "^23.5.0",
-    "jest-puppeteer": "^3.2.1",
+    "jest-puppeteer": "^3.9.0",
     "node-sass": "^4.9.3",
     "postcss-loader": "^2.1.6",
     "puppeteer": "^1.7.0",
@@ -61,8 +61,8 @@
     "stylelint-config-wordpress": "^12.0.0",
     "url-loader": "^0.5.9",
     "webpack": "^3.12.0",
-    "webpack-rtl-plugin": "^1.7.0",
-    "wp-pot": "^1.6.3"
+    "webpack-rtl-plugin": "^1.8.0",
+    "wp-pot": "^1.6.6"
   },
   "dependencies": {
     "accounting": "latest",
