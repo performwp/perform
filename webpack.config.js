@@ -11,12 +11,7 @@ const wpPot = require( 'wp-pot' );
 const inProduction = ( 'production' === process.env.NODE_ENV );
 
 const config = {
-	// Ensure modules like magnific know jQuery is external (loaded via WP).
-	externals: {
-		$: 'jQuery',
-		jquery: 'jQuery',
-		lodash: 'lodash',
-	},
+
 	devtool: 'source-map',
 	module: {
 		rules: [
@@ -28,12 +23,6 @@ const config = {
 				loaders: [
 					'babel-loader',
 				],
-			},
-
-			// Expose accounting.js for plugin usage.
-			{
-				test: require.resolve( 'accounting' ),
-				loader: 'expose-loader?accounting',
 			},
 
 			// Create RTL styles.
@@ -66,19 +55,6 @@ const config = {
 				} ),
 			},
 
-			// Font files.
-			{
-				test: /\.(ttf|otf|eot|woff(2)?)(\?[a-z0-9]+)?$/,
-				use: [
-					{
-						loader: 'file-loader',
-						options: {
-							name: 'fonts/[name].[ext]',
-							publicPath: '../',
-						},
-					},
-				],
-			},
 
 			// Image files.
 			{
@@ -134,7 +110,7 @@ module.exports = [
 		output: {
 			path: path.join( __dirname, './assets/dist/' ),
 			filename: 'js/[name].js',
-			library: 'Give',
+			library: 'Perform',
 			libraryTarget: 'umd',
 		},
 	}, config ),
