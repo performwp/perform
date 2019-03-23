@@ -32,7 +32,7 @@ function perform_uninstall() {
 		'perform_support'
 	);
 
-	$remove_data_on_uninstall = perform_get_option( '', 'perform_advanced' );
+	$remove_data_on_uninstall = perform_get_option( 'remove_data_on_uninstall', 'perform_advanced' );
 	if ( $remove_data_on_uninstall ) {
 
 		if ( is_multisite() ) {
