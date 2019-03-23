@@ -443,15 +443,15 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			);
 
 			// Enable Assets Manager.
-			$this->add_field(
-				"{$this->prefix}advanced",
-				array(
-					'id'   => 'enable_assets_manager',
-					'type' => 'checkbox',
-					'name' => __( 'Enable Assets Manager', 'perform' ),
-					'desc' => __( 'Enables the Assets Manager which will provide you the ability to enable or disable CSS and JS files on per-page basis.', 'perform' ),
-				)
-			);
+			// $this->add_field(
+			// 	"{$this->prefix}advanced",
+			// 	array(
+			// 		'id'   => 'enable_assets_manager',
+			// 		'type' => 'checkbox',
+			// 		'name' => __( 'Enable Assets Manager', 'perform' ),
+			// 		'desc' => __( 'Enables the Assets Manager which will provide you the ability to enable or disable CSS and JS files on per-page basis.', 'perform' ),
+			// 	)
+			// );
 
 			// DNS Prefetch.
 			$this->add_field(
