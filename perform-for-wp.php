@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: Perform for WordPress
+ * Plugin Name: Perform
  * Plugin URI: https://www.mehulgohil.in/plugin/perform-for-wordpress/
- * Description: This plugin adds an assortment of performance and speed improvements to your WordPress installation.
+ * Description: This plugin adds toolset for performance and speed improvements to your WordPress sites.
  * Version: 1.0.0
  * Author: Mehul Gohil
  * Author URI: https://www.mehulgohil.in/
@@ -10,6 +10,10 @@
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: perform
  * Domain Path: /languages
+ *
+ * @package    WordPress
+ * @subpackage Perform
+ * @author     Mehul Gohil
  */
 
 // Bailout, if accessed directly.
@@ -125,7 +129,7 @@ if ( ! class_exists( 'Perform' ) ) {
 
 				return;
 			}
-			
+
 			$this->includes();
 
 			// Register activation hook.
@@ -169,7 +173,7 @@ if ( ! class_exists( 'Perform' ) ) {
 
 			// Minimum Required PHP version.
 			if ( ! defined( 'PERFORM_REQUIRED_PHP_VERSION' ) ) {
-				define( 'PERFORM_REQUIRED_PHP_VERSION', '5.3' );
+				define( 'PERFORM_REQUIRED_PHP_VERSION', '5.6' );
 			}
 
 			// Plugin Root File.
@@ -196,19 +200,14 @@ if ( ! class_exists( 'Perform' ) ) {
 
 		public function includes() {
 
+			require_once PERFORM_PLUGIN_DIR . '/includes/admin/class.perform-admin-settings-api.php';
+			require_once PERFORM_PLUGIN_DIR . '/includes/admin/class.perform-admin-settings.php';
 
-//			if ( is_admin() ) {
-				require_once PERFORM_PLUGIN_DIR . '/includes/admin/class.perform-admin-settings-api.php';
-				require_once PERFORM_PLUGIN_DIR . '/includes/admin/class.perform-admin-settings.php';
-//			}
-			
 			require_once PERFORM_PLUGIN_DIR . '/includes/install.php';
 			require_once PERFORM_PLUGIN_DIR . '/includes/actions.php';
 			require_once PERFORM_PLUGIN_DIR . '/includes/functions.php';
 			require_once PERFORM_PLUGIN_DIR . '/includes/misc-functions.php';
 			require_once PERFORM_PLUGIN_DIR . '/includes/admin/admin-filters.php';
-//			require_once PERFORM_PLUGIN_DIR . '/includes/assets-manager.php';
-//			require_once PERFORM_PLUGIN_DIR . '/includes/network.php';
 
 		}
 
