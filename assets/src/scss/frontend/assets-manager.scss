@@ -1,6 +1,6 @@
 .perform-assets-manager-wrap {
   position: fixed;
-  z-index: 10;
+  z-index: 999999;
   top: 32px;
   bottom: 0px;
   left: 0px;
@@ -51,13 +51,24 @@
     }
 
     .perform-assets-manager--logo {
-      display: inline-block;
+			display: inline-block;
       width: 20%;
     }
 
     .perform-assets-manager--menu {
       display: inline-block;
-      width: 79%;
+			width: 78%;
+			margin: 0;
+
+			.perform-assets-manager--menu-item {
+				list-style: none;
+				float: left;
+				padding: 10px 20px;
+
+				a {
+					font-size: 20px;
+				}
+			}
     }
   }
 
