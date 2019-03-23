@@ -52,8 +52,8 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 				'cdn'           => __( 'CDN', 'perform' ),
 				'woocommerce'   => __( 'WooCommerce', 'perform' ),
 				'advanced'      => __( 'Advanced', 'perform' ),
-				'import_export' => __( 'Import/Export', 'perform' ),
-				'support'       => __( 'Support', 'perform' ),
+				// 'import_export' => __( 'Import/Export', 'perform' ),
+				// 'support'       => __( 'Support', 'perform' ),
 			);
 
 			$this->add_tabs();
