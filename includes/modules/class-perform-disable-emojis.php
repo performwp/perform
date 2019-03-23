@@ -42,7 +42,7 @@ class Perform_Disable_Emojis {
 
 		// Add filter to disable emojis.
 		add_filter( 'tiny_mce_plugins', array( $this, 'disable_emojis_from_tinymce' ) );
-		add_filter( 'wp_resource_hints', array( $this, 'disable_emojis_from_dns_prefetch', 10, 2 ) );
+		add_filter( 'wp_resource_hints', array( $this, 'disable_emojis_from_dns_prefetch' ), 10, 2 );
 		add_filter( 'emoji_svg_url', '__return_false' );
 
 	}
