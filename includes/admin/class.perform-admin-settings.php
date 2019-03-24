@@ -1,11 +1,15 @@
 <?php
 /**
- * Admin Settings
+ * Perform - Admin Settings.
  *
  * @since 1.0.0
+ *
+ * @package    Perform
+ * @subpackage Admin Settings
+ * @author     Mehul Gohil
  */
 
-// Bailout, if accessed directly.
+// Bail out, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
