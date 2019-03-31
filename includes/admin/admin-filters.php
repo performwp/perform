@@ -27,12 +27,12 @@ function perform_admin_rate_us( $footer_text ) {
 
 	$current_screen = get_current_screen();
 
-	if ( stristr( $current_screen->base, 'perform-for-wordpress' ) ) {
+	if ( true == stristr( $current_screen->base, 'perform' ) ) {
 
 		$rate_text = sprintf(
 			/* translators: %s: Link to 5 star rating */
-			__( 'If you like <strong>Perform for WP</strong> please leave us a %s rating. It takes a minute and helps a lot. Thanks in advance!', 'perform' ),
-			'<a href="https://wordpress.org/support/view/plugin-reviews/perform-for-wp?filter=5#postform" target="_blank" class="perform-rating-link" style="text-decoration:none;" data-rated="' . esc_attr__( 'Thanks :)', 'perform' ) . '">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
+			__( 'If you like <strong>Perform</strong> please leave us a %s rating. It takes a minute and helps a lot. Thanks in advance!', 'perform' ),
+			'<a href="https://wordpress.org/support/plugin/perform/reviews/?filter=5#postform" target="_blank" class="perform-rating-link" style="text-decoration:none;" data-rated="' . esc_attr__( 'Thanks :)', 'perform' ) . '">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
 		);
 
 		return $rate_text;

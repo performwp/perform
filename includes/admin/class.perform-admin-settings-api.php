@@ -25,7 +25,7 @@ if ( ! class_exists( 'Perform_Admin_Settings_API' ) ) :
 	 * @since 1.0.0
 	 */
 	class Perform_Admin_Settings_API {
-		
+
 		/**
          * Base Prefix for Settings.
          *
@@ -34,7 +34,7 @@ if ( ! class_exists( 'Perform_Admin_Settings_API' ) ) :
 		 * @var string
 		 */
 	    public $prefix = '';
-	    
+
 		/**
 		 * Sections array.
 		 *
@@ -691,9 +691,9 @@ if ( ! class_exists( 'Perform_Admin_Settings_API' ) ) :
 		 * @return string
 		 */
 		function get_option( $option, $section, $default = '' ) {
-			
+
 			$options = get_option( $section );
-			
+
 			if ( isset( $options[ $option ] ) ) {
 				return $options[ $option ];
 			}
@@ -712,10 +712,10 @@ if ( ! class_exists( 'Perform_Admin_Settings_API' ) ) :
 		public function add_admin_menu() {
 			if( perform_has_network_access() ) {
 				add_options_page(
-					__( 'Perform for WP', 'perform' ),
-					__( 'Perform for WP', 'perform' ),
+					__( 'Perform', 'perform' ),
+					__( 'Perform', 'perform' ),
 					'manage_options',
-					'perform-for-wordpress',
+					'perform',
 					array( $this, 'settings_page' )
 				);
 			}
@@ -731,7 +731,7 @@ if ( ! class_exists( 'Perform_Admin_Settings_API' ) ) :
 		public function settings_page() {
 			?>
             <div class="wrap">
-                <h2><?php esc_html_e( 'Settings - Perform for WordPress', 'perform' ); ?></h2>
+                <h2><?php esc_html_e( 'Perform Settings', 'perform' ); ?></h2>
 				<?php $this->navigation_html(); ?>
 				<?php $this->display_form(); ?>
             </div>
