@@ -95,3 +95,22 @@ function perform_is_assets_manager_enabled() {
 	return perform_get_option( 'enable_assets_manager', 'perform_advanced', false );
 }
 
+/**
+ * This function is used to check whether the WooCommerce plugin is active or not.
+ *
+ * @since 1.0.1
+ *
+ * @return bool
+ */
+function perform_is_woocommerce_active() {
+
+	$is_active = false;
+
+	// Return true when WooCommerce plugin is active.
+	if ( class_exists( 'WooCommerce' ) ) {
+		$is_active = true;
+	}
+
+	return $is_active;
+}
+
