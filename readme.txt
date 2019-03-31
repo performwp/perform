@@ -5,7 +5,7 @@ Donate link: https://www.mehulgohil.in/donate/
 Requires at least: 4.8
 Tested up to: 5.1
 Requires PHP: 5.6
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -56,6 +56,11 @@ The manual installation method involves downloading our plugin and uploading it 
 We work hard to the best support possible for Perform. The [WordPress.org Support Forum](https://wordpress.org/support/plugin/perform) is used for free community based support. We continually monitor the forum and do our best to ensure everyone gets a response.
 
 == Changelog ==
+
+= 1.0.1 =
+fix: incorrect linking for reviews in admin footer #2
+fix: woocommerce tab should be visible when woocommerce is active #3
+fix: disabling woocommerce widgets not working #4
 
 = 1.0.0 =
 Initial Release. Yippee!
