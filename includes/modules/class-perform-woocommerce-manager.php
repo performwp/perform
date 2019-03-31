@@ -31,11 +31,6 @@ class Perform_WooCommerce_Manager {
 	 */
 	public function __construct() {
 
-		// Bailout, if WooCommerce is not active.
-		if ( ! function_exists( 'is_woocommerce' ) ) {
-			return;
-		}
-
 		/**
 		 * Disable Default WooCommerce Assets.
 		 *
@@ -77,6 +72,14 @@ class Perform_WooCommerce_Manager {
 		}
 	}
 
+	/**
+	 * Disable WooCommerce Assets.
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 *
+	 * @return void
+	 */
 	public function disable_assets() {
 
 		if (
@@ -119,12 +122,28 @@ class Perform_WooCommerce_Manager {
 
 	}
 
+	/**
+	 * Disable Card Fragmentation.
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 *
+	 * @return void
+	 */
 	public function disable_cart_fragmentation() {
 
 		wp_dequeue_script( 'wc-cart-fragments' );
 
 	}
 
+	/**
+	 * Disable Status Metabox.
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 *
+	 * @return void
+	 */
 	public function disable_status_metabox() {
 		remove_meta_box( 'woocommerce_dashboard_status', 'dashboard', 'normal' );
 	}
@@ -148,6 +167,9 @@ class Perform_WooCommerce_Manager {
 		unregister_widget( 'WC_Widget_Price_Filter' );
 		unregister_widget( 'WC_Widget_Product_Search' );
 		unregister_widget( 'WC_Widget_Recently_Viewed' );
+		unregister_widget( 'WC_Widget_Rating_Filter' );
+		unregister_widget( 'WC_Widget_Top_Rated_Products' );
+		unregister_widget( 'WC_Widget_Recent_Reviews' );
 
 	}
 }

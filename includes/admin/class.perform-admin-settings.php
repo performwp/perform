@@ -54,15 +54,18 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 				'common'        => __( 'General', 'perform' ),
 				'ssl'           => __( 'SSL', 'perform' ),
 				'cdn'           => __( 'CDN', 'perform' ),
-				'woocommerce'   => __( 'WooCommerce', 'perform' ),
 				'advanced'      => __( 'Advanced', 'perform' ),
 				// 'import_export' => __( 'Import/Export', 'perform' ),
 				// 'support'       => __( 'Support', 'perform' ),
 			);
 
+			// Display WooCommerce tab when WooCommerce plugin is active.
+			if ( perform_is_woocommerce_active() ) {
+				$this->tabs['woocommerce'] = __( 'WooCommerce', 'perform' );
+			}
+
 			$this->add_tabs();
 			$this->add_fields();
-
 
 		}
 

@@ -293,16 +293,19 @@ function perform_load_modules_on_init() {
 		define( 'AUTOSAVE_INTERVAL', $autosave_interval );
 	}
 
-	/**
-	 * Load WooCommerce Modules using WooCommerce Manager.
-	 *
-	 * @since 1.0.0
-	 */
-	// Load Module.
-	require_once PERFORM_PLUGIN_DIR . 'includes/modules/class-perform-woocommerce-manager.php';
+	// Load WooCommerce Manager module when WooCommerce is active.
+	if ( perform_is_woocommerce_active() ) {
+		/**
+		 * Load WooCommerce Modules using WooCommerce Manager.
+		 *
+		 * @since 1.0.0
+		 */
+		// Load Module.
+		require_once PERFORM_PLUGIN_DIR . 'includes/modules/class-perform-woocommerce-manager.php';
 
-	// Init Module.
-	new Perform_WooCommerce_Manager();
+		// Init Module.
+		new Perform_WooCommerce_Manager();
+	}
 
 	/**
 	 * Load Assets Manager module to optimise assets on frontend of the WordPress site.
@@ -323,7 +326,7 @@ function perform_load_modules_on_init() {
 
 }
 
-add_action( 'init', 'perform_load_modules_on_init' );
+add_action( 'init', 'perform_load_modules_on_init', 0 );
 
 /**
  * Load SSL Manager.
