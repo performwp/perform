@@ -42,3 +42,32 @@ function perform_admin_rate_us( $footer_text ) {
 }
 
 add_filter( 'admin_footer_text', 'perform_admin_rate_us' );
+
+/**
+ * Plugin page action links.
+ *
+ * @param array $actions An array of plugin action links.
+ *
+ * @since 1.0.1
+ *
+ * @return array
+ */
+function perform_add_plugin_page_action_links( $actions ) {
+
+	$new_actions = array(
+		'settings' => sprintf(
+			'<a href="%1$s">%2$s</a>',
+			admin_url( 'options-general.php?page=perform' ),
+			__( 'Settings', 'perform' )
+		),
+		'support' => sprintf(
+			'<a target="_blank" href="%1$s">%2$s</a>',
+			esc_url_raw( 'https://wordpress.org/support/plugin/perform/' ),
+			__( 'Support', 'perform' )
+		),
+	);
+
+	return array_merge( $new_actions, $actions );
+}
+
+add_filter( 'plugin_action_links_' . PERFORM_PLUGIN_BASENAME, 'perform_add_plugin_page_action_links');
