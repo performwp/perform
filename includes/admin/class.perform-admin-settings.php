@@ -50,12 +50,12 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 		    parent::__construct();
 
 		    $this->prefix = 'perform_';
-		    $this->tabs = array(
+		    $this->tabs   = array(
 				'common'        => __( 'General', 'perform' ),
 				'ssl'           => __( 'SSL', 'perform' ),
 				'cdn'           => __( 'CDN', 'perform' ),
 				'advanced'      => __( 'Advanced', 'perform' ),
-				// 'import_export' => __( 'Import/Export', 'perform' ),
+				'import_export' => __( 'Import/Export', 'perform' ),
 				// 'support'       => __( 'Support', 'perform' ),
 			);
 
@@ -285,10 +285,10 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'type'    => 'select',
 					'name'    => __( 'Heartbeat Frequency', 'perform' ),
 					'options' => array(
-						''   => sprintf(__('%s Seconds', 'perform'), '15') . ' (' . __('Default', 'perform') . ')',
-						'30' => sprintf(__('%s Seconds', 'perform'), '30'),
-						'45' => sprintf(__('%s Seconds', 'perform'), '45'),
-						'60' => sprintf(__('%s Seconds', 'perform'), '60'),
+						''   => sprintf( __( '%s Seconds', 'perform' ), '15') . ' (' . __( 'Default', 'perform' ) . ')',
+						'30' => sprintf( __( '%s Seconds', 'perform' ), '30'),
+						'45' => sprintf( __( '%s Seconds', 'perform' ), '45'),
+						'60' => sprintf( __( '%s Seconds', 'perform' ), '60'),
 					),
 					'desc'    => __( 'Disable WordPress Heartbeat everywhere or in certain areas (used for auto saving and revision tracking).', 'perform' ),
 				)
@@ -302,8 +302,8 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'type'    => 'select',
 					'name'    => __( 'Limit Post Revisions', 'perform' ),
 					'options' => array(
-						''      => __( 'Default', 'perform'),
-						'false' => __( 'Disable Post Revisions', 'perform'),
+						''      => __( 'Default', 'perform' ),
+						'false' => __( 'Disable Post Revisions', 'perform' ),
 						'1'     => '1',
 						'2'     => '2',
 						'3'     => '3',
@@ -327,11 +327,11 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'type'    => 'select',
 					'name'    => __( 'Autosave Interval', 'perform' ),
 					'options' => array(
-						''    => __('1 Minute', 'perform') . ' (' . __('Default', 'perform') . ')',
-						'120' => sprintf(__('%s Minutes', 'perform'), '2'),
-						'180' => sprintf(__('%s Minutes', 'perform'), '3'),
-						'240' => sprintf(__('%s Minutes', 'perform'), '4'),
-						'300' => sprintf(__('%s Minutes', 'perform'), '5')
+						''    => __( '1 Minute', 'perform' ) . ' (' . __( 'Default', 'perform' ) . ')',
+						'120' => sprintf( __( '%s Minutes', 'perform' ), '2' ),
+						'180' => sprintf( __( '%s Minutes', 'perform' ), '3' ),
+						'240' => sprintf( __( '%s Minutes', 'perform' ), '4' ),
+						'300' => sprintf( __( '%s Minutes', 'perform' ), '5' )
 					),
 					'desc'    => __( 'Controls how often WordPress will auto save posts and pages while editing.', 'perform' ),
 				)
