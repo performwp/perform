@@ -314,15 +314,15 @@ function perform_load_modules_on_init() {
 	 *
 	 * @since 1.0.0
 	 */
-	// $is_assets_manager_enabled = perform_get_option( 'enable_assets_manager', 'perform_advanced' );
-	// if ( $is_assets_manager_enabled ) {
+	$is_assets_manager_enabled = perform_get_option( 'enable_assets_manager', 'perform_advanced' );
+	if ( $is_assets_manager_enabled ) {
 
-	// 	 // Load Module.
-	// 	 require_once PERFORM_PLUGIN_DIR . 'includes/modules/assets-manager/class-perform-assets-manager.php';
+		// Load Module.
+		require_once PERFORM_PLUGIN_DIR . 'includes/modules/assets-manager/class-perform-assets-manager.php';
 
-	// 	 // Init Module.
-	// 	 new Perform_Assets_Manager();
-	// }
+		// Init Module.
+		new Perform_Assets_Manager();
+	}
 
 }
 
