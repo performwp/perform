@@ -710,14 +710,50 @@ if ( ! class_exists( 'Perform_Admin_Settings_API' ) ) :
 		 * @return void
 		 */
 		public function add_admin_menu() {
-			if( perform_has_network_access() ) {
-				add_options_page(
+			if ( perform_has_network_access() ) {
+
+				add_menu_page(
 					__( 'Perform', 'perform' ),
 					__( 'Perform', 'perform' ),
 					'manage_options',
-					'perform',
+					'perform_dashboard',
 					array( $this, 'settings_page' )
 				);
+
+				add_submenu_page(
+					'perform',
+					__( 'Dashboard', 'perform' ),
+					__( 'Dashboard', 'perform' ),
+					'manage_options',
+					'perform_dashboard',
+					array( $this, 'settings_page' )
+				);
+
+				add_submenu_page(
+					'perform',
+					__( 'Widgets Manager', 'perform' ),
+					__( 'Widgets Manager', 'perform' ),
+					'manage_options',
+					'perform_widgets_manager',
+					array( $this, 'settings_page' )
+				);
+
+				add_submenu_page(
+					'perform',
+					__( 'Settings', 'perform' ),
+					__( 'Settings', 'perform' ),
+					'manage_options',
+					'perform_settings',
+					array( $this, 'settings_page' )
+				);
+
+				// add_options_page(
+				// 	__( 'Perform', 'perform' ),
+				// 	__( 'Perform', 'perform' ),
+				// 	'manage_options',
+				// 	'perform',
+				// 	array( $this, 'settings_page' )
+				// );
 			}
 		}
 
