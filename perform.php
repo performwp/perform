@@ -3,7 +3,7 @@
  * Plugin Name: Perform
  * Plugin URI: https://www.mehulgohil.in/plugin/perform-for-wordpress/
  * Description: This plugin adds toolset for performance and speed improvements to your WordPress sites.
- * Version: 1.0.1
+ * Version: 1.1.0
  * Author: Mehul Gohil
  * Author URI: https://www.mehulgohil.in/
  * License: GPLv2 or later
@@ -168,7 +168,7 @@ if ( ! class_exists( 'Perform' ) ) {
 
 			// Plugin version.
 			if ( ! defined( 'PERFORM_VERSION' ) ) {
-				define( 'PERFORM_VERSION', '1.0.1' );
+				define( 'PERFORM_VERSION', '1.1.0' );
 			}
 
 			// Minimum Required PHP version.
