@@ -114,3 +114,21 @@ function perform_is_woocommerce_active() {
 	return $is_active;
 }
 
+/**
+ * Clean variables using sanitize_text_field. Arrays are cleaned recursively.
+ * Non-scalar values are ignored.
+ *
+ * @since  1.1.0
+ *
+ * @param  string|array $var
+ *
+ * @return string|array
+ */
+function perform_clean( $var ) {
+	if ( is_array( $var ) ) {
+		return array_map( 'perform_clean', $var );
+	} else {
+		return is_scalar( $var ) ? sanitize_text_field( wp_unslash( $var ) ) : $var;
+	}
+}
+
