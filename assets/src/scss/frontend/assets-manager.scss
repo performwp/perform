@@ -1,76 +1,76 @@
 .perform-assets-manager-wrap {
 	position: fixed;
-	z-index: 999999;
+	z-index: 9999;
 	top: 32px;
 	bottom: 0px;
 	left: 0px;
 	right: 0px;
 	background: rgba(0,0,0,0.5);
 	overflow-y: auto;
-  }
 
-  #perform-assets-manager {
-	background: #EEF2F5;
-	font-size: 14px;
-	line-height: 1.5em;
-	color: #4a545a;
-	min-height: 100%;
-
-	a {
-	  color: #4A89DD;
-	  text-decoration: none;
-	  border: none;
-	}
-
-	#perform-assets-manager--header {
-	  width: 100%;
-	  background: #282E34;
-	  padding: 15px;
-
-	  h2 {
-		font-size: 24px;
-		margin: 0px 0px 10px 0px;
-		color: #ffffff;
-		font-weight: bold;
-
-		span {
-		  background: #ED5464;
-		  color: #ffffff;
-		  padding: 5px;
-		  vertical-align: middle;
-		  font-size: 10px;
-		  margin-left: 5px;
-		}
-	  }
-
-	  p {
+  .perform-assets-manager {
+		background: #EEF2F5;
 		font-size: 14px;
+		line-height: 1.5em;
 		color: #4a545a;
-		font-style: italic;
-		margin: 0px auto 15px auto;
-	  }
+		min-height: 100%;
 
-	  .perform-assets-manager--logo {
-			  display: inline-block;
-		width: 20%;
-	  }
+		.perform-assets-manager--logo {
+			float: left;
+			width: 20%;
+		}
 
-	  .perform-assets-manager--menu {
-		display: inline-block;
-			  width: 78%;
-			  margin: 0;
+		.perform-assets-manager--header {
+			width: 100%;
+			background: #282E34;
+			padding: 15px;
+			display: block;
+			overflow: hidden;
 
-			  .perform-assets-manager--menu-item {
-				  list-style: none;
-				  float: left;
-				  padding: 10px 20px;
+			.perform-assets-manager--menu {
+				float: left;
+				width: 78%;
+				margin: 0;
 
-				  a {
-					  font-size: 20px;
-				  }
-			  }
-	  }
-	}
+				.perform-assets-manager--menu-item {
+					list-style: none;
+					float: left;
+					padding: 10px 20px;
+
+					a {
+						color: #4A89DD;
+						text-decoration: none;
+						border: none;
+						font-size: 16px;
+					}
+				}
+			}
+
+			h2 {
+				font-size: 24px;
+				margin: 0px 0px 10px 0px;
+				color: #ffffff;
+				font-weight: bold;
+			}
+
+			span {
+				background: #ED5464;
+				color: #ffffff;
+				padding: 5px;
+				vertical-align: middle;
+				font-size: 10px;
+				margin-left: 5px;
+			}
+
+			p {
+				font-size: 14px;
+				color: #4a545a;
+				font-style: italic;
+				margin: 0px auto 15px auto;
+			}
+
+		}
+
 
 	#perform-assets-manager-close {
 	  position: absolute;
@@ -103,3 +103,6 @@
 	  }
 	}
   }
+
+
+}

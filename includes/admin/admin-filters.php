@@ -70,4 +70,19 @@ function perform_add_plugin_page_action_links( $actions ) {
 	return array_merge( $new_actions, $actions );
 }
 
-add_filter( 'plugin_action_links_' . PERFORM_PLUGIN_BASENAME, 'perform_add_plugin_page_action_links');
+add_filter( 'plugin_action_links_' . PERFORM_PLUGIN_BASENAME, 'perform_add_plugin_page_action_links' );
+
+/**
+ * Add Admin Assets.
+ *
+ * @since 1.1.0
+ *
+ * @return void
+ */
+function perform_add_admin_assets() {
+
+	wp_register_style( 'perform-admin', PERFORM_PLUGIN_URL . 'assets/dist/css/admin.css', '', PERFORM_VERSION );
+	wp_enqueue_style( 'perform-admin' );
+}
+
+add_action( 'admin_enqueue_scripts', 'perform_add_admin_assets' );

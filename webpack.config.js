@@ -55,7 +55,6 @@ const config = {
 				} ),
 			},
 
-
 			// Image files.
 			{
 				test: /\.(png|jpe?g|gif|svg)$/,
@@ -106,6 +105,7 @@ module.exports = [
 	Object.assign( {
 		entry: {
 			perform: [ './assets/src/scss/frontend/main.scss' ],
+			admin: [ './assets/src/scss/admin/admin.scss' ],
 		},
 		output: {
 			path: path.join( __dirname, './assets/dist/' ),
@@ -133,5 +133,4 @@ if ( inProduction ) {
 
 	// Minify CSS.
 	config.plugins.push( new webpack.LoaderOptionsPlugin( { minimize: true } ) );
-
 }

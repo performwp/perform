@@ -61,9 +61,6 @@ if ( ! class_exists( 'Perform_Admin_Settings_API' ) ) :
 			// Hook it up.
 			add_action( 'admin_init', array( $this, 'admin_init' ) );
 
-			// Admin Menu.
-			add_action( 'admin_menu', array( $this, 'add_admin_menu' ), 9 );
-
 		}
 
 		/**
@@ -702,62 +699,6 @@ if ( ! class_exists( 'Perform_Admin_Settings_API' ) ) :
 		}
 
 		/**
-		 * This function will add admin menu.
-		 *
-		 * @since  1.0.0
-		 * @access public
-		 *
-		 * @return void
-		 */
-		public function add_admin_menu() {
-			if ( perform_has_network_access() ) {
-
-				add_menu_page(
-					__( 'Perform', 'perform' ),
-					__( 'Perform', 'perform' ),
-					'manage_options',
-					'perform_dashboard',
-					array( $this, 'settings_page' )
-				);
-
-				add_submenu_page(
-					'perform',
-					__( 'Dashboard', 'perform' ),
-					__( 'Dashboard', 'perform' ),
-					'manage_options',
-					'perform_dashboard',
-					array( $this, 'settings_page' )
-				);
-
-				add_submenu_page(
-					'perform',
-					__( 'Widgets Manager', 'perform' ),
-					__( 'Widgets Manager', 'perform' ),
-					'manage_options',
-					'perform_widgets_manager',
-					array( $this, 'settings_page' )
-				);
-
-				add_submenu_page(
-					'perform',
-					__( 'Settings', 'perform' ),
-					__( 'Settings', 'perform' ),
-					'manage_options',
-					'perform_settings',
-					array( $this, 'settings_page' )
-				);
-
-				// add_options_page(
-				// 	__( 'Perform', 'perform' ),
-				// 	__( 'Perform', 'perform' ),
-				// 	'manage_options',
-				// 	'perform',
-				// 	array( $this, 'settings_page' )
-				// );
-			}
-		}
-
-		/**
 		 * This function will have markup of settings page.
 		 *
 		 * @since 1.0.0
@@ -797,7 +738,7 @@ if ( ! class_exists( 'Perform_Admin_Settings_API' ) ) :
 				foreach ( $this->sections_array as $tab ) {
 					$active_class = ( $active_tab === $tab['id'] ) ? 'nav-tab-active' : '';
 					?>
-                    <a href="?page=perform&tab=<?php echo $tab['id']; ?>" class="nav-tab <?php echo $active_class; ?>">
+                    <a href="?page=perform_settings&tab=<?php echo $tab['id']; ?>" class="nav-tab <?php echo $active_class; ?>">
 						<?php echo $tab['title']; ?>
                     </a>
 					<?php
