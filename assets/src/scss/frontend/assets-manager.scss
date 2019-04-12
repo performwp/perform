@@ -86,11 +86,41 @@
 	}
 
 	#perform-assets-manager--main {
-	  padding: 25px 50px;
+		padding: 25px 50px;
+
+		.perform-assets-manager-group--status {
+			select {
+				border: 2px solid #27ae60;
+				outline: none;
+
+				&.disabled {
+					border: 2px solid #ED5464;
+				}
+			}
+		}
 
 	  .perform-assets-manager--title {
 		text-align: center;
-	  }
+		}
+
+		.perform-assets-manager--section {
+			.perform-assets-manager--group {
+				.perform-assets-manager--status {
+					text-align: center;
+
+					select {
+						border: 2px solid #27ae60;
+						outline: none;
+
+						&.disabled {
+							border: 2px solid #ED5464;
+						}
+					}
+				}
+			}
+		}
+
+
 
 	  .perform-assets-manager--row {
 
