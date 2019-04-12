@@ -401,12 +401,30 @@ class Perform_Assets_Manager {
                     ?>
                 </td>
                 <td class='perform-assets-manager--status'>
-                 <?php $this->print_assets_manager_status($type, $handle); ?>
+				 <?php $this->print_assets_manager_status( $type, $handle ); ?>
+				 <?php $this->disable_assets_html( $type, $handle ); ?>
                 </td>
 
 			</tr>
 			<?php
 		}
+	}
+
+	public function disable_assets_html( $type, $handle ) {
+		?>
+		<div class="perform-assets-manager--disable-options">
+			<label for="<?php echo esc_html( "disabled-{$type}-{$handle}-current" ); ?>">
+				<input type="radio" name="disabled[<?php echo esc_html( $type ); ?>][<?php echo esc_html( $handle ); ?>]" id="<?php echo esc_html( "disabled-{$type}-{$handle}-current" ); ?>" class="perform-disable-assets" value="current"/>
+				<?php esc_html_e( 'Current URL', 'perform' ); ?>
+			</label>
+			<label for="<?php echo esc_html( "disabled-{$type}-{$handle}-everywhere" ); ?>">
+				<input type="radio" name="disabled[<?php echo esc_html( $type ); ?>][<?php echo esc_html( $handle ); ?>]" id="<?php echo esc_html( "disabled-{$type}-{$handle}-everywhere" ); ?>" class="perform-disable-assets" value="everywhere"/>
+				<?php esc_html_e( 'Everywhere', 'perform' ); ?>
+			</label>
+		</div>
+		<?php
+
+		$this->print_assets_manager_enable( $type, $handle );
 	}
 
 	/**
@@ -452,31 +470,28 @@ class Perform_Assets_Manager {
 		<?php
 	}
 
-	function print_assets_manager_enable($type, $handle) {
-		global $perfmatters_script_manager_settings;
-		global $perfmatters_script_manager_options;
-		global $currentID;
-		$options = $perfmatters_script_manager_options;
+	public function print_assets_manager_enable( $type, $handle ) {
 
-		echo "<div class='perform-script-manager-enable'"; if(empty($options['disabled'][$type][$handle]['everywhere'])) { echo " style='display: none;'"; } echo">";
+		$options = array();
+		?>
+		<div class="perform-assets-manager--exceptions">
+			<div class="perform-assets-manager--title"><?php esc_html_e( 'Exceptions', 'perform' ); ?></div>
 
-		echo "<div style='font-size: 16px;'>" . __('Exceptions', 'perfmatters') . "</div>";
 
-		//Current URL
-		echo "<input type='hidden' name='enabled[" . $type . "][" . $handle . "][current]' value='' />";
-		echo "<label for='" . $type . "-" . $handle . "-enable-current'>";
-		echo "<input type='checkbox' name='enabled[" . $type . "][" . $handle . "][current]' id='" . $type . "-" . $handle . "-enable-current' value='" . $currentID ."' ";
-		if(isset($options['enabled'][$type][$handle]['current'])) {
-			if(in_array($currentID, $options['enabled'][$type][$handle]['current'])) {
-				echo "checked";
-			}
-		}
-		echo " />" . __('Current URL', 'perfmatters');
-		echo "</label>";
+		<input type="hidden" name="enabled[<?php echo $type; ?>][<?php echo $handle; ?>][current]" value="" />
+		<label for="<?php echo "{$type}-{$handle}-enable-current"; ?>">
+			<input type="checkbox" name="enabled[<?php echo $type; ?>][<?php echo $handle; ?>][current]" id="<?php echo "{$type}-{$handle}-enable-current"; ?>" value=""/>
+		</label>
 
-		//Post Types
-		echo "<span style='display: block; font-size: 10px; font-weight: bold; margin: 0px;'>Post Types:</span>";
-		$post_types = get_post_types(array('public' => true), 'objects', 'and');
+		<span style='display: block; font-size: 10px; font-weight: bold; margin: 0px;'>Post Types:</span>
+		<?php
+		$post_types = get_post_types(
+			array(
+				'public' => true,
+			),
+			'objects',
+			'and'
+		);
 		if(!empty($post_types)) {
 			if(isset($post_types['attachment'])) {
 				unset($post_types['attachment']);
@@ -552,208 +567,294 @@ class Perform_Assets_Manager {
 	}
 
 
-	function update_assets_manager() {
+	/**
+	 * Saves Assets Manager Optimization Settings.
+	 *
+	 * @since  1.1.0
+	 * @access public
+	 *
+	 * @return array
+	 */
+	public function update_assets_manager() {
 
-		if ( isset( $_GET['perform'] ) && ! empty( $_POST['perform_assets_manager'] ) ) {
+		$post_data = perform_clean( filter_input_array( INPUT_POST ) );
+		$get_data  = perform_clean( filter_input_array( INPUT_GET ) );
 
-			$currentID = get_queried_object_id();
+		if (
+			isset( $get_data['perform'] ) &&
+			! empty( $post_data['perform_assets_manager'] )
+		) {
 
-			$perfmatters_filters = array("js", "css", "plugins", "themes");
+			$current_id = get_queried_object_id();
+			$filters    = array( 'js', 'css', 'plugins', 'themes' );
+			$options    = get_option( 'perform_assets_manager_options' );
+			$settings   = get_option( 'perform_assets_manager_settings' );
 
-			$options = get_option('perfmatters_script_manager');
-			$settings = get_option('perfmatters_script_manager_settings');
+			foreach ( $filters as $type ) {
 
-			foreach($perfmatters_filters as $type) {
+				if ( isset( $post_data['disabled'][ $type ] ) ) {
 
-				if(isset($_POST['disabled'][$type])) {
+					foreach ( $post_data['disabled'][ $type ] as $handle => $value ) {
 
-					foreach($_POST['disabled'][$type] as $handle => $value) {
+						$group_disabled = false;
 
-						$groupDisabled = false;
-						if(isset($_POST['relations'][$type][$handle])) {
-							$relationInfo = $_POST['relations'][$type][$handle];
-							if($_POST['status'][$relationInfo['category']][$relationInfo['group']] == "disabled" && isset($_POST['disabled'][$relationInfo['category']][$relationInfo['group']])) {
-								$groupDisabled = true;
+						if ( isset( $post_data['relations'][ $type ][ $handle ] ) ) {
+
+							$relation_info = $post_data['relations'][ $type ][ $handle ];
+							if (
+								'disabled' === $post_data['status'][ $relation_info['category'] ][ $relation_info['group'] ] &&
+								isset( $post_data['disabled'][ $relation_info['category'] ][ $relation_info['group'] ] )
+							) {
+								$group_disabled = true;
 							}
 						}
 
-						if(!$groupDisabled && $_POST['status'][$type][$handle] == 'disabled' && !empty($value)) {
-							if($value == "everywhere") {
-								$options['disabled'][$type][$handle]['everywhere'] = 1;
-								if(!empty($options['disabled'][$type][$handle]['current'])) {
-									unset($options['disabled'][$type][$handle]['current']);
+						if (
+							'disabled' === ! $group_disabled && $post_data['status'][ $type ][ $handle ] &&
+							! empty( $value )
+						) {
+							if ( 'everywhere' === $value ) {
+								$options['disabled'][ $type ][ $handle ]['everywhere'] = 1;
+
+								if ( ! empty( $options['disabled'][ $type ][ $handle ]['current'] ) ) {
+									unset( $options['disabled'][ $type ][ $handle ]['current'] );
+								}
+							} elseif ( 'current' === $value ) {
+
+								if ( isset( $options['disabled'][ $type ][ $handle ]['everywhere'] ) ) {
+									unset( $options['disabled'][ $type ][ $handle ]['everywhere'] );
+								}
+
+								if ( ! is_array( $options['disabled'][ $type ][ $handle ]['current'] ) ) {
+									$options['disabled'][ $type ][ $handle ]['current'] = array();
+								}
+
+								if ( ! in_array( $current_id, $options['disabled'][ $type ][ $handle ]['current'] ) ) {
+									array_push( $options['disabled'][ $type ][ $handle ]['current'], $current_id );
 								}
 							}
-                            elseif($value == "current") {
-								if(isset($options['disabled'][$type][$handle]['everywhere'])) {
-									unset($options['disabled'][$type][$handle]['everywhere']);
-								}
-								if(!is_array($options['disabled'][$type][$handle]['current'])) {
-									$options['disabled'][$type][$handle]['current'] = array();
-								}
-								if(!in_array($currentID, $options['disabled'][$type][$handle]['current'])) {
-									array_push($options['disabled'][$type][$handle]['current'], $currentID);
-								}
-							}
-						}
-						else {
-							unset($options['disabled'][$type][$handle]['everywhere']);
-							if(isset($options['disabled'][$type][$handle]['current'])) {
-								$current_key = array_search($currentID, $options['disabled'][$type][$handle]['current']);
-								if($current_key !== false) {
-									unset($options['disabled'][$type][$handle]['current'][$current_key]);
-									if(empty($options['disabled'][$type][$handle]['current'])) {
-										unset($options['disabled'][$type][$handle]['current']);
+						} else {
+							unset( $options['disabled'][ $type ][ $handle ]['everywhere'] );
+
+							if ( isset( $options['disabled'][ $type ][ $handle ]['current'] ) ) {
+
+								$current_key = array_search( $current_id, $options['disabled'][ $type ][ $handle ]['current'] );
+
+								if ( false !== $current_key ) {
+									unset( $options['disabled'][ $type ][ $handle ]['current'][ $current_key ] );
+
+									if ( empty( $options['disabled'][ $type ][ $handle ]['current'] ) ) {
+										unset( $options['disabled'][ $type ][ $handle ]['current'] );
 									}
 								}
 							}
 						}
 
-						if(empty($options['disabled'][$type][$handle])) {
-							unset($options['disabled'][$type][$handle]);
-							if(empty($options['disabled'][$type])) {
-								unset($options['disabled'][$type]);
-								if(empty($options['disabled'])) {
-									unset($options['disabled']);
+						if ( empty( $options['disabled'][ $type ][ $handle ] ) ) {
+							unset( $options['disabled'][ $type ][ $handle ] );
+
+							if ( empty( $options['disabled'][ $type ] ) ) {
+								unset( $options['disabled'][ $type ] );
+
+								if ( empty( $options['disabled'] ) ) {
+									unset( $options['disabled'] );
 								}
 							}
 						}
 					}
 				}
 
-				if(isset($_POST['enabled'][$type])) {
+				if ( isset( $post_data['enabled'][ $type ] ) ) {
 
-					foreach($_POST['enabled'][$type] as $handle => $value) {
+					foreach ( $post_data['enabled'][ $type ] as $handle => $value ) {
 
-						$groupDisabled = false;
-						if(isset($_POST['relations'][$type][$handle])) {
-							$relationInfo = $_POST['relations'][$type][$handle];
-							if($_POST['status'][$relationInfo['category']][$relationInfo['group']] == "disabled" && isset($_POST['disabled'][$relationInfo['category']][$relationInfo['group']])) {
-								$groupDisabled = true;
+						$group_disabled = false;
+
+						if ( isset( $post_data['relations'][ $type ][ $handle ] ) ) {
+							$relation_info = $post_data['relations'][ $type ][ $handle ];
+
+							if (
+								'disabled' === $post_data['status'][ $relation_info['category'] ][ $relationInfo['group'] ] &&
+								isset( $post_data['disabled'][ $relation_info['category'] ][ $relation_info['group'] ] )
+							) {
+								$group_disabled = true;
 							}
 						}
 
-						if(!$groupDisabled && $_POST['status'][$type][$handle] == 'disabled' && (!empty($value['current']) || $value['current'] === "0")) {
-							if(!is_array($options['enabled'][$type][$handle]['current'])) {
-								$options['enabled'][$type][$handle]['current'] = array();
+						if (
+							! $group_disabled &&
+							'disabled' === $post_data['status'][ $type ][ $handle ] &&
+							(
+								! empty( $value['current'] ) ||
+								'0' === $value['current']
+							)
+						) {
+							if ( ! is_array( $options['enabled'][ $type ][ $handle ]['current'] ) ) {
+								$options['enabled'][ $type ][ $handle ]['current'] = array();
 							}
-							if(!in_array($value['current'], $options['enabled'][$type][$handle]['current'])) {
-								array_push($options['enabled'][$type][$handle]['current'], $value['current']);
+
+							if ( ! in_array( $value['current'], $options['enabled'][ $type ][ $handle ]['current'] ) ) {
+								array_push( $options['enabled'][ $type ][ $handle ]['current'], $value['current'] );
 							}
-						}
-						else {
-							if(isset($options['enabled'][$type][$handle]['current'])) {
-								$current_key = array_search($currentID, $options['enabled'][$type][$handle]['current']);
-								if($current_key !== false) {
-									unset($options['enabled'][$type][$handle]['current'][$current_key]);
-									if(empty($options['enabled'][$type][$handle]['current'])) {
-										unset($options['enabled'][$type][$handle]['current']);
+						} else {
+							if ( isset( $options['enabled'][ $type ][ $handle ]['current'] ) ) {
+								$current_key = array_search( $current_id, $options['enabled'][ $type ][ $handle ]['current'] );
+
+								if ( false !== $current_key ) {
+									unset( $options['enabled'][ $type ][ $handle ]['current'][ $current_key ] );
+
+									if ( empty( $options['enabled'][ $type ][ $handle ]['current'] ) ) {
+										unset( $options['enabled'][ $type ][ $handle ]['current'] );
 									}
 								}
 							}
 						}
 
-						if(!$groupDisabled && $_POST['status'][$type][$handle] == 'disabled' && !empty($value['post_types'])) {
-							$options['enabled'][$type][$handle]['post_types'] = array();
-							foreach($value['post_types'] as $key => $post_type) {
-								if(isset($options['enabled'][$type][$handle]['post_types'])) {
-									if(!in_array($post_type, $options['enabled'][$type][$handle]['post_types'])) {
-										array_push($options['enabled'][$type][$handle]['post_types'], $post_type);
+						if (
+							! $group_disabled &&
+							'disabled' === $post_data['status'][ $type ][ $handle ] &&
+							! empty( $value['post_types'] )
+						) {
+							$options['enabled'][ $type ][ $handle ]['post_types'] = array();
+
+							foreach ( $value['post_types'] as $key => $post_type ) {
+								if ( isset( $options['enabled'][ $type ][ $handle ]['post_types'] ) ) {
+									if ( ! in_array( $post_type, $options['enabled'][ $type ][ $handle ]['post_types'] ) ) {
+										array_push( $options['enabled'][ $type ][ $handle ]['post_types'], $post_type );
 									}
 								}
 							}
-						}
-						else {
-							unset($options['enabled'][$type][$handle]['post_types']);
+						} else {
+							unset( $options['enabled'][ $type ][ $handle ]['post_types'] );
 						}
 
-						//filter out empty child arrays
-						if(!empty($settings['separate_archives']) && $settings['separate_archives'] == "1") {
-							$value['archives'] = array_filter($value['archives']);
-							if(!$groupDisabled && $_POST['status'][$type][$handle] == 'disabled' && !empty($value['archives'])) {
-								$script_manager_archives = array('wp', 'taxonomies', 'post_types');
-								foreach($script_manager_archives as $archive_type) {
-									if(!empty($value['archives'][$archive_type])) {
-										$options['enabled'][$type][$handle]['archives'][$archive_type] = array();
-										foreach($value['archives'][$archive_type] as $key => $archive) {
-											if(isset($options['enabled'][$type][$handle]['archives'][$archive_type])) {
-												if(!in_array($post_type, $options['enabled'][$type][$handle]['archives'][$archive_type])) {
-													array_push($options['enabled'][$type][$handle]['archives'][$archive_type], $archive);
+						// Filter out empty child arrays.
+						if ( ! empty( $settings['separate_archives'] ) && $settings['separate_archives'] == "1" ) {
+							$value['archives'] = array_filter( $value['archives'] );
+
+							if (
+								! $group_disabled &&
+								'disabled' === $post_data['status'][ $type ][ $handle ] &&
+								! empty( $value['archives'] )
+							) {
+								$archives = array( 'wp', 'taxonomies', 'post_types' );
+
+								foreach ( $archives as $archive_type ) {
+									if ( ! empty( $value['archives'][ $archive_type ] ) ) {
+										$options['enabled'][ $type ][ $handle ]['archives'][ $archive_type ] = array();
+
+										foreach ( $value['archives'][ $archive_type ] as $key => $archive ) {
+											if ( isset( $options['enabled'][ $type ][ $handle ]['archives'][ $archive_type ] ) ) {
+												if ( ! in_array( $post_type, $options['enabled'][ $type ][ $handle ]['archives'][ $archive_type ] ) ) {
+													array_push( $options['enabled'][ $type ][ $handle ]['archives'][ $archive_type ], $archive );
 												}
 											}
 										}
-									}
-									else {
-										unset($options['enabled'][$type][$handle]['archives'][$archive_type]);
+									} else {
+										unset( $options['enabled'][ $type ][ $handle ]['archives'][ $archive_type ] );
 									}
 								}
-							}
-							else {
-								unset($options['enabled'][$type][$handle]['archives']);
+							} else {
+								unset( $options['enabled'][ $type ][$handle ]['archives'] );
 							}
 						}
 
-						if(empty($options['enabled'][$type][$handle])) {
-							unset($options['enabled'][$type][$handle]);
-							if(empty($options['enabled'][$type])) {
-								unset($options['enabled'][$type]);
-								if(empty($options['enabled'])) {
-									unset($options['enabled']);
+						if ( empty( $options['enabled'][ $type ][ $handle] ) ) {
+							unset( $options['enabled'][ $type ][ $handle ] );
+
+							if ( empty( $options['enabled'][ $type ] ) ) {
+								unset( $options['enabled'][ $type ] );
+
+								if ( empty( $options['enabled'] ) ) {
+									unset( $options['enabled'] );
 								}
 							}
 						}
 					}
 				}
 			}
-			update_option('perfmatters_script_manager', $options);
+			update_option( 'perform_assets_manager_options', $options );
 		}
 	}
 
-	function dequeue_assets($src, $handle) {
-		if(is_admin()) {
+	/**
+	 * Dequeue Assets based on the Assets Manager Options.
+	 *
+	 * @param string $src    Source URL of the asset.
+	 * @param string $handle Handle of the asset.
+	 *
+	 * @since  1.1.0
+	 * @access public
+	 *
+	 * @return void
+	 */
+	public function dequeue_assets( $src, $handle ) {
+
+		if ( is_admin() ) {
 			return $src;
 		}
 
-		//get script type
-		$type = current_filter() == 'script_loader_src' ? "js" : "css";
+		// Get assets type.
+		$type = current_filter() == 'script_loader_src' ? 'js' : 'css';
 
-		//load options
-		$options = get_option('perfmatters_script_manager');
-		$currentID = get_queried_object_id();
+		// Load Assets Manager settings.
+		$options    = get_option( 'perform_assets_manager_options' );
+		$current_id = get_queried_object_id();
 
-		//get category + group from src
-		preg_match('/\/wp-content\/(.*?\/.*?)\//', $src, $match);
-		if(!empty($match[1])) {
-			$match = explode("/", $match[1]);
+		// Get category + group from src.
+		preg_match( '/\/wp-content\/(.*?\/.*?)\//', $src, $match );
+
+		if ( ! empty( $match[1] ) ) {
+			$match    = explode( '/', $match[1] );
 			$category = $match[0];
-			$group = $match[1];
+			$group    = $match[1];
 		}
 
-		//check for group disable settings and override
-		if(!empty($category) && !empty($group) && isset($options['disabled'][$category][$group])) {
-			$type = $category;
+		// Check for group disable settings and override.
+		if ( ! empty( $category ) && ! empty( $group ) && isset( $options['disabled'][ $category ][ $group] ) ) {
+			$type   = $category;
 			$handle = $group;
 		}
 
-		//disable is set, check options
-		if((!empty($options['disabled'][$type][$handle]['everywhere']) && $options['disabled'][$type][$handle]['everywhere'] == 1) || (!empty($options['disabled'][$type][$handle]['current']) && in_array($currentID, $options['disabled'][$type][$handle]['current']))) {
+		// Disable is set, check options.
+		if (
+			(
+				! empty( $options['disabled'][ $type ][ $handle ]['everywhere'] ) &&
+				1 === $options['disabled'][ $type ][ $handle ]['everywhere']
+			) ||
+			(
+				! empty( $options['disabled'][ $type ][ $handle ]['current'] ) &&
+				in_array( $current_id, $options['disabled'][ $type ][ $handle ]['current'] )
+			)
+		) {
 
-			if(!empty($options['enabled'][$type][$handle]['current']) && in_array($currentID, $options['enabled'][$type][$handle]['current'])) {
+			if ( ! empty( $options['enabled'][ $type ][ $handle ]['current'] ) && in_array( $current_id, $options['enabled'][ $type ][ $handle ]['current'] ) ) {
 				return $src;
 			}
 
-			if(is_front_page() || is_home()) {
-				if(get_option('show_on_front') == 'page' && !empty($options['enabled'][$type][$handle]['post_types']) && in_array('page', $options['enabled'][$type][$handle]['post_types'])) {
+			if ( is_front_page() || is_home() ) {
+				if (
+					'page' === get_option( 'show_on_front' ) &&
+					! empty( $options['enabled'][ $type ][ $handle ]['post_types'] ) &&
+					in_array( 'page', $options['enabled'][ $type ][ $handle ]['post_types'] )
+				) {
 					return $src;
 				}
-			}
-			else {
-				if(!empty($options['enabled'][$type][$handle]['post_types']) && in_array(get_post_type(), $options['enabled'][$type][$handle]['post_types'])) {
+			} else {
+				if (
+					! empty( $options['enabled'][ $type ][ $handle ]['post_types'] ) &&
+					in_array( get_post_type(), $options['enabled'][ $type ][ $handle ]['post_types'] )
+				) {
 					return $src;
 				}
 			}
 
-			if($handle == 'jquery-core' && $type == 'js' && isset($_GET['perform']) && current_user_can('manage_options')) {
+			if (
+				'jquery-core' === $handle &&
+				'js' === $type &&
+				isset( $get_data['perform'] ) &&
+				current_user_can( 'manage_options' )
+			) {
 				global $pmsm_jquery_disabled;
 				$pmsm_jquery_disabled = true;
 				return $src;
@@ -762,7 +863,6 @@ class Perform_Assets_Manager {
 			return false;
 		}
 
-		//original script src
 		return $src;
 	}
 }
