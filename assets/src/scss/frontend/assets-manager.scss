@@ -99,14 +99,32 @@
 			}
 		}
 
-	  .perform-assets-manager--title {
-		text-align: center;
+	  	.perform-assets-manager--title {
+			text-align: center;
 		}
 
 		.perform-assets-manager--section {
+			> h3 {
+				background-color: #222222;
+				color: #ffffff;
+				padding: 10px 15px;
+			}
+
 			.perform-assets-manager--group {
+				margin: 0;
+				border-bottom: 1px solid #EEF2F5;
+
+				.perform-assets-manager-group--title {
+					display: block;
+					overflow: hidden;
+					margin-bottom: 10px;
+
+					> h3 {
+						float: left;
+					}
+				}
+
 				.perform-assets-manager--status {
-					text-align: center;
 
 					select {
 						border: 2px solid #27ae60;
