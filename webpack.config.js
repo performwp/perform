@@ -104,7 +104,7 @@ const config = {
 module.exports = [
 	Object.assign( {
 		entry: {
-			perform: [ './assets/src/scss/frontend/main.scss' ],
+			perform: [ './assets/src/scss/frontend/main.scss', './assets/src/js/frontend/main.js' ],
 			admin: [ './assets/src/scss/admin/admin.scss' ],
 		},
 		output: {
