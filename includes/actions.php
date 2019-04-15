@@ -17,11 +17,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Enqueue Styles
  *
- * @since 1.0.0
+ * @since 1.1.0
  *
- * @todo Implement this feature in 1.1.0
+ * @return void
  */
 function perform_enqueue_styles() {
 	wp_enqueue_style( 'perform', PERFORM_PLUGIN_URL . 'assets/dist/css/perform.css' );
 }
 add_action( 'wp_enqueue_scripts', 'perform_enqueue_styles' );
+
+/**
+ * Enqueue Scripts
+ *
+ * @since 1.1.0
+ *
+ * @return void
+ */
+function perform_enqueue_scripts() {
+	wp_enqueue_script( 'perform', PERFORM_PLUGIN_URL . 'assets/dist/js/perform.js', '', PERFORM_VERSION, true );
+}
+add_action( 'wp_enqueue_scripts', 'perform_enqueue_scripts' );

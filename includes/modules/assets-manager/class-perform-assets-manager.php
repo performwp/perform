@@ -88,7 +88,7 @@ class Perform_Assets_Manager {
 
 		global $wp;
 
-		$server_data = perform_clean( filter_input_array( 'INPUT_SERVER' ) );
+		$server_data = perform_clean( filter_input_array( INPUT_SERVER ) );
 
 		$href = add_query_arg(
 			str_replace( array( '&perform', 'perform' ), '', $server_data['QUERY_STRING'] ),
@@ -157,34 +157,35 @@ class Perform_Assets_Manager {
 							foreach ( $assets_list as $category => $groups ) {
 								if ( ! empty( $groups ) ) {
 									?>
-									<h3><?php echo ucwords( $category ); ?></h3>
+									<div class="perform-assets-manager--section">
+										<h3><?php echo ucwords( $category ); ?></h3>
+										<?php
+										if ( 'misc' !== $category ) {
+											foreach ( $groups as $group => $details ) {
+												$this->print_assets_manager_group( $category, $group, $details );
+											}
+										} else {
+											$details = array(
+												'assets' => $groups,
+											);
+											$this->print_assets_manager_group( $category, $group, $details );
+										}
+
+										?>
+									</div>
 									<?php
+
 									if ( 'misc' !== $category ) {
 										?>
-										<div class="perform-assets-manager--section">
-											<?php
-											foreach ( $groups as $group => $details ) {
-												if ( ! empty( $details['assets'] ) ) {
-													?>
-													<div class='perform-assets-manager--group'>
-														<h3>
-															<?php echo $details['name']; ?>
-															<div class='perform-assets-manager-group--status' style='float: right;'>
-																<?php $this->print_assets_manager_status($category, $group); ?>
-															</div>
-														</h3>
-														<?php $this->print_assets_manager_section($category, $group, $details['assets']); ?>
-													</div>
-													<?php
-												}
-											}
-											?>
-										</div>
+
 										<?php
 									} else {
-										if ( ! empty( $groups ) ) {
-											$this->print_assets_manager_section( $category, $category, $groups );
-										}
+										// if ( ! empty( $groups ) ) {
+										// 	$details = array(
+										// 		'assets' => $groups,
+										// 	);
+										// 	$this->print_assets_manager_group( $category, $category, $details );
+										// }
 									}
 								}
 							}
@@ -238,7 +239,7 @@ class Perform_Assets_Manager {
 
 		$loaded_plugins  = array();
 		$loaded_themes   = array();
-		$content_dirname = defined( 'WP_CONTENT_FOLDERNAME' ) ? WP_CONTENT_FOLDERNAME : 'wp-content';
+		$content_dirname = perform_get_content_dir_name();
 
 		foreach ( $all_assets as $type => $data ) {
 
@@ -267,7 +268,7 @@ class Perform_Assets_Manager {
 						}
 
 						$assets_data['plugins'][ $plugin_slug ]['assets'][] = array(
-                            'type' => $type,
+                            'type'   => $type,
                             'handle' => $handle,
                         );
 
@@ -288,7 +289,7 @@ class Perform_Assets_Manager {
 							$theme_details = $loaded_themes[$plugin_slug];
 						}
 
-						$assets_data['themes'][$plugin_slug]['assets'][] = array(
+						$assets_data['themes'][ $plugin_slug ]['assets'][] = array(
                             'type'   => $type,
                             'handle' => $handle,
                         );
@@ -307,49 +308,56 @@ class Perform_Assets_Manager {
      *
 	 * @param $category
 	 * @param $group
-	 * @param array $assets List of all assets.
+	 * @param array $asset_details List of all assets.
      *
-     * @since 1.0.0
+     * @since  1.1.0
+	 * @access public
      *
      * @return mixed
 	 */
-	function print_assets_manager_section( $category, $group, $assets ) {
-		global $currentID;
-
+	public function print_assets_manager_group( $category, $group, $asset_details ) {
 		?>
-		<div class='perform-assets-manager--section'>
-			<div class='perform-assets-manager--group'>
-				<div class='perform-assets-manager--description'>
-					<table>
-						<thead>
-							<tr>
-								<th style=''>
-									<?php echo esc_html__( 'Handle', 'perform' ); ?>
-								</th>
-								<th style=''>
-									<?php echo esc_html__( 'Assets URL', 'perform' ); ?>
-								</th>
-								<th>
-									<?php echo esc_html__( 'Type', 'perform' ); ?>
-								</th>
-								<th>
-									<?php echo esc_html__( 'Size', 'perform' ); ?>
-								</th>
-								<th>
-									<?php echo esc_html__( 'Status', 'perform' ); ?>
-								</th>
-							</tr>
-						</thead>
-						<tbody>
-							<?php
-							foreach ( $assets as $key => $details ) {
-								$this->print_assets_manager_script( $category, $group, $details['handle'], $details['type'] );
-							}
-						?>
-						</tbody>
-					</table>
+		<div class="perform-assets-manager--group">
+			<?php
+			if ( 'misc' !== $category ) {
+				?>
+				<div class="perform-assets-manager-group--title">
+					<h3><?php echo esc_html( $asset_details['name'] ); ?></h3>
+					<div class='perform-assets-manager-group--status' style='float: right;'>
+						<?php $this->print_assets_manager_status( $category, $group ); ?>
+					</div>
 				</div>
-			</div>
+				<?php
+			}
+			?>
+			<table>
+				<thead>
+					<tr>
+						<th style=''>
+							<?php echo esc_html__( 'Handle', 'perform' ); ?>
+						</th>
+						<th style=''>
+							<?php echo esc_html__( 'Assets URL', 'perform' ); ?>
+						</th>
+						<th>
+							<?php echo esc_html__( 'Type', 'perform' ); ?>
+						</th>
+						<th>
+							<?php echo esc_html__( 'Size', 'perform' ); ?>
+						</th>
+						<th>
+							<?php echo esc_html__( 'Status', 'perform' ); ?>
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php
+					foreach ( $asset_details['assets'] as $key => $details ) {
+						$this->print_assets_manager_script( $category, $group, $details['handle'], $details['type'] );
+					}
+				?>
+				</tbody>
+			</table>
 		</div>
     <?php
 	}
@@ -362,57 +370,49 @@ class Perform_Assets_Manager {
 	 */
 	function print_assets_manager_script($category, $group, $script, $type) {
 
-	        $data = $this->loaded_assets[$type];
+			$data   = $this->loaded_assets[ $type ];
+			$handle = $data['scripts']->registered[ $script ]->handle;
+			$src    = $data['scripts']->registered[ $script ]->src;
 
-            if( ! empty( $data["scripts"]->registered[$script]->src ) ) {
+            if ( ! empty( $src ) ) {
+				?>
+				<tr>
+					<td class="perform-assets-manager--handle">
+						<?php echo esc_html( $handle ); ?>
+					</td>
+					<td class="perform-assets-manager--url">
+						<a href="<?php echo $src; ?>" target="_blank"><?php echo str_replace( get_home_url(), '', $src ); ?></a>
+					</td>
+					<td class="perform-assets-manager--type">
+						<?php
+						if ( ! empty( $type ) ) {
+							echo esc_html( $type );
+						}
+						?>
+					</td>
+					<td class='perform-assets-manager--size'>
+						<?php
+						if( file_exists( ABSPATH . str_replace( get_home_url(), '', $data["scripts"]->registered[$script]->src ) ) ) {
+							echo round( filesize(ABSPATH . str_replace(get_home_url(), '', $data["scripts"]->registered[$script]->src)) / 1024, 1 ) . ' KB';
+						}
+						?>
+					</td>
+					<td class='perform-assets-manager--status'>
+					<?php $this->print_assets_manager_status( $type, $handle ); ?>
+					<?php $this->disable_assets_html( $type, $handle ); ?>
+					</td>
 
-
-//			if(!empty($perfmatters_disables)) {
-//				foreach($perfmatters_disables as $key => $val) {
-//					if(strpos($data["scripts"]->registered[$script]->src, $val) !== false) {
-//						//continue 2;
-//						return;
-//					}
-//				}
-//			}
-
-			$handle = $data["scripts"]->registered[$script]->handle;
-			?>
-			<tr>
-
-                <td class="perform-assets-manager--handle">
-                    <?php echo $handle; ?>
-                </td>
-                <td class='perform-assets-manager--url'>
-                    <a href='<?php echo $data["scripts"]->registered[$script]->src; ?>' target='_blank'><?php echo str_replace(get_home_url(), '', $data["scripts"]->registered[$script]->src); ?></a>
-                </td>
-                <td class='perform-assets-manager--type'>
-                    <?php
-                    if ( ! empty( $type ) ) {
-                        echo $type;
-                    }
-                    ?>
-                </td>
-                <td class='perform-assets-manager--size'>
-                    <?php
-                    if( file_exists( ABSPATH . str_replace( get_home_url(), '', $data["scripts"]->registered[$script]->src ) ) ) {
-                        echo round(filesize(ABSPATH . str_replace(get_home_url(), '', $data["scripts"]->registered[$script]->src)) / 1024, 1 ) . ' KB';
-                    }
-                    ?>
-                </td>
-                <td class='perform-assets-manager--status'>
-				 <?php $this->print_assets_manager_status( $type, $handle ); ?>
-				 <?php $this->disable_assets_html( $type, $handle ); ?>
-                </td>
-
-			</tr>
+				</tr>
 			<?php
 		}
 	}
 
 	public function disable_assets_html( $type, $handle ) {
 		?>
-		<div class="perform-assets-manager--disable-options">
+		<div class="perform-assets-manager-disable-asset-options" style="display: none;">
+			<label>
+				<?php esc_html_e( 'Disable on', 'perform' ); ?>
+			</label>
 			<label for="<?php echo esc_html( "disabled-{$type}-{$handle}-current" ); ?>">
 				<input type="radio" name="disabled[<?php echo esc_html( $type ); ?>][<?php echo esc_html( $handle ); ?>]" id="<?php echo esc_html( "disabled-{$type}-{$handle}-current" ); ?>" class="perform-disable-assets" value="current"/>
 				<?php esc_html_e( 'Current URL', 'perform' ); ?>
@@ -474,96 +474,46 @@ class Perform_Assets_Manager {
 
 		$options = array();
 		?>
-		<div class="perform-assets-manager--exceptions">
-			<div class="perform-assets-manager--title"><?php esc_html_e( 'Exceptions', 'perform' ); ?></div>
+		<div class="perform-assets-manager--exceptions" style="display: none;">
+			<div class="perform-assets-manager-exceptions--title">
+				<?php esc_html_e( 'Exceptions', 'perform' ); ?>
+			</div>
 
+			<input type="hidden" name="enabled[<?php echo $type; ?>][<?php echo $handle; ?>][current]" value="" />
+			<label for="<?php echo "{$type}-{$handle}-enable-current"; ?>">
+				<input type="checkbox" name="enabled[<?php echo $type; ?>][<?php echo $handle; ?>][current]" id="<?php echo "{$type}-{$handle}-enable-current"; ?>" value=""/>
+				<?php esc_html_e( 'Current URL', 'perform' ); ?>
+			</label>
 
-		<input type="hidden" name="enabled[<?php echo $type; ?>][<?php echo $handle; ?>][current]" value="" />
-		<label for="<?php echo "{$type}-{$handle}-enable-current"; ?>">
-			<input type="checkbox" name="enabled[<?php echo $type; ?>][<?php echo $handle; ?>][current]" id="<?php echo "{$type}-{$handle}-enable-current"; ?>" value=""/>
-		</label>
+			<span style='display: block; font-size: 10px; font-weight: bold; margin: 0px;'>Post Types:</span>
+			<?php
+			$post_types = get_post_types(
+				array(
+					'public' => true,
+				),
+				'objects',
+				'and'
+			);
+			if ( ! empty( $post_types ) ) {
 
-		<span style='display: block; font-size: 10px; font-weight: bold; margin: 0px;'>Post Types:</span>
+				if ( isset( $post_types['attachment'] ) ) {
+					unset( $post_types['attachment'] );
+				}
+				?>
+				<input type="hidden" name="enabled[<?php echo $type; ?>][<?php echo $handle; ?>][post_types]" value="" />
+				<?php
+				foreach ( $post_types as $key => $value ) {
+					?>
+					<label for="<?php echo "{$type}-{$handle}-enable-{$key}"; ?>">
+						<input type="checkbox" name="enabled[<?php echo $type; ?>][<?php echo $handle; ?>][post_types][]" id="<?php echo "{$type}-{$handle}-enable-{$key}"; ?>" value="<?php echo $key; ?>" />
+						<?php echo $value->label; ?>
+					</label>
+					<?php
+				}
+			}
+			?>
+		</div>
 		<?php
-		$post_types = get_post_types(
-			array(
-				'public' => true,
-			),
-			'objects',
-			'and'
-		);
-		if(!empty($post_types)) {
-			if(isset($post_types['attachment'])) {
-				unset($post_types['attachment']);
-			}
-			echo "<input type='hidden' name='enabled[" . $type . "][" . $handle . "][post_types]' value='' />";
-			foreach($post_types as $key => $value) {
-				echo "<label for='" . $type . "-" . $handle . "-enable-" . $key . "'>";
-				echo "<input type='checkbox' name='enabled[" . $type . "][" . $handle . "][post_types][]' id='" . $type . "-" . $handle . "-enable-" . $key . "' value='" . $key ."' ";
-				if(isset($options['enabled'][$type][$handle]['post_types'])) {
-					if(in_array($key, $options['enabled'][$type][$handle]['post_types'])) {
-						echo "checked";
-					}
-				}
-				echo " />" . $value->label;
-				echo "</label>";
-			}
-		}
-
-		//Archives
-		if(!empty($perfmatters_script_manager_settings['separate_archives']) && $perfmatters_script_manager_settings['separate_archives'] == "1") {
-			echo "<span style='display: block; font-size: 10px; font-weight: bold;'>Archives:</span>";
-
-			//Built-In Tax Archives
-			$wp_archives = array('category' => 'Categories', 'tag' => 'Tags', 'author' => 'Authors', 'date' => 'Dates');
-			echo "<input type='hidden' name='enabled[" . $type . "][" . $handle . "][archives][wp]' value='' />";
-			foreach($wp_archives as $key => $value) {
-				echo "<label for='" . $type . "-" . $handle . "-enable-archive-wp-" . $key . "' title='" . $key . " (WordPress Taxonomy Archive)'>";
-				echo "<input type='checkbox' name='enabled[" . $type . "][" . $handle . "][archives][wp][]' id='" . $type . "-" . $handle . "-enable-archive-wp-" . $key . "' value='" . $key ."' ";
-				if(isset($options['enabled'][$type][$handle]['archives']['wp'])) {
-					if(in_array($key, $options['enabled'][$type][$handle]['archives']['wp'])) {
-						echo "checked";
-					}
-				}
-				echo " />" . $value;
-				echo "</label>";
-			}
-
-			//Custom Tax Archives
-			$taxonomies = get_taxonomies(array('public' => true, '_builtin' => false), 'objects', 'and');
-			if(!empty($taxonomies)) {
-				echo "<input type='hidden' name='enabled[" . $type . "][" . $handle . "][archives][taxonomies]' value='' />";
-				foreach($taxonomies as $key => $value) {
-					echo "<label for='" . $type . "-" . $handle . "-enable-archive-taxonomy-" . $key . "' title='" . $key . " (Custom Taxonomy Archive)'>";
-					echo "<input type='checkbox' name='enabled[" . $type . "][" . $handle . "][archives][taxonomies][]' id='" . $type . "-" . $handle . "-enable-archive-taxonomy-" . $key . "' value='" . $key ."' ";
-					if(isset($options['enabled'][$type][$handle]['archives']['taxonomies'])) {
-						if(in_array($key, $options['enabled'][$type][$handle]['archives']['taxonomies'])) {
-							echo "checked";
-						}
-					}
-					echo " />" . $value->label;
-					echo "</label>";
-				}
-			}
-
-			//Post Type Archives
-			if(!empty($post_types)) {
-				echo "<input type='hidden' name='enabled[" . $type . "][" . $handle . "][archives][post_types]' value='' />";
-				foreach($post_types as $key => $value) {
-					echo "<label for='" . $type . "-" . $handle . "-enable-archive-post-type-" . $key . "' title='" . $key . " (Post Type Archive)'>";
-					echo "<input type='checkbox' name='enabled[" . $type . "][" . $handle . "][archives][post_types][]' id='" . $type . "-" . $handle . "-enable-archive-post-type-" . $key . "' value='" . $key ."' ";
-					if(isset($options['enabled'][$type][$handle]['archives']['post_types'])) {
-						if(in_array($key, $options['enabled'][$type][$handle]['archives']['post_types'])) {
-							echo "checked";
-						}
-					}
-					echo " />" . $value->label;
-					echo "</label>";
-				}
-			}
-		}
-
-		echo "</div>";
 	}
 
 

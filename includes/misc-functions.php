@@ -132,3 +132,14 @@ function perform_clean( $var ) {
 	}
 }
 
+/**
+ * This function will return the content directory name.
+ *
+ * @since 1.1.0
+ *
+ * @return string
+ */
+function perform_get_content_dir_name() {
+	return defined( 'WP_CONTENT_FOLDERNAME' ) ? WP_CONTENT_FOLDERNAME : 'wp-content';
+}
+
