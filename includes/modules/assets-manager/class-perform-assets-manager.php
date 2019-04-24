@@ -540,10 +540,11 @@ class Perform_Assets_Manager {
 	 * @return void
 	 */
 	public function print_assets_manager_exceptions( $type, $handle ) {
+		$current_id          = get_the_ID();
 		$selected_post_types = isset( $this->selected_options['enabled'][ $type ][ $handle ]['post_types'] ) ? $this->selected_options['enabled'][ $type ][ $handle ]['post_types'] : false;
 		$is_selected         = selected( $this->selected_options['disabled'][ $type ][ $handle ]['everywhere'], 1, false );
 		$show_options        = $is_selected ? 'display: block;' : 'display: none;';
-		echo "<pre>"; print_r($this->selected_options['enabled']); echo "</pre>";
+		$is_current_checked  = in_array( $current_id, $this->selected_options['enabled'][ $type ][ $handle ]['current'] ) ? ' checked="checked"' : '';
 		?>
 		<div class="perform-assets-manager--exceptions" style="<?php echo esc_html( $show_options ); ?>">
 			<div class="perform-assets-manager-exceptions--title">
@@ -553,7 +554,7 @@ class Perform_Assets_Manager {
 			<div class="perform-assets-manager-exception--options">
 				<input type="hidden" name="enabled[<?php echo $type; ?>][<?php echo $handle; ?>][current]" value="" />
 				<label for="<?php echo "{$type}-{$handle}-enable-current"; ?>">
-					<input type="checkbox" name="enabled[<?php echo $type; ?>][<?php echo $handle; ?>][current]" id="<?php echo "{$type}-{$handle}-enable-current"; ?>" value=""/>
+					<input type="checkbox" name="enabled[<?php echo $type; ?>][<?php echo $handle; ?>][current]" id="<?php echo "{$type}-{$handle}-enable-current"; ?>" value="<?php echo $current_id; ?>" <?php echo $is_current_checked; ?>/>
 					<?php esc_html_e( 'Current URL', 'perform' ); ?>
 				</label>
 
@@ -704,8 +705,8 @@ class Perform_Assets_Manager {
 							$relation_info = $post_data['relations'][ $type ][ $handle ];
 
 							if (
-								'disabled' === $post_data['status'][ $relation_info['category'] ][ $relation_info['group'] ] &&
-								isset( $post_data['disabled'][ $relation_info['category'] ][ $relation_info['group'] ] )
+								isset( $post_data['disabled'][ $relation_info['category'] ][ $relation_info['group'] ] ) &&
+								'disabled' === $post_data['status'][ $relation_info['category'] ][ $relation_info['group'] ]
 							) {
 								$group_disabled = true;
 							}
@@ -716,7 +717,7 @@ class Perform_Assets_Manager {
 							'disabled' === $post_data['status'][ $type ][ $handle ] &&
 							(
 								! empty( $value['current'] ) ||
-								'0' === $value['current']
+								0 === $value['current']
 							)
 						) {
 							if ( ! is_array( $options['enabled'][ $type ][ $handle ]['current'] ) ) {
@@ -804,7 +805,7 @@ class Perform_Assets_Manager {
 				}
 			}
 
-			// echo "<pre>"; print_r($post_data); print_r($options); echo "</pre>"; die();
+			// Save assets manager settings to DB.
 			update_option( 'perform_assets_manager_options', $options, false );
 		}
 	}
