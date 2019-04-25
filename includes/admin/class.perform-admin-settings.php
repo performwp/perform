@@ -81,53 +81,52 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 		 * @return void
 		 */
 		public function add_admin_menu() {
-			if ( perform_has_network_access() ) {
 
-				add_menu_page(
-					__( 'Perform', 'perform' ),
-					__( 'Perform', 'perform' ),
-					'manage_options',
-					'perform_dashboard',
-					array( $this, 'dashboard_page' )
-				);
+			add_menu_page(
+				__( 'Perform', 'perform' ),
+				__( 'Perform', 'perform' ),
+				'manage_options',
+				'perform_dashboard',
+				array( $this, 'dashboard_page' )
+			);
 
-				add_submenu_page(
-					'perform_dashboard',
-					__( 'Dashboard', 'perform' ),
-					__( 'Dashboard', 'perform' ),
-					'manage_options',
-					'perform_dashboard',
-					array( $this, 'dashboard_page' )
-				);
+			add_submenu_page(
+				'perform_dashboard',
+				__( 'Dashboard', 'perform' ),
+				__( 'Dashboard', 'perform' ),
+				'manage_options',
+				'perform_dashboard',
+				array( $this, 'dashboard_page' )
+			);
 
-				add_submenu_page(
-					'perform_dashboard',
-					__( 'Widgets Manager', 'perform' ),
-					__( 'Widgets Manager', 'perform' ),
-					'manage_options',
-					'perform_widgets_manager',
-					array( $this, 'widgets_manager_page' )
-				);
+			add_submenu_page(
+				'perform_dashboard',
+				__( 'Widgets Manager', 'perform' ),
+				__( 'Widgets Manager', 'perform' ),
+				'manage_options',
+				'perform_widgets_manager',
+				array( $this, 'widgets_manager_page' )
+			);
 
-				add_submenu_page(
-					'perform_dashboard',
-					__( 'Settings', 'perform' ),
-					__( 'Settings', 'perform' ),
-					'manage_options',
-					'perform_settings',
-					array( $this, 'settings_page' )
-				);
+			add_submenu_page(
+				'perform_dashboard',
+				__( 'Settings', 'perform' ),
+				__( 'Settings', 'perform' ),
+				'manage_options',
+				'perform_settings',
+				array( $this, 'settings_page' )
+			);
 
-				add_submenu_page(
-					'perform_dashboard',
-					__( 'Tools', 'perform' ),
-					__( 'Tools', 'perform' ),
-					'manage_options',
-					'perform_tools',
-					array( $this, 'tools_page' )
-				);
+			add_submenu_page(
+				'perform_dashboard',
+				__( 'Tools', 'perform' ),
+				__( 'Tools', 'perform' ),
+				'manage_options',
+				'perform_tools',
+				array( $this, 'tools_page' )
+			);
 
-			}
+
 		}
 
 		public function dashboard_page() {

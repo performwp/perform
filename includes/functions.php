@@ -306,24 +306,6 @@ function perform_load_modules_on_init() {
 		// Init Module.
 		new Perform_WooCommerce_Manager();
 	}
-
-	/**
-	 * Load Assets Manager module to optimise assets on frontend of the WordPress site.
-	 *
-	 * @todo enable for 1.1.0
-	 *
-	 * @since 1.0.0
-	 */
-	$is_assets_manager_enabled = perform_get_option( 'enable_assets_manager', 'perform_advanced' );
-	if ( $is_assets_manager_enabled ) {
-
-		// Load Module.
-		require_once PERFORM_PLUGIN_DIR . 'includes/modules/assets-manager/class-perform-assets-manager.php';
-
-		// Init Module.
-		new Perform_Assets_Manager();
-	}
-
 }
 
 add_action( 'init', 'perform_load_modules_on_init', 0 );
@@ -380,3 +362,18 @@ function perform_load_preconnect() {
 }
 
 add_action( 'wp_head', 'perform_load_preconnect', 1 );
+
+
+/**
+ * Load Assets Manager.
+ *
+ * @since 1.1.0
+ *
+ * @return void
+ */
+$is_assets_manager_enabled = perform_get_option( 'enable_assets_manager', 'perform_advanced' );
+
+if ( $is_assets_manager_enabled ) {
+
+	require_once PERFORM_PLUGIN_DIR . 'includes/modules/assets-manager/functions.php';
+}

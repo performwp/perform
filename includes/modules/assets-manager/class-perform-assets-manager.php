@@ -59,25 +59,16 @@ class Perform_Assets_Manager {
 	 */
 	public function __construct() {
 
-		$this->is_assets_manager_enabled = Perform()->settings->get_option( 'enable_assets_manager', 'perform_advanced' );
-		$this->selected_options          = get_option( 'perform_assets_manager_options' );
-
-		// Bailout, if assets manager is not enabled.
-		if ( ! $this->is_assets_manager_enabled ) {
-		    return;
-		}
-
 		add_action( 'admin_bar_menu', array( $this, 'add_assets_manager_admin_bar' ), 1000, 1 );
-		add_filter( 'script_loader_src', array( $this, 'dequeue_assets' ), 1000, 2 );
-        add_filter( 'style_loader_src', array( $this, 'dequeue_assets' ), 1000, 2 );
 
 		// Don't proceed, if Assets Manager is not enabled.
 		if ( ! isset( $_GET['perform'] ) ) {
 		    return;
-        }
+		}
 
-		add_action( 'wp_footer', array( $this, 'assets_manager_html' ), 1000 );
-        add_action( 'template_redirect', array( $this, 'update_assets_manager' ), 10, 2 );
+		$this->selected_options = get_option( 'perform_assets_manager_options' );
+
+		$this->assets_manager_html();
 
 	}
 
@@ -426,8 +417,10 @@ class Perform_Assets_Manager {
 	 */
 	public function disable_single_asset_html( $type, $handle ) {
 
-		$is_selected  = is_array( $this->selected_options['disabled'][ $type ][ $handle ] ) ? 'selected="selected"' : '';
-		$show_options = $is_selected ? 'display: block;' : 'display: none;';
+		$is_disabled_type   = isset( $this->selected_options['disabled'][ $type ] );
+		$is_disabled_handle = $is_disabled_type && isset( $this->selected_options['disabled'][ $type ][ $handle ] );
+		$is_selected        = $is_disabled_handle && is_array( $this->selected_options['disabled'][ $type ][ $handle ] ) ? 'selected="selected"' : '';
+		$show_options       = $is_selected ? 'display: block;' : 'display: none;';
 		?>
 		<div class="perform-assets-manager-disable-single-asset perform-assets-manager-disable-assets" style="<?php echo esc_html( $show_options ); ?>">
 			<?php $this->disable_assets_html( $type, $handle ); ?>
@@ -470,6 +463,7 @@ class Perform_Assets_Manager {
 	 */
 	public function disable_assets_html( $type, $handle ) {
 		$is_checked   = '';
+		$current_id   = get_the_ID();
 		$radio_inputs = array(
 			'current'    => esc_html__( 'Current URL', 'perform' ),
 			'everywhere' => esc_html__( 'Everywhere', 'perform' ),
@@ -481,13 +475,17 @@ class Perform_Assets_Manager {
 			</strong>
 			<?php
 			foreach ( $radio_inputs as $key => $value ) {
-				$is_checked = checked( $this->selected_options['disabled'][ $type ][ $handle ][ $key ], 1, false );
+
+				$is_disabled_key = isset( $this->selected_options['disabled'][ $type ][ $handle ][ $key ] ) ? $this->selected_options['disabled'][ $type ][ $handle ][ $key ] : false;
 
 				if (
 					empty( $is_checked ) &&
-					get_the_ID() === $this->selected_options['disabled'][ $type ][ $handle ][ $key ][0]
+					is_array( $is_disabled_key ) &&
+					in_array( $current_id, $is_disabled_key )
 				) {
 					$is_checked = " checked='checked'";
+				} else {
+					$is_checked = checked( $is_disabled_key, 1, false );
 				}
 				?>
 				<label for="<?php echo esc_html( "disabled-{$type}-{$handle}-{$key}" ); ?>">
@@ -514,8 +512,10 @@ class Perform_Assets_Manager {
 	 */
 	public function print_assets_manager_status( $type, $handle ) {
 
-		$is_selected   = is_array( $this->selected_options['disabled'][ $type ][ $handle ] ) ? 'selected="selected"' : '';
-		$disable_class = ! empty( $is_selected ) ? 'disabled' : '';
+		$is_disabled_type   = isset( $this->selected_options['disabled'][ $type ] );
+		$is_disabled_handle = $is_disabled_type && isset( $this->selected_options['disabled'][ $type ][ $handle ] );
+		$is_selected        = ( $is_disabled_handle && is_array( $this->selected_options['disabled'][ $type ][ $handle ] ) ) ? 'selected="selected"' : '';
+		$disable_class      = ! empty( $is_selected ) ? 'disabled' : '';
 		?>
 		<select name="status[<?php echo esc_html( $type ); ?>][<?php echo esc_html( $handle ); ?>]" class="perform-status-select <?php echo esc_html( $disable_class ); ?>">
 			<option value='enabled' class='perform-option-enabled'>
@@ -540,11 +540,13 @@ class Perform_Assets_Manager {
 	 * @return void
 	 */
 	public function print_assets_manager_exceptions( $type, $handle ) {
+
 		$current_id          = get_the_ID();
 		$selected_post_types = isset( $this->selected_options['enabled'][ $type ][ $handle ]['post_types'] ) ? $this->selected_options['enabled'][ $type ][ $handle ]['post_types'] : false;
-		$is_selected         = selected( $this->selected_options['disabled'][ $type ][ $handle ]['everywhere'], 1, false );
+		$is_selected         = isset( $this->selected_options['disabled'][ $type ][ $handle ]['everywhere'] ) ? selected( $this->selected_options['disabled'][ $type ][ $handle ]['everywhere'], 1, false ) : '';
 		$show_options        = $is_selected ? 'display: block;' : 'display: none;';
-		$is_current_checked  = in_array( $current_id, $this->selected_options['enabled'][ $type ][ $handle ]['current'] ) ? ' checked="checked"' : '';
+		$current_exception   = isset( $this->selected_options['enabled'][ $type ][ $handle ]['current'] ) ? $this->selected_options['enabled'][ $type ][ $handle ]['current'] : false;
+		$is_current_checked  = ( is_array( $current_exception ) && in_array( $current_id, $current_exception ) ) ? ' checked="checked"' : '';
 		?>
 		<div class="perform-assets-manager--exceptions" style="<?php echo esc_html( $show_options ); ?>">
 			<div class="perform-assets-manager-exceptions--title">
@@ -578,10 +580,7 @@ class Perform_Assets_Manager {
 
 					foreach ( $post_types as $key => $value ) {
 
-						$is_post_type_selected = '';
-						if ( in_array( $key, $selected_post_types ) ) {
-							$is_post_type_selected = " checked='checked'";
-						}
+						$is_post_type_selected = ( is_array( $selected_post_types ) && in_array( $key, $selected_post_types ) ) ? ' checked="checked"' : '';
 						?>
 						<label for="<?php echo "{$type}-{$handle}-enable-{$key}"; ?>">
 							<input type="checkbox" name="enabled[<?php echo $type; ?>][<?php echo $handle; ?>][post_types][]" id="<?php echo "{$type}-{$handle}-enable-{$key}"; ?>" value="<?php echo $key; ?>" <?php echo $is_post_type_selected; ?> />
@@ -595,310 +594,6 @@ class Perform_Assets_Manager {
 		</div>
 		<?php
 	}
-
-	/**
-	 * Saves Assets Manager Optimization Settings.
-	 *
-	 * @since  1.1.0
-	 * @access public
-	 *
-	 * @return array
-	 */
-	public function update_assets_manager() {
-
-		$post_data = perform_clean( filter_input_array( INPUT_POST ) );
-		$get_data  = perform_clean( filter_input_array( INPUT_GET ) );
-
-		if (
-			isset( $get_data['perform'] ) &&
-			! empty( $post_data['perform_assets_manager'] )
-		) {
-
-			$current_id = get_queried_object_id();
-			$filters    = array( 'js', 'css', 'plugins', 'themes' );
-			$options    = get_option( 'perform_assets_manager_options' );
-			$settings   = get_option( 'perform_assets_manager_settings' );
-
-			foreach ( $filters as $type ) {
-
-				if ( isset( $post_data['disabled'][ $type ] ) ) {
-
-					foreach ( $post_data['disabled'][ $type ] as $handle => $value ) {
-
-						$group_disabled = false;
-
-						if ( isset( $post_data['relations'][ $type ][ $handle ] ) ) {
-
-							$relation_info = $post_data['relations'][ $type ][ $handle ];
-
-							if (
-								'disabled' === $post_data['status'][ $relation_info['category'] ][ $relation_info['group'] ] &&
-								isset( $post_data['disabled'][ $relation_info['category'] ][ $relation_info['group'] ] )
-							) {
-								$group_disabled = true;
-							}
-						}
-
-						if (
-							! $group_disabled &&
-							'disabled' === $post_data['status'][ $type ][ $handle ] &&
-							! empty( $value )
-						) {
-							if ( 'everywhere' === $value ) {
-								$options['disabled'][ $type ][ $handle ]['everywhere'] = 1;
-
-								if ( ! empty( $options['disabled'][ $type ][ $handle ]['current'] ) ) {
-									unset( $options['disabled'][ $type ][ $handle ]['current'] );
-								}
-							} elseif ( 'current' === $value ) {
-
-								if ( isset( $options['disabled'][ $type ][ $handle ]['everywhere'] ) ) {
-									unset( $options['disabled'][ $type ][ $handle ]['everywhere'] );
-								}
-
-								if ( ! is_array( $options['disabled'][ $type ][ $handle ]['current'] ) ) {
-									$options['disabled'][ $type ][ $handle ]['current'] = array();
-								}
-
-								if ( ! in_array( $current_id, $options['disabled'][ $type ][ $handle ]['current'] ) ) {
-									array_push( $options['disabled'][ $type ][ $handle ]['current'], $current_id );
-								}
-							}
-						} else {
-							unset( $options['disabled'][ $type ][ $handle ]['everywhere'] );
-
-							if ( isset( $options['disabled'][ $type ][ $handle ]['current'] ) ) {
-
-								$current_key = array_search( $current_id, $options['disabled'][ $type ][ $handle ]['current'] );
-
-								if ( false !== $current_key ) {
-									unset( $options['disabled'][ $type ][ $handle ]['current'][ $current_key ] );
-
-									if ( empty( $options['disabled'][ $type ][ $handle ]['current'] ) ) {
-										unset( $options['disabled'][ $type ][ $handle ]['current'] );
-									}
-								}
-							}
-						}
-
-						if ( empty( $options['disabled'][ $type ][ $handle ] ) ) {
-							unset( $options['disabled'][ $type ][ $handle ] );
-
-							if ( empty( $options['disabled'][ $type ] ) ) {
-								unset( $options['disabled'][ $type ] );
-
-								if ( empty( $options['disabled'] ) ) {
-									unset( $options['disabled'] );
-								}
-							}
-						}
-					}
-				}
-
-				if ( isset( $post_data['enabled'][ $type ] ) ) {
-
-					foreach ( $post_data['enabled'][ $type ] as $handle => $value ) {
-
-						$group_disabled = false;
-
-						if ( isset( $post_data['relations'][ $type ][ $handle ] ) ) {
-							$relation_info = $post_data['relations'][ $type ][ $handle ];
-
-							if (
-								isset( $post_data['disabled'][ $relation_info['category'] ][ $relation_info['group'] ] ) &&
-								'disabled' === $post_data['status'][ $relation_info['category'] ][ $relation_info['group'] ]
-							) {
-								$group_disabled = true;
-							}
-						}
-
-						if (
-							! $group_disabled &&
-							'disabled' === $post_data['status'][ $type ][ $handle ] &&
-							(
-								! empty( $value['current'] ) ||
-								0 === $value['current']
-							)
-						) {
-							if ( ! is_array( $options['enabled'][ $type ][ $handle ]['current'] ) ) {
-								$options['enabled'][ $type ][ $handle ]['current'] = array();
-							}
-
-							if ( ! in_array( $value['current'], $options['enabled'][ $type ][ $handle ]['current'] ) ) {
-								array_push( $options['enabled'][ $type ][ $handle ]['current'], $value['current'] );
-							}
-						} else {
-							if ( isset( $options['enabled'][ $type ][ $handle ]['current'] ) ) {
-								$current_key = array_search( $current_id, $options['enabled'][ $type ][ $handle ]['current'] );
-
-								if ( false !== $current_key ) {
-									unset( $options['enabled'][ $type ][ $handle ]['current'][ $current_key ] );
-
-									if ( empty( $options['enabled'][ $type ][ $handle ]['current'] ) ) {
-										unset( $options['enabled'][ $type ][ $handle ]['current'] );
-									}
-								}
-							}
-						}
-
-						if (
-							! $group_disabled &&
-							'disabled' === $post_data['status'][ $type ][ $handle ] &&
-							! empty( $value['post_types'] )
-						) {
-							$options['enabled'][ $type ][ $handle ]['post_types'] = array();
-
-							foreach ( $value['post_types'] as $key => $post_type ) {
-								if ( isset( $options['enabled'][ $type ][ $handle ]['post_types'] ) ) {
-									if ( ! in_array( $post_type, $options['enabled'][ $type ][ $handle ]['post_types'] ) ) {
-										array_push( $options['enabled'][ $type ][ $handle ]['post_types'], $post_type );
-									}
-								}
-							}
-						} else {
-							unset( $options['enabled'][ $type ][ $handle ]['post_types'] );
-						}
-
-						// Filter out empty child arrays.
-						if ( ! empty( $settings['separate_archives'] ) && $settings['separate_archives'] == "1" ) {
-							$value['archives'] = array_filter( $value['archives'] );
-
-							if (
-								! $group_disabled &&
-								'disabled' === $post_data['status'][ $type ][ $handle ] &&
-								! empty( $value['archives'] )
-							) {
-								$archives = array( 'wp', 'taxonomies', 'post_types' );
-
-								foreach ( $archives as $archive_type ) {
-									if ( ! empty( $value['archives'][ $archive_type ] ) ) {
-										$options['enabled'][ $type ][ $handle ]['archives'][ $archive_type ] = array();
-
-										foreach ( $value['archives'][ $archive_type ] as $key => $archive ) {
-											if ( isset( $options['enabled'][ $type ][ $handle ]['archives'][ $archive_type ] ) ) {
-												if ( ! in_array( $post_type, $options['enabled'][ $type ][ $handle ]['archives'][ $archive_type ] ) ) {
-													array_push( $options['enabled'][ $type ][ $handle ]['archives'][ $archive_type ], $archive );
-												}
-											}
-										}
-									} else {
-										unset( $options['enabled'][ $type ][ $handle ]['archives'][ $archive_type ] );
-									}
-								}
-							} else {
-								unset( $options['enabled'][ $type ][$handle ]['archives'] );
-							}
-						}
-
-						if ( empty( $options['enabled'][ $type ][ $handle] ) ) {
-							unset( $options['enabled'][ $type ][ $handle ] );
-
-							if ( empty( $options['enabled'][ $type ] ) ) {
-								unset( $options['enabled'][ $type ] );
-
-								if ( empty( $options['enabled'] ) ) {
-									unset( $options['enabled'] );
-								}
-							}
-						}
-					}
-				}
-			}
-
-			// Save assets manager settings to DB.
-			update_option( 'perform_assets_manager_options', $options, false );
-		}
-	}
-
-	/**
-	 * Dequeue Assets based on the Assets Manager Options.
-	 *
-	 * @param string $src    Source URL of the asset.
-	 * @param string $handle Handle of the asset.
-	 *
-	 * @since  1.1.0
-	 * @access public
-	 *
-	 * @return void
-	 */
-	public function dequeue_assets( $src, $handle ) {
-
-		if ( is_admin() ) {
-			return $src;
-		}
-
-		$get_data = perform_clean( filter_input_array( INPUT_GET ) );
-
-		// Get assets type.
-		$type = current_filter() == 'script_loader_src' ? 'js' : 'css';
-
-		// Load Assets Manager settings.
-		$options         = get_option( 'perform_assets_manager_options' );
-		$current_id      = get_queried_object_id();
-		$content_dirname = perform_get_content_dir_name();
-
-		// Get category + group from src.
-		preg_match( "/\/{$content_dirname}\/(.*?\/.*?)\//", $src, $match );
-
-		if ( ! empty( $match[1] ) ) {
-			$match    = explode( '/', $match[1] );
-			$category = $match[0];
-			$group    = $match[1];
-		}
-
-		// Check for group disable settings and override.
-		if ( ! empty( $category ) && ! empty( $group ) && isset( $options['disabled'][ $category ][ $group] ) ) {
-			$type   = $category;
-			$handle = $group;
-		}
-
-		// Disable is set, check options.
-		if (
-			(
-				! empty( $options['disabled'][ $type ][ $handle ]['everywhere'] ) &&
-				1 === $options['disabled'][ $type ][ $handle ]['everywhere']
-			) ||
-			(
-				! empty( $options['disabled'][ $type ][ $handle ]['current'] ) &&
-				in_array( $current_id, $options['disabled'][ $type ][ $handle ]['current'] )
-			)
-		) {
-
-			if ( ! empty( $options['enabled'][ $type ][ $handle ]['current'] ) && in_array( $current_id, $options['enabled'][ $type ][ $handle ]['current'] ) ) {
-				return $src;
-			}
-
-			if ( is_front_page() || is_home() ) {
-				if (
-					'page' === get_option( 'show_on_front' ) &&
-					! empty( $options['enabled'][ $type ][ $handle ]['post_types'] ) &&
-					in_array( 'page', $options['enabled'][ $type ][ $handle ]['post_types'] )
-				) {
-					return $src;
-				}
-			} else {
-				if (
-					! empty( $options['enabled'][ $type ][ $handle ]['post_types'] ) &&
-					in_array( get_post_type(), $options['enabled'][ $type ][ $handle ]['post_types'] )
-				) {
-					return $src;
-				}
-			}
-
-			if (
-				'jquery-core' === $handle &&
-				'js' === $type &&
-				isset( $get_data['perform'] ) &&
-				current_user_can( 'manage_options' )
-			) {
-				global $pmsm_jquery_disabled;
-				$pmsm_jquery_disabled = true;
-				return $src;
-			}
-
-			return false;
-		}
-
-		return $src;
-	}
 }
+
+new Perform_Assets_Manager();
