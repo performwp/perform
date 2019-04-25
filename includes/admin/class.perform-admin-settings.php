@@ -55,7 +55,7 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 				'ssl'           => __( 'SSL', 'perform' ),
 				'cdn'           => __( 'CDN', 'perform' ),
 				'advanced'      => __( 'Advanced', 'perform' ),
-				'import_export' => __( 'Import/Export', 'perform' ),
+				// 'import_export' => __( 'Import/Export', 'perform' ),
 				// 'support'       => __( 'Support', 'perform' ),
 			);
 
@@ -82,70 +82,14 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 		 */
 		public function add_admin_menu() {
 
-			add_menu_page(
+			add_options_page(
 				__( 'Perform', 'perform' ),
 				__( 'Perform', 'perform' ),
 				'manage_options',
-				'perform_dashboard',
-				array( $this, 'dashboard_page' )
-			);
-
-			add_submenu_page(
-				'perform_dashboard',
-				__( 'Dashboard', 'perform' ),
-				__( 'Dashboard', 'perform' ),
-				'manage_options',
-				'perform_dashboard',
-				array( $this, 'dashboard_page' )
-			);
-
-			add_submenu_page(
-				'perform_dashboard',
-				__( 'Widgets Manager', 'perform' ),
-				__( 'Widgets Manager', 'perform' ),
-				'manage_options',
-				'perform_widgets_manager',
-				array( $this, 'widgets_manager_page' )
-			);
-
-			add_submenu_page(
-				'perform_dashboard',
-				__( 'Settings', 'perform' ),
-				__( 'Settings', 'perform' ),
-				'manage_options',
-				'perform_settings',
+				'perform',
 				array( $this, 'settings_page' )
 			);
 
-			add_submenu_page(
-				'perform_dashboard',
-				__( 'Tools', 'perform' ),
-				__( 'Tools', 'perform' ),
-				'manage_options',
-				'perform_tools',
-				array( $this, 'tools_page' )
-			);
-
-
-		}
-
-		public function dashboard_page() {
-			$screen = get_current_screen();
-
-			if ( substr( $screen->parent_base, 0, 8 ) === 'perform_' ) {
-				remove_all_actions( 'admin_notices' );
-			}
-
-
-			echo 'dashboard';
-		}
-
-		public function widgets_manager_page() {
-			echo 'widgets manager';
-		}
-
-		public function tools_page() {
-			echo 'tools manager';
 		}
 
 		/**
@@ -179,10 +123,10 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}common",
 				array(
-					'id'      => 'disable_emojis',
-					'type'    => 'checkbox',
-					'name'    => __( 'Disable Emoji\'s', 'perform' ),
-					'desc'    => __( 'Enabling this will disable the usage of emoji\'s in WordPress Posts, Pages, and Custom Post Types.', 'perform' ),
+					'id'   => 'disable_emojis',
+					'type' => 'checkbox',
+					'name' => __( 'Disable Emoji\'s', 'perform' ),
+					'desc' => __( 'Enabling this will disable the usage of emoji\'s in WordPress Posts, Pages, and Custom Post Types.', 'perform' ),
 				)
 			);
 
@@ -190,10 +134,10 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}common",
 				array(
-					'id'      => 'disable_embeds',
-					'type'    => 'checkbox',
-					'name'    => __( 'Disable Embeds', 'perform' ),
-					'desc'    => __( 'Removes WordPress Embed JavaScript file (wp-embed.min.js).', 'perform' ),
+					'id'   => 'disable_embeds',
+					'type' => 'checkbox',
+					'name' => __( 'Disable Embeds', 'perform' ),
+					'desc' => __( 'Removes WordPress Embed JavaScript file (wp-embed.min.js).', 'perform' ),
 				)
 			);
 
@@ -201,10 +145,10 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}common",
 				array(
-					'id'      => 'remove_query_strings',
-					'type'    => 'checkbox',
-					'name'    => __( 'Remove Query Strings', 'perform' ),
-					'desc'    => __( 'Remove query strings from static resources (CSS, JS).', 'perform' ),
+					'id'   => 'remove_query_strings',
+					'type' => 'checkbox',
+					'name' => __( 'Remove Query Strings', 'perform' ),
+					'desc' => __( 'Remove query strings from static resources (CSS, JS).', 'perform' ),
 				)
 			);
 
@@ -212,10 +156,10 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}common",
 				array(
-					'id'      => 'disable_xmlrpc',
-					'type'    => 'checkbox',
-					'name'    => __( 'Disable XML-RPC', 'perform' ),
-					'desc'    => __( 'Disables WordPress XML-RPC functionality.', 'perform' ),
+					'id'   => 'disable_xmlrpc',
+					'type' => 'checkbox',
+					'name' => __( 'Disable XML-RPC', 'perform' ),
+					'desc' => __( 'Disables WordPress XML-RPC functionality.', 'perform' ),
 				)
 			);
 
@@ -223,10 +167,10 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}common",
 				array(
-					'id'      => 'remove_jquery_migrate',
-					'type'    => 'checkbox',
-					'name'    => __( 'Remove jQuery Migrate', 'perform' ),
-					'desc'    => __( 'Removes jQuery Migrate JS file (jquery-migrate.min.js).', 'perform' ),
+					'id'   => 'remove_jquery_migrate',
+					'type' => 'checkbox',
+					'name' => __( 'Remove jQuery Migrate', 'perform' ),
+					'desc' => __( 'Removes jQuery Migrate JS file (jquery-migrate.min.js).', 'perform' ),
 				)
 			);
 
@@ -234,10 +178,10 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}common",
 				array(
-					'id'      => 'hide_wp_version',
-					'type'    => 'checkbox',
-					'name'    => __( 'Hide WP Version', 'perform' ),
-					'desc'    => __( 'Removes WordPress version generator meta tag.', 'perform' ),
+					'id'   => 'hide_wp_version',
+					'type' => 'checkbox',
+					'name' => __( 'Hide WP Version', 'perform' ),
+					'desc' => __( 'Removes WordPress version generator meta tag.', 'perform' ),
 				)
 			);
 
@@ -245,10 +189,10 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}common",
 				array(
-					'id'      => 'remove_wlwmanifest_link',
-					'type'    => 'checkbox',
-					'name'    => __( 'Remove wlwmanifest Link', 'perform' ),
-					'desc'    => __( 'Remove wlwmanifest link tag. It is usually used to support Windows Live Writer.', 'perform' ),
+					'id'   => 'remove_wlwmanifest_link',
+					'type' => 'checkbox',
+					'name' => __( 'Remove wlwmanifest Link', 'perform' ),
+					'desc' => __( 'Remove wlwmanifest link tag. It is usually used to support Windows Live Writer.', 'perform' ),
 				)
 			);
 
@@ -256,10 +200,10 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}common",
 				array(
-					'id'      => 'remove_rsd_link',
-					'type'    => 'checkbox',
-					'name'    => __( 'Remove RSD Link', 'perform' ),
-					'desc'    => __( 'Remove RSD (Real Simple Discovery) link tag.', 'perform' ),
+					'id'   => 'remove_rsd_link',
+					'type' => 'checkbox',
+					'name' => __( 'Remove RSD Link', 'perform' ),
+					'desc' => __( 'Remove RSD (Real Simple Discovery) link tag.', 'perform' ),
 				)
 			);
 
@@ -267,10 +211,10 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}common",
 				array(
-					'id'      => 'remove_shortlink',
-					'type'    => 'checkbox',
-					'name'    => __( 'Remove Shortlink', 'perform' ),
-					'desc'    => __( 'Remove Shortlink link tag.', 'perform' ),
+					'id'   => 'remove_shortlink',
+					'type' => 'checkbox',
+					'name' => __( 'Remove Shortlink', 'perform' ),
+					'desc' => __( 'Remove Shortlink link tag.', 'perform' ),
 				)
 			);
 
@@ -348,9 +292,9 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'type'    => 'select',
 					'name'    => __( 'Disable Heartbeat', 'perform' ),
 					'options' => array(
-						''                   => __('Default', 'perform'),
-						'disable_everywhere' => __('Disable Everywhere', 'perform'),
-						'allow_posts'        => __('Only Allow When Editing Posts/Pages', 'perform'),
+						''                   => __( 'Default', 'perform' ),
+						'disable_everywhere' => __( 'Disable Everywhere', 'perform' ),
+						'allow_posts'        => __( 'Only Allow When Editing Posts/Pages', 'perform' ),
 					),
 					'desc'    => __( 'Disable WordPress Heartbeat everywhere or in certain areas (used for auto saving and revision tracking).', 'perform' ),
 				)

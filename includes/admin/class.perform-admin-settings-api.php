@@ -738,7 +738,7 @@ if ( ! class_exists( 'Perform_Admin_Settings_API' ) ) :
 				foreach ( $this->sections_array as $tab ) {
 					$active_class = ( $active_tab === $tab['id'] ) ? 'nav-tab-active' : '';
 					?>
-                    <a href="?page=perform_settings&tab=<?php echo $tab['id']; ?>" class="nav-tab <?php echo $active_class; ?>">
+                    <a href="?page=perform&tab=<?php echo $tab['id']; ?>" class="nav-tab <?php echo $active_class; ?>">
 						<?php echo $tab['title']; ?>
                     </a>
 					<?php
