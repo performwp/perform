@@ -56,7 +56,7 @@ msgstr ""
 msgid "WooCommerce"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:86, includes/admin/class.perform-admin-settings.php:87, includes/modules/assets-manager/class-perform-assets-manager.php:135
+#: includes/admin/class.perform-admin-settings.php:86, includes/admin/class.perform-admin-settings.php:87, includes/modules/assets-manager/class-perform-assets-manager.php:90
 msgid "Perform"
 msgstr ""
 
@@ -344,68 +344,68 @@ msgstr ""
 msgid "No feed available, please visit the <a href=\"%s\">homepage</a>!"
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:104, includes/modules/assets-manager/class-perform-assets-manager.php:158
-msgid "Assets Manager"
-msgstr ""
-
-#: includes/modules/assets-manager/class-perform-assets-manager.php:106
-msgid "Close Assets Manager"
-msgstr ""
-
-#: includes/modules/assets-manager/class-perform-assets-manager.php:152
+#: includes/modules/assets-manager/class-perform-assets-manager.php:107
 msgid "Save"
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:161
+#: includes/modules/assets-manager/class-perform-assets-manager.php:113, includes/modules/assets-manager/functions.php:370
+msgid "Assets Manager"
+msgstr ""
+
+#: includes/modules/assets-manager/class-perform-assets-manager.php:116
 msgid "Optimise loading of assets on this page."
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:331
+#: includes/modules/assets-manager/class-perform-assets-manager.php:286
 msgid "Handle"
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:334
+#: includes/modules/assets-manager/class-perform-assets-manager.php:289
 msgid "Assets URL"
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:337
+#: includes/modules/assets-manager/class-perform-assets-manager.php:292
 msgid "Type"
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:340
+#: includes/modules/assets-manager/class-perform-assets-manager.php:295
 msgid "Size"
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:343
+#: includes/modules/assets-manager/class-perform-assets-manager.php:298
 msgid "Status"
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:447
+#: includes/modules/assets-manager/class-perform-assets-manager.php:402
 msgid "All assets in this group have been disabled. Please enable the group to individually manager assets."
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:468, includes/modules/assets-manager/class-perform-assets-manager.php:560
+#: includes/modules/assets-manager/class-perform-assets-manager.php:423, includes/modules/assets-manager/class-perform-assets-manager.php:515
 msgid "Current URL"
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:469
+#: includes/modules/assets-manager/class-perform-assets-manager.php:424
 msgid "Everywhere"
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:474
+#: includes/modules/assets-manager/class-perform-assets-manager.php:429
 msgid "Disable on"
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:522
+#: includes/modules/assets-manager/class-perform-assets-manager.php:477
 msgid "ON"
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:525
+#: includes/modules/assets-manager/class-perform-assets-manager.php:480
 msgid "OFF"
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:553
+#: includes/modules/assets-manager/class-perform-assets-manager.php:508
 msgid "Exceptions"
+msgstr ""
+
+#: includes/modules/assets-manager/functions.php:372
+msgid "Close Assets Manager"
 msgstr ""
 
 #: perform.php:73, perform.php:86
