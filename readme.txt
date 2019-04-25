@@ -1,11 +1,11 @@
 === Perform ===
 Contributors: mehul0810
-Tags: performance, speed, improve site loading
+Tags: performance, assets manager, disable embeds, disable emoji
 Donate link: https://www.mehulgohil.in/donate/
 Requires at least: 4.8
 Tested up to: 5.1
 Requires PHP: 5.6
-Stable tag: 1.0.1
+Stable tag: 1.1.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -13,6 +13,32 @@ Improves Performance and Loading Speed of your WordPress Site.
 
 == Description ==
 Perform will help you remove unnecessary styles, scripts, and features which adds up load to your WordPress site. Removing those unnecessary items from your WordPress site will help you improve performance and loading speed of your WordPress site just by installing and configuring the plugin.
+
+= Features =
+* Disable emoji
+* Disable embeds
+* Remove query strings
+* Disable XML-RPC
+* Remove jQuery Migrate
+* Hide WP version
+* Remove wlwmanifest link
+* Remove RSD link
+* Remove Shortlink
+* Disable RSS Feeds
+* Remove RSS Feed Links
+* Disable Self Pingbacks
+* Remove REST API Links
+* Disable Dashicons
+* Disable Password Strength Meter
+* Disable Heartbeat
+* Set Heartbeat Frequency
+* Limit Post Revisions
+* Set Autosave Intervals
+* Assets Manager ( JS & CSS of themes and plugins )
+* SSL Manager
+* CDN Manager
+* DNS Prefetch
+* Preconnect
 
 = Connect with Perform - WordPress Plugin =
 
@@ -55,7 +81,20 @@ The manual installation method involves downloading our plugin and uploading it 
 
 We work hard to the best support possible for Perform. The [WordPress.org Support Forum](https://wordpress.org/support/plugin/perform) is used for free community based support. We continually monitor the forum and do our best to ensure everyone gets a response.
 
+= Does it work with caching plugins like WP Rocket? =
+Yes, it does.
+
+= Does it work with plugins like Autoptimize? =
+Yes, it does.
+
+= Does it work with hosting providers like FlyWheel, Kinsta, and hosts with server-level caching? =
+Yes, it does.
+
 == Changelog ==
+
+= 1.1.0 =
+feat: add support for assets manager #1
+fix: settings page is not visible with multisite setup #5
 
 = 1.0.1 =
 fix: incorrect linking for reviews in admin footer #2
