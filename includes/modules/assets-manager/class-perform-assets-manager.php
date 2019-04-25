@@ -59,8 +59,6 @@ class Perform_Assets_Manager {
 	 */
 	public function __construct() {
 
-		add_action( 'admin_bar_menu', array( $this, 'add_assets_manager_admin_bar' ), 1000, 1 );
-
 		// Don't proceed, if Assets Manager is not enabled.
 		if ( ! isset( $_GET['perform'] ) ) {
 		    return;
@@ -70,49 +68,6 @@ class Perform_Assets_Manager {
 
 		$this->assets_manager_html();
 
-	}
-
-	/**
-	 * This function is used to add assets manager button in admin bar.
-	 *
-	 * @param array $wp_admin_bar List of items on admin bar.
-	 *
-	 * @since  1.1.0
-	 * @access public
-	 *
-	 * @return void
-	 */
-	public function add_assets_manager_admin_bar( $wp_admin_bar ) {
-
-		// Bailout, if conditions below doesn't pass through.
-		if ( ! current_user_can( 'manage_options' ) || is_admin() ) {
-			return;
-		}
-
-		global $wp;
-
-		$server_data = perform_clean( filter_input_array( INPUT_SERVER ) );
-
-		$href = add_query_arg(
-			str_replace( array( '&perform', 'perform' ), '', $server_data['QUERY_STRING'] ),
-			'',
-			home_url( $wp->request )
-		);
-
-		if ( ! isset( $_GET['perform'] ) ) {
-			$href .= ! empty( $server_data['QUERY_STRING'] ) ? '&perform' : '?perform';
-			$menu_text = __( 'Assets Manager', 'perform' );
-		} else {
-			$menu_text = __( 'Close Assets Manager', 'perform' );
-		}
-
-		$args = array(
-			'id'    => 'perform_assets_manager',
-			'title' => $menu_text,
-			'href'  => $href,
-		);
-
-		$wp_admin_bar->add_node( $args );
 	}
 
 	/**

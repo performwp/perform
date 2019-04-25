@@ -338,3 +338,47 @@ function perform_dequeue_assets( $src, $handle ) {
 add_filter( 'script_loader_src', 'perform_dequeue_assets', 1000, 2 );
 add_filter( 'style_loader_src', 'perform_dequeue_assets', 1000, 2 );
 
+/**
+ * This function is used to add assets manager button in admin bar.
+ *
+ * @param array $wp_admin_bar List of items on admin bar.
+ *
+ * @since  1.1.1
+ * @access public
+ *
+ * @return void
+ */
+function perform_add_assets_manager_admin_bar( $wp_admin_bar ) {
+
+	// Bailout, if conditions below doesn't pass through.
+	if ( ! current_user_can( 'manage_options' ) || is_admin() ) {
+		return;
+	}
+
+	global $wp;
+
+	$server_data = perform_clean( filter_input_array( INPUT_SERVER ) );
+
+	$href = add_query_arg(
+		str_replace( array( '&perform', 'perform' ), '', $server_data['QUERY_STRING'] ),
+		'',
+		home_url( $wp->request )
+	);
+
+	if ( ! isset( $_GET['perform'] ) ) {
+		$href .= ! empty( $server_data['QUERY_STRING'] ) ? '&perform' : '?perform';
+		$menu_text = __( 'Assets Manager', 'perform' );
+	} else {
+		$menu_text = __( 'Close Assets Manager', 'perform' );
+	}
+
+	$args = array(
+		'id'    => 'perform_assets_manager',
+		'title' => $menu_text,
+		'href'  => $href,
+	);
+
+	$wp_admin_bar->add_node( $args );
+}
+
+add_action( 'admin_bar_menu', 'perform_add_assets_manager_admin_bar', 1000, 1 );
