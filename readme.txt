@@ -93,7 +93,7 @@ Yes, it does.
 == Changelog ==
 
 = 1.1.1 =
-fix: display assets manager link in admin bar
+fix: display assets manager link in admin bar #6
 
 = 1.1.0 =
 feat: add support for assets manager #1
