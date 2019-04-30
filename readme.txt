@@ -39,6 +39,7 @@ Perform will help you remove unnecessary styles, scripts, and features which add
 * CDN Manager
 * DNS Prefetch
 * Preconnect
+* Navigation Menu Cache
 
 = Connect with Perform - WordPress Plugin =
 
