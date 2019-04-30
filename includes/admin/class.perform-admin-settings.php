@@ -472,6 +472,17 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 				)
 			);
 
+			// Enable Menu Cache.
+			$this->add_field(
+				"{$this->prefix}advanced",
+				array(
+					'id'   => 'enable_navigation_menu_cache',
+					'type' => 'checkbox',
+					'name' => __( 'Enable Menu Cache', 'perform' ),
+					'desc' => __( 'Enables the Navigation Menu Cache which will provide you the ability to cache all the menus on your WordPress site to reduce the time taken by outputting the menu\'s.', 'perform' ),
+				)
+			);
+
 			// Enable Assets Manager.
 			$this->add_field(
 				"{$this->prefix}advanced",
