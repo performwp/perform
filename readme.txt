@@ -1,6 +1,6 @@
 === Perform ===
 Contributors: mehul0810
-Tags: performance, assets manager, scripts manager, disable embeds, disable emoji
+Tags: performance, assets manager, scripts manager, menu cache, disable embeds, disable emoji
 Donate link: https://www.mehulgohil.in/donate/
 Requires at least: 4.8
 Tested up to: 5.2
