@@ -13,11 +13,13 @@
 		border: 1px solid #222222;
 		border-spacing: 0;
 		border-collapse: collapse;
+		table-layout: auto;
 
 		tr {
 			@extend table;
 
 			th {
+				text-align: center;
 				@extend table;
 			}
 
@@ -30,6 +32,7 @@
 
 	select {
 		font-size: 16px;
+		width: auto;
 	}
 
 	h3 {
@@ -48,20 +51,22 @@
 			width: 20%;
 			font-size: 28px;
 			margin: 10px 0;
-			color: #fff;
+			color: #222222;
 			font-weight: 700;
 			display: block;
 			overflow: hidden;
-			text-transform: uppercase;
 		}
 
 		.perform-assets-manager--header {
 			width: 100%;
-			background: #282E34;
+			background: #ffffff;
 			padding: 10px 50px;
 			display: block;
 			overflow: hidden;
 			position: fixed;
+			-webkit-box-shadow: 0px 0px 1px 0px rgba(0,0,0,.35);
+			-moz-box-shadow: 0px 0px 1px 0px rgba(0,0,0,.35);
+			box-shadow: 0px 0px 1px 0px rgba(0,0,0,.35);
 
 			.perform-assets-manager-header-actions {
 				float: right;
@@ -70,6 +75,8 @@
 					border-radius: 0;
 					font-size: 18px;
 					padding: 10px 20px;
+					background-color: #222222;
+					color: #ffffff;
 				}
 			}
 
