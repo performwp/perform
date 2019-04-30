@@ -309,34 +309,42 @@ msgid "Enter any directories or file extensions you would like to be excluded fr
 msgstr ""
 
 #: includes/admin/class.perform-admin-settings.php:481
-msgid "Enable Assets Manager"
+msgid "Enable Menu Cache"
 msgstr ""
 
 #: includes/admin/class.perform-admin-settings.php:482
-msgid "Enables the Assets Manager which will provide you the ability to enable or disable CSS and JS files on per-page basis."
+msgid "Enables the Navigation Menu Cache which will provide you the ability to cache all the menus on your WordPress site to reduce the time taken by outputting the menu's."
 msgstr ""
 
 #: includes/admin/class.perform-admin-settings.php:492
-msgid "DNS Prefetch"
+msgid "Enable Assets Manager"
 msgstr ""
 
 #: includes/admin/class.perform-admin-settings.php:493
-msgid "Resolve domain names before a user clicks. Format: //domain.tld (one per line)"
+msgid "Enables the Assets Manager which will provide you the ability to enable or disable CSS and JS files on per-page basis."
 msgstr ""
 
 #: includes/admin/class.perform-admin-settings.php:503
-msgid "Preconnect"
+msgid "DNS Prefetch"
 msgstr ""
 
 #: includes/admin/class.perform-admin-settings.php:504
-msgid "Preconnect allows the browser to set up early connections before an HTTP request, eliminating roundtrip latency and saving time for users. Format: scheme://domain.tld (one per line)"
+msgid "Resolve domain names before a user clicks. Format: //domain.tld (one per line)"
 msgstr ""
 
 #: includes/admin/class.perform-admin-settings.php:514
-msgid "Remove Data on Uninstall"
+msgid "Preconnect"
 msgstr ""
 
 #: includes/admin/class.perform-admin-settings.php:515
+msgid "Preconnect allows the browser to set up early connections before an HTTP request, eliminating roundtrip latency and saving time for users. Format: scheme://domain.tld (one per line)"
+msgstr ""
+
+#: includes/admin/class.perform-admin-settings.php:525
+msgid "Remove Data on Uninstall"
+msgstr ""
+
+#: includes/admin/class.perform-admin-settings.php:526
 msgid "When enabled, this will cause all the options data to be removed from your database when the plugin is uninstalled."
 msgstr ""
 
@@ -406,6 +414,10 @@ msgstr ""
 
 #: includes/modules/assets-manager/functions.php:372
 msgid "Close Assets Manager"
+msgstr ""
+
+#: includes/modules/assets-manager/functions.php:399
+msgid "Manage Assets"
 msgstr ""
 
 #: perform.php:73, perform.php:86
