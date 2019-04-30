@@ -1,11 +1,11 @@
 === Perform ===
 Contributors: mehul0810
-Tags: performance, assets manager, disable embeds, disable emoji
+Tags: performance, assets manager, scripts manager, disable embeds, disable emoji
 Donate link: https://www.mehulgohil.in/donate/
 Requires at least: 4.8
 Tested up to: 5.2
 Requires PHP: 5.6
-Stable tag: 1.1.1
+Stable tag: 1.2.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -91,6 +91,11 @@ Yes, it does.
 Yes, it does.
 
 == Changelog ==
+
+= 1.2.0 =
+fix: add quick access to assets manager from admin listing #10
+feat: add menu cache #11
+fix: generalise styling for assets manager with all the themes #12
 
 = 1.1.1 =
 fix: display assets manager link in admin bar #6
