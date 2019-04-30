@@ -377,3 +377,17 @@ if ( $is_assets_manager_enabled ) {
 
 	require_once PERFORM_PLUGIN_DIR . 'includes/modules/assets-manager/functions.php';
 }
+
+/**
+ * Load Navigation Menu Cache.
+ *
+ * @since 1.2.0
+ *
+ * @return void
+ */
+$is_nav_menu_cache_enabled = perform_get_option( 'enable_navigation_menu_cache', 'perform_advanced' );
+
+if ( $is_nav_menu_cache_enabled ) {
+
+	require_once PERFORM_PLUGIN_DIR . 'includes/modules/cache-manager/class-perform-menu-cache.php';
+}
