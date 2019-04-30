@@ -382,3 +382,25 @@ function perform_add_assets_manager_admin_bar( $wp_admin_bar ) {
 }
 
 add_action( 'admin_bar_menu', 'perform_add_assets_manager_admin_bar', 1000, 1 );
+
+/**
+ * This function is used to add `Manage Assets` in quick action under admin CPT listing.
+ *
+ * @since 1.1.2
+ *
+ * @return array
+ */
+function perform_add_assets_manager_row_actions( $actions, $post ) {
+
+	if ( 'publish' === $post->post_status ) {
+		$actions['assets_manager'] = sprintf(
+			'<a href="%1$s" target="_blank">%2$s</a>',
+			esc_url( get_the_permalink( $post->ID ) . '?perform' ),
+			__( 'Manage Assets', 'perform' )
+		);
+	}
+
+    return $actions;
+}
+
+add_filter( 'post_row_actions', 'perform_add_assets_manager_row_actions', 10, 2 );
