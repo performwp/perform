@@ -27,7 +27,7 @@
 		margin-right: 15px !important;
 
 		&:before {
-			// background: url('../../images/perform-icon-full-circle.svg');
+			background: url('../../images/perform-icon.svg');
 			width: 36px;
 			height: 36px;
 			content: ' ';
@@ -50,10 +50,9 @@
 
 // Version Badge
 .perform-badge {
-	// background: url('../../images/perform-badge.png') no-repeat 0 0 transparent;
-	padding-top: 150px;
-	height: 52px;
-	width: 185px;
+	padding: 40px 10px;
+	height: auto;
+	width: 150px;
 	color: #222222;
 	font-weight: bold;
 	font-size: 14px;
@@ -63,6 +62,11 @@
 	top: 30px;
 	right: 20px;
 	background-color: #f5f5f5;
+
+	img {
+		width: 75px;
+		margin: 0 auto;
+	}
 }
 
 .perform-welcome-content-wrap {
@@ -221,6 +225,8 @@
 	background: #FFF;
 	text-align: center;
 	padding: 100px 0 160px;
+	display: block;
+	overflow: hidden;
 
 	p {
 		font-size: 16px;
@@ -280,12 +286,8 @@
 
 	}
 
-	&__addons h3:before {
-		// background: url('../../images/admin/shopping-cart.svg') no-repeat center top transparent;
-	}
-
 	&__documentation h3:before {
-		// background: url('../../images/admin/docs-book.svg') no-repeat center top transparent;
+		background: url('../../images/docs-book.svg') no-repeat center top transparent;
 	}
 
 	&__col-inner {

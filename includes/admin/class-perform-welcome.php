@@ -187,13 +187,16 @@ class Perform_Welcome {
 				<?php $this->get_newsletter(); ?>
 
 				<div class="perform-badge">
-					<?php
-					printf(
-						/* translators: %s: Perform version */
-						esc_html__( 'Version %s', 'perform' ),
-						$display_version
-					);
-					?>
+					<img src="<?php echo PERFORM_PLUGIN_URL . 'assets/dist/images/perform-icon.svg'; ?>"/>
+					<p>
+						<?php
+						printf(
+							/* translators: %s: Perform version */
+							esc_html__( 'Version %s', 'perform' ),
+							$display_version
+						);
+						?>
+					</p>
 				</div>
 
 			</div>
