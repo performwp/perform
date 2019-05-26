@@ -1,8 +1,12 @@
 <?php
 /**
- * Install Perform Plugin.
+ * Perform - Install
  *
- * @since 1.0.0
+ * @since 1.2.1
+ *
+ * @package    Perform
+ * @subpackage Includes/Install
+ * @author     Mehul Gohil
  */
 
 // Bailout, if accessed directly.
@@ -61,5 +65,8 @@ function perform_run_install() {
 	if ( PERFORM_VERSION !== get_option( 'perform_version' ) ) {
 		update_option( 'perform_version', PERFORM_VERSION, false );
 	}
+
+	// Set activation redirect transient.
+	set_transient( '_perform_activation_redirect', true );
 }
 
