@@ -87,7 +87,8 @@ class Perform_Assets_Manager {
 				<div class="perform-assets-manager">
 					<div class="perform-assets-manager--header">
 						<div class="perform-assets-manager--logo">
-							<?php esc_html_e( 'Perform', 'perform' ); ?>
+							<img style="width: 150px;" src="<?php echo PERFORM_PLUGIN_URL . 'assets/dist/images/perform-retina-logo.png';
+							 ?>" alt="<?php esc_html_e( 'Perform', 'perform' ); ?>" />
 						</div>
 						<?php /*
 						<ul class="perform-assets-manager--menu">
