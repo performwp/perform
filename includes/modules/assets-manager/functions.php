@@ -404,3 +404,4 @@ function perform_add_assets_manager_row_actions( $actions, $post ) {
 }
 
 add_filter( 'post_row_actions', 'perform_add_assets_manager_row_actions', 10, 2 );
+add_filter( 'page_row_actions', 'perform_add_assets_manager_row_actions', 10, 2 );
