@@ -62,6 +62,11 @@
 			padding: 10px 50px;
 			display: block;
 			overflow: hidden;
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			margin-top: 33px;
 			-webkit-box-shadow: 0px 0px 1px 0px rgba(0,0,0,.35);
 			-moz-box-shadow: 0px 0px 1px 0px rgba(0,0,0,.35);
 			box-shadow: 0px 0px 1px 0px rgba(0,0,0,.35);
