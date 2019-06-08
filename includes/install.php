@@ -47,12 +47,24 @@ function perform_install( $network = false ) {
 	}
 }
 
+/**
+ * Run Install
+ *
+ * @since 1.2.1
+ *
+ * @return void
+ */
 function perform_run_install() {
 
 	// Add "Upgraded From" version.
 	$current_version = get_option( 'perform_version' );
 	if ( $current_version ) {
 		update_option( 'perform_version_upgraded_from', $current_version, false );
+	}
+
+	// Fresh Install? Set default settings.
+	if ( empty( $current_version ) ) {
+		perform_set_default_settings();
 	}
 
 	/**
@@ -70,3 +82,20 @@ function perform_run_install() {
 	set_transient( '_perform_activation_redirect', true );
 }
 
+/**
+ * Set default settings.
+ *
+ * @since 1.2.1
+ *
+ * @return void
+ */
+function perform_set_default_settings() {
+
+	$advanced_settings = array(
+		'enable_assets_manager'        => '1',
+		'enable_navigation_menu_cache' => '1',
+	);
+
+	// Set default advanced settings.
+	update_option( 'perform_advanced', $advanced_settings );
+}
