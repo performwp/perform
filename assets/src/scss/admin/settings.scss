@@ -565,60 +565,12 @@
   padding: 10px 0px 0px 0px;
   border-top: 1px solid #f8f8f8;
 }
-/*Settings View*/
-#assets-manager-settings table th {
-  width: 200px;
-  vertical-align: top;
-  border: none;
-}
-#assets-manager-settings .switch {
-  position: relative;
-  display: inline-block;
-  width: 48px;
-  height: 28px;
-  font-size: 1px;
-}
-#assets-manager-settings .switch input {
-  display: block;
-  margin: 0px;
-}
-#assets-manager-settings .slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-#assets-manager-settings .slider:before {
-  position: absolute;
-  content: '';
-  height: 20px;
-  width: 20px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-#assets-manager-settings input:checked + .slider {
-  background-color: #2196F3;
-}
 
-#assets-manager-settings input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
-}
-#assets-manager-settings input:checked + .slider:before {
-  -webkit-transform: translateX(20px);
-  -ms-transform: translateX(20px);
-  transform: translateX(20px);
-}
-#jquery-message {
-  font-size: 12px;
-  font-style: italic;
-  color: #27ae60;
-  margin-top: 5px;
+.perform-help-link {
+	text-decoration: none;
+	color: #b5b5b5;
+
+	&:hover {
+		color: #b5b5b5;
+	}
 }
