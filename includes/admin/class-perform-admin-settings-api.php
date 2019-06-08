@@ -292,6 +292,17 @@ if ( ! class_exists( 'Perform_Admin_Settings_API' ) ) :
 						'sanitize_callback' => $sanitize_callback,
 					);
 
+					// Add help icon next to the name of the field.
+					if ( ! empty( $help_link ) ) {
+
+						$help_link  = isset( $field['help_link'] ) ? $field['help_link'] : '';
+						$help_title =  isset( $field['help_title'] ) ? $field['help_title'] : '';
+
+						$name .= sprintf( '&nbsp;<a title="%1$s" class="perform-help-link" href="%2$s" target="_blank">', $help_title, $help_link );
+						$name .= '<span class="dashicons dashicons-editor-help"></span>';
+						$name .= '</a>';
+					}
+
 					/**
 					 * Add a new field to a section of a settings page.
 					 *
@@ -460,7 +471,6 @@ if ( ! class_exists( 'Perform_Admin_Settings_API' ) ) :
 		function callback_checkbox( $args ) {
 
 			$value = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
-
 			$html  = '<fieldset>';
 			$html .= sprintf( '<legend class="screen-reader-text"><span>%1$s</span></legend>', $args['section'] );
 			$html .= sprintf( '<label for="perform-%1$s[%2$s]">', $args['section'], $args['id'] );
