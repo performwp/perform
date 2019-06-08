@@ -292,13 +292,12 @@ if ( ! class_exists( 'Perform_Admin_Settings_API' ) ) :
 						'sanitize_callback' => $sanitize_callback,
 					);
 
+					// Help Link.
+					$help_link  = isset( $field['help_link'] ) ? $field['help_link'] : '';
+
 					// Add help icon next to the name of the field.
 					if ( ! empty( $help_link ) ) {
-
-						$help_link  = isset( $field['help_link'] ) ? $field['help_link'] : '';
-						$help_title =  isset( $field['help_title'] ) ? $field['help_title'] : '';
-
-						$name .= sprintf( '&nbsp;<a title="%1$s" class="perform-help-link" href="%2$s" target="_blank">', $help_title, $help_link );
+						$name .= sprintf( '&nbsp;<a title="%1$s" class="perform-help-link" href="%2$s" target="_blank">', $name, $help_link );
 						$name .= '<span class="dashicons dashicons-editor-help"></span>';
 						$name .= '</a>';
 					}
