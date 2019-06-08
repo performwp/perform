@@ -127,6 +127,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'type' => 'checkbox',
 					'name' => __( 'Disable Emoji\'s', 'perform' ),
 					'desc' => __( 'Enabling this will disable the usage of emoji\'s in WordPress Posts, Pages, and Custom Post Types.', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/disable-emojis'
+						)
+					),
 				)
 			);
 
@@ -138,6 +148,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'type' => 'checkbox',
 					'name' => __( 'Disable Embeds', 'perform' ),
 					'desc' => __( 'Removes WordPress Embed JavaScript file (wp-embed.min.js).', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/disable-embeds'
+						)
+					),
 				)
 			);
 
@@ -149,6 +169,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'type' => 'checkbox',
 					'name' => __( 'Remove Query Strings', 'perform' ),
 					'desc' => __( 'Remove query strings from static resources (CSS, JS).', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/remove-query-strings'
+						)
+					),
 				)
 			);
 
@@ -160,6 +190,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'type' => 'checkbox',
 					'name' => __( 'Disable XML-RPC', 'perform' ),
 					'desc' => __( 'Disables WordPress XML-RPC functionality.', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/disable-xmlrpc'
+						)
+					),
 				)
 			);
 
@@ -171,6 +211,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'type' => 'checkbox',
 					'name' => __( 'Remove jQuery Migrate', 'perform' ),
 					'desc' => __( 'Removes jQuery Migrate JS file (jquery-migrate.min.js).', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/remove-jquery-migrate'
+						)
+					),
 				)
 			);
 
@@ -182,6 +232,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'type' => 'checkbox',
 					'name' => __( 'Hide WP Version', 'perform' ),
 					'desc' => __( 'Removes WordPress version generator meta tag.', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/hide-wp-version'
+						)
+					),
 				)
 			);
 
@@ -193,6 +253,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'type' => 'checkbox',
 					'name' => __( 'Remove wlwmanifest Link', 'perform' ),
 					'desc' => __( 'Remove wlwmanifest link tag. It is usually used to support Windows Live Writer.', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/remove-wlwmanifest-link'
+						)
+					),
 				)
 			);
 
@@ -204,6 +274,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'type' => 'checkbox',
 					'name' => __( 'Remove RSD Link', 'perform' ),
 					'desc' => __( 'Remove RSD (Real Simple Discovery) link tag.', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/remove-rsd-link'
+						)
+					),
 				)
 			);
 
@@ -215,6 +295,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'type' => 'checkbox',
 					'name' => __( 'Remove Shortlink', 'perform' ),
 					'desc' => __( 'Remove Shortlink link tag.', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/remove-shortlink'
+						)
+					),
 				)
 			);
 
@@ -226,6 +316,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'type' => 'checkbox',
 					'name' => __( 'Disable RSS Feeds', 'perform' ),
 					'desc' => __( 'Disable WordPress generated RSS feeds and 301 redirect URL to parent.', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/disable-rss-feeds'
+						)
+					),
 				)
 			);
 
@@ -237,6 +337,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'type' => 'checkbox',
 					'name' => __( 'Remove RSS Feed Links', 'perform' ),
 					'desc' => __( 'Disable WordPress generated RSS feed link tags.', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/remove-rss-feed-links'
+						)
+					),
 				)
 			);
 
@@ -248,6 +358,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'type' => 'checkbox',
 					'name' => __( 'Disable Self Pingbacks', 'perform' ),
 					'desc' => __( 'Disable Self Pingbacks (generated when linking to an article on your own blog).', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/disable-self-pingbacks'
+						)
+					),
 				)
 			);
 
@@ -259,6 +379,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'type' => 'checkbox',
 					'name' => __( 'Remove REST API Links', 'perform' ),
 					'desc' => __( 'Removes REST API link tag from the front end and the REST API header link from page requests.', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/remove-rest-api-links'
+						)
+					),
 				)
 			);
 
@@ -270,6 +400,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'type' => 'checkbox',
 					'name' => __( 'Disable Dashicons', 'perform' ),
 					'desc' => __( 'Disables dashicons js on the front end when not logged in.', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/disable-dashicons'
+						)
+					),
 				)
 			);
 
@@ -281,6 +421,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'type' => 'checkbox',
 					'name' => __( 'Disable Password Strength Meter', 'perform' ),
 					'desc' => __( 'Removes WordPress and WooCommerce Password Strength Meter scripts from non essential pages.', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/disable-password-strength-meter'
+						)
+					),
 				)
 			);
 
@@ -297,6 +447,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 						'allow_posts'        => __( 'Only Allow When Editing Posts/Pages', 'perform' ),
 					),
 					'desc'    => __( 'Disable WordPress Heartbeat everywhere or in certain areas (used for auto saving and revision tracking).', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/disable-heartbeat'
+						)
+					),
 				)
 			);
 
@@ -314,6 +474,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 						'60' => sprintf( __( '%s Seconds', 'perform' ), '60'),
 					),
 					'desc'    => __( 'Disable WordPress Heartbeat everywhere or in certain areas (used for auto saving and revision tracking).', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/disable-heartbeat'
+						)
+					),
 				)
 			);
 
@@ -339,6 +509,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 						'30'    => '30',
 					),
 					'desc'    => __( 'Limits the maximum amount of revisions that are allowed for posts and pages.', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/limit-post-revisions'
+						)
+					),
 				)
 			);
 
@@ -357,19 +537,18 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 						'300' => sprintf( __( '%s Minutes', 'perform' ), '5' )
 					),
 					'desc'    => __( 'Controls how often WordPress will auto save posts and pages while editing.', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/autosave-intervals'
+						)
+					),
 				)
 			);
-
-			// Change Login URL.
-//			$this->add_field(
-//				"{$this->prefix}common",
-//				array(
-//					'id'   => 'login_url',
-//					'type' => 'url',
-//					'name' => __( 'Change Login URL', 'perform' ),
-//					'desc' => __( 'When set, this will change your WordPress login URL (slug) to the provided string and will block wp-admin and wp-login endpoints from being directly accessed.', 'perform' ),
-//				)
-//			);
 
 			// Enable SSL.
 			$this->add_field(
@@ -379,6 +558,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'type' => 'checkbox',
 					'name' => __( 'Enable SSL', 'perform' ),
 					'desc' => __( 'Enabling this setting will let you automatically redirect visitors  to the SSL enabled URL of your website.', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/auto-ssl-redirect'
+						)
+					),
 				)
 			);
 
@@ -390,6 +579,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'type' => 'checkbox',
 					'name' => __( 'Disable Default Assets', 'perform' ),
 					'desc' => __( 'Disables WooCommerce default scripts and styles except on product, cart, and checkout pages.', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/disable-woocommerce-assets'
+						)
+					),
 				)
 			);
 
@@ -401,6 +600,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'type' => 'checkbox',
 					'name' => __( 'Disable Cart Fragmentation', 'perform' ),
 					'desc' => __( 'Completely disables WooCommerce cart fragmentation script.', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/disable-woocommerce-cart-fragmentation'
+						)
+					),
 				)
 			);
 
@@ -412,6 +621,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'type' => 'checkbox',
 					'name' => __( 'Disable Status Meta-box', 'perform' ),
 					'desc' => __( 'Disables WooCommerce status meta-box from the WP Admin Dashboard.', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/disable-woocommerce-status'
+						)
+					),
 				)
 			);
 
@@ -423,6 +642,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'type' => 'checkbox',
 					'name' => __( 'Disable Widgets', 'perform' ),
 					'desc' => __( 'Disables all WooCommerce widgets.', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/disable-widgets'
+						)
+					),
 				)
 			);
 
@@ -434,6 +663,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'type' => 'checkbox',
 					'name' => __( 'Enable CDN Rewrite', 'perform' ),
 					'desc' => __( 'Enables rewriting of your site URLs with your CDN URLs which can be configured below.', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/cdn-rewrite'
+						)
+					),
 				)
 			);
 
@@ -445,6 +684,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'type' => 'url',
 					'name' => __( 'CDN URL', 'perform' ),
 					'desc' => __( 'Enter your CDN URL without the trailing backslash. Example: https://cdn.example.com', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/cdn-rewrite'
+						)
+					),
 				)
 			);
 
@@ -457,6 +706,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'placeholder' => 'wp-content, wp-includes',
 					'name'        => __( 'Included Directories', 'perform' ),
 					'desc'        => __( 'Enter any directories you would like to be included in CDN rewriting, separated by commas (,). Default: wp-content,wp-includes', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/cdn-rewrite'
+						)
+					),
 				)
 			);
 
@@ -469,6 +728,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'placeholder' => '.php',
 					'name'        => __( 'CDN Exclusions', 'perform' ),
 					'desc'        => __( 'Enter any directories or file extensions you would like to be excluded from CDN rewriting, separated by commas (,). Default: .php', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/cdn-rewrite'
+						)
+					),
 				)
 			);
 
@@ -480,6 +749,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'type' => 'checkbox',
 					'name' => __( 'Enable Menu Cache', 'perform' ),
 					'desc' => __( 'Enables the Navigation Menu Cache which will provide you the ability to cache all the menus on your WordPress site to reduce the time taken by outputting the menu\'s.', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/navigation-menu-cache'
+						)
+					),
 				)
 			);
 
@@ -491,6 +770,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'type' => 'checkbox',
 					'name' => __( 'Enable Assets Manager', 'perform' ),
 					'desc' => __( 'Enables the Assets Manager which will provide you the ability to enable or disable CSS and JS files on per-page basis.', 'perform' ),
+					'help_link'  => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/assets-manager'
+						)
+					),
 				)
 			);
 
