@@ -123,11 +123,11 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}common",
 				array(
-					'id'   => 'disable_emojis',
-					'type' => 'checkbox',
-					'name' => __( 'Disable Emoji\'s', 'perform' ),
-					'desc' => __( 'Enabling this will disable the usage of emoji\'s in WordPress Posts, Pages, and Custom Post Types.', 'perform' ),
-					'help_link'  => esc_url(
+					'id'        => 'disable_emojis',
+					'type'      => 'checkbox',
+					'name'      => __( 'Disable Emoji\'s', 'perform' ),
+					'desc'      => __( 'Enabling this will disable the usage of emoji\'s in WordPress Posts, Pages, and Custom Post Types.', 'perform' ),
+					'help_link' => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -144,11 +144,11 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}common",
 				array(
-					'id'   => 'disable_embeds',
-					'type' => 'checkbox',
-					'name' => __( 'Disable Embeds', 'perform' ),
-					'desc' => __( 'Removes WordPress Embed JavaScript file (wp-embed.min.js).', 'perform' ),
-					'help_link'  => esc_url(
+					'id'        => 'disable_embeds',
+					'type'      => 'checkbox',
+					'name'      => __( 'Disable Embeds', 'perform' ),
+					'desc'      => __( 'Removes WordPress Embed JavaScript file (wp-embed.min.js).', 'perform' ),
+					'help_link' => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -165,11 +165,11 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}common",
 				array(
-					'id'   => 'remove_query_strings',
-					'type' => 'checkbox',
-					'name' => __( 'Remove Query Strings', 'perform' ),
-					'desc' => __( 'Remove query strings from static resources (CSS, JS).', 'perform' ),
-					'help_link'  => esc_url(
+					'id'        => 'remove_query_strings',
+					'type'      => 'checkbox',
+					'name'      => __( 'Remove Query Strings', 'perform' ),
+					'desc'      => __( 'Remove query strings from static resources (CSS, JS).', 'perform' ),
+					'help_link' => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -186,11 +186,11 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}common",
 				array(
-					'id'   => 'disable_xmlrpc',
-					'type' => 'checkbox',
-					'name' => __( 'Disable XML-RPC', 'perform' ),
-					'desc' => __( 'Disables WordPress XML-RPC functionality.', 'perform' ),
-					'help_link'  => esc_url(
+					'id'        => 'disable_xmlrpc',
+					'type'      => 'checkbox',
+					'name'      => __( 'Disable XML-RPC', 'perform' ),
+					'desc'      => __( 'Disables WordPress XML-RPC functionality.', 'perform' ),
+					'help_link' => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -207,11 +207,11 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}common",
 				array(
-					'id'   => 'remove_jquery_migrate',
-					'type' => 'checkbox',
-					'name' => __( 'Remove jQuery Migrate', 'perform' ),
-					'desc' => __( 'Removes jQuery Migrate JS file (jquery-migrate.min.js).', 'perform' ),
-					'help_link'  => esc_url(
+					'id'        => 'remove_jquery_migrate',
+					'type'      => 'checkbox',
+					'name'      => __( 'Remove jQuery Migrate', 'perform' ),
+					'desc'      => __( 'Removes jQuery Migrate JS file (jquery-migrate.min.js).', 'perform' ),
+					'help_link' => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -228,11 +228,11 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}common",
 				array(
-					'id'   => 'hide_wp_version',
-					'type' => 'checkbox',
-					'name' => __( 'Hide WP Version', 'perform' ),
-					'desc' => __( 'Removes WordPress version generator meta tag.', 'perform' ),
-					'help_link'  => esc_url(
+					'id'        => 'hide_wp_version',
+					'type'      => 'checkbox',
+					'name'      => __( 'Hide WP Version', 'perform' ),
+					'desc'      => __( 'Removes WordPress version generator meta tag.', 'perform' ),
+					'help_link' => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -249,11 +249,11 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}common",
 				array(
-					'id'   => 'remove_wlwmanifest_link',
-					'type' => 'checkbox',
-					'name' => __( 'Remove wlwmanifest Link', 'perform' ),
-					'desc' => __( 'Remove wlwmanifest link tag. It is usually used to support Windows Live Writer.', 'perform' ),
-					'help_link'  => esc_url(
+					'id'        => 'remove_wlwmanifest_link',
+					'type'      => 'checkbox',
+					'name'      => __( 'Remove wlwmanifest Link', 'perform' ),
+					'desc'      => __( 'Remove wlwmanifest link tag. It is usually used to support Windows Live Writer.', 'perform' ),
+					'help_link' => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -270,11 +270,11 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}common",
 				array(
-					'id'   => 'remove_rsd_link',
-					'type' => 'checkbox',
-					'name' => __( 'Remove RSD Link', 'perform' ),
-					'desc' => __( 'Remove RSD (Real Simple Discovery) link tag.', 'perform' ),
-					'help_link'  => esc_url(
+					'id'        => 'remove_rsd_link',
+					'type'      => 'checkbox',
+					'name'      => __( 'Remove RSD Link', 'perform' ),
+					'desc'      => __( 'Remove RSD (Real Simple Discovery) link tag.', 'perform' ),
+					'help_link' => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -291,11 +291,11 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}common",
 				array(
-					'id'   => 'remove_shortlink',
-					'type' => 'checkbox',
-					'name' => __( 'Remove Shortlink', 'perform' ),
-					'desc' => __( 'Remove Shortlink link tag.', 'perform' ),
-					'help_link'  => esc_url(
+					'id'        => 'remove_shortlink',
+					'type'      => 'checkbox',
+					'name'      => __( 'Remove Shortlink', 'perform' ),
+					'desc'      => __( 'Remove Shortlink link tag.', 'perform' ),
+					'help_link' => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -312,11 +312,11 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}common",
 				array(
-					'id'   => 'disable_rss_feeds',
-					'type' => 'checkbox',
-					'name' => __( 'Disable RSS Feeds', 'perform' ),
-					'desc' => __( 'Disable WordPress generated RSS feeds and 301 redirect URL to parent.', 'perform' ),
-					'help_link'  => esc_url(
+					'id'        => 'disable_rss_feeds',
+					'type'      => 'checkbox',
+					'name'      => __( 'Disable RSS Feeds', 'perform' ),
+					'desc'      => __( 'Disable WordPress generated RSS feeds and 301 redirect URL to parent.', 'perform' ),
+					'help_link' => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -333,11 +333,11 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}common",
 				array(
-					'id'   => 'remove_feed_links',
-					'type' => 'checkbox',
-					'name' => __( 'Remove RSS Feed Links', 'perform' ),
-					'desc' => __( 'Disable WordPress generated RSS feed link tags.', 'perform' ),
-					'help_link'  => esc_url(
+					'id'        => 'remove_feed_links',
+					'type'      => 'checkbox',
+					'name'      => __( 'Remove RSS Feed Links', 'perform' ),
+					'desc'      => __( 'Disable WordPress generated RSS feed link tags.', 'perform' ),
+					'help_link' => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -354,11 +354,11 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}common",
 				array(
-					'id'   => 'disable_self_pingbacks',
-					'type' => 'checkbox',
-					'name' => __( 'Disable Self Pingbacks', 'perform' ),
-					'desc' => __( 'Disable Self Pingbacks (generated when linking to an article on your own blog).', 'perform' ),
-					'help_link'  => esc_url(
+					'id'        => 'disable_self_pingbacks',
+					'type'      => 'checkbox',
+					'name'      => __( 'Disable Self Pingbacks', 'perform' ),
+					'desc'      => __( 'Disable Self Pingbacks (generated when linking to an article on your own blog).', 'perform' ),
+					'help_link' => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -375,11 +375,11 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}common",
 				array(
-					'id'   => 'remove_rest_api_links',
-					'type' => 'checkbox',
-					'name' => __( 'Remove REST API Links', 'perform' ),
-					'desc' => __( 'Removes REST API link tag from the front end and the REST API header link from page requests.', 'perform' ),
-					'help_link'  => esc_url(
+					'id'        => 'remove_rest_api_links',
+					'type'      => 'checkbox',
+					'name'      => __( 'Remove REST API Links', 'perform' ),
+					'desc'      => __( 'Removes REST API link tag from the front end and the REST API header link from page requests.', 'perform' ),
+					'help_link' => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -396,11 +396,11 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}common",
 				array(
-					'id'   => 'disable_dashicons',
-					'type' => 'checkbox',
-					'name' => __( 'Disable Dashicons', 'perform' ),
-					'desc' => __( 'Disables dashicons js on the front end when not logged in.', 'perform' ),
-					'help_link'  => esc_url(
+					'id'        => 'disable_dashicons',
+					'type'      => 'checkbox',
+					'name'      => __( 'Disable Dashicons', 'perform' ),
+					'desc'      => __( 'Disables dashicons js on the front end when not logged in.', 'perform' ),
+					'help_link' => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -417,11 +417,11 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}common",
 				array(
-					'id'   => 'disable_password_strength_meter',
-					'type' => 'checkbox',
-					'name' => __( 'Disable Password Strength Meter', 'perform' ),
-					'desc' => __( 'Removes WordPress and WooCommerce Password Strength Meter scripts from non essential pages.', 'perform' ),
-					'help_link'  => esc_url(
+					'id'        => 'disable_password_strength_meter',
+					'type'      => 'checkbox',
+					'name'      => __( 'Disable Password Strength Meter', 'perform' ),
+					'desc'      => __( 'Removes WordPress and WooCommerce Password Strength Meter scripts from non essential pages.', 'perform' ),
+					'help_link' => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -438,16 +438,16 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}common",
 				array(
-					'id'      => 'disable_heartbeat',
-					'type'    => 'select',
-					'name'    => __( 'Disable Heartbeat', 'perform' ),
-					'options' => array(
+					'id'        => 'disable_heartbeat',
+					'type'      => 'select',
+					'name'      => __( 'Disable Heartbeat', 'perform' ),
+					'options'   => array(
 						''                   => __( 'Default', 'perform' ),
 						'disable_everywhere' => __( 'Disable Everywhere', 'perform' ),
 						'allow_posts'        => __( 'Only Allow When Editing Posts/Pages', 'perform' ),
 					),
-					'desc'    => __( 'Disable WordPress Heartbeat everywhere or in certain areas (used for auto saving and revision tracking).', 'perform' ),
-					'help_link'  => esc_url(
+					'desc'      => __( 'Disable WordPress Heartbeat everywhere or in certain areas (used for auto saving and revision tracking).', 'perform' ),
+					'help_link' => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -464,17 +464,17 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}common",
 				array(
-					'id'      => 'heartbeat_frequency',
-					'type'    => 'select',
-					'name'    => __( 'Heartbeat Frequency', 'perform' ),
-					'options' => array(
+					'id'        => 'heartbeat_frequency',
+					'type'      => 'select',
+					'name'      => __( 'Heartbeat Frequency', 'perform' ),
+					'options'   => array(
 						''   => sprintf( __( '%s Seconds', 'perform' ), '15') . ' (' . __( 'Default', 'perform' ) . ')',
 						'30' => sprintf( __( '%s Seconds', 'perform' ), '30'),
 						'45' => sprintf( __( '%s Seconds', 'perform' ), '45'),
 						'60' => sprintf( __( '%s Seconds', 'perform' ), '60'),
 					),
-					'desc'    => __( 'Disable WordPress Heartbeat everywhere or in certain areas (used for auto saving and revision tracking).', 'perform' ),
-					'help_link'  => esc_url(
+					'desc'      => __( 'Disable WordPress Heartbeat everywhere or in certain areas (used for auto saving and revision tracking).', 'perform' ),
+					'help_link' => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -491,10 +491,10 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}common",
 				array(
-					'id'      => 'limit_post_revisions',
-					'type'    => 'select',
-					'name'    => __( 'Limit Post Revisions', 'perform' ),
-					'options' => array(
+					'id'        => 'limit_post_revisions',
+					'type'      => 'select',
+					'name'      => __( 'Limit Post Revisions', 'perform' ),
+					'options'   => array(
 						''      => __( 'Default', 'perform' ),
 						'false' => __( 'Disable Post Revisions', 'perform' ),
 						'1'     => '1',
@@ -508,8 +508,8 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 						'25'    => '25',
 						'30'    => '30',
 					),
-					'desc'    => __( 'Limits the maximum amount of revisions that are allowed for posts and pages.', 'perform' ),
-					'help_link'  => esc_url(
+					'desc'      => __( 'Limits the maximum amount of revisions that are allowed for posts and pages.', 'perform' ),
+					'help_link' => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -526,18 +526,18 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}common",
 				array(
-					'id'      => 'autosave_interval',
-					'type'    => 'select',
-					'name'    => __( 'Autosave Interval', 'perform' ),
-					'options' => array(
+					'id'       => 'autosave_interval',
+					'type'     => 'select',
+					'name'     => __( 'Autosave Interval', 'perform' ),
+					'options'  => array(
 						''    => __( '1 Minute', 'perform' ) . ' (' . __( 'Default', 'perform' ) . ')',
 						'120' => sprintf( __( '%s Minutes', 'perform' ), '2' ),
 						'180' => sprintf( __( '%s Minutes', 'perform' ), '3' ),
 						'240' => sprintf( __( '%s Minutes', 'perform' ), '4' ),
 						'300' => sprintf( __( '%s Minutes', 'perform' ), '5' )
 					),
-					'desc'    => __( 'Controls how often WordPress will auto save posts and pages while editing.', 'perform' ),
-					'help_link'  => esc_url(
+					'desc'     => __( 'Controls how often WordPress will auto save posts and pages while editing.', 'perform' ),
+					'help_link' => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -554,11 +554,11 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}ssl",
 				array(
-					'id'   => 'enable_ssl',
-					'type' => 'checkbox',
-					'name' => __( 'Enable SSL', 'perform' ),
-					'desc' => __( 'Enabling this setting will let you automatically redirect visitors  to the SSL enabled URL of your website.', 'perform' ),
-					'help_link'  => esc_url(
+					'id'        => 'enable_ssl',
+					'type'      => 'checkbox',
+					'name'      => __( 'Enable SSL', 'perform' ),
+					'desc'      => __( 'Enabling this setting will let you automatically redirect visitors  to the SSL enabled URL of your website.', 'perform' ),
+					'help_link' => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -575,11 +575,11 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}woocommerce",
 				array(
-					'id'   => 'disable_woocommerce_assets',
-					'type' => 'checkbox',
-					'name' => __( 'Disable Default Assets', 'perform' ),
-					'desc' => __( 'Disables WooCommerce default scripts and styles except on product, cart, and checkout pages.', 'perform' ),
-					'help_link'  => esc_url(
+					'id'        => 'disable_woocommerce_assets',
+					'type'      => 'checkbox',
+					'name'      => __( 'Disable Default Assets', 'perform' ),
+					'desc'      => __( 'Disables WooCommerce default scripts and styles except on product, cart, and checkout pages.', 'perform' ),
+					'help_link' => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -596,11 +596,11 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}woocommerce",
 				array(
-					'id'   => 'disable_woocommerce_cart_fragmentation',
-					'type' => 'checkbox',
-					'name' => __( 'Disable Cart Fragmentation', 'perform' ),
-					'desc' => __( 'Completely disables WooCommerce cart fragmentation script.', 'perform' ),
-					'help_link'  => esc_url(
+					'id'        => 'disable_woocommerce_cart_fragmentation',
+					'type'      => 'checkbox',
+					'name'      => __( 'Disable Cart Fragmentation', 'perform' ),
+					'desc'      => __( 'Completely disables WooCommerce cart fragmentation script.', 'perform' ),
+					'help_link' => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -617,11 +617,11 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}woocommerce",
 				array(
-					'id'   => 'disable_woocommerce_status',
-					'type' => 'checkbox',
-					'name' => __( 'Disable Status Meta-box', 'perform' ),
-					'desc' => __( 'Disables WooCommerce status meta-box from the WP Admin Dashboard.', 'perform' ),
-					'help_link'  => esc_url(
+					'id'        => 'disable_woocommerce_status',
+					'type'      => 'checkbox',
+					'name'      => __( 'Disable Status Meta-box', 'perform' ),
+					'desc'      => __( 'Disables WooCommerce status meta-box from the WP Admin Dashboard.', 'perform' ),
+					'help_link' => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -638,11 +638,11 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}woocommerce",
 				array(
-					'id'   => 'disable_woocommerce_widgets',
-					'type' => 'checkbox',
-					'name' => __( 'Disable Widgets', 'perform' ),
-					'desc' => __( 'Disables all WooCommerce widgets.', 'perform' ),
-					'help_link'  => esc_url(
+					'id'        => 'disable_woocommerce_widgets',
+					'type'      => 'checkbox',
+					'name'      => __( 'Disable Widgets', 'perform' ),
+					'desc'      => __( 'Disables all WooCommerce widgets.', 'perform' ),
+					'help_link' => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -659,11 +659,11 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}cdn",
 				array(
-					'id'   => 'enable_cdn',
-					'type' => 'checkbox',
-					'name' => __( 'Enable CDN Rewrite', 'perform' ),
-					'desc' => __( 'Enables rewriting of your site URLs with your CDN URLs which can be configured below.', 'perform' ),
-					'help_link'  => esc_url(
+					'id'        => 'enable_cdn',
+					'type'      => 'checkbox',
+					'name'      => __( 'Enable CDN Rewrite', 'perform' ),
+					'desc'      => __( 'Enables rewriting of your site URLs with your CDN URLs which can be configured below.', 'perform' ),
+					'help_link' => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -680,11 +680,11 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}cdn",
 				array(
-					'id'   => 'cdn_url',
-					'type' => 'url',
-					'name' => __( 'CDN URL', 'perform' ),
-					'desc' => __( 'Enter your CDN URL without the trailing backslash. Example: https://cdn.example.com', 'perform' ),
-					'help_link'  => esc_url(
+					'id'        => 'cdn_url',
+					'type'      => 'url',
+					'name'      => __( 'CDN URL', 'perform' ),
+					'desc'      => __( 'Enter your CDN URL without the trailing backslash. Example: https://cdn.example.com', 'perform' ),
+					'help_link' => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -706,7 +706,7 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'placeholder' => 'wp-content, wp-includes',
 					'name'        => __( 'Included Directories', 'perform' ),
 					'desc'        => __( 'Enter any directories you would like to be included in CDN rewriting, separated by commas (,). Default: wp-content,wp-includes', 'perform' ),
-					'help_link'  => esc_url(
+					'help_link'   => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -728,7 +728,7 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 					'placeholder' => '.php',
 					'name'        => __( 'CDN Exclusions', 'perform' ),
 					'desc'        => __( 'Enter any directories or file extensions you would like to be excluded from CDN rewriting, separated by commas (,). Default: .php', 'perform' ),
-					'help_link'  => esc_url(
+					'help_link'   => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -745,11 +745,11 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}advanced",
 				array(
-					'id'   => 'enable_navigation_menu_cache',
-					'type' => 'checkbox',
-					'name' => __( 'Enable Menu Cache', 'perform' ),
-					'desc' => __( 'Enables the Navigation Menu Cache which will provide you the ability to cache all the menus on your WordPress site to reduce the time taken by outputting the menu\'s.', 'perform' ),
-					'help_link'  => esc_url(
+					'id'        => 'enable_navigation_menu_cache',
+					'type'      => 'checkbox',
+					'name'      => __( 'Enable Menu Cache', 'perform' ),
+					'desc'      => __( 'Enables the Navigation Menu Cache which will provide you the ability to cache all the menus on your WordPress site to reduce the time taken by outputting the menu\'s.', 'perform' ),
+					'help_link' => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -766,11 +766,11 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}advanced",
 				array(
-					'id'   => 'enable_assets_manager',
-					'type' => 'checkbox',
-					'name' => __( 'Enable Assets Manager', 'perform' ),
-					'desc' => __( 'Enables the Assets Manager which will provide you the ability to enable or disable CSS and JS files on per-page basis.', 'perform' ),
-					'help_link'  => esc_url(
+					'id'        => 'enable_assets_manager',
+					'type'      => 'checkbox',
+					'name'      => __( 'Enable Assets Manager', 'perform' ),
+					'desc'      => __( 'Enables the Assets Manager which will provide you the ability to enable or disable CSS and JS files on per-page basis.', 'perform' ),
+					'help_link' => esc_url(
 						add_query_arg(
 							array(
 								'utm_source'   => 'admin-settings',
@@ -787,10 +787,20 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}advanced",
 				array(
-					'id'   => 'dns_prefetch',
-					'type' => 'textarea',
-					'name' => __( 'DNS Prefetch', 'perform' ),
-					'desc' => __( 'Resolve domain names before a user clicks. Format: //domain.tld (one per line)', 'perform' ),
+					'id'        => 'dns_prefetch',
+					'type'      => 'textarea',
+					'name'      => __( 'DNS Prefetch', 'perform' ),
+					'desc'      => __( 'Resolve domain names before a user clicks. Format: //domain.tld (one per line)', 'perform' ),
+					'help_link' => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/dns-prefetch'
+						)
+					),
 				)
 			);
 
@@ -798,10 +808,20 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}advanced",
 				array(
-					'id'   => 'preconnect',
-					'type' => 'textarea',
-					'name' => __( 'Preconnect', 'perform' ),
-					'desc' => __( 'Preconnect allows the browser to set up early connections before an HTTP request, eliminating roundtrip latency and saving time for users. Format: scheme://domain.tld (one per line)', 'perform' ),
+					'id'        => 'preconnect',
+					'type'      => 'textarea',
+					'name'      => __( 'Preconnect', 'perform' ),
+					'desc'      => __( 'Preconnect allows the browser to set up early connections before an HTTP request, eliminating roundtrip latency and saving time for users. Format: scheme://domain.tld (one per line)', 'perform' ),
+					'help_link' => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/preconnect'
+						)
+					),
 				)
 			);
 
@@ -809,14 +829,23 @@ if ( ! class_exists( 'Perform_Admin_Settings' ) ) {
 			$this->add_field(
 				"{$this->prefix}advanced",
 				array(
-					'id'   => 'remove_data_on_uninstall',
-					'type' => 'checkbox',
-					'name' => __( 'Remove Data on Uninstall', 'perform' ),
-					'desc' => __( 'When enabled, this will cause all the options data to be removed from your database when the plugin is uninstalled.', 'perform' ),
+					'id'        => 'remove_data_on_uninstall',
+					'type'      => 'checkbox',
+					'name'      => __( 'Remove Data on Uninstall', 'perform' ),
+					'desc'      => __( 'When enabled, this will cause all the options data to be removed from your database when the plugin is uninstalled.', 'perform' ),
+					'help_link' => esc_url(
+						add_query_arg(
+							array(
+								'utm_source'   => 'admin-settings',
+								'utm_medium'   => 'plugin',
+								'utm_campaign' => 'perform',
+							),
+							'https://performwp.com/docs/clean-uninstall'
+						)
+					),
 				)
 			);
 
 		}
-
 	}
 }
