@@ -97,6 +97,11 @@ Please make sure you make a backup of your database before updating any version 
 
 == Changelog ==
 
+= 1.2.1: June 22th, 2019 =
+Fix: redirect to welcome screen on plugin activation [#15](https://github.com/mehul0810/issues/15)
+General Design Improvements & Tweaks
+User Experience Improvements for settings page
+
 = 1.2.0: April 30th, 2019 =
 Fix: add quick access to assets manager from admin listing [#10](https://github.com/mehul0810/issues/10)
 Feat: add menu cache [#11](https://github.com/mehul0810/issues/11)
