@@ -28,387 +28,488 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: includes/admin/admin-filters.php:66
+#: includes/admin/admin-filters.php:66, includes/admin/class-perform-welcome.php:429
 msgid "Support"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings-api.php:711
+#: includes/admin/class-perform-admin-settings-api.php:720
 msgid "Perform Settings"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:54
+#: includes/admin/class-perform-admin-settings.php:54
 msgid "General"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:55
+#: includes/admin/class-perform-admin-settings.php:55
 msgid "SSL"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:56
+#: includes/admin/class-perform-admin-settings.php:56
 msgid "CDN"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:57
+#: includes/admin/class-perform-admin-settings.php:57
 msgid "Advanced"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:64
+#: includes/admin/class-perform-admin-settings.php:64
 msgid "WooCommerce"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:86, includes/admin/class.perform-admin-settings.php:87, includes/modules/assets-manager/class-perform-assets-manager.php:90
+#: includes/admin/class-perform-admin-settings.php:86, includes/admin/class-perform-admin-settings.php:87, includes/modules/assets-manager/class-perform-assets-manager.php:91
 msgid "Perform"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:128
+#: includes/admin/class-perform-admin-settings.php:128
 msgid "Disable Emoji's"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:129
+#: includes/admin/class-perform-admin-settings.php:129
 msgid "Enabling this will disable the usage of emoji's in WordPress Posts, Pages, and Custom Post Types."
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:139
+#: includes/admin/class-perform-admin-settings.php:149
 msgid "Disable Embeds"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:140
+#: includes/admin/class-perform-admin-settings.php:150
 msgid "Removes WordPress Embed JavaScript file (wp-embed.min.js)."
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:150
+#: includes/admin/class-perform-admin-settings.php:170
 msgid "Remove Query Strings"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:151
+#: includes/admin/class-perform-admin-settings.php:171
 msgid "Remove query strings from static resources (CSS, JS)."
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:161
+#: includes/admin/class-perform-admin-settings.php:191
 msgid "Disable XML-RPC"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:162
+#: includes/admin/class-perform-admin-settings.php:192
 msgid "Disables WordPress XML-RPC functionality."
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:172
+#: includes/admin/class-perform-admin-settings.php:212
 msgid "Remove jQuery Migrate"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:173
+#: includes/admin/class-perform-admin-settings.php:213
 msgid "Removes jQuery Migrate JS file (jquery-migrate.min.js)."
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:183
+#: includes/admin/class-perform-admin-settings.php:233
 msgid "Hide WP Version"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:184
+#: includes/admin/class-perform-admin-settings.php:234
 msgid "Removes WordPress version generator meta tag."
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:194
+#: includes/admin/class-perform-admin-settings.php:254
 msgid "Remove wlwmanifest Link"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:195
+#: includes/admin/class-perform-admin-settings.php:255
 msgid "Remove wlwmanifest link tag. It is usually used to support Windows Live Writer."
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:205
+#: includes/admin/class-perform-admin-settings.php:275
 msgid "Remove RSD Link"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:206
+#: includes/admin/class-perform-admin-settings.php:276
 msgid "Remove RSD (Real Simple Discovery) link tag."
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:216
+#: includes/admin/class-perform-admin-settings.php:296
 msgid "Remove Shortlink"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:217
+#: includes/admin/class-perform-admin-settings.php:297
 msgid "Remove Shortlink link tag."
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:227
+#: includes/admin/class-perform-admin-settings.php:317
 msgid "Disable RSS Feeds"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:228
+#: includes/admin/class-perform-admin-settings.php:318
 msgid "Disable WordPress generated RSS feeds and 301 redirect URL to parent."
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:238
+#: includes/admin/class-perform-admin-settings.php:338
 msgid "Remove RSS Feed Links"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:239
+#: includes/admin/class-perform-admin-settings.php:339
 msgid "Disable WordPress generated RSS feed link tags."
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:249
+#: includes/admin/class-perform-admin-settings.php:359
 msgid "Disable Self Pingbacks"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:250
+#: includes/admin/class-perform-admin-settings.php:360
 msgid "Disable Self Pingbacks (generated when linking to an article on your own blog)."
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:260
+#: includes/admin/class-perform-admin-settings.php:380
 msgid "Remove REST API Links"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:261
+#: includes/admin/class-perform-admin-settings.php:381
 msgid "Removes REST API link tag from the front end and the REST API header link from page requests."
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:271
+#: includes/admin/class-perform-admin-settings.php:401
 msgid "Disable Dashicons"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:272
+#: includes/admin/class-perform-admin-settings.php:402
 msgid "Disables dashicons js on the front end when not logged in."
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:282
+#: includes/admin/class-perform-admin-settings.php:422
 msgid "Disable Password Strength Meter"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:283
+#: includes/admin/class-perform-admin-settings.php:423
 msgid "Removes WordPress and WooCommerce Password Strength Meter scripts from non essential pages."
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:293
+#: includes/admin/class-perform-admin-settings.php:443
 msgid "Disable Heartbeat"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:295, includes/admin/class.perform-admin-settings.php:311, includes/admin/class.perform-admin-settings.php:328, includes/admin/class.perform-admin-settings.php:353
+#: includes/admin/class-perform-admin-settings.php:445, includes/admin/class-perform-admin-settings.php:471, includes/admin/class-perform-admin-settings.php:498, includes/admin/class-perform-admin-settings.php:533
 msgid "Default"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:296
+#: includes/admin/class-perform-admin-settings.php:446
 msgid "Disable Everywhere"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:297
+#: includes/admin/class-perform-admin-settings.php:447
 msgid "Only Allow When Editing Posts/Pages"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:299, includes/admin/class.perform-admin-settings.php:316
+#: includes/admin/class-perform-admin-settings.php:449, includes/admin/class-perform-admin-settings.php:476
 msgid "Disable WordPress Heartbeat everywhere or in certain areas (used for auto saving and revision tracking)."
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:309
+#: includes/admin/class-perform-admin-settings.php:469
 msgid "Heartbeat Frequency"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:311, includes/admin/class.perform-admin-settings.php:312, includes/admin/class.perform-admin-settings.php:313, includes/admin/class.perform-admin-settings.php:314
+#: includes/admin/class-perform-admin-settings.php:471, includes/admin/class-perform-admin-settings.php:472, includes/admin/class-perform-admin-settings.php:473, includes/admin/class-perform-admin-settings.php:474
 msgid "%s Seconds"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:326
+#: includes/admin/class-perform-admin-settings.php:496
 msgid "Limit Post Revisions"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:329
+#: includes/admin/class-perform-admin-settings.php:499
 msgid "Disable Post Revisions"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:341
+#: includes/admin/class-perform-admin-settings.php:511
 msgid "Limits the maximum amount of revisions that are allowed for posts and pages."
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:351
+#: includes/admin/class-perform-admin-settings.php:531
 msgid "Autosave Interval"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:353
+#: includes/admin/class-perform-admin-settings.php:533
 msgid "1 Minute"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:354, includes/admin/class.perform-admin-settings.php:355, includes/admin/class.perform-admin-settings.php:356, includes/admin/class.perform-admin-settings.php:357
+#: includes/admin/class-perform-admin-settings.php:534, includes/admin/class-perform-admin-settings.php:535, includes/admin/class-perform-admin-settings.php:536, includes/admin/class-perform-admin-settings.php:537
 msgid "%s Minutes"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:359
+#: includes/admin/class-perform-admin-settings.php:539
 msgid "Controls how often WordPress will auto save posts and pages while editing."
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:380
+#: includes/admin/class-perform-admin-settings.php:559
 msgid "Enable SSL"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:381
+#: includes/admin/class-perform-admin-settings.php:560
 msgid "Enabling this setting will let you automatically redirect visitors  to the SSL enabled URL of your website."
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:391
+#: includes/admin/class-perform-admin-settings.php:580
 msgid "Disable Default Assets"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:392
+#: includes/admin/class-perform-admin-settings.php:581
 msgid "Disables WooCommerce default scripts and styles except on product, cart, and checkout pages."
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:402
+#: includes/admin/class-perform-admin-settings.php:601
 msgid "Disable Cart Fragmentation"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:403
+#: includes/admin/class-perform-admin-settings.php:602
 msgid "Completely disables WooCommerce cart fragmentation script."
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:413
+#: includes/admin/class-perform-admin-settings.php:622
 msgid "Disable Status Meta-box"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:414
+#: includes/admin/class-perform-admin-settings.php:623
 msgid "Disables WooCommerce status meta-box from the WP Admin Dashboard."
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:424
+#: includes/admin/class-perform-admin-settings.php:643
 msgid "Disable Widgets"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:425
+#: includes/admin/class-perform-admin-settings.php:644
 msgid "Disables all WooCommerce widgets."
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:435
+#: includes/admin/class-perform-admin-settings.php:664
 msgid "Enable CDN Rewrite"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:436
+#: includes/admin/class-perform-admin-settings.php:665
 msgid "Enables rewriting of your site URLs with your CDN URLs which can be configured below."
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:446
+#: includes/admin/class-perform-admin-settings.php:685
 msgid "CDN URL"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:447
+#: includes/admin/class-perform-admin-settings.php:686
 msgid "Enter your CDN URL without the trailing backslash. Example: https://cdn.example.com"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:458
+#: includes/admin/class-perform-admin-settings.php:707
 msgid "Included Directories"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:459
+#: includes/admin/class-perform-admin-settings.php:708
 msgid "Enter any directories you would like to be included in CDN rewriting, separated by commas (,). Default: wp-content,wp-includes"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:470
+#: includes/admin/class-perform-admin-settings.php:729
 msgid "CDN Exclusions"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:471
+#: includes/admin/class-perform-admin-settings.php:730
 msgid "Enter any directories or file extensions you would like to be excluded from CDN rewriting, separated by commas (,). Default: .php"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:481
+#: includes/admin/class-perform-admin-settings.php:750
 msgid "Enable Menu Cache"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:482
+#: includes/admin/class-perform-admin-settings.php:751
 msgid "Enables the Navigation Menu Cache which will provide you the ability to cache all the menus on your WordPress site to reduce the time taken by outputting the menu's."
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:492
+#: includes/admin/class-perform-admin-settings.php:771
 msgid "Enable Assets Manager"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:493
+#: includes/admin/class-perform-admin-settings.php:772
 msgid "Enables the Assets Manager which will provide you the ability to enable or disable CSS and JS files on per-page basis."
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:503
+#: includes/admin/class-perform-admin-settings.php:792
 msgid "DNS Prefetch"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:504
+#: includes/admin/class-perform-admin-settings.php:793
 msgid "Resolve domain names before a user clicks. Format: //domain.tld (one per line)"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:514
+#: includes/admin/class-perform-admin-settings.php:813
 msgid "Preconnect"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:515
+#: includes/admin/class-perform-admin-settings.php:814
 msgid "Preconnect allows the browser to set up early connections before an HTTP request, eliminating roundtrip latency and saving time for users. Format: scheme://domain.tld (one per line)"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:525
+#: includes/admin/class-perform-admin-settings.php:834
 msgid "Remove Data on Uninstall"
 msgstr ""
 
-#: includes/admin/class.perform-admin-settings.php:526
+#: includes/admin/class-perform-admin-settings.php:835
 msgid "When enabled, this will cause all the options data to be removed from your database when the plugin is uninstalled."
+msgstr ""
+
+#: includes/admin/class-perform-welcome.php:74, includes/admin/class-perform-welcome.php:75, includes/admin/class-perform-welcome.php:122
+msgid "What's New"
+msgstr ""
+
+#. translators: %s: Perform version
+#: includes/admin/class-perform-welcome.php:84
+msgid "Perform %s - Credits"
+msgstr ""
+
+#: includes/admin/class-perform-welcome.php:85
+msgid "The people that build Perform"
+msgstr ""
+
+#: includes/admin/class-perform-welcome.php:126
+msgid "Credits"
+msgstr ""
+
+#: includes/admin/class-perform-welcome.php:155
+msgid "What's New in Perform %s"
+msgstr ""
+
+#: includes/admin/class-perform-welcome.php:156
+msgid "Perform is regularly updated with new features and fixes to ensure that your site performance is up-to-date. We always recommend keeping Perform up to date with the latest version."
+msgstr ""
+
+#: includes/admin/class-perform-welcome.php:160
+msgid "GitHub Contributors"
+msgstr ""
+
+#. translators: %s: https://github.com/mehul0810/perform
+#: includes/admin/class-perform-welcome.php:163
+msgid "Perform is developed and maintained by Mehul Gohil and vibrant open source community. If you are interested in contributing please visit the <a href=\"%s\" target=\"_blank\">GitHub Repo</a>."
+msgstr ""
+
+#. translators: %s: Perform version
+#: includes/admin/class-perform-welcome.php:195
+msgid "Version %s"
+msgstr ""
+
+#: includes/admin/class-perform-welcome.php:226
+msgid "See what's new in version %1$s of Perform! If you feel we've missed a fix or there's a feature you'd like to see developed please <a href=\"%2$s\" target=\"_blank\">contact support</a>."
+msgstr ""
+
+#. translators: %s: https://github.com/mehul0810/perform
+#: includes/admin/class-perform-welcome.php:263
+msgid "Perform is developed & maintained by Mehul Gohil and vibrant open source community. If you are interested in contributing please visit the <a href=\"%s\" target=\"_blank\">GitHub Repo</a>."
+msgstr ""
+
+#: includes/admin/class-perform-welcome.php:291
+msgid "No valid changlog was found."
+msgstr ""
+
+#. translators: %s: Perform twitter user @perform_wp
+#: includes/admin/class-perform-welcome.php:394
+msgid "Follow %s"
+msgstr ""
+
+#: includes/admin/class-perform-welcome.php:430
+msgid "Inevitably questions arise while improving loading speed of your WordPress site."
+msgstr ""
+
+#: includes/admin/class-perform-welcome.php:433
+msgid "How support works"
+msgstr ""
+
+#: includes/admin/class-perform-welcome.php:439
+msgid "Documentation"
+msgstr ""
+
+#: includes/admin/class-perform-welcome.php:440
+msgid "Learn the ins and outs of Perform with well organized and clearly written documentation."
+msgstr ""
+
+#: includes/admin/class-perform-welcome.php:442
+msgid "Check out the docs"
+msgstr ""
+
+#: includes/admin/class-perform-welcome.php:463
+msgid "Sign up for the below to stay informed about important updates, release notes, performance optimization tips, and more! We'll never spam you."
+msgstr ""
+
+#: includes/admin/class-perform-welcome.php:470
+msgid "To complete your subscription, click the confirmation link in your email. Thank you!"
+msgstr ""
+
+#: includes/admin/class-perform-welcome.php:477, includes/admin/class-perform-welcome.php:479
+msgid "Email Address (required)"
+msgstr ""
+
+#: includes/admin/class-perform-welcome.php:484, includes/admin/class-perform-welcome.php:486
+msgid "First Name"
+msgstr ""
+
+#: includes/admin/class-perform-welcome.php:491, includes/admin/class-perform-welcome.php:493
+msgid "Last Name"
+msgstr ""
+
+#: includes/admin/class-perform-welcome.php:499
+msgid "Subscribe"
 msgstr ""
 
 #: includes/modules/class-perform-disable-rss-feeds.php:69
 msgid "No feed available, please visit the <a href=\"%s\">homepage</a>!"
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:107
+#: includes/modules/assets-manager/class-perform-assets-manager.php:108
 msgid "Save"
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:113, includes/modules/assets-manager/functions.php:370
+#: includes/modules/assets-manager/class-perform-assets-manager.php:114, includes/modules/assets-manager/functions.php:370
 msgid "Assets Manager"
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:116
+#: includes/modules/assets-manager/class-perform-assets-manager.php:117
 msgid "Optimise loading of assets on this page."
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:286
+#: includes/modules/assets-manager/class-perform-assets-manager.php:287
 msgid "Handle"
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:289
+#: includes/modules/assets-manager/class-perform-assets-manager.php:290
 msgid "Assets URL"
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:292
+#: includes/modules/assets-manager/class-perform-assets-manager.php:293
 msgid "Type"
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:295
+#: includes/modules/assets-manager/class-perform-assets-manager.php:296
 msgid "Size"
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:298
+#: includes/modules/assets-manager/class-perform-assets-manager.php:299
 msgid "Status"
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:402
+#: includes/modules/assets-manager/class-perform-assets-manager.php:403
 msgid "All assets in this group have been disabled. Please enable the group to individually manager assets."
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:423, includes/modules/assets-manager/class-perform-assets-manager.php:515
+#: includes/modules/assets-manager/class-perform-assets-manager.php:424, includes/modules/assets-manager/class-perform-assets-manager.php:516
 msgid "Current URL"
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:424
+#: includes/modules/assets-manager/class-perform-assets-manager.php:425
 msgid "Everywhere"
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:429
+#: includes/modules/assets-manager/class-perform-assets-manager.php:430
 msgid "Disable on"
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:477
+#: includes/modules/assets-manager/class-perform-assets-manager.php:478
 msgid "ON"
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:480
+#: includes/modules/assets-manager/class-perform-assets-manager.php:481
 msgid "OFF"
 msgstr ""
 
-#: includes/modules/assets-manager/class-perform-assets-manager.php:508
+#: includes/modules/assets-manager/class-perform-assets-manager.php:509
 msgid "Exceptions"
 msgstr ""
 
@@ -424,30 +525,30 @@ msgstr ""
 msgid "Cheatin&#8217; huh?"
 msgstr ""
 
-#: perform.php:252
+#: perform.php:261
 msgid "Your site could be faster and more secure with a newer PHP version."
 msgstr ""
 
-#: perform.php:253
+#: perform.php:262
 msgid "Hey, we've noticed that you're running an outdated version of PHP. PHP is the programming language that WordPress and Perform for WordPress are built on. The version that is currently used for your site is no longer supported. Newer versions of PHP are both faster and more secure. In fact, your version of PHP no longer receives security updates, which is why we're sending you this notice."
 msgstr ""
 
-#: perform.php:254
+#: perform.php:263
 msgid "Hosts have the ability to update your PHP version, but sometimes they don't dare to do that because they're afraid they'll break your site."
 msgstr ""
 
-#: perform.php:255
+#: perform.php:264
 msgid "To which version should I update?"
 msgstr ""
 
-#: perform.php:256
+#: perform.php:265
 msgid "You should update your PHP version to either 5.6 or to 7.0 or 7.1. On a normal WordPress site, switching to PHP 5.6 should never cause issues. We would however actually recommend you switch to PHP7. There are some plugins that are not ready for PHP7 though, so do some testing first. PHP7 is much faster than PHP 5.6. It's also the only PHP version still in active development and therefore the better option for your site in the long run."
 msgstr ""
 
-#: perform.php:257
+#: perform.php:266
 msgid "Can't update? Ask your host!"
 msgstr ""
 
-#: perform.php:258
+#: perform.php:267
 msgid "If you cannot upgrade your PHP version yourself, you can send an email to your host. If they don't want to upgrade your PHP version, we would suggest you switch hosts. Have a look at one of the recommended %1$sWordPress hosting partners%2$s."
 msgstr ""
