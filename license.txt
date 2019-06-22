@@ -1,4 +1,4 @@
-Perform for WordPress
+Perform
 
 Copyright 2015 by the contributors
 
@@ -20,7 +20,7 @@ This program incorporates work covered by the following copyright and
 permission notices:
 
   Perform is Copyright (c) 2019
-  https://www.mehulgohil.in
+  https://performwp.com
 
   Perform is released under the GPLv3
 
