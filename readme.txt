@@ -1,15 +1,15 @@
 === Perform ===
-Contributors: mehul0810
+Contributors: performwp, mehul0810
 Tags: performance, assets manager, scripts manager, menu cache, disable embeds, disable emoji
 Donate link: https://www.mehulgohil.in/donate/
 Requires at least: 4.8
 Tested up to: 5.2
 Requires PHP: 5.6
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-Improves Performance and Loading Speed of your WordPress Site.
+Clean and Easy to use UI. Improves Performance and Loading Speed of your WordPress Site by disabling unused features and assets liks JS and CSS.
 
 == Description ==
 Perform will help you remove unnecessary styles, scripts, and features which adds up load to your WordPress site. Removing those unnecessary items from your WordPress site will help you improve performance and loading speed of your WordPress site just by installing and configuring the plugin.
