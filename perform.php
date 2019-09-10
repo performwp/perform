@@ -25,6 +25,9 @@
  * Text Domain: perform
  * Domain Path: /languages
  */
+
+namespace Perform;
+
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
