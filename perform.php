@@ -34,6 +34,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Define necessary configuration files.
+ */
+require_once __DIR__ . '/config/constants.php';
+
+/**
+ * Automatically loads files used throughout the plugin.
+ */
+require_once __DIR__ . '/autoloader.php';
+
+// Initialize the plugin.
+$plugin = new Includes\Plugin();
+$plugin->register();
+
+/**
  * Check for class Perform existence.
  *
  * @since 1.0.0
