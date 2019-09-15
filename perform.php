@@ -58,6 +58,16 @@ if ( ! class_exists( 'Perform' ) ) {
 		public $settings;
 
 		/**
+		 * Config Object to transform.
+		 *
+		 * @since  1.2.2
+		 * @access public
+		 *
+		 * @var WPConfigTransformer object
+		 */
+		public $config;
+
+		/**
 		 * Throw error on object clone.
 		 *
 		 * The whole idea of the singleton design pattern is that there is a single
@@ -147,6 +157,8 @@ if ( ! class_exists( 'Perform' ) ) {
 		 * @access public
 		 *
 		 * @return void
+		 *
+		 * @throws
 		 */
 		public function init() {
 
@@ -154,6 +166,7 @@ if ( ! class_exists( 'Perform' ) ) {
 			$this->load_textdomain();
 
 			$this->settings = new Perform_Admin_Settings();
+			$this->config   = new WPConfigTransformer( ABSPATH . 'wp-config.php' );
 		}
 
 		/**
