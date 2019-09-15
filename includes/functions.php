@@ -292,7 +292,9 @@ function perform_load_modules_on_init() {
 	 */
 	$autosave_interval = perform_get_option( 'autosave_interval', 'perform_common' );
 	if ( ! empty( $autosave_interval ) ) {
-		define( 'AUTOSAVE_INTERVAL', $autosave_interval );
+		Perform()->config->exists( 'constant', 'AUTOSAVE_INTERVAL' ) ?
+			Perform()->config->update( 'constant', 'AUTOSAVE_INTERVAL', $autosave_interval ) :
+			Perform()->config->add( 'constant', 'AUTOSAVE_INTERVAL', $autosave_interval );
 	}
 
 	// Load WooCommerce Manager module when WooCommerce is active.
