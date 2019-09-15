@@ -208,10 +208,15 @@ if ( ! class_exists( 'Perform' ) ) {
 		 */
 		public function includes() {
 
+			// Load Admin Files.
 			require_once PERFORM_PLUGIN_DIR . '/includes/admin/class-perform-welcome.php';
 			require_once PERFORM_PLUGIN_DIR . '/includes/admin/class-perform-admin-settings-api.php';
 			require_once PERFORM_PLUGIN_DIR . '/includes/admin/class-perform-admin-settings.php';
 
+			// Load Libraries.
+			require_once PERFORM_PLUGIN_DIR . '/includes/libraries/WPConfigTransformer.php';
+
+			// Load Frontend Files.
 			require_once PERFORM_PLUGIN_DIR . '/includes/install.php';
 			require_once PERFORM_PLUGIN_DIR . '/includes/actions.php';
 			require_once PERFORM_PLUGIN_DIR . '/includes/misc-functions.php';
