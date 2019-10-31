@@ -40,6 +40,7 @@ Perform will help you remove unnecessary styles, scripts, and features which add
 * DNS Prefetch
 * Preconnect
 * Navigation Menu Cache
+* Supports WooCommerce
 
 = Connect with Perform - WordPress Plugin =
 
