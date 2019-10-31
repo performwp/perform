@@ -314,6 +314,15 @@ function perform_load_modules_on_init() {
 		// Init Module.
 		new Perform_WooCommerce_Manager();
 	}
+
+	$is_cdn_rewrite_enabled = perform_get_option( 'enable_cdn', 'perform_cdn' );
+	if ( $is_cdn_rewrite_enabled ) {
+		// Load Module.
+		require_once PERFORM_PLUGIN_DIR . 'includes/modules/class-perform-cdn-manager.php';
+
+		// Init Module.
+		new Perform_CDN_Manager();
+	}
 }
 
 add_action( 'init', 'perform_load_modules_on_init', 0 );
