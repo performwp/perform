@@ -252,7 +252,7 @@ add_action( 'template_redirect', 'perform_update_assets_manager', 10, 2 );
  * @since  1.1.0
  * @access public
  *
- * @return void
+ * @return bool|string
  */
 function perform_dequeue_assets( $src, $handle ) {
 
