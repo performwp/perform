@@ -3,7 +3,7 @@ Contributors: performwp, mehul0810
 Tags: performance, assets manager, scripts manager, menu cache, disable embeds, disable emoji
 Donate link: https://www.mehulgohil.in/donate/
 Requires at least: 4.8
-Tested up to: 5.2
+Tested up to: 5.3
 Requires PHP: 5.6
 Stable tag: 1.2.2
 License: GPLv3
