@@ -6,6 +6,11 @@
 
 # Files
 /.gitattributes export-ignore
+/.babelrc export-ignore
+/.editorconfig export-ignore
+/.eslintrc export-ignore
+/.eslintignore export-ignore
+/postcss.config.js export-ignore
 /.gitignore export-ignore
 /webpack.config.js export-ignore
 /deploy.sh export-ignore
