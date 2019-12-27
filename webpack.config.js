@@ -151,17 +151,11 @@ if ( inProduction ) {
 	wpPot( {
 		package: 'Perform for WordPress',
 		domain: 'perform',
-		destFile: 'languages/perform-for-wordpress.pot',
+		destFile: 'languages/perform.pot',
 		relativeTo: './',
-		bugReport: 'https://github.com/mehul0810/perform-for-wordpress/issues/new',
-		team: 'Mehul Gohil <hello@mehulgohil.in>',
+		bugReport: 'https://github.com/mehul0810/perform/issues/new',
+		team: 'Mehul Gohil <hello@mehulgohil.com>',
 	} );
-
-	// Uglify JS.
-	// config.plugins.push( new webpack.optimize.UglifyJsPlugin( { sourceMap: true } ) );
-
-	// Minify CSS.
-	// config.plugins.push( new webpack.LoaderOptionsPlugin( { minimize: true } ) );
 }
 
 module.exports = config;
