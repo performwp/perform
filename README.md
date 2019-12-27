@@ -1,4 +1,4 @@
-# [Perform](https://www.mehulgohil.in/plugins/perform "Perform - Speed Matters") #
+# [Perform](https://mehulgohil.com/plugins/perform "Perform - Speed Matters") #
 
 ![WordPress version](https://img.shields.io/wordpress/plugin/v/perform.svg) ![WordPress Rating](https://img.shields.io/wordpress/plugin/r/perform.svg) ![WordPress Downloads](https://img.shields.io/wordpress/plugin/dt/perform.svg) [![License](https://img.shields.io/badge/license-GPL--2.0%2B-green.svg)](https://github.com/mehul0810/perform-for-wp/blob/master/license.txt) 
 

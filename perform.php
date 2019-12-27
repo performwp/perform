@@ -1,19 +1,29 @@
 <?php
 /**
+ * The plugin bootstrap file
+ *
+ * This file is read by WordPress to generate the plugin information in the plugin
+ * admin area. This file also includes all of the dependencies used by the plugin,
+ * registers the activation and deactivation functions, and starts the plugin.
+ *
+ * @since      1.0.0
+ * @package    WordPress
+ * @subpackage Perform
+ * @author     Mehul Gohil
+ * @link       https://performwp.com
+ *
+ * @wordpress-plugin
+ *
  * Plugin Name: Perform - Performance Optimization Plugin for WordPress
  * Plugin URI: https://performwp.com/
  * Description: This plugin adds toolset for performance and speed improvements to your WordPress sites.
- * Version: 1.2.1
+ * Version: 1.2.2
  * Author: Mehul Gohil
  * Author URI: https://www.mehulgohil.in/
  * License: GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: perform
  * Domain Path: /languages
- *
- * @package    WordPress
- * @subpackage Perform
- * @author     Mehul Gohil
  */
 
 // Bailout, if accessed directly.
@@ -56,6 +66,16 @@ if ( ! class_exists( 'Perform' ) ) {
 		 * @var Perform_Admin_Settings object
 		 */
 		public $settings;
+
+		/**
+		 * Config Object to transform.
+		 *
+		 * @since  1.2.2
+		 * @access public
+		 *
+		 * @var WPConfigTransformer object
+		 */
+		public $config;
 
 		/**
 		 * Throw error on object clone.
@@ -147,6 +167,8 @@ if ( ! class_exists( 'Perform' ) ) {
 		 * @access public
 		 *
 		 * @return void
+		 *
+		 * @throws
 		 */
 		public function init() {
 
@@ -154,6 +176,7 @@ if ( ! class_exists( 'Perform' ) ) {
 			$this->load_textdomain();
 
 			$this->settings = new Perform_Admin_Settings();
+			$this->config   = new WPConfigTransformer( ABSPATH . 'wp-config.php' );
 		}
 
 		/**
@@ -168,7 +191,7 @@ if ( ! class_exists( 'Perform' ) ) {
 
 			// Plugin version.
 			if ( ! defined( 'PERFORM_VERSION' ) ) {
-				define( 'PERFORM_VERSION', '1.2.1' );
+				define( 'PERFORM_VERSION', '1.2.2' );
 			}
 
 			// Minimum Required PHP version.
@@ -208,10 +231,15 @@ if ( ! class_exists( 'Perform' ) ) {
 		 */
 		public function includes() {
 
+			// Load Admin Files.
 			require_once PERFORM_PLUGIN_DIR . '/includes/admin/class-perform-welcome.php';
 			require_once PERFORM_PLUGIN_DIR . '/includes/admin/class-perform-admin-settings-api.php';
 			require_once PERFORM_PLUGIN_DIR . '/includes/admin/class-perform-admin-settings.php';
 
+			// Load Libraries.
+			require_once PERFORM_PLUGIN_DIR . '/includes/libraries/WPConfigTransformer.php';
+
+			// Load Frontend Files.
 			require_once PERFORM_PLUGIN_DIR . '/includes/install.php';
 			require_once PERFORM_PLUGIN_DIR . '/includes/actions.php';
 			require_once PERFORM_PLUGIN_DIR . '/includes/misc-functions.php';

@@ -143,3 +143,18 @@ function perform_get_content_dir_name() {
 	return defined( 'WP_CONTENT_FOLDERNAME' ) ? WP_CONTENT_FOLDERNAME : 'wp-content';
 }
 
+/**
+ * This function is used to check whether assets manager can be displayed or not.
+ *
+ * @since 1.2.2
+ *
+ * @return bool
+ */
+function perform_can_display_assets_manager() {
+
+	if ( isset( $_GET['perform'] ) ) {
+		return true;
+	}
+
+	return false;
+}

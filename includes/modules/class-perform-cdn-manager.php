@@ -31,12 +31,21 @@ class Perform_CDN_Manager {
 	 */
 	public function __construct() {
 
-		add_action( 'template_redirect', array( $this, 'rewrite_with_cdn_url' ) );
+		add_action( 'template_redirect', array( $this, 'rewrite_with_cdn' ), 1 );
 
 	}
 
 	/**
-	 * This functill will act as wrapper to rewrite the HTML with CDN URL.
+	 * This function is introduced to act as an output buffer to fetch HTML to replace the URLs.
+	 *
+	 * @since 1.2.2
+	 */
+	public function rewrite_with_cdn() {
+		ob_start( array( $this, 'rewrite_with_cdn_url' ) );
+	}
+
+	/**
+	 * This function will act as wrapper to rewrite the HTML with CDN URL.
 	 *
 	 * @param mixed $html HTML content.
 	 *
@@ -46,8 +55,6 @@ class Perform_CDN_Manager {
 	 * @return mixed
 	 */
 	public function rewrite_with_cdn_url( $html ) {
-
-		ob_start();
 
 		$site_url        = quotemeta( get_option( 'home' ) );
 		$url_regex       = '(https?:|)' . substr( $site_url, strpos( $site_url, '//' ) );

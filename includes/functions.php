@@ -280,7 +280,11 @@ function perform_load_modules_on_init() {
 	 */
 	$post_revisions_limit = perform_get_option( 'limit_post_revisions', 'perform_common' );
 	if ( ! empty( $post_revisions_limit ) ) {
-		define( 'WP_POST_REVISIONS', $post_revisions_limit );
+		Perform()->config->exists( 'constant', 'WP_POST_REVISIONS' ) ?
+		Perform()->config->update( 'constant', 'WP_POST_REVISIONS', $post_revisions_limit ) :
+		Perform()->config->add( 'constant', 'WP_POST_REVISIONS', $post_revisions_limit );
+	} else {
+		Perform()->config->remove( 'constant', 'WP_POST_REVISIONS' );
 	}
 
 	/**
@@ -290,7 +294,11 @@ function perform_load_modules_on_init() {
 	 */
 	$autosave_interval = perform_get_option( 'autosave_interval', 'perform_common' );
 	if ( ! empty( $autosave_interval ) ) {
-		define( 'AUTOSAVE_INTERVAL', $autosave_interval );
+		Perform()->config->exists( 'constant', 'AUTOSAVE_INTERVAL' ) ?
+		Perform()->config->update( 'constant', 'AUTOSAVE_INTERVAL', $autosave_interval ) :
+		Perform()->config->add( 'constant', 'AUTOSAVE_INTERVAL', $autosave_interval );
+	} else {
+		Perform()->config->remove( 'constant', 'AUTOSAVE_INTERVAL' );
 	}
 
 	// Load WooCommerce Manager module when WooCommerce is active.
@@ -305,6 +313,15 @@ function perform_load_modules_on_init() {
 
 		// Init Module.
 		new Perform_WooCommerce_Manager();
+	}
+
+	$is_cdn_rewrite_enabled = perform_get_option( 'enable_cdn', 'perform_cdn' );
+	if ( $is_cdn_rewrite_enabled ) {
+		// Load Module.
+		require_once PERFORM_PLUGIN_DIR . 'includes/modules/class-perform-cdn-manager.php';
+
+		// Init Module.
+		new Perform_CDN_Manager();
 	}
 }
 
