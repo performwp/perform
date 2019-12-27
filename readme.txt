@@ -34,7 +34,7 @@ Perform will help you remove unnecessary styles, scripts, and features which add
 * Set Heartbeat Frequency
 * Limit Post Revisions
 * Set Autosave Intervals
-* Assets Manager ( JS & CSS of themes and plugins )
+* Assets Manager ( Manage JS & CSS of themes and plugins )
 * SSL Manager
 * CDN Manager
 * DNS Prefetch
