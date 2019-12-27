@@ -101,6 +101,7 @@ Please make sure you make a backup of your database before updating any version 
 = 1.2.2: December 27th, 2019 =
 Fix: cdn rewrite is not working [#16](https://github.com/mehul0810/perform/issues/16)
 UI Improvements for Assets Manager
+Simplified working of `wp-config.php` constants
 Security Improvements
 
 = 1.2.1: June 22th, 2019 =
