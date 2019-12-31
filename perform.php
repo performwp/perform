@@ -68,16 +68,6 @@ if ( ! class_exists( 'Perform' ) ) {
 		public $settings;
 
 		/**
-		 * Config Object to transform.
-		 *
-		 * @since  1.2.2
-		 * @access public
-		 *
-		 * @var WPConfigTransformer object
-		 */
-		public $config;
-
-		/**
 		 * Throw error on object clone.
 		 *
 		 * The whole idea of the singleton design pattern is that there is a single
