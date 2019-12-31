@@ -17,7 +17,7 @@
  * Plugin Name: Perform - Performance Optimization Plugin for WordPress
  * Plugin URI: https://performwp.com/
  * Description: This plugin adds toolset for performance and speed improvements to your WordPress sites.
- * Version: 1.2.2
+ * Version: 1.2.3
  * Author: Mehul Gohil
  * Author URI: https://www.mehulgohil.in/
  * License: GPLv2 or later
@@ -195,7 +195,7 @@ if ( ! class_exists( 'Perform' ) ) {
 
 			// Plugin version.
 			if ( ! defined( 'PERFORM_VERSION' ) ) {
-				define( 'PERFORM_VERSION', '1.2.2' );
+				define( 'PERFORM_VERSION', '1.2.3' );
 			}
 
 			// Minimum Required PHP version.
