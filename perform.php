@@ -172,11 +172,25 @@ if ( ! class_exists( 'Perform' ) ) {
 		 */
 		public function init() {
 
+			/**
+			 * This action will be used before init of the plugin.
+			 *
+			 * @since 1.2.3
+			 */
+			do_action( 'perform_before_init' );
+
 			// Set up localization.
 			$this->load_textdomain();
 
 			$this->settings = new Perform_Admin_Settings();
-			$this->config   = new WPConfigTransformer( ABSPATH . 'wp-config.php' );
+
+			/**
+			 * This action will be used after the plugin is loaded
+			 *
+			 * @since 1.2.3
+			 */
+			do_action( 'perform_loaded' );
+
 		}
 
 		/**
