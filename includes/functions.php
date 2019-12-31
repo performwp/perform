@@ -273,34 +273,6 @@ function perform_load_modules_on_init() {
 
 	}
 
-	/**
-	 * Set Post Revisions Limit.
-	 *
-	 * @since 1.0.0
-	 */
-	$post_revisions_limit = perform_get_option( 'limit_post_revisions', 'perform_common' );
-	if ( ! empty( $post_revisions_limit ) ) {
-		Perform()->config->exists( 'constant', 'WP_POST_REVISIONS' ) ?
-		Perform()->config->update( 'constant', 'WP_POST_REVISIONS', $post_revisions_limit ) :
-		Perform()->config->add( 'constant', 'WP_POST_REVISIONS', $post_revisions_limit );
-	} else {
-		Perform()->config->remove( 'constant', 'WP_POST_REVISIONS' );
-	}
-
-	/**
-	 * Set Autosave Interval.
-	 *
-	 * @since 1.0.0
-	 */
-	$autosave_interval = perform_get_option( 'autosave_interval', 'perform_common' );
-	if ( ! empty( $autosave_interval ) ) {
-		Perform()->config->exists( 'constant', 'AUTOSAVE_INTERVAL' ) ?
-		Perform()->config->update( 'constant', 'AUTOSAVE_INTERVAL', $autosave_interval ) :
-		Perform()->config->add( 'constant', 'AUTOSAVE_INTERVAL', $autosave_interval );
-	} else {
-		Perform()->config->remove( 'constant', 'AUTOSAVE_INTERVAL' );
-	}
-
 	// Load WooCommerce Manager module when WooCommerce is active.
 	if ( perform_is_woocommerce_active() ) {
 		/**
@@ -326,6 +298,47 @@ function perform_load_modules_on_init() {
 }
 
 add_action( 'init', 'perform_load_modules_on_init', 0 );
+
+function perform_define_necessary_constants() {
+
+	/**
+	 * Set Autosave Interval.
+	 *
+	 * @since 1.0.0
+	 */
+	$autosave_interval = perform_get_option( 'autosave_interval', 'perform_common' );
+
+	// If `Autosave Interval` is already defined in `wp-config.php` then leave it as is.
+	if ( ! empty( $autosave_interval ) && ! defined( 'AUTOSAVE_INTERVAL' ) ) {
+		define( 'AUTOSAVE_INTERVAL', $autosave_interval );
+	}
+
+	/**
+	 * Set Post Revisions Limit.
+	 *
+	 * @since 1.0.0
+	 */
+	$post_revisions_limit = perform_get_option( 'limit_post_revisions', 'perform_common' );
+
+	// If `Post Revisions` is already defined in `wp-config.php` then leave it as is.
+	if ( ! empty( $post_revisions_limit ) && ! defined( 'WP_POST_REVISIONS' ) ) {
+		define( 'WP_POST_REVISIONS', $post_revisions_limit );
+	}
+
+	/**
+	 * Force Admin SSL.
+	 *
+	 * @since 1.2.3
+	 */
+	$is_ssl_enabled = perform_get_option( 'enable_ssl', 'perform_ssl', false );
+
+	// If `Force Admin SSL` is already defined in `wp-config.php` then leave it as is.
+	if ( ! empty( $is_ssl_enabled ) && ! defined( 'FORCE_SSL_ADMIN' ) ) {
+		define( 'FORCE_SSL_ADMIN', 'true' );
+	}
+}
+
+add_action( 'perform_loaded', 'perform_define_necessary_constants' );
 
 /**
  * Load SSL Manager.
