@@ -17,7 +17,7 @@
  * Plugin Name: Perform - Performance Optimization Plugin for WordPress
  * Plugin URI: https://performwp.com/
  * Description: This plugin adds toolset for performance and speed improvements to your WordPress sites.
- * Version: 1.2.2
+ * Version: 1.2.3
  * Author: Mehul Gohil
  * Author URI: https://www.mehulgohil.in/
  * License: GPLv2 or later
@@ -66,16 +66,6 @@ if ( ! class_exists( 'Perform' ) ) {
 		 * @var Perform_Admin_Settings object
 		 */
 		public $settings;
-
-		/**
-		 * Config Object to transform.
-		 *
-		 * @since  1.2.2
-		 * @access public
-		 *
-		 * @var WPConfigTransformer object
-		 */
-		public $config;
 
 		/**
 		 * Throw error on object clone.
@@ -172,11 +162,25 @@ if ( ! class_exists( 'Perform' ) ) {
 		 */
 		public function init() {
 
+			/**
+			 * This action will be used before init of the plugin.
+			 *
+			 * @since 1.2.3
+			 */
+			do_action( 'perform_before_init' );
+
 			// Set up localization.
 			$this->load_textdomain();
 
 			$this->settings = new Perform_Admin_Settings();
-			$this->config   = new WPConfigTransformer( ABSPATH . 'wp-config.php' );
+
+			/**
+			 * This action will be used after the plugin is loaded
+			 *
+			 * @since 1.2.3
+			 */
+			do_action( 'perform_loaded' );
+
 		}
 
 		/**
@@ -191,7 +195,7 @@ if ( ! class_exists( 'Perform' ) ) {
 
 			// Plugin version.
 			if ( ! defined( 'PERFORM_VERSION' ) ) {
-				define( 'PERFORM_VERSION', '1.2.2' );
+				define( 'PERFORM_VERSION', '1.2.3' );
 			}
 
 			// Minimum Required PHP version.
@@ -235,9 +239,6 @@ if ( ! class_exists( 'Perform' ) ) {
 			require_once PERFORM_PLUGIN_DIR . '/includes/admin/class-perform-welcome.php';
 			require_once PERFORM_PLUGIN_DIR . '/includes/admin/class-perform-admin-settings-api.php';
 			require_once PERFORM_PLUGIN_DIR . '/includes/admin/class-perform-admin-settings.php';
-
-			// Load Libraries.
-			require_once PERFORM_PLUGIN_DIR . '/includes/libraries/WPConfigTransformer.php';
 
 			// Load Frontend Files.
 			require_once PERFORM_PLUGIN_DIR . '/includes/install.php';

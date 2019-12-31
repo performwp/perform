@@ -44,19 +44,10 @@ class Perform_SSL_Manager {
 
 		$this->is_ssl_enabled = perform_get_option( 'enable_ssl', 'perform_ssl', false );
 
-		if ( $this->is_ssl_enabled ) {
-
-			// Forcing SSL for admin.
-			Perform()->config->exists( 'constant', 'FORCE_SSL_ADMIN' ) ?
-			Perform()->config->update( 'constant', 'FORCE_SSL_ADMIN', 'true' ) :
-			Perform()->config->add( 'constant', 'FORCE_SSL_ADMIN', 'true' );
-
-			// Proceed, only if site accessed with non-HTTP url.
-			if ( ! is_ssl() ) {
-				$this->wp_redirect_to_ssl();
-			}
+		// Proceed, only if site accessed with non-HTTP url.
+		if ( ! is_ssl() && $this->is_ssl_enabled ) {
+			$this->wp_redirect_to_ssl();
 		}
-
 	}
 
 	/**

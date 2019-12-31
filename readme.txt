@@ -5,7 +5,7 @@ Donate link: https://mehulgohil.com/donate/
 Requires at least: 4.8
 Tested up to: 5.3
 Requires PHP: 5.6
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -97,6 +97,9 @@ Yes, it does.
 Please make sure you make a backup of your database before updating any version to ensure that none of your data is lost.
 
 == Changelog ==
+
+= 1.2.3: December 31st, 2019 =
+Resolved fatal error when `wp-config.php` file is not writable
 
 = 1.2.2: December 27th, 2019 =
 Fix: cdn rewrite is not working [#16](https://github.com/mehul0810/perform/issues/16)
