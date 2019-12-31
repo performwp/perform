@@ -98,6 +98,9 @@ Please make sure you make a backup of your database before updating any version 
 
 == Changelog ==
 
+= 1.2.3: December 31st, 2019 =
+Resolved fatal error when `wp-config.php` file is not writable
+
 = 1.2.2: December 27th, 2019 =
 Fix: cdn rewrite is not working [#16](https://github.com/mehul0810/perform/issues/16)
 UI Improvements for Assets Manager
