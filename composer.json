@@ -1,0 +1,12 @@
+{
+    "name": "mehulgohil/perform",
+    "authors": [
+        {
+            "name": "Mehul Gohil",
+            "email": "hello@mehulgohil.com"
+        }
+    ],
+    "require": {
+        "appsero/client": "^1.1"
+    }
+}
