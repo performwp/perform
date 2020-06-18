@@ -141,6 +141,7 @@ if ( ! class_exists( 'Perform' ) ) {
 			}
 
 			$this->includes();
+			$this->loadAppsero();
 
 			// Register activation hook.
 			register_activation_hook( PERFORM_PLUGIN_FILE, 'perform_install' );
@@ -273,6 +274,21 @@ if ( ! class_exists( 'Perform' ) ) {
 			load_textdomain( 'perform', WP_LANG_DIR . '/perform/perform-' . $locale . '.mo' );
 			load_plugin_textdomain( 'perform', false, $lang_dir );
 
+		}
+
+		/**
+		 * Load Appsero for tracking.
+		 *
+		 * @since  1.2.4
+		 * @access public
+		 *
+		 * @return void
+		 */
+		public function loadAppsero() {
+			$client = new Appsero\Client( 'e67fa796-3452-47de-b8d7-2cce81c0eec0', 'Perform', __FILE__ );
+
+			// Active insights
+			$client->insights()->init();
 		}
 
 		/**
