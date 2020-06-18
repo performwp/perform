@@ -234,6 +234,8 @@ if ( ! class_exists( 'Perform' ) ) {
 		 * @return void
 		 */
 		public function includes() {
+			// Load Appsero SDK.
+			require_once PERFORM_PLUGIN_DIR . '/vendor/autoload.php';
 
 			// Load Admin Files.
 			require_once PERFORM_PLUGIN_DIR . '/includes/admin/class-perform-welcome.php';
