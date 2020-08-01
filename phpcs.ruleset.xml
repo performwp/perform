@@ -6,6 +6,9 @@
 	<!-- Set a description for this ruleset. -->
 	<description>We love clean code for Perform. This will let us enforce that easily.</description>
 
+	<!-- Default tab width for indentation fixes and such. -->
+	<arg name="tab-width" value="4"/>
+
 	<!-- Exclude directories we don't want checked. -->
 	<exclude-pattern>node_modules/*</exclude-pattern>
 	<exclude-pattern>vendor/*</exclude-pattern>
@@ -15,6 +18,7 @@
 	<!-- Bring in WP rules. -->
 	<rule ref="WordPress-Core">
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
 		<exclude name="WordPress.WP.I18n.MissingTranslatorsComment" />
 		<exclude name="Generic.Arrays.DisallowShortArraySyntax" />
 	</rule>
