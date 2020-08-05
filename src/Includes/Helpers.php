@@ -33,7 +33,7 @@ class Helpers {
 	 *
 	 * @return bool
 	 */
-	public static function hasNetworkAccess() {
+	public static function has_network_access() {
 		// Bailout, if not Multi-Site instance.
 		if ( ! is_multisite() ) {
 			return true;
@@ -62,7 +62,7 @@ class Helpers {
 	 *
 	 * @return string
 	 */
-	public static function getOption( $option, $section, $default = '' ) {
+	public static function get_option( $option, $section, $default = '' ) {
 		$options = get_option( $section );
 
 		if ( isset( $options[ $option ] ) ) {
@@ -75,21 +75,21 @@ class Helpers {
 	/**
 	 * Check if radio(enabled/disabled) and checkbox(on) is active or not.
 	 *
-	 * @param string $value       Value.
-	 * @param string $compareWith Compare With.
+	 * @param string $value        Value.
+	 * @param string $compare_with Compare With.
 	 *
 	 * @since  2.0.0
 	 * @access public
 	 *
 	 * @return bool
 	 */
-	public static function isSettingEnabled( $value, $compareWith = '' ) {
-		if ( ! is_null( $compareWith ) ) {
-			if ( is_array( $compareWith ) ) {
-				return in_array( $value, $compareWith, true );
+	public static function is_settings_enabled( $value, $compare_with = '' ) {
+		if ( ! is_null( $compare_with ) ) {
+			if ( is_array( $compare_with ) ) {
+				return in_array( $value, $compare_with, true );
 			}
 
-			return ( $value === $compareWith );
+			return ( $value === $compare_with );
 		}
 
 		return ( in_array( $value, [ 'enabled', 'on', 'yes' ], true ) ? true : false );
@@ -103,8 +103,8 @@ class Helpers {
 	 *
 	 * @return bool
 	 */
-	public static function isAssetsManagerEnabled() {
-		return self::getOption( 'enable_assets_manager', 'perform_advanced', false );
+	public static function is_assets_manager_enabled() {
+		return self::get_option( 'enable_assets_manager', 'perform_advanced', false );
 	}
 
 	/**
@@ -115,15 +115,15 @@ class Helpers {
 	 *
 	 * @return bool
 	 */
-	public static function isWooCommerceActive() {
-		$isActive = false;
+	public static function is_woocommerce_active() {
+		$is_active = false;
 
 		// Return true when WooCommerce plugin is active.
 		if ( class_exists( 'WooCommerce' ) ) {
-			$isActive = true;
+			$is_active = true;
 		}
 
-		return $isActive;
+		return $is_active;
 	}
 
 	/**
@@ -153,7 +153,7 @@ class Helpers {
 	 *
 	 * @return string
 	 */
-	public static function getContentDirName() {
+	public static function get_content_dir_name() {
 		return defined( 'WP_CONTENT_FOLDERNAME' ) ? WP_CONTENT_FOLDERNAME : 'wp-content';
 	}
 
@@ -165,7 +165,7 @@ class Helpers {
 	 *
 	 * @return bool
 	 */
-	public static function canDisplayAssetsManager() {
+	public static function can_display_assets_manager() {
 		if ( isset( $_GET['perform'] ) ) {
 			return true;
 		}
