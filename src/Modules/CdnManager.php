@@ -11,6 +11,8 @@
 
 namespace Perform\Modules;
 
+use Perform\Includes\Helpers;
+
 // Bail out, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -58,7 +60,7 @@ class CdnManager {
 		$site_url        = quotemeta( get_option( 'home' ) );
 		$url_regex       = '(https?:|)' . substr( $site_url, strpos( $site_url, '//' ) );
 		$directories     = 'wp\-content|wp\-includes';
-		$cdn_directories = perform_get_option( 'cdn_directories', 'perform_cdn' );
+		$cdn_directories = Helpers::get_option( 'cdn_directories', 'perform_cdn' );
 
 		if ( ! empty( $cdn_directories ) ) {
 			$directory_list = array_map( 'trim', explode( ',', $cdn_directories ) );
@@ -84,10 +86,10 @@ class CdnManager {
 	 * @return string
 	 */
 	public function rewrited_cdn_url( $url ) {
-		$cdn_url = perform_get_option( 'cdn_url', 'perform_cdn' );
+		$cdn_url = Helpers::get_option( 'cdn_url', 'perform_cdn' );
 
 		if ( ! empty( $cdn_url ) ) {
-			$cdn_exclusions = perform_get_option( 'cdn_exclusions', 'perform_cdn' );
+			$cdn_exclusions = Helpers::get_option( 'cdn_exclusions', 'perform_cdn' );
 
 			// Don't Rewrite URL, if Excluded.
 			if ( ! empty( $cdn_exclusions ) ) {
