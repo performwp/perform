@@ -417,6 +417,11 @@ class Basic {
 	 * @return void
 	 */
 	public function disable_dashicons() {
+		// Bailout, if user is logged in.
+		if ( is_user_logged_in() ) {
+			return;
+		}
+
 		wp_dequeue_style( 'dashicons' );
 		wp_deregister_style( 'dashicons' );
 	}
