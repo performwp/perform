@@ -11,6 +11,8 @@
 
 namespace Perform\Includes;
 
+use const WP_CONTENT_FOLDERNAME;
+
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -139,7 +141,7 @@ class Helpers {
 	 */
 	public static function clean( $var ) {
 		if ( is_array( $var ) ) {
-			return array_map( 'perform_clean', $var );
+			return array_map( [ __CLASS__, __METHOD__ ], $var );
 		} else {
 			return is_scalar( $var ) ? sanitize_text_field( wp_unslash( $var ) ) : $var;
 		}
