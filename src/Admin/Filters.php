@@ -14,6 +14,8 @@ class Filters {
 	public function __construct() {
 		add_filter( 'admin_footer_text', [ $this, 'addAdminFooterText' ] );
 		add_filter( 'plugin_action_links_' . PERFORM_PLUGIN_BASENAME, [ $this, 'addPluginActionLinks' ] );
+		add_filter( 'post_row_actions', [ $this, 'add_row_actions' ], 10, 2 );
+		add_filter( 'page_row_actions', [ $this, 'add_row_actions' ], 10, 2 );
 	}
 
 	/**
@@ -55,10 +57,10 @@ class Filters {
 		$new_actions = [
 			'settings' => sprintf(
 				'<a href="%1$s">%2$s</a>',
-				admin_url( 'options-general.php?page=perform' ),
+				admin_url( 'admin.php?page=perform' ),
 				esc_html__( 'Settings', 'perform' )
 			),
-			'support' => sprintf(
+			'support'  => sprintf(
 				'<a target="_blank" href="%1$s">%2$s</a>',
 				esc_url_raw( 'https://wordpress.org/support/plugin/perform/' ),
 				esc_html__( 'Support', 'perform' )
@@ -67,5 +69,24 @@ class Filters {
 
 		return array_merge( $new_actions, $actions );
 	}
+
+	/**
+	 * This function is used to add `Manage Assets` in quick action under admin CPT listing.
+	 *
+	 * @since  1.1.2
+	 * @access public
+	 *
+	 * @return array
+	 */
+	public function add_row_actions( $actions, $post ) {
+		if ( 'publish' === $post->post_status ) {
+			$actions['assets_manager'] = sprintf(
+				'<a href="%1$s" target="_blank">%2$s</a>',
+				esc_url( get_the_permalink( $post->ID ) . '?perform' ),
+				esc_html__( 'Manage Assets', 'perform' )
+			);
+		}
+
+		return $actions;
+	}
 }
-new Filters();
