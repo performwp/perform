@@ -11,6 +11,7 @@
 namespace Perform\Admin\Settings;
 
 use Perform\Admin\Settings\Api;
+use Perform\Includes\Helpers;
 
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -40,14 +41,14 @@ class Menu extends Api {
 		];
 
 		// Display WooCommerce tab when WooCommerce plugin is active.
-		if ( perform_is_woocommerce_active() ) {
+		if ( Helpers::is_woocommerce_active() ) {
 			$this->tabs['woocommerce'] = esc_html__( 'WooCommerce', 'perform' );
 		}
 
-		$this->addTabs();
-		$this->addFields();
+		$this->add_tabs();
+		$this->add_fields();
 
-		add_action( 'admin_menu', [ $this, 'registerAdminMenu' ], 9 );
+		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 9 );
 	}
 
 	/**
@@ -58,13 +59,13 @@ class Menu extends Api {
 	 *
 	 * @return void
 	 */
-	public function registerAdminMenu() {
+	public function register_admin_menu() {
 		add_options_page(
 			esc_html__( 'Perform', 'perform' ),
 			esc_html__( 'Perform', 'perform' ),
 			'manage_options',
 			'perform',
-			[ $this, 'renderSettingsPage' ]
+			[ $this, 'render_settings_page' ]
 		);
 	}
 
@@ -76,7 +77,7 @@ class Menu extends Api {
 	 *
 	 * @return void
 	 */
-	public function renderSettingsPage() {
+	public function render_settings_page() {
 		?>
 		<div class="wrap">
 			<h1>
@@ -96,7 +97,7 @@ class Menu extends Api {
 	 *
 	 * @return void
 	 */
-	public function addTabs() {
+	public function add_tabs() {
 		foreach ( $this->tabs as $slug => $name ) {
 			$this->add_section(
 				[
@@ -115,7 +116,7 @@ class Menu extends Api {
 	 *
 	 * @return void
 	 */
-	public function addFields() {
+	public function add_fields() {
 		// Disable Emoji's.
 		$this->add_field(
 			"{$this->prefix}common",
