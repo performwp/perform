@@ -11,6 +11,8 @@
 
 namespace Perform\Modules;
 
+use Perform\Includes\Helpers;
+
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -66,12 +68,9 @@ class Assets_Manager {
 
 		add_action( 'wp_footer', [ $this, 'assets_manager_html' ], 1000 );
 		add_action( 'template_redirect', [ $this, 'save_assets_manager_settings' ], 10, 2 );
-		add_action( 'admin_bar_menu', [ $this, 'add_to_admin_bar' ], 1000, 1 );
 
 		add_filter( 'script_loader_src', [ $this, 'dequeue_assets' ], 1000, 2 );
 		add_filter( 'style_loader_src', [ $this, 'dequeue_assets' ], 1000, 2 );
-		add_filter( 'post_row_actions', [ $this, 'add_row_actions' ], 10, 2 );
-		add_filter( 'page_row_actions', [ $this, 'add_row_actions' ], 10, 2 );
 	}
 
 	/**
@@ -196,7 +195,7 @@ class Assets_Manager {
 
 		$loaded_plugins  = [];
 		$loaded_themes   = [];
-		$content_dirname = perform_get_content_dir_name();
+		$content_dirname = Helpers::get_content_dir_name();
 
 		foreach ( $all_assets as $type => $data ) {
 			// List all the assets of the WordPress site.
@@ -205,6 +204,17 @@ class Assets_Manager {
 			if ( is_array( $assets ) && count( $assets ) ) {
 				foreach ( $assets as $key => $handle ) {
 					$url = $all_assets[ $type ]['scripts']->registered[ $handle ]->src;
+
+					// Add handles which we don't want to show under Assets Manager.
+					$incompatible_handles = [
+						'perform',
+						'admin-bar',
+					];
+
+					// Don't show incompatible handles for Assets Manager.
+					if ( in_array( $handle, $incompatible_handles, true ) ) {
+						continue;
+					}
 
 					if ( strpos( $url, "/{$content_dirname}/plugins/" ) !== false ) {
 
@@ -567,8 +577,8 @@ class Assets_Manager {
 	 * @return array
 	 */
 	public function save_assets_manager_settings() {
-		$post_data = perform_clean( filter_input_array( INPUT_POST ) );
-		$get_data  = perform_clean( filter_input_array( INPUT_GET ) );
+		$post_data = Helpers::clean( filter_input_array( INPUT_POST ) );
+		$get_data  = Helpers::clean( filter_input_array( INPUT_GET ) );
 
 		if (
 			isset( $get_data['perform'] ) &&
@@ -788,7 +798,7 @@ class Assets_Manager {
 			return $src;
 		}
 
-		$get_data = perform_clean( filter_input_array( INPUT_GET ) );
+		$get_data = Helpers::clean( filter_input_array( INPUT_GET ) );
 
 		// Get assets type.
 		$type = current_filter() == 'script_loader_src' ? 'js' : 'css';
@@ -796,7 +806,7 @@ class Assets_Manager {
 		// Load Assets Manager settings.
 		$options         = get_option( 'perform_assets_manager_options' );
 		$current_id      = get_queried_object_id();
-		$content_dirname = perform_get_content_dir_name();
+		$content_dirname = Helpers::get_content_dir_name();
 
 		// Get category + group from src.
 		preg_match( "/\/{$content_dirname}\/(.*?\/.*?)\//", $src, $match );
@@ -861,67 +871,5 @@ class Assets_Manager {
 		}
 
 		return $src;
-	}
-
-	/**
-	 * This function is used to add assets manager button in admin bar.
-	 *
-	 * @param array $wp_admin_bar List of items on admin bar.
-	 *
-	 * @since  1.1.1
-	 * @access public
-	 *
-	 * @return void
-	 */
-	public function add_to_admin_bar( $wp_admin_bar ) {
-		// Bailout, if conditions below doesn't pass through.
-		if ( ! current_user_can( 'manage_options' ) || is_admin() ) {
-			return;
-		}
-
-		global $wp;
-
-		$server_data = perform_clean( filter_input_array( INPUT_SERVER ) );
-
-		$href = add_query_arg(
-			str_replace( [ '&perform', 'perform' ], '', $server_data['QUERY_STRING'] ),
-			'',
-			home_url( $wp->request )
-		);
-
-		if ( ! isset( $_GET['perform'] ) ) {
-			$href     .= ! empty( $server_data['QUERY_STRING'] ) ? '&perform' : '?perform';
-			$menu_text = esc_html__( 'Assets Manager', 'perform' );
-		} else {
-			$menu_text = esc_html__( 'Close Assets Manager', 'perform' );
-		}
-
-		$args = [
-			'id'    => 'perform_assets_manager',
-			'title' => $menu_text,
-			'href'  => $href,
-		];
-
-		$wp_admin_bar->add_node( $args );
-	}
-
-	/**
-	 * This function is used to add `Manage Assets` in quick action under admin CPT listing.
-	 *
-	 * @since  1.1.2
-	 * @access public
-	 *
-	 * @return array
-	 */
-	public function add_row_actions( $actions, $post ) {
-		if ( 'publish' === $post->post_status ) {
-			$actions['assets_manager'] = sprintf(
-				'<a href="%1$s" target="_blank">%2$s</a>',
-				esc_url( get_the_permalink( $post->ID ) . '?perform' ),
-				esc_html__( 'Manage Assets', 'perform' )
-			);
-		}
-
-		return $actions;
 	}
 }
