@@ -34,6 +34,11 @@ class Cdn_Manager {
 	 * @return void
 	 */
 	public function __construct() {
+		// Bailout, if the CDN is not enabled.
+		if ( ! Helpers::get_option( 'enable_cdn', 'perform_cdn', false ) ) {
+			return;
+		}
+
 		add_action( 'template_redirect', [ $this, 'rewrite_with_cdn' ], 1 );
 	}
 
