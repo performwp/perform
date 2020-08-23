@@ -54,9 +54,11 @@ final class Plugin {
 
 		// Load Frontend Files.
 		new Includes\Actions();
+		new Includes\Filters();
 		new Modules\Basic();
 		new Modules\Cdn_Manager();
 		new Modules\Assets_Manager();
+		new Modules\Ssl_Manager();
 	}
 
 	/**
