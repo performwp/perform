@@ -59,6 +59,7 @@ final class Plugin {
 		new Modules\Cdn_Manager();
 		new Modules\Assets_Manager();
 		new Modules\Ssl_Manager();
+		new Modules\Woocommerce_Manager();
 	}
 
 	/**
