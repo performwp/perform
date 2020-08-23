@@ -11,6 +11,15 @@
 namespace Perform\Admin;
 
 class Filters {
+
+	/**
+	 * Constructor.
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 *
+	 * @return void
+	 */
 	public function __construct() {
 		add_filter( 'admin_footer_text', [ $this, 'add_admin_footer_text' ] );
 		add_filter( 'plugin_action_links_' . PERFORM_PLUGIN_BASENAME, [ $this, 'add_plugin_action_links' ] );
