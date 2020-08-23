@@ -33,9 +33,12 @@ class Filters {
 		if ( true == stristr( $current_screen->base, 'perform' ) ) {
 
 			$ratingText = sprintf(
-				/* translators: %s: Link to 5 star rating */
-				esc_html__( 'If you like <strong>Perform</strong> please leave us a %s rating. It takes a minute and helps a lot. Thanks in advance!', 'perform' ),
-				'<a href="https://wordpress.org/support/plugin/perform/reviews/?filter=5#postform" target="_blank" class="perform-rating-link" style="text-decoration:none;" data-rated="' . esc_attr__( 'Thanks :)', 'perform' ) . '">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
+				'%1$s <strong>%2$s</strong> %3$s <a href="%4$s" target="_blank" class="perform-rating-link">%5$s</a>',
+				esc_html__( 'If you love using', 'perform' ),
+				esc_html__( 'Perform WordPress Plugin', 'perform' ),
+				esc_html__( 'please leave us a', 'perform' ),
+				esc_url( 'https://wordpress.org/support/plugin/perform/reviews/?filter=5#postform' ),
+				esc_html__( 'rating. It takes a minute and helps a lot. Thanks in advance!', 'perform' ),
 			);
 
 			return $ratingText;
