@@ -12,8 +12,8 @@ namespace Perform\Admin;
 
 class Filters {
 	public function __construct() {
-		add_filter( 'admin_footer_text', [ $this, 'addAdminFooterText' ] );
-		add_filter( 'plugin_action_links_' . PERFORM_PLUGIN_BASENAME, [ $this, 'addPluginActionLinks' ] );
+		add_filter( 'admin_footer_text', [ $this, 'add_admin_footer_text' ] );
+		add_filter( 'plugin_action_links_' . PERFORM_PLUGIN_BASENAME, [ $this, 'add_plugin_action_links' ] );
 		add_filter( 'post_row_actions', [ $this, 'add_row_actions' ], 10, 2 );
 		add_filter( 'page_row_actions', [ $this, 'add_row_actions' ], 10, 2 );
 	}
@@ -27,7 +27,7 @@ class Filters {
 	 *
 	 * @return string
 	 */
-	public function addAdminFooterText( $footerText ) {
+	public function add_admin_footer_text( $footerText ) {
 		$current_screen = get_current_screen();
 
 		if ( true == stristr( $current_screen->base, 'perform' ) ) {
@@ -56,7 +56,7 @@ class Filters {
 	 *
 	 * @return array
 	 */
-	public function addPluginActionLinks( $actions ) {
+	public function add_plugin_action_links( $actions ) {
 		$new_actions = [
 			'settings' => sprintf(
 				'<a href="%1$s">%2$s</a>',
