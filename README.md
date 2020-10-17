@@ -1,4 +1,10 @@
-# [Perform](https://mehulgohil.com/plugins/perform "Perform - Speed Matters") #
+<h1><p align="center">PerformWP - Web Performance Optimization WordPress Plugin :rocket:</p></h1>
+
+<p align="center">This plugin has been developed with an intention to improve the performance of your WordPress website. It has been developed from the ground up for all your performance optimization needs.</p>
+
+---
+
+👉 Not a developer? Running WordPress? [Download PerformWP](https://wordpress.org/plugins/perform/) on WordPress.org.
 
 ![WordPress version](https://img.shields.io/wordpress/plugin/v/perform.svg) ![WordPress Rating](https://img.shields.io/wordpress/plugin/r/perform.svg) ![WordPress Downloads](https://img.shields.io/wordpress/plugin/dt/perform.svg) [![License](https://img.shields.io/badge/license-GPL--2.0%2B-green.svg)](https://github.com/mehul0810/perform-for-wp/blob/master/license.txt) 
 
