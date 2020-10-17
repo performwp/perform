@@ -96,8 +96,15 @@ const config = {
 		new MiniCSSExtractPlugin( {
 			filename: 'css/[name].css',
 		} ),
-
-		new CopyWebpackPlugin( [ { from: 'assets/src/images', to: 'images' } ] ),
+		new CopyWebpackPlugin( {
+			patterns: [
+				{
+					from: 'assets/src/images',
+					to: 'images',
+				},
+			],
+		} ),
+		// new CopyWebpackPlugin( [ { from: 'assets/src/images', to: 'images' } ] ),
 	],
 };
 
