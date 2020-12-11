@@ -1,5 +1,6 @@
 {
 	"name": "mehulgohil/perform",
+	"description": "Web Performance Optimization plugin for WordPress",
 	"authors": [
 		{
 			"name": "Mehul Gohil",
@@ -7,12 +8,13 @@
 		}
 	],
 	"require": {
-		"appsero/client": "^1.1",
-		"squizlabs/php_codesniffer": "*",
-		"wp-coding-standards/wpcs": "*",
+		"composer/installers": "*",
+		"appsero/client": "*"
+	},
+	"require-dev": {
 		"dealerdirect/phpcodesniffer-composer-installer": "*",
-		"phpcompatibility/php-compatibility": "*",
-		"phpcompatibility/phpcompatibility-wp": "*"
+		"phpcompatibility/phpcompatibility-wp": "*",
+		"wp-coding-standards/wpcs": "*"
 	},
 	"scripts": {
 		"post-install-cmd": [
