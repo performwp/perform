@@ -14,12 +14,12 @@
  *
  * @wordpress-plugin
  *
- * Plugin Name: Perform - Performance Optimization Plugin for WordPress
+ * Plugin Name: Perform - Optimize Performance
  * Plugin URI: https://performwp.com/
  * Description: This plugin adds toolset for performance and speed improvements to your WordPress sites.
- * Version: 2.0.0
+ * Version: 1.3.0
  * Author: Mehul Gohil
- * Author URI: https://www.mehulgohil.in/
+ * Author URI: https://mehulgohil.com/
  * License: GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: perform
@@ -33,6 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// Load Constants.
 require_once __DIR__ . '/config/constants.php';
 
 // Automatically loads files used throughout the plugin.
