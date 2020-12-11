@@ -1,5 +1,6 @@
 /.git
 .gitignore
+.gitattributes
 
 /.idea
 /.github
@@ -10,6 +11,7 @@
 /assets/src
 /vendor/bin
 /vendor/composer/installers
+/wp-org-assets
 
 .scrutinizer.yml
 .travis.yml
