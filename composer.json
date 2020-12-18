@@ -8,8 +8,7 @@
 		}
 	],
 	"require": {
-		"composer/installers": "*",
-		"appsero/client": "*"
+		"composer/installers": "*"
 	},
 	"require-dev": {
 		"dealerdirect/phpcodesniffer-composer-installer": "*",

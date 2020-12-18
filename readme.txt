@@ -100,7 +100,6 @@ Please make sure you make a backup of your database before updating any version 
 
 = 1.3.0: December 31st, 2020 =
 Moved to modern coding practices using namespaces
-Added support for Appsero for anonymous usage tracking
 
 = 1.2.3: December 31st, 2019 =
 Resolved fatal error when `wp-config.php` file is not writable
