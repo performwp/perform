@@ -1,11 +1,11 @@
 === Perform ===
 Contributors: performwp, mehul0810
 Tags: performance, assets manager, scripts manager, menu cache, disable embeds, disable emoji
-Donate link: https://mehulgohil.com/donate/
+Donate link: https://www.buymeacoffee.com/mehulgohil
 Requires at least: 4.8
-Tested up to: 5.3
+Tested up to: 5.6
 Requires PHP: 5.6
-Stable tag: 1.2.3
+Stable tag: 1.3.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -97,6 +97,9 @@ Yes, it does.
 Please make sure you make a backup of your database before updating any version to ensure that none of your data is lost.
 
 == Changelog ==
+
+= 1.3.0: December 31st, 2020 =
+Moved to modern coding practices using namespaces
 
 = 1.2.3: December 31st, 2019 =
 Resolved fatal error when `wp-config.php` file is not writable

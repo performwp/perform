@@ -1,0 +1,178 @@
+<?php
+/**
+ * Perform | Helpers
+ *
+ * @since 2.0.0
+ *
+ * @package Perform
+ * @subpackage Includes
+ * @author Mehul Gohil <hello@mehulgohil.com>
+ */
+
+namespace Perform\Includes;
+
+use const WP_CONTENT_FOLDERNAME;
+
+// Bailout, if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Helper Class.
+ *
+ * @since 2.0.0
+ *
+ * @return void
+ */
+class Helpers {
+
+	/**
+	 * Has Network Access.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 *
+	 * @return bool
+	 */
+	public static function has_network_access() {
+		// Bailout, if not Multi-Site instance.
+		if ( ! is_multisite() ) {
+			return true;
+		}
+
+		$network = get_site_option( 'perform_network' );
+
+		if (
+			! is_super_admin() &&
+			! empty( $network['access'] ) &&
+			'super' === $network['access']
+		) {
+			return false;
+		}
+	}
+
+	/**
+	 * Get the value of a settings field.
+	 *
+	 * @param string $option  Settings field name.
+	 * @param string $section The section name this field belongs to.
+	 * @param string $default Default text if it's not found.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 *
+	 * @return string
+	 */
+	public static function get_option( $option, $section, $default = '' ) {
+		$options = get_option( $section );
+
+		if ( isset( $options[ $option ] ) ) {
+			return $options[ $option ];
+		}
+
+		return $default;
+	}
+
+	/**
+	 * Check if radio(enabled/disabled) and checkbox(on) is active or not.
+	 *
+	 * @param string $value        Value.
+	 * @param string $compare_with Compare With.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 *
+	 * @return bool
+	 */
+	public static function is_settings_enabled( $value, $compare_with = '' ) {
+		if ( ! is_null( $compare_with ) ) {
+			if ( is_array( $compare_with ) ) {
+				return in_array( $value, $compare_with, true );
+			}
+
+			return ( $value === $compare_with );
+		}
+
+		return ( in_array( $value, [ 'enabled', 'on', 'yes' ], true ) ? true : false );
+	}
+
+	/**
+	 * Is Assets Manager Enabled?
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 *
+	 * @return bool
+	 */
+	public static function is_assets_manager_enabled() {
+		return self::get_option( 'enable_assets_manager', 'perform_advanced', false );
+	}
+
+	/**
+	 * Is WooCommerce Active?
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 *
+	 * @return bool
+	 */
+	public static function is_woocommerce_active() {
+		$is_active = false;
+
+		// Return true when WooCommerce plugin is active.
+		if ( class_exists( 'WooCommerce' ) ) {
+			$is_active = true;
+		}
+
+		return $is_active;
+	}
+
+	/**
+	 * Clean variables using `sanitize_text_field`.
+	 * Arrays are cleaned recursively. Non-scalar values are ignored.
+	 *
+	 * @param string|array $var Sanitize the variable.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 *
+	 * @return string|array
+	 */
+	public static function clean( $var ) {
+		if ( is_array( $var ) ) {
+			return array_map( [ __CLASS__, __METHOD__ ], $var );
+		} else {
+			return is_scalar( $var ) ? sanitize_text_field( wp_unslash( $var ) ) : $var;
+		}
+	}
+
+	/**
+	 * This function will return the content directory name.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 *
+	 * @return string
+	 */
+	public static function get_content_dir_name() {
+		return defined( 'WP_CONTENT_FOLDERNAME' ) ? WP_CONTENT_FOLDERNAME : 'wp-content';
+	}
+
+	/**
+	 * Can Display Assets Manager.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 *
+	 * @return bool
+	 */
+	public static function can_display_assets_manager() {
+		if ( isset( $_GET['perform'] ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+}

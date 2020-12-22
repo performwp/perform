@@ -1,0 +1,35 @@
+{
+	"name": "mehulgohil/perform",
+	"description": "Web Performance Optimization plugin for WordPress",
+	"authors": [
+		{
+			"name": "Mehul Gohil",
+			"email": "hello@mehulgohil.com"
+		}
+	],
+	"require": {
+		"composer/installers": "*"
+	},
+	"require-dev": {
+		"dealerdirect/phpcodesniffer-composer-installer": "*",
+		"phpcompatibility/phpcompatibility-wp": "*",
+		"wp-coding-standards/wpcs": "*"
+	},
+	"scripts": {
+		"post-install-cmd": [
+			"\"vendor/bin/phpcs\" --config-set installed_paths vendor/wp-coding-standards/wpcs || true",
+			"@install-codestandards"
+		],
+		"post-update-cmd": [
+			"\"vendor/bin/phpcs\" --config-set installed_paths vendor/wp-coding-standards/wpcs || true"
+		],
+		"install-codestandards": [
+			"Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\Plugin::run"
+		]
+	},
+	"autoload": {
+		"psr-4": {
+			"Perform\\": "src/"
+		}
+	}
+}
