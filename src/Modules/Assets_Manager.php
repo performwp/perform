@@ -64,6 +64,11 @@ class Assets_Manager {
 			return;
 		}
 
+		// Don't proceed, if not accessed by administrator.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
 		$this->selected_options = get_option( 'perform_assets_manager_options' );
 
 		add_action( 'wp_footer', [ $this, 'assets_manager_html' ], 1000 );
@@ -275,7 +280,7 @@ class Assets_Manager {
 	 *
 	 * @param $category
 	 * @param $group
-	 * @param array $asset_details List of all assets.
+	 * @param array    $asset_details List of all assets.
 	 *
 	 * @since  1.1.0
 	 * @access public

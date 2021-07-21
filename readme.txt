@@ -98,39 +98,42 @@ Please make sure you make a backup of your database before updating any version 
 
 == Changelog ==
 
+= 1.3.1 =
+- Restrict non-admin users to access assets manager.
+
 = 1.3.0: December 31st, 2020 =
-Moved to modern coding practices using namespaces
+- Moved to modern coding practices using namespaces
 
 = 1.2.3: December 31st, 2019 =
-Resolved fatal error when `wp-config.php` file is not writable
+- Resolved fatal error when `wp-config.php` file is not writable
 
 = 1.2.2: December 27th, 2019 =
-Fix: cdn rewrite is not working [#16](https://github.com/mehul0810/perform/issues/16)
-UI Improvements for Assets Manager
-Simplified working of `wp-config.php` constants
-Security Improvements
+- Fix: cdn rewrite is not working [#16](https://github.com/mehul0810/perform/issues/16)
+- UI Improvements for Assets Manager
+- Simplified working of `wp-config.php` constants
+- Security Improvements
 
 = 1.2.1: June 22th, 2019 =
-Fix: redirect to welcome screen on plugin activation [#15](https://github.com/mehul0810/perform/issues/15)
-General Design Improvements & Tweaks
-User Experience Improvements for settings page
+- Fix: redirect to welcome screen on plugin activation [#15](https://github.com/mehul0810/perform/issues/15)
+- General Design Improvements & Tweaks
+- User Experience Improvements for settings page
 
 = 1.2.0: April 30th, 2019 =
-Fix: add quick access to assets manager from admin listing [#10](https://github.com/mehul0810/perform/issues/10)
-Feat: add menu cache [#11](https://github.com/mehul0810/issues/11)
-Fix: generalise styling for assets manager with all the themes [#12](https://github.com/mehul0810/perform/issues/12)
+- Fix: add quick access to assets manager from admin listing [#10](https://github.com/mehul0810/perform/issues/10)
+- Feat: add menu cache [#11](https://github.com/mehul0810/issues/11)
+- Fix: generalise styling for assets manager with all the themes [#12](https://github.com/mehul0810/perform/issues/12)
 
 = 1.1.1: April 25th, 2019 =
-Fix: display assets manager link in admin bar [#6](https://github.com/mehul0810/perform/issues/6)
+- Fix: display assets manager link in admin bar [#6](https://github.com/mehul0810/perform/issues/6)
 
 = 1.1.0: April 25th, 2019 =
-Feat: add support for assets manager [#1](https://github.com/mehul0810/perform/issues/1)
-Fix: settings page is not visible with multisite setup [#5](https://github.com/mehul0810/perform/issues/5)
+- Feat: add support for assets manager [#1](https://github.com/mehul0810/perform/issues/1)
+- Fix: settings page is not visible with multisite setup [#5](https://github.com/mehul0810/perform/issues/5)
 
 = 1.0.1: March 31st, 2019 =
-Fix: incorrect linking for reviews in admin footer [#2](https://github.com/mehul0810/perform/issues/2)
-Fix: woocommerce tab should be visible when woocommerce is active [#3](https://github.com/mehul0810/perform/issues/3)
-Fix: disabling woocommerce widgets not working [#4](https://github.com/mehul0810/perform/issues/4)
+- Fix: incorrect linking for reviews in admin footer [#2](https://github.com/mehul0810/perform/issues/2)
+- Fix: woocommerce tab should be visible when woocommerce is active [#3](https://github.com/mehul0810/perform/issues/3)
+- Fix: disabling woocommerce widgets not working [#4](https://github.com/mehul0810/perform/issues/4)
 
 = 1.0.0: March 23rd, 2019 =
-Initial Release. Yippee!
+- Initial Release. Yippee!
