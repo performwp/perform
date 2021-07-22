@@ -49,6 +49,7 @@ class Menu extends Api {
 		$this->add_fields();
 
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 9 );
+		add_action( 'in_admin_header', [ $this, 'render_settings_page_header' ] );
 	}
 
 	/**
@@ -64,9 +65,86 @@ class Menu extends Api {
 			esc_html__( 'Perform', 'perform' ),
 			esc_html__( 'Perform', 'perform' ),
 			'manage_options',
-			'perform',
+			'perform_settings',
 			[ $this, 'render_settings_page' ]
 		);
+	}
+
+	/**
+	 * Render Settings Page Header.
+	 *
+	 * @since  1.4.0
+	 * @access public
+	 *
+	 * @return void|mixed
+	 */
+	public function render_settings_page_header() {
+		$screen = get_current_screen();
+
+		// Bailout, if screen id doesn't match.
+		if ( 'settings_page_perform_settings' !== $screen->id ) {
+			return;
+		}
+		?>
+		<div class="perform-dashboard-header">
+			<div class="perform-dashboard-header-title">
+				<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 408 76.372"><defs><linearGradient id="a" x1="0.941" y1="0.067" x2="0.074" y2="0.93" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#0046d1"/><stop offset="1" stop-color="#afc9ff"/></linearGradient><linearGradient id="b" x1="0.881" y1="0.125" x2="0.139" y2="0.883" xlink:href="#a"/><linearGradient id="c" x1="0.892" y1="0.121" x2="0.125" y2="0.897" xlink:href="#a"/></defs><text transform="translate(249 60)" fill="#222" font-size="62" font-family="Montserrat-Medium, Montserrat" font-weight="500"><tspan x="-158.534" y="0">PERFORM</tspan></text><g transform="translate(0 0.42)"><path d="M169.357,67.974,205.9,32.92,185.432,98.468Z" transform="translate(-134.396 -26.743)" fill="#c8d8ff"/><path d="M49.768,58.34,84,23.094,18.155,46.032Z" transform="translate(-14.408 -18.946)" fill="#fff"/><path d="M75.939,1.433a1.546,1.546,0,0,0-.051-.258,1.714,1.714,0,0,0-.109-.268c-.023-.048-.031-.1-.059-.145a1.016,1.016,0,0,0-.069-.078,1.713,1.713,0,0,0-.187-.21A1.614,1.614,0,0,0,75.25.291c-.028-.02-.046-.048-.074-.064-.046-.028-.1-.035-.145-.058a1.718,1.718,0,0,0-.276-.111,1.738,1.738,0,0,0-.243-.043A1.694,1.694,0,0,0,74.223,0a1.484,1.484,0,0,0-.268.045,1.521,1.521,0,0,0-.17.028L1.12,24.847a1.65,1.65,0,0,0-.058,3.1s17.841,5.311,30,17.062S49.682,74.956,49.682,74.956a1.654,1.654,0,0,0,1.516,1c.028,0,.055,0,.083,0A1.652,1.652,0,0,0,52.772,74.8L67.927,27.169,75.892,2.137a1.237,1.237,0,0,0,.021-.157,1.561,1.561,0,0,0,.038-.276A1.646,1.646,0,0,0,75.939,1.433ZM6.5,26.5,68.127,5.489,35.842,37.774ZM50.962,69.592,38.212,40.077,70.685,7.6Z" transform="translate(-0.001 0)" fill="#0046d1"/><path d="M25.941,240.4a1.65,1.65,0,0,0-2.335,0L.485,263.523a1.651,1.651,0,1,0,2.335,2.335l23.121-23.121A1.65,1.65,0,0,0,25.941,240.4Z" transform="translate(-0.001 -190.39)" fill="url(#a)"/><path d="M100.046,296.4l-11.56,11.56A1.651,1.651,0,1,0,90.82,310.3l11.56-11.56a1.651,1.651,0,1,0-2.335-2.335Z" transform="translate(-69.835 -234.83)" fill="url(#b)"/><path d="M1.653,222.782A1.647,1.647,0,0,0,2.82,222.3l11.56-11.56a1.651,1.651,0,1,0-2.335-2.335L.485,219.963a1.651,1.651,0,0,0,1.168,2.819Z" transform="translate(-0.001 -164.996)" fill="url(#c)"/></g></svg>
+			</div>
+			<?php $this->render_header_navigation(); ?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render Header Navigation.
+	 *
+	 * @since  1.4.0
+	 * @access public
+	 *
+	 * @return void
+	 */
+	public function render_header_navigation() {
+		$screen      = get_current_screen();
+		$current_tab = ! empty( $_GET['tab'] ) ? $_GET['tab'] : '';
+		$tabs        = apply_filters(
+			'perform_settings_navigation_tabs',
+			[
+				'general'       => [
+					'name'  => esc_html__( 'General', 'perform' ),
+					'url'   => admin_url( 'options-general.php?page=perform_settings' ),
+					'class' => 'settings_page_perform_settings' === $screen->id && '' === $current_tab ? 'active' : '',
+				],
+				'advanced'      => [
+					'name'  => esc_html__( 'Advanced', 'perform' ),
+					'url'   => admin_url( 'admin.php?page=perform_settings' ),
+					'class' => 'settings_page_perform_settings' === $screen->id && 'advanced' === $current_tab ? 'active' : '',
+				],
+				'other-plugins' => [
+					'name'  => esc_html__( 'Recommended Plugins', 'perform' ),
+					'url'   => admin_url( 'admin.php?page=perform_settings&tab=recommended_plugins' ),
+					'class' => 'settings_page_perform_settings' === $screen->id && 'recommended_plugins' === $current_tab ? 'active' : '',
+				],
+			],
+		);
+
+		// Don't print any markup if we only have one tab.
+		if ( count( $tabs ) === 1 ) {
+			return;
+		}
+		?>
+		<div class="perform-header-navigation">
+			<?php
+			foreach ( $tabs as $tab ) {
+				printf(
+					'<a href="%1$s" class="%2$s">%3$s</a>',
+					esc_url( $tab['url'] ),
+					esc_attr( $tab['class'] ),
+					esc_html( $tab['name'] )
+				);
+			}
+			?>
+		</div>
+		<?php
 	}
 
 	/**
@@ -787,6 +865,7 @@ class Menu extends Api {
 			[
 				'id'        => 'dns_prefetch',
 				'type'      => 'textarea',
+				'data_type' => 'one_per_line',
 				'name'      => esc_html__( 'DNS Prefetch', 'perform' ),
 				'desc'      => esc_html__( 'Resolve domain names before a user clicks. Format: //domain.tld (one per line)', 'perform' ),
 				'help_link' => esc_url(
