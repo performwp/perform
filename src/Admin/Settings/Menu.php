@@ -109,20 +109,25 @@ class Menu extends Api {
 		$tabs        = apply_filters(
 			'perform_settings_navigation_tabs',
 			[
-				'general'       => [
+				'general'      => [
 					'name'  => esc_html__( 'General', 'perform' ),
 					'url'   => admin_url( 'options-general.php?page=perform_settings' ),
 					'class' => 'settings_page_perform_settings' === $screen->id && '' === $current_tab ? 'active' : '',
 				],
-				'advanced'      => [
+				'advanced'     => [
 					'name'  => esc_html__( 'Advanced', 'perform' ),
-					'url'   => admin_url( 'admin.php?page=perform_settings' ),
+					'url'   => admin_url( 'options-general.php?page=perform_settings&tab=advanced' ),
 					'class' => 'settings_page_perform_settings' === $screen->id && 'advanced' === $current_tab ? 'active' : '',
 				],
-				'other-plugins' => [
-					'name'  => esc_html__( 'Recommended Plugins', 'perform' ),
-					'url'   => admin_url( 'admin.php?page=perform_settings&tab=recommended_plugins' ),
-					'class' => 'settings_page_perform_settings' === $screen->id && 'recommended_plugins' === $current_tab ? 'active' : '',
+				'tools'        => [
+					'name'  => esc_html__( 'Tools', 'perform' ),
+					'url'   => admin_url( 'options-general.php?page=perform_settings&tab=tools' ),
+					'class' => 'settings_page_perform_settings' === $screen->id && 'tools' === $current_tab ? 'active' : '',
+				],
+				'experimental' => [
+					'name'  => esc_html__( 'Experimental', 'perform' ),
+					'url'   => admin_url( 'options-general.php?page=perform_settings&tab=experimental' ),
+					'class' => 'settings_page_perform_settings' === $screen->id && 'experimental' === $current_tab ? 'active' : '',
 				],
 			],
 		);
