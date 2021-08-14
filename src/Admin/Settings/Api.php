@@ -11,759 +11,144 @@
 
 namespace Perform\Admin\Settings;
 
+use Perform\Includes\Helpers;
+
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * Perform_Admin_Settings_API Class
+ * API Class for admin settings.
  *
- * @since 1.0.0
+ * @since 2.0.0
  */
 class Api {
 
 	/**
-	 * Base Prefix for Settings.
+	 * Set a prefix for the purpose of storing it in DB.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 *
 	 * @var string
 	 */
 	public $prefix = '';
 
 	/**
-	 * Sections array.
+	 * Render Admin Fields.
 	 *
-	 * @var   array
-	 * @since 1.0.0
-	 */
-	private $sections_array = [];
-
-	/**
-	 * Fields array.
+	 * This function will loop through the admin settings fields for all the tabs.
 	 *
-	 * @var   array
-	 * @since 1.0.0
-	 */
-	private $fields_array = [];
-
-	/**
-	 * Constructor.
+	 * @param array $all_fields List of fields in a multi-dimensional array format for all tabs.
 	 *
-	 * @since  1.0.0
-	 */
-	public function __construct() {
-		add_action( 'admin_init', [ $this, 'admin_init' ] );
-	}
-
-	/**
-	 * Set Sections.
-	 *
-	 * @param array $sections List of sections.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return $this|bool
-	 */
-	public function set_sections( $sections ) {
-
-		// Bail if not array.
-		if ( ! is_array( $sections ) ) {
-			return false;
-		}
-
-		// Assign to the sections array.
-		$this->sections_array = $sections;
-
-		return $this;
-	}
-
-
-	/**
-	 * Add a single section.
-	 *
-	 * @param array $section List of sections.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return $this|bool
-	 */
-	public function add_section( $section ) {
-
-		// Bail if not array.
-		if ( ! is_array( $section ) ) {
-			return false;
-		}
-
-		// Assign the section to sections array.
-		$this->sections_array[] = $section;
-
-		return $this;
-	}
-
-
-	/**
-	 * Set Fields.
-	 *
-	 * @param array $fields List of fields.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return $this|bool
-	 */
-	public function set_fields( $fields ) {
-		// Bail if not array.
-		if ( ! is_array( $fields ) ) {
-			return false;
-		}
-
-		// Assign the fields.
-		$this->fields_array = $fields;
-
-		return $this;
-	}
-
-	/**
-	 * Add a single field.
-	 *
-	 * @param string $section Any section.
-	 * @param array  $fields List of fields.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return $this
-	 */
-	public function add_field( $section, $fields ) {
-
-		// Set the defaults
-		$defaults = [
-			'id'   => '',
-			'name' => '',
-			'desc' => '',
-			'type' => 'text',
-		];
-
-		// Combine the defaults with user's arguements.
-		$args = wp_parse_args( $fields, $defaults );
-
-		// Each field is an array named against its section.
-		$this->fields_array[ $section ][] = $args;
-
-		return $this;
-	}
-
-
-
-	/**
-	 * Initialize API.
-	 *
-	 * Initializes and registers the settings sections and fields.
-	 * Usually this should be called at `admin_init` hook.
-	 *
-	 * @since  1.0.0
-	 */
-	public function admin_init() {
-		/**
-		 * Register the sections.
-		 *
-		 * Sections array is like this:
-		 *
-		 * $sections_array = array (
-		 *   $section_array,
-		 *   $section_array,
-		 *   $section_array,
-		 * );
-		 *
-		 * Section array is like this:
-		 *
-		 * $section_array = array (
-		 *   'id'    => 'section_id',
-		 *   'title' => 'Section Title'
-		 * );
-		 *
-		 * @since 1.0.0
-		 */
-		foreach ( $this->sections_array as $section ) {
-			if ( false == get_option( $section['id'] ) ) {
-				// Add a new field as section ID.
-				add_option( $section['id'] );
-			}
-
-			// Deals with sections description.
-			if ( isset( $section['desc'] ) && ! empty( $section['desc'] ) ) {
-				// Build HTML.
-				$section['desc'] = '<div class="inside">' . $section['desc'] . '</div>';
-
-				// Create the callback for description.
-				$callback = function() use ( $section ) {
-					echo str_replace( '"', '\"', $section['desc'] );
-				};
-
-			} elseif ( isset( $section['callback'] ) ) {
-				$callback = $section['callback'];
-			} else {
-				$callback = null;
-			}
-
-			/**
-			 * Add a new section to a settings page.
-			 *
-			 * @param string $id
-			 * @param string $title
-			 * @param callable $callback
-			 * @param string $page | Page is same as section ID.
-			 * @since 1.0.0
-			 */
-			add_settings_section( $section['id'], $section['title'], $callback, $section['id'] );
-		} // foreach ended.
-
-		/**
-		 * Register settings fields.
-		 *
-		 * Fields array is like this:
-		 *
-		 * $fields_array = array (
-		 *   $section => $field_array,
-		 *   $section => $field_array,
-		 *   $section => $field_array,
-		 * );
-		 *
-		 *
-		 * Field array is like this:
-		 *
-		 * $field_array = array (
-		 *   'id'   => 'id',
-		 *   'name' => 'Name',
-		 *   'type' => 'text',
-		 * );
-		 *
-		 * @since 1.0.0
-		 */
-		foreach ( $this->fields_array as $section => $field_array ) {
-			foreach ( $field_array as $field ) {
-				// ID.
-				$id = isset( $field['id'] ) ? $field['id'] : false;
-
-				// Type.
-				$type = isset( $field['type'] ) ? $field['type'] : 'text';
-
-				// Name.
-				$name = isset( $field['name'] ) ? $field['name'] : 'No Name Added';
-
-				// Label for.
-				$label_for = "{$section}[{$field['id']}]";
-
-				// Description.
-				$description = isset( $field['desc'] ) ? $field['desc'] : '';
-
-				// Size.
-				$size = isset( $field['size'] ) ? $field['size'] : null;
-
-				// Options.
-				$options = isset( $field['options'] ) ? $field['options'] : '';
-
-				// Standard default value.
-				$default = isset( $field['default'] ) ? $field['default'] : '';
-
-				// Standard default placeholder.
-				$placeholder = isset( $field['placeholder'] ) ? $field['placeholder'] : '';
-
-				// Sanitize Callback.
-				$sanitize_callback = isset( $field['sanitize_callback'] ) ? $field['sanitize_callback'] : '';
-
-				$args = [
-					'id'                => $id,
-					'type'              => $type,
-					'name'              => $name,
-					'label_for'         => $label_for,
-					'desc'              => $description,
-					'section'           => $section,
-					'size'              => $size,
-					'options'           => $options,
-					'std'               => $default,
-					'placeholder'       => $placeholder,
-					'sanitize_callback' => $sanitize_callback,
-				];
-
-				// Help Link.
-				$help_link = isset( $field['help_link'] ) ? $field['help_link'] : '';
-
-				// Add help icon next to the name of the field.
-				if ( ! empty( $help_link ) ) {
-					$name .= sprintf( '&nbsp;<a title="%1$s" class="perform-help-link" href="%2$s" target="_blank">', $name, $help_link );
-					$name .= '<span class="dashicons dashicons-editor-help"></span>';
-					$name .= '</a>';
-				}
-
-				/**
-				 * Add a new field to a section of a settings page.
-				 *
-				 * @param string   $id
-				 * @param string   $title
-				 * @param callable $callback
-				 * @param string   $page
-				 * @param string   $section = 'default'
-				 * @param array    $args = array()
-				 * @since 1.0.0
-				 */
-
-				// @param string 	$id
-				$field_id = $section . '[' . $field['id'] . ']';
-
-				add_settings_field(
-					$field_id,
-					$name,
-					[ $this, 'callback_' . $type ],
-					$section,
-					$section,
-					$args
-				);
-			} // foreach ended.
-		} // foreach ended.
-
-		// Creates our settings in the fields table.
-		foreach ( $this->sections_array as $section ) {
-			/**
-			 * Registers a setting and its sanitization callback.
-			 *
-			 * @param string $field_group   | A settings group name.
-			 * @param string $field_name    | The name of an option to sanitize and save.
-			 * @param callable  $sanitize_callback = ''
-			 * @since 1.0.0
-			 */
-			register_setting( $section['id'], $section['id'], [ $this, 'sanitize_fields' ] );
-		} // foreach ended.
-
-	} // admin_init() ended.
-
-
-	/**
-	 * Sanitize callback for Settings API fields.
-	 *
-	 * @since 1.0.0
-	 */
-	public function sanitize_fields( $fields ) {
-		foreach ( $fields as $field_slug => $field_value ) {
-			$sanitize_callback = $this->get_sanitize_callback( $field_slug );
-
-			// If callback is set, call it.
-			if ( $sanitize_callback ) {
-				$fields[ $field_slug ] = call_user_func( $sanitize_callback, $field_value );
-				continue;
-			}
-		}
-
-		return $fields;
-	}
-
-
-	/**
-	 * Get sanitization callback for given option slug
-	 *
-	 * @param string $slug option slug.
-	 * @return mixed string | bool false
-	 * @since  1.0.0
-	 */
-	public function get_sanitize_callback( $slug = '' ) {
-		if ( empty( $slug ) ) {
-			return false;
-		}
-
-		// Iterate over registered fields and see if we can find proper callback.
-		foreach ( $this->fields_array as $section => $field_array ) {
-			foreach ( $field_array as $field ) {
-				if ( $field['name'] != $slug ) {
-					continue;
-				}
-
-				// Return the callback name.
-				return isset( $field['sanitize_callback'] ) && is_callable( $field['sanitize_callback'] ) ? $field['sanitize_callback'] : false;
-			}
-		}
-
-		return false;
-	}
-
-
-	/**
-	 * Get field description for display
-	 *
-	 * @param array $args settings field args
-	 */
-	public function get_field_description( $args ) {
-		if ( ! empty( $args['desc'] ) ) {
-			$desc = sprintf( '<p class="description">%s</p>', $args['desc'] );
-		} else {
-			$desc = '';
-		}
-
-		return $desc;
-	}
-
-
-	/**
-	 * Displays a title field for a settings field
-	 *
-	 * @param array $args settings field args
-	 */
-	public function callback_title( $args ) {
-		$value = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
-		if ( '' !== $args['name'] ) {
-			$name = $args['name'];
-		} else {
-		};
-		$type = isset( $args['type'] ) ? $args['type'] : 'title';
-
-		$html = '';
-		echo $html;
-	}
-
-
-	/**
-	 * Displays a text field for a settings field
-	 *
-	 * @param array $args settings field args
-	 */
-	public function callback_text( $args ) {
-
-		$value = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'], $args['placeholder'] ) );
-		$size  = isset( $args['size'] ) && ! is_null( $args['size'] ) ? $args['size'] : 'regular';
-		$type  = isset( $args['type'] ) ? $args['type'] : 'text';
-
-		$html  = sprintf( '<input type="%1$s" class="%2$s-text" id="%3$s[%4$s]" name="%3$s[%4$s]" value="%5$s"placeholder="%6$s"/>', $type, $size, $args['section'], $args['id'], $value, $args['placeholder'] );
-		$html .= $this->get_field_description( $args );
-
-		echo $html;
-	}
-
-
-	/**
-	 * Displays a url field for a settings field
-	 *
-	 * @param array $args settings field args
-	 */
-	public function callback_url( $args ) {
-		$this->callback_text( $args );
-	}
-
-	/**
-	 * Displays a number field for a settings field
-	 *
-	 * @param array $args settings field args
-	 */
-	public function callback_number( $args ) {
-		$this->callback_text( $args );
-	}
-
-	/**
-	 * Displays a checkbox for a settings field
-	 *
-	 * @param array $args settings field args
-	 */
-	public function callback_checkbox( $args ) {
-
-		$value = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
-		$html  = '<fieldset>';
-		$html .= sprintf( '<legend class="screen-reader-text"><span>%1$s</span></legend>', $args['section'] );
-		$html .= sprintf( '<label for="perform-%1$s[%2$s]">', $args['section'], $args['id'] );
-		//          $html .= sprintf( '<input type="hidden" name="%1$s[%2$s]" value="off" />', $args['section'], $args['id'] );
-		$html .= sprintf( '<input type="checkbox" class="checkbox" id="perform-%1$s-%2$s" name="%1$s[%2$s]" value="1" %3$s />', $args['section'], $args['id'], checked( $value, '1', false ) );
-		$html .= sprintf( '%1$s</label>', $args['desc'] );
-		$html .= '</fieldset>';
-
-		echo $html;
-	}
-
-	/**
-	 * Displays a multicheckbox a settings field
-	 *
-	 * @param array $args settings field args
-	 */
-	public function callback_multicheck( $args ) {
-
-		$value = $this->get_option( $args['id'], $args['section'], $args['std'] );
-
-		$html = '<fieldset>';
-		foreach ( $args['options'] as $key => $label ) {
-			$checked = isset( $value[ $key ] ) ? $value[ $key ] : '0';
-			$html   .= sprintf( '<label for="perform-%1$s[%2$s][%3$s]">', $args['section'], $args['id'], $key );
-			$html   .= sprintf( '<input type="checkbox" class="checkbox" id="perform-%1$s[%2$s][%3$s]" name="%1$s[%2$s][%3$s]" value="%3$s" %4$s />', $args['section'], $args['id'], $key, checked( $checked, $key, false ) );
-			$html   .= sprintf( '%1$s</label><br>', $label );
-		}
-		$html .= $this->get_field_description( $args );
-		$html .= '</fieldset>';
-
-		echo $html;
-	}
-
-	/**
-	 * Displays a multicheckbox a settings field
-	 *
-	 * @param array $args settings field args
-	 */
-	public function callback_radio( $args ) {
-
-		$value = $this->get_option( $args['id'], $args['section'], $args['std'] );
-
-		$html = '<fieldset>';
-		foreach ( $args['options'] as $key => $label ) {
-			$html .= sprintf( '<label for="perform-%1$s[%2$s][%3$s]">', $args['section'], $args['id'], $key );
-			$html .= sprintf( '<input type="radio" class="radio" id="perform-%1$s[%2$s][%3$s]" name="%1$s[%2$s]" value="%3$s" %4$s />', $args['section'], $args['id'], $key, checked( $value, $key, false ) );
-			$html .= sprintf( '%1$s</label><br>', $label );
-		}
-		$html .= $this->get_field_description( $args );
-		$html .= '</fieldset>';
-
-		echo $html;
-	}
-
-	/**
-	 * Displays a selectbox for a settings field
-	 *
-	 * @param array $args settings field args
-	 */
-	public function callback_select( $args ) {
-
-		$value = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
-		$size  = isset( $args['size'] ) && ! is_null( $args['size'] ) ? $args['size'] : 'regular';
-
-		$html = sprintf( '<select class="%1$s" name="%2$s[%3$s]" id="%2$s[%3$s]">', $size, $args['section'], $args['id'] );
-		foreach ( $args['options'] as $key => $label ) {
-			$html .= sprintf( '<option value="%s"%s>%s</option>', $key, selected( $value, $key, false ), $label );
-		}
-		$html .= sprintf( '</select>' );
-		$html .= $this->get_field_description( $args );
-
-		echo $html;
-	}
-
-	/**
-	 * Displays a textarea for a settings field
-	 *
-	 * @param array $args settings field args
-	 */
-	public function callback_textarea( $args ) {
-
-		$value = esc_textarea( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
-		$size  = isset( $args['size'] ) && ! is_null( $args['size'] ) ? $args['size'] : 'regular';
-
-		$html  = sprintf( '<textarea rows="5" cols="55" class="%1$s-text" id="%2$s[%3$s]" name="%2$s[%3$s]">%4$s</textarea>', $size, $args['section'], $args['id'], $value );
-		$html .= $this->get_field_description( $args );
-
-		echo $html;
-	}
-
-	/**
-	 * Displays a textarea for a settings field
-	 *
-	 * @param array $args settings field args.
-	 * @return string
-	 */
-	public function callback_html( $args ) {
-		echo $this->get_field_description( $args );
-	}
-
-	/**
-	 * Displays a rich text textarea for a settings field
-	 *
-	 * @param array $args settings field args.
-	 */
-	public function callback_wysiwyg( $args ) {
-
-		$value = $this->get_option( $args['id'], $args['section'], $args['std'] );
-		$size  = isset( $args['size'] ) && ! is_null( $args['size'] ) ? $args['size'] : '500px';
-
-		echo '<div style="max-width: ' . $size . ';">';
-
-		$editor_settings = [
-			'teeny'         => true,
-			'textarea_name' => $args['section'] . '[' . $args['id'] . ']',
-			'textarea_rows' => 10,
-		];
-		if ( isset( $args['options'] ) && is_array( $args['options'] ) ) {
-			$editor_settings = array_merge( $editor_settings, $args['options'] );
-		}
-
-		wp_editor( $value, $args['section'] . '-' . $args['id'], $editor_settings );
-
-		echo '</div>';
-
-		echo $this->get_field_description( $args );
-	}
-
-	/**
-	 * Displays a file upload field for a settings field
-	 *
-	 * @param array $args settings field args.
-	 */
-	public function callback_file( $args ) {
-
-		$value = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
-		$size  = isset( $args['size'] ) && ! is_null( $args['size'] ) ? $args['size'] : 'regular';
-		$id    = $args['section'] . '[' . $args['id'] . ']';
-		$label = isset( $args['options']['button_label'] ) ?
-			$args['options']['button_label'] :
-			__( 'Choose File', 'perform' );
-
-		$html  = sprintf( '<input type="text" class="%1$s-text wpsa-url" id="%2$s[%3$s]" name="%2$s[%3$s]" value="%4$s"/>', $size, $args['section'], $args['id'], $value );
-		$html .= '<input type="button" class="button wpsa-browse" value="' . $label . '" />';
-		$html .= $this->get_field_description( $args );
-
-		echo $html;
-	}
-
-	/**
-	 * Displays an image upload field with a preview
-	 *
-	 * @param array $args settings field args.
-	 */
-	public function callback_image( $args ) {
-
-		$value = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
-		$size  = isset( $args['size'] ) && ! is_null( $args['size'] ) ? $args['size'] : 'regular';
-		$id    = $args['section'] . '[' . $args['id'] . ']';
-		$label = isset( $args['options']['button_label'] ) ?
-			$args['options']['button_label'] :
-			__( 'Choose Image', 'perform' );
-
-		$html  = sprintf( '<input type="text" class="%1$s-text wpsa-url" id="%2$s[%3$s]" name="%2$s[%3$s]" value="%4$s"/>', $size, $args['section'], $args['id'], $value );
-		$html .= '<input type="button" class="button wpsa-browse" value="' . $label . '" />';
-		$html .= $this->get_field_description( $args );
-		$html .= '<p class="wpsa-image-preview"><img src=""/></p>';
-
-		echo $html;
-	}
-
-	/**
-	 * Displays a password field for a settings field
-	 *
-	 * @param array $args settings field args
-	 */
-	public function callback_password( $args ) {
-
-		$value = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
-		$size  = isset( $args['size'] ) && ! is_null( $args['size'] ) ? $args['size'] : 'regular';
-
-		$html  = sprintf( '<input type="password" class="%1$s-text" id="%2$s[%3$s]" name="%2$s[%3$s]" value="%4$s"/>', $size, $args['section'], $args['id'], $value );
-		$html .= $this->get_field_description( $args );
-
-		echo $html;
-	}
-
-	/**
-	 * Displays a color picker field for a settings field
-	 *
-	 * @param array $args settings field args
-	 */
-	public function callback_color( $args ) {
-
-		$value = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'], $args['placeholder'] ) );
-		$size  = isset( $args['size'] ) && ! is_null( $args['size'] ) ? $args['size'] : 'regular';
-
-		$html  = sprintf( '<input type="text" class="%1$s-text color-picker" id="%2$s[%3$s]" name="%2$s[%3$s]" value="%4$s" data-default-color="%5$s" placeholder="%6$s" />', $size, $args['section'], $args['id'], $value, $args['std'], $args['placeholder'] );
-		$html .= $this->get_field_description( $args );
-
-		echo $html;
-	}
-
-
-	/**
-	 * Displays a separator field for a settings field
-	 *
-	 * @param array $args settings field args
-	 */
-	public function callback_separator( $args ) {
-		$type = isset( $args['type'] ) ? $args['type'] : 'separator';
-
-		$html  = '';
-		$html .= '<div class="wpsa-settings-separator"></div>';
-		echo $html;
-	}
-
-
-	/**
-	 * Get the value of a settings field
-	 *
-	 * @param string $option  settings field name.
-	 * @param string $section the section name this field belongs to.
-	 * @param string $default default text if it's not found.
-	 * @return string
-	 */
-	public function get_option( $option, $section, $default = '' ) {
-
-		$options = get_option( $section );
-
-		if ( isset( $options[ $option ] ) ) {
-			return $options[ $option ];
-		}
-
-		return $default;
-	}
-
-	/**
-	 * This function is used to prepare navigation HTML.
-	 *
-	 * @since  1.0.0
+	 * @since  2.0.0
 	 * @access public
 	 *
 	 * @return void
 	 */
-	public function navigation_html() {
-
-		// Get Active Tab.
-		$active_tab = filter_input( INPUT_GET, 'tab' );
-
-		// Set default tab when there is no active tab.
-		if ( empty( $active_tab ) ) {
-			$active_tab = 'perform_common';
-		}
+	public function render_fields( $all_fields = [] ) {
+		ob_start();
+		$current_tab = Helpers::get_current_tab();
 		?>
-		<h2 class="nav-tab-wrapper">
-			<?php
-			foreach ( $this->sections_array as $tab ) {
-				$active_class = ( $active_tab === $tab['id'] ) ? 'nav-tab-active' : '';
-				?>
-				<a href="?page=perform&tab=<?php echo $tab['id']; ?>" class="nav-tab <?php echo $active_class; ?>">
-					<?php echo $tab['title']; ?>
-				</a>
+		<table class="form-table" role="presentation">
+			<tbody>
 				<?php
-			}
-			?>
-		</h2>
+				foreach ( $all_fields as $tab => $fields ) {
+					// Skip this iteration, if the current tab doesn't match with the field tab.
+					if ( $tab !== $current_tab ) {
+						continue;
+					}
+
+					// Skip this iteration, if the `$fields` array is empty.
+					if ( empty( $fields ) ) {
+						continue;
+					}
+
+					foreach ( $fields as $field ) {
+						$type = ! empty( $field['type'] ) ? $field['type'] : 'text';
+
+						?>
+						<tr>
+							<th scope="row">
+								<?php echo $field['name']; ?>
+							</th>
+							<td>
+								<?php
+								// Dynamically render the required admin settings field.
+								echo call_user_func( [ $this, "render_{$type}_field" ], $field );
+								?>
+							</td>
+						</tr>
+						<?php
+					}
+				}
+				?>
+			</tbody>
+		</table>
 		<?php
+		echo ob_get_clean();
 	}
 
 	/**
-	 * Show the section settings forms
+	 * Render Help Link.
 	 *
-	 * This function displays every sections in a different form
+	 * @param string $url URL for the help link.
 	 *
-	 * @since  1.0.0
+	 * @since  2.0.0
 	 * @access public
+	 *
+	 * @return mixed
 	 */
-	public function display_form() {
+	public function render_help_link( $url ) {
+		ob_start();
 		?>
-		<form method="POST" action="options.php">
-			<?php
-			// Get Active Tab.
-			$active_tab = filter_input( INPUT_GET, 'tab' );
-
-			// Set default tab when there is no active tab.
-			if ( empty( $active_tab ) ) {
-				$active_tab = 'perform_common';
-			}
-
-			foreach ( $this->sections_array as $form ) {
-
-				if ( $form['id'] === $active_tab ) {
-					settings_fields( $form['id'] );
-					do_settings_sections( $form['id'] );
-				}
-			}
-			submit_button();
-			?>
-		</form>
+		<a href="<?php echo esc_url( $url ); ?>" class="perform-tooltip" target="_blank" title="<?php esc_html_e( 'Learn more', 'perform' ); ?>">?</a>
 		<?php
+		return ob_get_clean();
+	}
+
+	/**
+	 * Render Checkbox field.
+	 *
+	 * @param array $field List of admin field parameters.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 *
+	 * @return mixed
+	 */
+	public function render_checkbox_field( $field ) {
+		ob_start();
+		$this->render_help_link( $field['help_link'] );
+		?>
+		<input type="checkbox" name="<?php $field['id']; ?>"/> <?php echo $field['desc']; ?>
+		<?php
+		return ob_get_clean();
+	}
+
+	/**
+	 * Render Select field.
+	 *
+	 * @param array $field List of admin field parameters.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 *
+	 * @return mixed
+	 */
+	public function render_select_field( $field ) {
+		ob_start();
+		?>
+		<select name="<?php $field['id']; ?>">
+			<?php
+			foreach ( $field['options'] as $option_slug => $option_value ) {
+				?>
+				<option value="<?php echo $option_slug; ?>"><?php echo $option_value; ?></option>
+				<?php
+			}
+			?>
+		</select>
+		<?php
+		return ob_get_clean();
 	}
 }
