@@ -170,4 +170,23 @@ class Api {
 		<?php
 		return ob_get_clean();
 	}
+
+	/**
+	 * Render `Text` field.
+	 *
+	 * @param array $field List of admin field parameters.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 *
+	 * @return mixed
+	 */
+	public function render_text_field( $field ) {
+		ob_start();
+		$this->render_help_link( $field['help_link'] );
+		?>
+		<input type="text" name="<?php echo esc_attr( $field['id'] ); ?>"/> <?php echo $field['desc']; ?>
+		<?php
+		return ob_get_clean();
+	}
 }
