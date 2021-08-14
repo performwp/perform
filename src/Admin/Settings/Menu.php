@@ -169,8 +169,6 @@ class Menu extends Api {
 			<div class="perform-admin-settings--right-section">
 				<?php $this->render_right_section(); ?>
 			</div>
-			<?php // $this->navigation_html(); ?>
-			<?php $this->display_form(); ?>
 		</div>
 		<?php
 	}
