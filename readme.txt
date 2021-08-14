@@ -98,8 +98,9 @@ Please make sure you make a backup of your database before updating any version 
 
 == Changelog ==
 
-= 1.3.1 =
-- Restrict non-admin users to access assets manager.
+= 2.0.0: unreleased =
+- Restrict non-admin users to access assets manager
+- Revamp Admin Settings UI and API for better stability and less code
 
 = 1.3.0: December 31st, 2020 =
 - Moved to modern coding practices using namespaces
