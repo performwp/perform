@@ -121,7 +121,7 @@ class Api {
 		ob_start();
 		$this->render_help_link( $field['help_link'] );
 		?>
-		<input type="checkbox" name="<?php $field['id']; ?>"/> <?php echo $field['desc']; ?>
+		<input type="checkbox" name="<?php echo esc_attr( $field['id'] ); ?>"/> <?php echo $field['desc']; ?>
 		<?php
 		return ob_get_clean();
 	}
@@ -139,7 +139,7 @@ class Api {
 	public function render_select_field( $field ) {
 		ob_start();
 		?>
-		<select name="<?php $field['id']; ?>">
+		<select name="<?php echo esc_attr( $field['id'] ); ?>">
 			<?php
 			foreach ( $field['options'] as $option_slug => $option_value ) {
 				?>
@@ -148,6 +148,25 @@ class Api {
 			}
 			?>
 		</select>
+		<?php
+		return ob_get_clean();
+	}
+
+	/**
+	 * Render URL field.
+	 *
+	 * @param array $field List of admin field parameters.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 *
+	 * @return mixed
+	 */
+	public function render_url_field( $field ) {
+		ob_start();
+		$this->render_help_link( $field['help_link'] );
+		?>
+		<input type="url" name="<?php echo esc_attr( $field['id'] ); ?>"/> <?php echo $field['desc']; ?>
 		<?php
 		return ob_get_clean();
 	}
