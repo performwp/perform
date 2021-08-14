@@ -71,6 +71,7 @@ class Api {
 						<tr>
 							<th scope="row">
 								<?php echo $field['name']; ?>
+								<?php echo $this->render_help_link( $field['help_link'] ); ?>
 							</th>
 							<td>
 								<?php
@@ -119,7 +120,6 @@ class Api {
 	 */
 	public function render_checkbox_field( $field ) {
 		ob_start();
-		$this->render_help_link( $field['help_link'] );
 		?>
 		<input type="checkbox" name="<?php echo esc_attr( $field['id'] ); ?>"/> <?php echo $field['desc']; ?>
 		<?php
