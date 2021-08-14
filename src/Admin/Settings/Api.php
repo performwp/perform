@@ -35,6 +35,24 @@ class Api {
 	public $prefix = '';
 
 	/**
+	 * Render Action for admin settings field.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 *
+	 * @return void
+	 */
+	public function render_action() {
+		ob_start();
+		?>
+		<div class="perform-admin-settings--save-wrap">
+			<input type="submit" class="button button-primary" value="<?php esc_html_e( 'Save Settings', 'perform' ); ?>"/>
+		</div>
+		<?php
+		echo ob_get_clean();
+	}
+
+	/**
 	 * Render Admin Fields.
 	 *
 	 * This function will loop through the admin settings fields for all the tabs.
