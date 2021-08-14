@@ -162,14 +162,45 @@ class Menu extends Api {
 	 */
 	public function render_settings_page() {
 		?>
-		<div class="wrap">
-			<h1>
-				<?php esc_html_e( 'Perform Settings', 'perform' ); ?>
-			</h1>
-			<?php $this->navigation_html(); ?>
+		<div class="wrap perform-admin-settings-wrap">
+			<div class="perform-admin-settings--left-section">
+				<?php $this->render_left_section(); ?>
+			</div>
+			<div class="perform-admin-settings--right-section">
+				<?php $this->render_right_section(); ?>
+			</div>
+			<?php // $this->navigation_html(); ?>
 			<?php $this->display_form(); ?>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Render `Left Section` of the admin settings.
+	 *
+	 * This section will display the admin settings fields.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 *
+	 * @return void
+	 */
+	public function render_left_section() {
+
+	}
+
+	/**
+	 * Render `Right Section` of the admin settings.
+	 *
+	 * This section will display the help area to ensure better utilizing of the plugin.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 *
+	 * @return void
+	 */
+	public function render_right_section() {
+
 	}
 
 	/**
