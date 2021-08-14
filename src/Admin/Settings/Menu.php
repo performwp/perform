@@ -88,7 +88,7 @@ class Menu extends Api {
 		?>
 		<div class="perform-dashboard-header">
 			<div class="perform-dashboard-header-title">
-				<img src="<?php echo PERFORM_PLUGIN_URL . 'assets/dist/images/logo.png'; ?>" />
+				<img src="<?php echo PERFORM_PLUGIN_URL . 'assets/dist/images/logo.png'; ?>" alt="<?php esc_html_e( 'PerformWP', 'perform' ); ?>"/>
 			</div>
 			<?php $this->render_header_navigation(); ?>
 		</div>
