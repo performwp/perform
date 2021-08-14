@@ -164,9 +164,9 @@ class Api {
 	 */
 	public function render_url_field( $field ) {
 		ob_start();
-		$this->render_help_link( $field['help_link'] );
+		$placeholder = ! empty( $field['placeholder'] ) ? $field['placeholder'] : '';
 		?>
-		<input type="url" name="<?php echo esc_attr( $field['id'] ); ?>"/> <?php echo $field['desc']; ?>
+		<input type="url" name="<?php echo esc_attr( $field['id'] ); ?>" placeholder="<?php echo $placeholder; ?>"/> <?php echo $field['desc']; ?>
 		<?php
 		return ob_get_clean();
 	}
@@ -183,9 +183,31 @@ class Api {
 	 */
 	public function render_text_field( $field ) {
 		ob_start();
-		$this->render_help_link( $field['help_link'] );
+		$placeholder = ! empty( $field['placeholder'] ) ? $field['placeholder'] : '';
 		?>
-		<input type="text" name="<?php echo esc_attr( $field['id'] ); ?>"/> <?php echo $field['desc']; ?>
+		<input type="text" name="<?php echo esc_attr( $field['id'] ); ?>" placeholder="<?php echo $placeholder; ?>"/> <?php echo $field['desc']; ?>
+		<?php
+		return ob_get_clean();
+	}
+
+	/**
+	 * Render `Textarea` field.
+	 *
+	 * @param array $field List of admin field parameters.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 *
+	 * @return mixed
+	 */
+	public function render_textarea_field( $field ) {
+		ob_start();
+		$placeholder = ! empty( $field['placeholder'] ) ? $field['placeholder'] : '';
+		?>
+		<textarea name="<?php echo esc_attr( $field['id'] ); ?>" placeholder="<?php echo $placeholder; ?>"></textarea>
+		<p class="description">
+			<?php echo $field['desc']; ?>
+		</p>
 		<?php
 		return ob_get_clean();
 	}
