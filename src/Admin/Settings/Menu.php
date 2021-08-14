@@ -103,30 +103,25 @@ class Menu extends Api {
 	 * @return void
 	 */
 	public function render_header_navigation() {
-		$screen      = get_current_screen();
-		$current_tab = ! empty( $_GET['tab'] ) ? $_GET['tab'] : '';
+		$current_tab = Helpers::get_current_tab();
 		$tabs        = apply_filters(
 			'perform_settings_navigation_tabs',
 			[
-				'general'      => [
-					'name'  => esc_html__( 'General', 'perform' ),
-					'url'   => admin_url( 'options-general.php?page=perform_settings' ),
-					'class' => 'settings_page_perform_settings' === $screen->id && '' === $current_tab ? 'active' : '',
+				'general'  => [
+					'name' => esc_html__( 'General', 'perform' ),
+					'url'  => admin_url( 'options-general.php?page=perform_settings' ),
 				],
-				'advanced'     => [
-					'name'  => esc_html__( 'Advanced', 'perform' ),
-					'url'   => admin_url( 'options-general.php?page=perform_settings&tab=advanced' ),
-					'class' => 'settings_page_perform_settings' === $screen->id && 'advanced' === $current_tab ? 'active' : '',
+				'ssl'      => [
+					'name' => esc_html__( 'SSL', 'perform' ),
+					'url'  => admin_url( 'options-general.php?page=perform_settings&tab=ssl' ),
 				],
-				'tools'        => [
-					'name'  => esc_html__( 'Tools', 'perform' ),
-					'url'   => admin_url( 'options-general.php?page=perform_settings&tab=tools' ),
-					'class' => 'settings_page_perform_settings' === $screen->id && 'tools' === $current_tab ? 'active' : '',
+				'cdn'      => [
+					'name' => esc_html__( 'CDN', 'perform' ),
+					'url'  => admin_url( 'options-general.php?page=perform_settings&tab=cdn' ),
 				],
-				'experimental' => [
-					'name'  => esc_html__( 'Experimental', 'perform' ),
-					'url'   => admin_url( 'options-general.php?page=perform_settings&tab=experimental' ),
-					'class' => 'settings_page_perform_settings' === $screen->id && 'experimental' === $current_tab ? 'active' : '',
+				'advanced' => [
+					'name' => esc_html__( 'Advanced', 'perform' ),
+					'url'  => admin_url( 'options-general.php?page=perform_settings&tab=advanced' ),
 				],
 			],
 		);
@@ -138,11 +133,11 @@ class Menu extends Api {
 		?>
 		<div class="perform-header-navigation">
 			<?php
-			foreach ( $tabs as $tab ) {
+			foreach ( $tabs as $slug => $tab ) {
 				printf(
 					'<a href="%1$s" class="%2$s">%3$s</a>',
 					esc_url( $tab['url'] ),
-					esc_attr( $tab['class'] ),
+					$slug === $current_tab ? 'active' : '',
 					esc_html( $tab['name'] )
 				);
 			}
