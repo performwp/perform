@@ -648,7 +648,7 @@ class Menu extends Api {
 		$check_our_documentation = esc_html__( 'Check our documentation', 'perform' );
 		?>
 		<div class="performwp-sidebar-section">
-			<a href="https://performwp.com/docs/" title="<?php echo $check_our_documentation; ?>">
+			<a href="https://performwp.com/docs/" title="<?php echo $check_our_documentation; ?>" target="_blank">
 				<img src="<?php echo PERFORM_PLUGIN_URL . 'assets/dist/images/check-our-documentation.svg'; ?>" alt="<?php echo $check_our_documentation; ?>"/>
 			</a>
 		</div>
