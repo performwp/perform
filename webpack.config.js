@@ -13,7 +13,7 @@ const config = {
 	mode,
 	entry: {
 		perform: [ './assets/src/scss/frontend/main.scss', './assets/src/js/frontend/main.js' ],
-		admin: [ './assets/src/scss/admin/admin.scss' ],
+		admin: [ './assets/src/scss/admin/admin.scss', './assets/src/js/admin/main.js' ],
 	},
 	output: {
 		path: path.join( __dirname, './assets/dist/' ),
