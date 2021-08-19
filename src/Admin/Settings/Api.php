@@ -46,7 +46,9 @@ class Api {
 		ob_start();
 		?>
 		<div class="perform-admin-settings--save-wrap">
-			<input type="submit" class="button button-primary" value="<?php esc_html_e( 'Save Settings', 'perform' ); ?>"/>
+			<input type="submit" class="button button-primary" value="<?php esc_html_e( 'Save Settings', 'perform' ); ?>" data-saving-text="<?php esc_html_e( 'Saving...', 'perform' ); ?>"/>
+			<div class="perform-admin-settings--save-notices">
+			</div>
 		</div>
 		<?php
 		echo ob_get_clean();
@@ -68,42 +70,45 @@ class Api {
 		ob_start();
 		$current_tab = Helpers::get_current_tab();
 		?>
-		<table class="form-table" role="presentation">
-			<tbody>
-				<?php
-				foreach ( $all_fields as $tab => $fields ) {
-					// Skip this iteration, if the current tab doesn't match with the field tab.
-					if ( $tab !== $current_tab ) {
-						continue;
-					}
+		<form action="POST">
+			<table class="form-table" role="presentation">
+				<tbody>
+					<?php
+					foreach ( $all_fields as $tab => $fields ) {
+						// Skip this iteration, if the current tab doesn't match with the field tab.
+						if ( $tab !== $current_tab ) {
+							continue;
+						}
 
-					// Skip this iteration, if the `$fields` array is empty.
-					if ( empty( $fields ) ) {
-						continue;
-					}
+						// Skip this iteration, if the `$fields` array is empty.
+						if ( empty( $fields ) ) {
+							continue;
+						}
 
-					foreach ( $fields as $field ) {
-						$type = ! empty( $field['type'] ) ? $field['type'] : 'text';
+						foreach ( $fields as $field ) {
+							$type = ! empty( $field['type'] ) ? $field['type'] : 'text';
 
-						?>
-						<tr>
-							<th scope="row">
-								<?php echo $field['name']; ?>
-								<?php echo $this->render_help_link( $field['help_link'] ); ?>
-							</th>
-							<td>
-								<?php
-								// Dynamically render the required admin settings field.
-								echo call_user_func( [ $this, "render_{$type}_field" ], $field );
-								?>
-							</td>
-						</tr>
-						<?php
+							?>
+							<tr>
+								<th scope="row">
+									<?php echo $field['name']; ?>
+									<?php echo $this->render_help_link( $field['help_link'] ); ?>
+								</th>
+								<td>
+									<?php
+									// Dynamically render the required admin settings field.
+									echo call_user_func( [ $this, "render_{$type}_field" ], $field );
+									?>
+								</td>
+							</tr>
+							<?php
+						}
 					}
-				}
-				?>
-			</tbody>
-		</table>
+					?>
+				</tbody>
+			</table>
+			<?php $this->render_action(); ?>
+		</form>
 		<?php
 		echo ob_get_clean();
 	}
