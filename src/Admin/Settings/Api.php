@@ -44,9 +44,10 @@ class Api {
 	 */
 	public function render_action() {
 		ob_start();
+		$save_text = esc_html__( 'Save Settings', 'perform' );
 		?>
 		<div class="perform-admin-settings--save-wrap">
-			<input type="submit" class="button button-primary" value="<?php esc_html_e( 'Save Settings', 'perform' ); ?>" data-saving-text="<?php esc_html_e( 'Saving...', 'perform' ); ?>"/>
+			<input type="submit" class="button button-primary" value="<?php echo $save_text; ?>" data-default-text="<?php echo $save_text; ?>" data-saving-text="<?php esc_html_e( 'Saving...', 'perform' ); ?>"/>
 			<div class="perform-admin-settings--save-notices">
 			</div>
 		</div>
