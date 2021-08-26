@@ -237,7 +237,7 @@ class Api {
 		ob_start();
 		$settings    = Helpers::get_settings();
 		$placeholder = ! empty( $field['placeholder'] ) ? $field['placeholder'] : '';
-		$value       = ! empty( $settings[ $field['id'] ] ) ? $settings[ $field['id'] ] : '';
+		$value       = ! empty( $settings[ $field['id'] ] ) ? implode( ' ', $settings[ $field['id'] ] ) : '';
 		?>
 		<textarea name="<?php echo esc_attr( $field['id'] ); ?>" placeholder="<?php echo $placeholder; ?>"><?php echo $value; ?></textarea>
 		<p class="description">
