@@ -145,8 +145,10 @@ class Api {
 	 */
 	public function render_checkbox_field( $field ) {
 		ob_start();
+		$settings   = Helpers::get_settings();
+		$is_checked = ! empty( $settings[ $field['id'] ] ) ? checked( true, $settings[ $field['id'] ], false ) : '';
 		?>
-		<input type="checkbox" name="<?php echo esc_attr( $field['id'] ); ?>" value="1"/> <?php echo $field['desc']; ?>
+		<input type="checkbox" name="<?php echo esc_attr( $field['id'] ); ?>" value="1" <?php echo $is_checked; ?>/> <?php echo $field['desc']; ?>
 		<?php
 		return ob_get_clean();
 	}
@@ -163,12 +165,14 @@ class Api {
 	 */
 	public function render_select_field( $field ) {
 		ob_start();
+		$settings = Helpers::get_settings();
 		?>
 		<select name="<?php echo esc_attr( $field['id'] ); ?>">
 			<?php
 			foreach ( $field['options'] as $option_slug => $option_value ) {
+				$is_selected = ! empty( $settings[ $field['id'] ] ) ? selected( $option_slug, $settings[ $field['id'] ], false ) : '';
 				?>
-				<option value="<?php echo $option_slug; ?>"><?php echo $option_value; ?></option>
+				<option <?php echo $is_selected; ?> value="<?php echo $option_slug; ?>"><?php echo $option_value; ?></option>
 				<?php
 			}
 			?>
@@ -189,9 +193,11 @@ class Api {
 	 */
 	public function render_url_field( $field ) {
 		ob_start();
+		$settings    = Helpers::get_settings();
 		$placeholder = ! empty( $field['placeholder'] ) ? $field['placeholder'] : '';
+		$value       = ! empty( $settings[ $field['id'] ] ) ? $settings[ $field['id'] ] : '';
 		?>
-		<input type="url" name="<?php echo esc_attr( $field['id'] ); ?>" placeholder="<?php echo $placeholder; ?>"/> <?php echo $field['desc']; ?>
+		<input type="url" name="<?php echo esc_attr( $field['id'] ); ?>" placeholder="<?php echo $placeholder; ?>" value="<?php echo $value; ?>"/> <?php echo $field['desc']; ?>
 		<?php
 		return ob_get_clean();
 	}
@@ -208,9 +214,11 @@ class Api {
 	 */
 	public function render_text_field( $field ) {
 		ob_start();
+		$settings    = Helpers::get_settings();
 		$placeholder = ! empty( $field['placeholder'] ) ? $field['placeholder'] : '';
+		$value       = ! empty( $settings[ $field['id'] ] ) ? $settings[ $field['id'] ] : '';
 		?>
-		<input type="text" name="<?php echo esc_attr( $field['id'] ); ?>" placeholder="<?php echo $placeholder; ?>"/> <?php echo $field['desc']; ?>
+		<input type="text" name="<?php echo esc_attr( $field['id'] ); ?>" placeholder="<?php echo $placeholder; ?>" value="<?php echo $value; ?>"/> <?php echo $field['desc']; ?>
 		<?php
 		return ob_get_clean();
 	}
@@ -227,9 +235,11 @@ class Api {
 	 */
 	public function render_textarea_field( $field ) {
 		ob_start();
+		$settings    = Helpers::get_settings();
 		$placeholder = ! empty( $field['placeholder'] ) ? $field['placeholder'] : '';
+		$value       = ! empty( $settings[ $field['id'] ] ) ? $settings[ $field['id'] ] : '';
 		?>
-		<textarea name="<?php echo esc_attr( $field['id'] ); ?>" placeholder="<?php echo $placeholder; ?>"></textarea>
+		<textarea name="<?php echo esc_attr( $field['id'] ); ?>" placeholder="<?php echo $placeholder; ?>"><?php echo $value; ?></textarea>
 		<p class="description">
 			<?php echo $field['desc']; ?>
 		</p>
