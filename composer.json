@@ -11,9 +11,10 @@
 		"composer/installers": "*"
 	},
 	"require-dev": {
-		"dealerdirect/phpcodesniffer-composer-installer": "*",
+		"dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
 		"phpcompatibility/phpcompatibility-wp": "*",
-		"wp-coding-standards/wpcs": "*"
+		"wp-coding-standards/wpcs": "*",
+		"automattic/vipwpcs": "^2.3"
 	},
 	"scripts": {
 		"post-install-cmd": [
