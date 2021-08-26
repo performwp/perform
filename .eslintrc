@@ -122,7 +122,6 @@
 					}
 			],
 			"no-shadow": "error",
-			"no-undef": "error",
 			"no-undef-init": "error",
 			"no-unreachable": "error",
 			"no-unsafe-negation": "error",
