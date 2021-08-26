@@ -672,8 +672,8 @@ class Menu extends Api {
 		$new_settings = wp_parse_args( $posted_data, $settings );
 
 		// Store `DNS Prefetch` and `Preconnect` data as array.
-		$new_settings['dns_prefetch'] = explode( ' ', $new_settings['dns_prefetch'] );
-		$new_settings['preconnect']   = explode( ' ', $new_settings['preconnect'] );
+		$new_settings['dns_prefetch'] = ! empty( $new_settings['dns_prefetch'] ) ? explode( ' ', $new_settings['dns_prefetch'] ) : '';
+		$new_settings['preconnect']   = ! empty( $new_settings['preconnect'] ) ? explode( ' ', $new_settings['preconnect'] ) : '';
 
 		// Unset not required settings.
 		unset( $new_settings['perform_settings_barrier'] );
