@@ -148,6 +148,7 @@ class Api {
 		$settings   = Helpers::get_settings();
 		$is_checked = ! empty( $settings[ $field['id'] ] ) ? checked( true, $settings[ $field['id'] ], false ) : '';
 		?>
+		<input type="hidden" name="<?php echo esc_attr( $field['id'] ); ?>" value="0"/>
 		<input type="checkbox" name="<?php echo esc_attr( $field['id'] ); ?>" value="1" <?php echo $is_checked; ?>/> <?php echo $field['desc']; ?>
 		<?php
 		return ob_get_clean();
