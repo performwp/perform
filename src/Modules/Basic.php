@@ -47,77 +47,77 @@ class Basic {
 		$this->settings = Helpers::get_settings();
 
 		// Disable Emoji's.
-		if ( $this->settings['disable_emojis'] ) {
+		if ( ! empty( $this->settings['disable_emojis'] ) ) {
 			add_action( 'init', [ $this, 'disable_emojis' ] );
 		}
 
 		// Disable Embeds.
-		if ( $this->settings['disable_embeds'] ) {
+		if ( ! empty( $this->settings['disable_embeds'] ) ) {
 			add_action( 'init', [ $this, 'disable_embeds' ], 9999 );
 		}
 
 		// Remove Query Strings.
-		if ( $this->settings['remove_query_strings'] ) {
+		if ( ! empty( $this->settings['remove_query_strings'] ) ) {
 			add_action( 'init', [ $this, 'remove_query_strings' ] );
 		}
 
 		// Disable XMLRPC.
-		if ( $this->settings['disable_xmlrpc'] ) {
+		if ( ! empty( $this->settings['disable_xmlrpc'] ) ) {
 			$this->disable_xmlrpc();
 		}
 
 		// Remove jQuery Migrate.
-		if ( $this->settings['remove_jquery_migrate'] ) {
+		if ( ! empty( $this->settings['remove_jquery_migrate'] ) ) {
 			add_filter( 'wp_default_scripts', [ $this, 'remove_jquery_migrate' ], 99 );
 		}
 
 		// Hide WP Version.
-		if ( $this->settings['hide_wp_version'] ) {
+		if ( ! empty( $this->settings['hide_wp_version'] ) ) {
 			$this->hide_wp_version();
 		}
 
 		// Remove wlwmanifest link.
-		if ( $this->settings['remove_wlwmanifest_link'] ) {
+		if ( ! empty( $this->settings['remove_wlwmanifest_link'] ) ) {
 			$this->remove_wlwmanifest_link();
 		}
 
 		// Remove RSD link.
-		if ( $this->settings['remove_rsd_link'] ) {
+		if ( ! empty( $this->settings['remove_rsd_link'] ) ) {
 			$this->remove_rsd_link();
 		}
 
 		// Remove Shortlink.
-		if ( $this->settings['remove_shortlink'] ) {
+		if ( ! empty( $this->settings['remove_shortlink'] ) ) {
 			$this->remove_shortlink();
 		}
 
 		// Disable RSS Feeds.
-		if ( $this->settings['disable_rss_feeds'] ) {
+		if ( ! empty( $this->settings['disable_rss_feeds'] ) ) {
 			add_action( 'template_redirect', [ $this, 'disable_rss_feeds' ], 1 );
 		}
 
 		// Disable RSS Feed Links.
-		if ( $this->settings['disable_feed_links'] ) {
+		if ( ! empty( $this->settings['disable_feed_links'] ) ) {
 			$this->disable_rss_feed_links();
 		}
 
 		// Disable Self Pingbacks.
-		if ( $this->settings['disable_self_pingbacks'] ) {
+		if ( ! empty( $this->settings['disable_self_pingbacks'] ) ) {
 			add_action( 'pre_ping', [ $this, 'disable_self_pingbacks' ], 99 );
 		}
 
 		// Remove Rest API Links.
-		if ( $this->settings['remove_rest_api_links'] ) {
+		if ( ! empty( $this->settings['remove_rest_api_links'] ) ) {
 			$this->remove_rest_api_links();
 		}
 
 		// Disable Dashicons.
-		if ( $this->settings['disable_dashicons'] ) {
+		if ( ! empty( $this->settings['disable_dashicons'] ) ) {
 			add_action( 'wp_enqueue_scripts', [ $this, 'disable_dashicons' ] );
 		}
 
 		// Disable Password Strength Meter.
-		if ( $this->settings['disable_password_strength_meter'] ) {
+		if ( ! empty( $this->settings['disable_password_strength_meter'] ) ) {
 			add_action( 'wp_print_scripts', [ $this, 'disable_password_strength_meter' ], 100 );
 		}
 
@@ -130,7 +130,7 @@ class Basic {
 		}
 
 		// Limit Post Revisions.
-		if ( $this->settings['limit_post_revisions'] ) {
+		if ( ! empty( $this->settings['limit_post_revisions'] ) ) {
 			add_action( 'wp_print_scripts', [ $this, 'disable_password_strength_meter' ], 100 );
 		}
 
