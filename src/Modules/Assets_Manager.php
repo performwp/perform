@@ -69,6 +69,13 @@ class Assets_Manager {
 			return;
 		}
 
+		$settings = Helpers::get_settings();
+
+		// Don't proceed, if `Assets Manager` is not enabled.
+		if ( ! isset( $settings['assets_manager'] ) || empty( $settings['assets_manager'] ) ) {
+			return;
+		}
+
 		$this->selected_options = get_option( 'perform_assets_manager_options' );
 
 		add_action( 'wp_footer', [ $this, 'assets_manager_html' ], 1000 );
