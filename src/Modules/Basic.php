@@ -594,7 +594,7 @@ class Basic {
 		}
 
 		// Trim whitespace from start and end along with between HTML tags.
-		echo trim( preg_replace( '/\>\s+\</m', '><', ob_get_clean() ) );
+		echo Helpers::compress_html( ob_get_clean() );
 	}
 
 	/**
@@ -608,9 +608,9 @@ class Basic {
 	public function preconnect() {
 		ob_start();
 		$settings   = Helpers::get_settings();
-		$preconnect = ! empty( $settings['preconnect'] ) ? $settings['preconnect'] : [];
+		$preconnect = ! empty( $settings['preconnect'] ) ? $settings['preconnect'] : '';
 
-		if ( ! empty( $preconnect ) && is_array( $preconnect ) ) {
+		if ( ! empty( $preconnect ) && count( $preconnect ) > 0 ) {
 			foreach ( $preconnect as $url ) {
 				?>
 				<link rel="preconnect" href="<?php echo esc_url( $url ); ?>"/>
@@ -619,6 +619,6 @@ class Basic {
 		}
 
 		// Trim whitespace from start and end along with between HTML tags.
-		echo trim( preg_replace( '/\>\s+\</m', '><', ob_get_clean() ) );
+		echo Helpers::compress_html( ob_get_clean() );
 	}
 }
