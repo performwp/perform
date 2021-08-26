@@ -120,13 +120,11 @@ class Basic {
 			add_action( 'wp_print_scripts', [ $this, 'disable_password_strength_meter' ], 100 );
 		}
 
-		// Preconnect.
-		// if ( ! empty( Helpers::get_option( 'preconnect', 'perform_advanced' ) ) ) {
-		// 	add_action( 'wp_head', [ $this, 'preconnect' ], 1 );
-		// }
-
 		// DNS Prefetch.
 		add_action( 'wp_head', [ $this, 'dns_prefetch' ], 1 );
+
+		// Preconnect.
+		add_action( 'wp_head', [ $this, 'preconnect' ], 1 );
 	}
 
 	/**
@@ -591,6 +589,31 @@ class Basic {
 			foreach ( $dns_prefetch as $url ) {
 				?>
 				<link rel="dns-prefetch" href="<?php echo esc_url( $url ); ?>"/>
+				<?php
+			}
+		}
+
+		// Trim whitespace from start and end along with between HTML tags.
+		echo trim( preg_replace( '/\>\s+\</m', '><', ob_get_clean() ) );
+	}
+
+	/**
+	 * Preconnect.
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 *
+	 * @return mixed
+	 */
+	public function preconnect() {
+		ob_start();
+		$settings   = Helpers::get_settings();
+		$preconnect = ! empty( $settings['preconnect'] ) ? $settings['preconnect'] : [];
+
+		if ( ! empty( $preconnect ) && is_array( $preconnect ) ) {
+			foreach ( $preconnect as $url ) {
+				?>
+				<link rel="preconnect" href="<?php echo esc_url( $url ); ?>"/>
 				<?php
 			}
 		}
