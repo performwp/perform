@@ -10,6 +10,8 @@
 namespace Perform\Modules;
 
 use Perform\Includes\Helpers;
+use function woocommerce_is_account_page;
+use function woocommerce_is_checkout;
 
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -24,6 +26,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Basic {
 
 	/**
+	 * Admin Settings
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 *
+	 * @var $settings
+	 */
+	public $settings;
+
+	/**
 	 * Constructor.
 	 *
 	 * @since  2.0.0
@@ -32,78 +44,80 @@ class Basic {
 	 * @return void
 	 */
 	public function __construct() {
+		$this->settings = Helpers::get_settings();
+
 		// Disable Emoji's.
-		if ( Helpers::get_option( 'disable_emojis', 'perform_common' ) ) {
+		if ( $this->settings['disable_emojis'] ) {
 			add_action( 'init', [ $this, 'disable_emojis' ] );
 		}
 
 		// Disable Embeds.
-		if ( Helpers::get_option( 'disable_embeds', 'perform_common' ) ) {
+		if ( $this->settings['disable_embeds'] ) {
 			add_action( 'init', [ $this, 'disable_embeds' ], 9999 );
 		}
 
 		// Remove Query Strings.
-		if ( Helpers::get_option( 'remove_query_strings', 'perform_common' ) ) {
+		if ( $this->settings['remove_query_strings'] ) {
 			add_action( 'init', [ $this, 'remove_query_strings' ] );
 		}
 
 		// Disable XMLRPC.
-		if ( Helpers::get_option( 'disable_xmlrpc', 'perform_common' ) ) {
+		if ( $this->settings['disable_xmlrpc'] ) {
 			$this->disable_xmlrpc();
 		}
 
 		// Remove jQuery Migrate.
-		if ( Helpers::get_option( 'remove_jquery_migrate', 'perform_common' ) ) {
+		if ( $this->settings['remove_jquery_migrate'] ) {
 			add_filter( 'wp_default_scripts', [ $this, 'remove_jquery_migrate' ], 99 );
 		}
 
 		// Hide WP Version.
-		if ( Helpers::get_option( 'hide_wp_version', 'perform_common' ) ) {
+		if ( $this->settings['hide_wp_version'] ) {
 			$this->hide_wp_version();
 		}
 
 		// Remove wlwmanifest link.
-		if ( Helpers::get_option( 'remove_wlwmanifest_link', 'perform_common' ) ) {
+		if ( $this->settings['remove_wlwmanifest_link'] ) {
 			$this->remove_wlwmanifest_link();
 		}
 
 		// Remove RSD link.
-		if ( Helpers::get_option( 'remove_rsd_link', 'perform_common' ) ) {
+		if ( $this->settings['remove_rsd_link'] ) {
 			$this->remove_rsd_link();
 		}
 
 		// Remove Shortlink.
-		if ( Helpers::get_option( 'remove_shortlink', 'perform_common' ) ) {
+		if ( $this->settings['remove_shortlink'] ) {
 			$this->remove_shortlink();
 		}
 
 		// Disable RSS Feeds.
-		if ( Helpers::get_option( 'disable_rss_feeds', 'perform_common' ) ) {
+		if ( $this->settings['disable_rss_feeds'] ) {
 			add_action( 'template_redirect', [ $this, 'disable_rss_feeds' ], 1 );
 		}
 
 		// Disable RSS Feed Links.
-		if ( Helpers::get_option( 'disable_feed_links', 'perform_common' ) ) {
+		if ( $this->settings['disable_feed_links'] ) {
 			$this->disable_rss_feed_links();
 		}
 
 		// Disable Self Pingbacks.
-		if ( Helpers::get_option( 'disable_self_pingbacks', 'perform_common' ) ) {
+		if ( $this->settings['disable_self_pingbacks'] ) {
 			add_action( 'pre_ping', [ $this, 'disable_self_pingbacks' ], 99 );
 		}
 
 		// Remove Rest API Links.
-		if ( Helpers::get_option( 'remove_rest_api_links', 'perform_common' ) ) {
+		if ( $this->settings['remove_rest_api_links'] ) {
 			$this->remove_rest_api_links();
 		}
 
 		// Disable Dashicons.
-		if ( Helpers::get_option( 'disable_dashicons', 'perform_common' ) ) {
+		if ( $this->settings['disable_dashicons'] ) {
 			add_action( 'wp_enqueue_scripts', [ $this, 'disable_dashicons' ] );
 		}
 
 		// Disable Password Strength Meter.
-		if ( Helpers::get_option( 'disable_password_strength_meter', 'perform_common' ) ) {
+		if ( $this->settings['disable_password_strength_meter'] ) {
 			add_action( 'wp_print_scripts', [ $this, 'disable_password_strength_meter' ], 100 );
 		}
 
@@ -116,7 +130,7 @@ class Basic {
 		}
 
 		// Limit Post Revisions.
-		if ( Helpers::get_option( 'limit_post_revisions', 'perform_common' ) ) {
+		if ( $this->settings['limit_post_revisions'] ) {
 			add_action( 'wp_print_scripts', [ $this, 'disable_password_strength_meter' ], 100 );
 		}
 
@@ -582,8 +596,7 @@ class Basic {
 	 */
 	public function dns_prefetch() {
 		ob_start();
-		$settings     = Helpers::get_settings();
-		$dns_prefetch = ! empty( $settings['dns_prefetch'] ) ? $settings['dns_prefetch'] : [];
+		$dns_prefetch = ! empty( $this->settings['dns_prefetch'] ) ? $this->settings['dns_prefetch'] : [];
 
 		if ( ! empty( $dns_prefetch ) && is_array( $dns_prefetch ) ) {
 			foreach ( $dns_prefetch as $url ) {
@@ -607,8 +620,7 @@ class Basic {
 	 */
 	public function preconnect() {
 		ob_start();
-		$settings   = Helpers::get_settings();
-		$preconnect = ! empty( $settings['preconnect'] ) ? $settings['preconnect'] : '';
+		$preconnect = ! empty( $this->settings['preconnect'] ) ? $this->settings['preconnect'] : '';
 
 		if ( ! empty( $preconnect ) && count( $preconnect ) > 0 ) {
 			foreach ( $preconnect as $url ) {
