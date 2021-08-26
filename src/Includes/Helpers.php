@@ -195,4 +195,16 @@ class Helpers {
 
 		return $current_tab;
 	}
+
+	/**
+	 * Get Admin Settings.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 *
+	 * @return array
+	 */
+	public static function get_settings() {
+		return get_option( 'perform_settings' );
+	}
 }
