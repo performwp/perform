@@ -207,4 +207,20 @@ class Helpers {
 	public static function get_settings() {
 		return get_option( 'perform_settings' );
 	}
+
+	/**
+	 * Compress HTML.
+	 *
+	 * This function will be used to remove whitespaces around HTML tags.
+	 *
+	 * @param mixed $html HTML Content.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 *
+	 * @return mixed
+	 */
+	public static function compress_html( $html ) {
+		return trim( preg_replace( '/\>\s+\</m', '><', $html ) );
+	}
 }
