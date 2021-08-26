@@ -671,8 +671,13 @@ class Menu extends Api {
 
 		$new_settings = wp_parse_args( $posted_data, $settings );
 
+		// Unset not required settings.
+		unset( $new_settings['perform_settings_barrier'] );
+		unset( $new_settings['_wp_http_referer'] );
+		unset( $new_settings['action'] );
+
 		// Save the admin settings.
-		$is_saved = update_option( 'perform_settings', $new_settings );
+		$is_saved = update_option( 'perform_settings', $new_settings, false );
 
 		if ( $is_saved ) {
 			wp_send_json_success(
