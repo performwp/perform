@@ -49,6 +49,7 @@ class Menu extends Api {
 
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 9 );
 		add_action( 'in_admin_header', [ $this, 'render_settings_page_header' ] );
+		add_action( 'wp_ajax_perform_save_settings', [ $this, 'save_settings' ] );
 	}
 
 	/**
@@ -654,5 +655,39 @@ class Menu extends Api {
 		</div>
 		<?php
 		echo ob_get_clean();
+	}
+
+	/**
+	 * Save Admin Settings.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 *
+	 * @return void
+	 */
+	public function save_settings() {
+		$posted_data = Helpers::clean( $_POST );
+		$settings    = Helpers::get_settings();
+
+		$new_settings = wp_parse_args( $posted_data, $settings );
+
+		// Save the admin settings.
+		$is_saved = update_option( 'perform_settings', $new_settings );
+
+		if ( $is_saved ) {
+			wp_send_json_success(
+				[
+					'type'    => 'success',
+					'message' => esc_html__( 'Settings saved successfully.', 'perform' ),
+				]
+			);
+		} else {
+			wp_send_json_error(
+				[
+					'type'    => 'error',
+					'message' => esc_html__( 'Unable to save the settings. Please try again.', 'perform' ),
+				]
+			);
+		}
 	}
 }
