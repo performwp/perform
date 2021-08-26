@@ -72,7 +72,7 @@ class Assets_Manager {
 		$settings = Helpers::get_settings();
 
 		// Don't proceed, if `Assets Manager` is not enabled.
-		if ( ! isset( $settings['assets_manager'] ) || empty( $settings['assets_manager'] ) ) {
+		if ( ! isset( $settings['enable_assets_manager'] ) || empty( $settings['enable_assets_manager'] ) ) {
 			return;
 		}
 
