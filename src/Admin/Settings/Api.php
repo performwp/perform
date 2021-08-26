@@ -47,7 +47,8 @@ class Api {
 		$save_text = esc_html__( 'Save Settings', 'perform' );
 		?>
 		<div class="perform-admin-settings--save-wrap">
-			<input id="perform-save-settings" type="submit" class="button button-primary" value="<?php echo $save_text; ?>" data-default-text="<?php echo $save_text; ?>" data-saving-text="<?php esc_html_e( 'Saving...', 'perform' ); ?>"/>
+			<?php wp_nonce_field( 'perform-save-settings', 'perform_settings_barrier' ); ?>
+			<input id="perform-save-settings" type="button" class="button button-primary" value="<?php echo $save_text; ?>" data-default-text="<?php echo $save_text; ?>" data-saving-text="<?php esc_html_e( 'Saving...', 'perform' ); ?>"/>
 			<div class="perform-admin-settings--save-notices">
 			</div>
 		</div>
@@ -71,7 +72,7 @@ class Api {
 		ob_start();
 		$current_tab = Helpers::get_current_tab();
 		?>
-		<form action="POST">
+		<form id="perform-admin-settings-form" action="POST">
 			<table class="form-table" role="presentation">
 				<tbody>
 					<?php
@@ -145,7 +146,7 @@ class Api {
 	public function render_checkbox_field( $field ) {
 		ob_start();
 		?>
-		<input type="checkbox" name="<?php echo esc_attr( $field['id'] ); ?>"/> <?php echo $field['desc']; ?>
+		<input type="checkbox" name="<?php echo esc_attr( $field['id'] ); ?>" value="1"/> <?php echo $field['desc']; ?>
 		<?php
 		return ob_get_clean();
 	}
