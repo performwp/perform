@@ -96,69 +96,51 @@ class Assets_Manager {
 	public function assets_manager_html() {
 		$assets_list = $this->prepare_assets_list();
 		?>
-		<div id="perform-assets-manager-wrap" class="perform-assets-manager-wrap">
-			<form class="perform-assets-manager--form" method='POST'>
-				<div class="perform-assets-manager">
-					<div class="perform-assets-manager--header">
-						<div class="perform-assets-manager--logo">
-							<img style="width: 150px;" src="<?php echo PERFORM_PLUGIN_URL . 'assets/dist/images/perform-retina-logo.png'; ?>" alt="<?php esc_html_e( 'Perform', 'perform' ); ?>" />
-						</div>
-						<?php
-						/*
-						<ul class="perform-assets-manager--menu">
-							<li class="perform-assets-manager--menu-item">
-								<a href="">
-									<?php esc_html_e( 'Assets Manager', 'perform' ); ?>
-								</a>
-							</li>
-							<li class="perform-assets-manager--menu-item">
-								<a href="">
-									<?php esc_html_e( 'Statistics', 'perform' ); ?>
-								</a>
-							</li>
-						</ul>
-						*/
-						?>
-						<div class="perform-assets-manager-header-actions">
-							<input type="submit" name="perform_assets_manager" value="<?php esc_html_e( 'Save', 'perform' ); ?>" />
-						</div>
+		<div id="perform-assets-manager" class="perform-assets-manager">
+			<form id="perform-assets-manager--form" method='POST'>
+				<div class="perform-assets-manager--header">
+					<div class="perform-assets-manager--logo">
+						<img src="<?php echo PERFORM_PLUGIN_URL . 'assets/dist/images/logo.png'; ?>" alt="<?php esc_html_e( 'Perform', 'perform' ); ?>" />
 					</div>
-					<div id="perform-assets-manager--main">
-						<div class='perform-assets-manager--title'>
-							<h3>
-								<?php esc_html_e( 'Assets Manager', 'perform' ); ?>
-							</h3>
-							<p>
-								<?php esc_html_e( 'Optimise loading of assets on this page.', 'perform' ); ?>
-							</p>
-						</div>
-							<?php
-							foreach ( $assets_list as $category => $groups ) {
-								if ( ! empty( $groups ) ) {
-									?>
-									<div class="perform-assets-manager--section">
-										<h3><?php echo ucwords( $category ); ?></h3>
-										<?php
-										if ( 'misc' !== $category ) {
-											foreach ( $groups as $group => $details ) {
-												$this->print_assets_manager_group( $category, $group, $details );
-											}
-										} else {
-											$details = [
-												'assets' => $groups,
-											];
+					<div class="perform-assets-manager-header-actions">
+						<input type="submit" name="perform_assets_manager" value="<?php esc_html_e( 'Save', 'perform' ); ?>" />
+					</div>
+				</div>
+				<div id="perform-assets-manager--main">
+					<div class='perform-assets-manager--title'>
+						<h3>
+							<?php esc_html_e( 'Assets Manager', 'perform' ); ?>
+						</h3>
+						<p>
+							<?php esc_html_e( 'Offload unnecessary assets (JS and CSS) from this page.', 'perform' ); ?>
+						</p>
+					</div>
+						<?php
+						foreach ( $assets_list as $category => $groups ) {
+							if ( ! empty( $groups ) ) {
+								?>
+								<div class="perform-assets-manager--section">
+									<h3><?php echo ucwords( $category ); ?></h3>
+									<?php
+									if ( 'misc' !== $category ) {
+										foreach ( $groups as $group => $details ) {
 											$this->print_assets_manager_group( $category, $group, $details );
 										}
+									} else {
+										$details = [
+											'assets' => $groups,
+										];
+										$this->print_assets_manager_group( $category, $group, $details );
+									}
 
-										?>
-									</div>
-									<?php
-								}
+									?>
+								</div>
+								<?php
 							}
-							?>
-					</div>
-					<div id="perform-assets-manager--footer">
-					</div>
+						}
+						?>
+				</div>
+				<div id="perform-assets-manager--footer">
 				</div>
 			</form>
 		</div>
@@ -217,6 +199,7 @@ class Assets_Manager {
 					$incompatible_handles = [
 						'perform',
 						'admin-bar',
+						'query-monitor',
 					];
 
 					// Don't show incompatible handles for Assets Manager.
@@ -298,21 +281,18 @@ class Assets_Manager {
 				?>
 				<div class="perform-assets-manager-group--title">
 					<h4><?php echo esc_html( $asset_details['name'] ); ?></h4>
-					<div class='perform-assets-manager-group--status' style='float: right;'>
+					<div class='perform-assets-manager-group--status'>
 						<?php $this->print_assets_manager_status( $category, $group ); ?>
 					</div>
 				</div>
 				<?php
 			}
 			?>
-			<table>
+			<table cellspacing="0" cellpadding="0">
 				<thead>
 					<tr>
 						<th>
 							<?php echo esc_html__( 'Handle', 'perform' ); ?>
-						</th>
-						<th>
-							<?php echo esc_html__( 'Assets URL', 'perform' ); ?>
 						</th>
 						<th>
 							<?php echo esc_html__( 'Type', 'perform' ); ?>
@@ -322,6 +302,9 @@ class Assets_Manager {
 						</th>
 						<th>
 							<?php echo esc_html__( 'Status', 'perform' ); ?>
+						</th>
+						<th>
+							<?php echo esc_html__( 'Actions', 'perform' ); ?>
 						</th>
 					</tr>
 				</thead>
@@ -362,11 +345,6 @@ class Assets_Manager {
 					<td class="perform-assets-manager--handle">
 					<?php echo esc_html( $handle ); ?>
 					</td>
-					<td class="perform-assets-manager--url">
-						<a href="<?php echo esc_url( $src ); ?>" target="_blank"><?php echo str_replace( get_home_url(), '', $src ); ?></a>
-						<input type="hidden" name="<?php echo esc_html( "relations[{$type}][{$handle}][category]" ); ?>" value="<?php echo $category; ?>" />
-						<input type="hidden" name="<?php echo esc_html( "relations[{$type}][{$handle}][group]" ); ?>", value="<?php echo $group; ?>" />
-					</td>
 					<td class="perform-assets-manager--type">
 					<?php
 					if ( ! empty( $type ) ) {
@@ -385,6 +363,11 @@ class Assets_Manager {
 					<td class='perform-assets-manager--status'>
 					<?php $this->print_assets_manager_status( $type, $handle ); ?>
 						<?php $this->disable_single_asset_html( $type, $handle ); ?>
+					</td>
+					<td class="perform-assets-manager--url">
+						<a href="<?php echo esc_url( $src ); ?>" target="_blank"><?php esc_html_e( 'View File', 'perform' ); ?></a>
+						<input type="hidden" name="<?php echo esc_html( "relations[{$type}][{$handle}][category]" ); ?>" value="<?php echo $category; ?>" />
+						<input type="hidden" name="<?php echo esc_html( "relations[{$type}][{$handle}][group]" ); ?>", value="<?php echo $group; ?>" />
 					</td>
 				</tr>
 			<?php
