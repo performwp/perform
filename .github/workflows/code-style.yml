@@ -1,4 +1,4 @@
-name: CS
+name: CodeStyle
 
 on:
   # Run on all relevant pushes (except to main) and on all relevant pull requests.
