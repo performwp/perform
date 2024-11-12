@@ -1,8 +1,8 @@
-const path = require( 'path' );
+const path = require('path');
 const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
-const MiniCSSExtractPlugin = require( 'mini-css-extract-plugin' );
 const ImageminPlugin = require( 'imagemin-webpack-plugin' ).default;
-const CleanWebpackPlugin = require( 'clean-webpack-plugin' );
+const { CleanWebpackPlugin } = require( 'clean-webpack-plugin' );
+const MiniCSSExtractPlugin = require( 'mini-css-extract-plugin' );
 const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
 const wpPot = require( 'wp-pot' );
 
@@ -12,23 +12,15 @@ const mode = inProduction ? 'production' : 'development';
 const config = {
 	mode,
 	entry: {
-		perform: [ './assets/src/scss/frontend/main.scss', './assets/src/js/frontend/main.js' ],
-		admin: [ './assets/src/scss/admin/admin.scss' ],
+		perform: [ './assets/src/js/frontend/main.js', './assets/src/scss/frontend/main.scss'],
+		admin: [ './assets/src/js/admin/main.js', './assets/src/scss/admin/main.scss' ],
 	},
 	output: {
-		path: path.join( __dirname, './assets/dist/' ),
-		filename: 'js/[name].js',
+		path: path.join(__dirname, 'assets/dist/'),
+		filename: 'js/[name].min.js',
 	},
 	module: {
 		rules: [
-
-			// Use Babel to compile JS.
-			{
-				test: /\.js$/,
-				exclude: /node_modules/,
-				loader: 'babel-loader',
-			},
-
 			// Create RTL styles.
 			{
 				test: /\.css$/,
@@ -52,8 +44,10 @@ const config = {
 					{
 						loader: 'sass-loader',
 						options: {
-							sourceMap: true,
-							outputStyle: ( inProduction ? 'compressed' : 'nested' ),
+							sassOptions: {
+								sourceMap: true,
+								style: ( inProduction ? 'compressed' : 'nested' ),
+							},
 						},
 					} ],
 			},
@@ -87,15 +81,16 @@ const config = {
 			},
 		],
 	},
-
-	// Plugins. Gotta have em'.
 	plugins: [
 		// Removes the "dist" folder before building.
-		new CleanWebpackPlugin( [ 'assets/dist' ] ),
+		new CleanWebpackPlugin({
+			cleanOnceBeforeBuildPatterns: [ 'assets/dist' ]
+		}),
 
 		new MiniCSSExtractPlugin( {
 			filename: 'css/[name].css',
 		} ),
+
 		new CopyWebpackPlugin( {
 			patterns: [
 				{
@@ -104,7 +99,6 @@ const config = {
 				},
 			],
 		} ),
-		// new CopyWebpackPlugin( [ { from: 'assets/src/images', to: 'images' } ] ),
 	],
 };
 
@@ -127,7 +121,7 @@ if ( inProduction ) {
 		relativeTo: './',
 		src: [ './**/*.php', '!./includes/libraries/**/*', '!./vendor/**/*' ],
 		bugReport: 'https://github.com/mehul0810/perform/issues/new',
-		team: 'Mehul Gohil <hello@mehulgohil.com>',
+		team: 'PerformWP <hello@performwp.com>',
 	} );
 }
 

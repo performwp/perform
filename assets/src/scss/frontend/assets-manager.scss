@@ -1,248 +1,122 @@
-.perform-assets-manager-wrap {
+#perform-assets-manager {
 	position: fixed;
 	z-index: 9999;
 	top: 32px;
-	bottom: 0px;
-	left: 0px;
-	right: 0px;
-	background: rgba(0,0,0,0.5);
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background-color: $secondary_color;
 	overflow-y: auto;
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
 
-	table {
-		border: 1px solid #222222;
-		border-spacing: 0;
-		border-collapse: collapse;
-		table-layout: auto;
+	&.perform-assets-manager {
+		#perform-assets-manager--form {
+			.perform-assets-manager--header {
+				background-color: #fff;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding: 0 15px 0 0;
 
-		tr {
-			@extend table;
-
-			th {
-				text-align: center;
-				@extend table;
-			}
-
-			td {
-				padding: 5px;
-				@extend table;
-			}
-		}
-	}
-
-	select {
-		font-size: 16px;
-		width: auto;
-	}
-
-	h3 {
-		font-size: 22px;
-	}
-
-  .perform-assets-manager {
-		background: #EEF2F5;
-		font-size: 14px;
-		line-height: 1.5em;
-		color: #4a545a;
-		min-height: 100%;
-
-		.perform-assets-manager--logo {
-			float: left;
-			width: 40%;
-			font-size: 28px;
-			margin: 0;
-			color: #222222;
-			font-weight: 700;
-			display: inline-block;
-			overflow: hidden;
-		}
-
-		.perform-assets-manager--header {
-			background: #ffffff;
-			padding: 10px 50px;
-			display: block;
-			overflow: hidden;
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100%;
-			margin-top: 33px;
-			-webkit-box-shadow: 0px 0px 1px 0px rgba(0,0,0,.35);
-			-moz-box-shadow: 0px 0px 1px 0px rgba(0,0,0,.35);
-			box-shadow: 0px 0px 1px 0px rgba(0,0,0,.35);
-
-			.perform-assets-manager-header-actions {
-				display: inline-block;
-				width: 60%;
-
-				input[type="submit"] {
-					border-radius: 0;
-					font-size: 18px;
-					padding: 10px 20px;
-					background-color: #222222;
-					color: #ffffff;
-					float: right;
+				.perform-assets-manager--logo {
+					img {
+						width: 180px;
+					}
 				}
-			}
 
-			.perform-assets-manager--menu {
-				float: left;
-				width: 78%;
-				margin: 0;
-
-				.perform-assets-manager--menu-item {
-					list-style: none;
-					float: left;
-					padding: 10px 20px;
-
-					a {
-						color: #4A89DD;
-						text-decoration: none;
+				.perform-assets-manager-header-actions {
+					input[type='submit'] {
+						background-color: $primary_color;
 						border: none;
-						font-size: 16px;
+						padding: 8px 25px;
+						font-size: 13px;
+						color: #fff;
+						border-radius: 5px;
+						text-transform: uppercase;
+						font-weight: 700;
 					}
 				}
 			}
 
-			span {
-				background: #ED5464;
-				color: #ffffff;
-				padding: 5px;
-				vertical-align: middle;
-				font-size: 10px;
-				margin-left: 5px;
-			}
+			#perform-assets-manager--main {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				width: 100%;
 
-			p {
-				font-size: 14px;
-				color: #4a545a;
-				font-style: italic;
-				margin: 0px auto 15px auto;
-			}
+				.perform-assets-manager--title {
+					text-align: center;
+					width: 100%;
+					background-color: $primary_color;
+					color: #fff;
+					padding: 20px 0;
 
-		}
-
-
-	#perform-assets-manager-close {
-	  position: absolute;
-	  top: 0px;
-	  right: 0px;
-	  height: 26px;
-	  width: 26px;
-
-	  img {
-		height: 26px;
-		width: 26px;
-	  }
-	}
-
-	#perform-assets-manager--main {
-		padding: 25px 50px;
-		padding-top: 80px;
-
-		.perform-assets-manager-group--status {
-			select {
-				border: 2px solid #27ae60;
-				outline: none;
-
-				&.disabled {
-					border: 2px solid #ED5464;
-				}
-			}
-		}
-
-	  	.perform-assets-manager--title {
-			text-align: center;
-
-			p {
-				margin: 0.5rem 0;
-			}
-
-			h3 {
-				margin: 0.5rem 0;
-			}
-		}
-
-		.perform-assets-manager--section {
-			> h3 {
-				background-color: #222222;
-				color: #ffffff;
-				padding: 10px 15px;
-				margin-bottom: 0;
-			}
-
-			.perform-assets-manager--group {
-				margin: 0;
-				border-bottom: 1px solid #EEF2F5;
-
-				.perform-assets-manager-group--title {
-					display: block;
-					overflow: hidden;
-					margin-bottom: 10px;
-
-					> h4 {
-						float: left;
-						margin: 0;
+					p {
 						font-size: 16px;
 					}
 				}
 
-				.perform-assets-manager--status {
+				.perform-assets-manager--section {
+					width: 90%;
+					background-color: #fff;
+					margin: 15px 0;
 
-					select {
-						border: 2px solid #27ae60;
-						outline: none;
+					h3 {
+						background-color: $primary_color;
+						color: #fff;
+						text-transform: uppercase;
+						font-size: 20px;
+						font-weight: 700;
+						padding: 10px;
+					}
 
-						&.disabled {
-							border: 2px solid #ED5464;
+					.perform-assets-manager--group {
+						padding: 20px;
+						border-bottom: 2px solid $secondary_color;
+
+						.perform-assets-manager-group--title {
+							display: flex;
+							justify-content: space-between;
+							align-items: center;
+						}
+
+						.perform-status-select {
+							padding: 3px 18px;
+							margin: 5px;
+							border-radius: 25px;
+							font-size: 1rem;
+							border: 2px solid;
+						}
+
+						table {
+							width: 100%;
+							border: none;
+
+							thead {
+								tr {
+									background-color: #fafafa;
+
+									th {
+										color: #71717a;
+										text-transform: uppercase;
+										font-size: 14px;
+									}
+								}
+							}
+
+							tbody {
+								tr {
+									border-bottom: 1px solid #e4e4e7;
+
+									td {
+										padding: 0 10px;
+										font-size: 16px;
+									}
+								}
+							}
 						}
 					}
 				}
 			}
 		}
-
-
-
-	  .perform-assets-manager--row {
-
-	  }
-
-	  .perform-assets-manager--group {
-		background-color: #FFFFFF;
-		padding: 20px;
-		margin: 10px 0;
-	  }
-
-	  .perform-assets-manager-disable-assets {
-
-		.perform-assets-manager-disable-asset-option-selection {
-			margin: 5px 0;
-		}
-
-		.perform-assets-manager--exceptions {
-			margin: 10px 0;
-			border: 1px solid #CCCCCC;
-
-			.perform-assets-manager-exceptions--title {
-				text-align: center;
-				border-bottom: 1px solid #CCCCCC;
-			}
-
-			.perform-assets-manager-exception--options {
-				padding: 15px;
-			}
-		}
-
-		p {
-			margin: 5px 0;
-			text-align: center;
-			background: #F8F8F8;
-			padding: 5px;
-		}
-
 	}
-	}
-  }
-
-
 }

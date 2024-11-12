@@ -64,6 +64,18 @@ class Assets_Manager {
 			return;
 		}
 
+		// Don't proceed, if not accessed by administrator.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$settings = Helpers::get_settings();
+
+		// Don't proceed, if `Assets Manager` is not enabled.
+		if ( ! isset( $settings['enable_assets_manager'] ) || empty( $settings['enable_assets_manager'] ) ) {
+			return;
+		}
+
 		$this->selected_options = get_option( 'perform_assets_manager_options' );
 
 		add_action( 'wp_footer', [ $this, 'assets_manager_html' ], 1000 );
@@ -84,73 +96,51 @@ class Assets_Manager {
 	public function assets_manager_html() {
 		$assets_list = $this->prepare_assets_list();
 		?>
-		<div id="perform-assets-manager-wrap" class="perform-assets-manager-wrap">
-			<form class="perform-assets-manager--form" method='POST'>
-				<div class="perform-assets-manager">
-					<div class="perform-assets-manager--header">
-						<div class="perform-assets-manager--logo">
-							<img style="width: 150px;" src="
-							<?php
-							echo PERFORM_PLUGIN_URL . 'assets/dist/images/perform-retina-logo.png';
-							?>
-							 " alt="<?php esc_html_e( 'Perform', 'perform' ); ?>" />
-						</div>
-						<?php
-						/*
-						<ul class="perform-assets-manager--menu">
-							<li class="perform-assets-manager--menu-item">
-								<a href="">
-									<?php esc_html_e( 'Assets Manager', 'perform' ); ?>
-								</a>
-							</li>
-							<li class="perform-assets-manager--menu-item">
-								<a href="">
-									<?php esc_html_e( 'Statistics', 'perform' ); ?>
-								</a>
-							</li>
-						</ul>
-						*/
-						?>
-						<div class="perform-assets-manager-header-actions">
-							<input type="submit" name="perform_assets_manager" value="<?php esc_html_e( 'Save', 'perform' ); ?>" />
-						</div>
+		<div id="perform-assets-manager" class="perform-assets-manager">
+			<form id="perform-assets-manager--form" method='POST'>
+				<div class="perform-assets-manager--header">
+					<div class="perform-assets-manager--logo">
+						<img src="<?php echo PERFORM_PLUGIN_URL . 'assets/dist/images/logo.png'; ?>" alt="<?php esc_html_e( 'Perform', 'perform' ); ?>" />
 					</div>
-					<div id="perform-assets-manager--main">
-						<div class='perform-assets-manager--title'>
-							<h3>
-								<?php esc_html_e( 'Assets Manager', 'perform' ); ?>
-							</h3>
-							<p>
-								<?php esc_html_e( 'Optimise loading of assets on this page.', 'perform' ); ?>
-							</p>
-						</div>
-							<?php
-							foreach ( $assets_list as $category => $groups ) {
-								if ( ! empty( $groups ) ) {
-									?>
-									<div class="perform-assets-manager--section">
-										<h3><?php echo ucwords( $category ); ?></h3>
-										<?php
-										if ( 'misc' !== $category ) {
-											foreach ( $groups as $group => $details ) {
-												$this->print_assets_manager_group( $category, $group, $details );
-											}
-										} else {
-											$details = [
-												'assets' => $groups,
-											];
+					<div class="perform-assets-manager-header-actions">
+						<input type="submit" name="perform_assets_manager" value="<?php esc_html_e( 'Save', 'perform' ); ?>" />
+					</div>
+				</div>
+				<div id="perform-assets-manager--main">
+					<div class='perform-assets-manager--title'>
+						<h3>
+							<?php esc_html_e( 'Assets Manager', 'perform' ); ?>
+						</h3>
+						<p>
+							<?php esc_html_e( 'Offload unnecessary assets (JS and CSS) from this page.', 'perform' ); ?>
+						</p>
+					</div>
+						<?php
+						foreach ( $assets_list as $category => $groups ) {
+							if ( ! empty( $groups ) ) {
+								?>
+								<div class="perform-assets-manager--section">
+									<h3><?php echo ucwords( $category ); ?></h3>
+									<?php
+									if ( 'misc' !== $category ) {
+										foreach ( $groups as $group => $details ) {
 											$this->print_assets_manager_group( $category, $group, $details );
 										}
+									} else {
+										$details = [
+											'assets' => $groups,
+										];
+										$this->print_assets_manager_group( $category, $group, $details );
+									}
 
-										?>
-									</div>
-									<?php
-								}
+									?>
+								</div>
+								<?php
 							}
-							?>
-					</div>
-					<div id="perform-assets-manager--footer">
-					</div>
+						}
+						?>
+				</div>
+				<div id="perform-assets-manager--footer">
 				</div>
 			</form>
 		</div>
@@ -209,6 +199,7 @@ class Assets_Manager {
 					$incompatible_handles = [
 						'perform',
 						'admin-bar',
+						'query-monitor',
 					];
 
 					// Don't show incompatible handles for Assets Manager.
@@ -275,7 +266,7 @@ class Assets_Manager {
 	 *
 	 * @param $category
 	 * @param $group
-	 * @param array $asset_details List of all assets.
+	 * @param array    $asset_details List of all assets.
 	 *
 	 * @since  1.1.0
 	 * @access public
@@ -290,21 +281,18 @@ class Assets_Manager {
 				?>
 				<div class="perform-assets-manager-group--title">
 					<h4><?php echo esc_html( $asset_details['name'] ); ?></h4>
-					<div class='perform-assets-manager-group--status' style='float: right;'>
+					<div class='perform-assets-manager-group--status'>
 						<?php $this->print_assets_manager_status( $category, $group ); ?>
 					</div>
 				</div>
 				<?php
 			}
 			?>
-			<table>
+			<table cellspacing="0" cellpadding="0">
 				<thead>
 					<tr>
-						<th style=''>
+						<th>
 							<?php echo esc_html__( 'Handle', 'perform' ); ?>
-						</th>
-						<th style=''>
-							<?php echo esc_html__( 'Assets URL', 'perform' ); ?>
 						</th>
 						<th>
 							<?php echo esc_html__( 'Type', 'perform' ); ?>
@@ -314,6 +302,9 @@ class Assets_Manager {
 						</th>
 						<th>
 							<?php echo esc_html__( 'Status', 'perform' ); ?>
+						</th>
+						<th>
+							<?php echo esc_html__( 'Actions', 'perform' ); ?>
 						</th>
 					</tr>
 				</thead>
@@ -354,11 +345,6 @@ class Assets_Manager {
 					<td class="perform-assets-manager--handle">
 					<?php echo esc_html( $handle ); ?>
 					</td>
-					<td class="perform-assets-manager--url">
-						<a href="<?php echo esc_url( $src ); ?>" target="_blank"><?php echo str_replace( get_home_url(), '', $src ); ?></a>
-						<input type="hidden" name="<?php echo esc_html( "relations[{$type}][{$handle}][category]" ); ?>" value="<?php echo $category; ?>" />
-						<input type="hidden" name="<?php echo esc_html( "relations[{$type}][{$handle}][group]" ); ?>", value="<?php echo $group; ?>" />
-					</td>
 					<td class="perform-assets-manager--type">
 					<?php
 					if ( ! empty( $type ) ) {
@@ -377,6 +363,11 @@ class Assets_Manager {
 					<td class='perform-assets-manager--status'>
 					<?php $this->print_assets_manager_status( $type, $handle ); ?>
 						<?php $this->disable_single_asset_html( $type, $handle ); ?>
+					</td>
+					<td class="perform-assets-manager--url">
+						<a href="<?php echo esc_url( $src ); ?>" target="_blank"><?php esc_html_e( 'View File', 'perform' ); ?></a>
+						<input type="hidden" name="<?php echo esc_html( "relations[{$type}][{$handle}][category]" ); ?>" value="<?php echo $category; ?>" />
+						<input type="hidden" name="<?php echo esc_html( "relations[{$type}][{$handle}][group]" ); ?>", value="<?php echo $group; ?>" />
 					</td>
 				</tr>
 			<?php
@@ -458,7 +449,7 @@ class Assets_Manager {
 				if (
 					empty( $is_checked ) &&
 					is_array( $is_disabled_key ) &&
-					in_array( $current_id, $is_disabled_key )
+					in_array( $current_id, $is_disabled_key, true )
 				) {
 					$is_checked = " checked='checked'";
 				} else {
@@ -521,7 +512,7 @@ class Assets_Manager {
 		$is_selected         = isset( $this->selected_options['disabled'][ $type ][ $handle ]['everywhere'] ) ? selected( $this->selected_options['disabled'][ $type ][ $handle ]['everywhere'], 1, false ) : '';
 		$show_options        = $is_selected ? 'display: block;' : 'display: none;';
 		$current_exception   = isset( $this->selected_options['enabled'][ $type ][ $handle ]['current'] ) ? $this->selected_options['enabled'][ $type ][ $handle ]['current'] : false;
-		$is_current_checked  = ( is_array( $current_exception ) && in_array( $current_id, $current_exception ) ) ? ' checked="checked"' : '';
+		$is_current_checked  = ( is_array( $current_exception ) && in_array( $current_id, $current_exception, true ) ) ? ' checked="checked"' : '';
 		?>
 		<div class="perform-assets-manager--exceptions" style="<?php echo esc_html( $show_options ); ?>">
 			<div class="perform-assets-manager-exceptions--title">
@@ -553,7 +544,7 @@ class Assets_Manager {
 					<?php
 
 					foreach ( $post_types as $key => $value ) {
-						$is_post_type_selected = ( is_array( $selected_post_types ) && in_array( $key, $selected_post_types ) ) ? ' checked="checked"' : '';
+						$is_post_type_selected = ( is_array( $selected_post_types ) && in_array( $key, $selected_post_types, true ) ) ? ' checked="checked"' : '';
 						?>
 						<label for="<?php echo "{$type}-{$handle}-enable-{$key}"; ?>">
 							<input type="checkbox" name="enabled[<?php echo $type; ?>][<?php echo $handle; ?>][post_types][]" id="<?php echo "{$type}-{$handle}-enable-{$key}"; ?>" value="<?php echo $key; ?>" <?php echo $is_post_type_selected; ?> />
@@ -631,7 +622,7 @@ class Assets_Manager {
 									$options['disabled'][ $type ][ $handle ]['current'] = [];
 								}
 
-								if ( ! in_array( $current_id, $options['disabled'][ $type ][ $handle ]['current'] ) ) {
+								if ( ! in_array( $current_id, $options['disabled'][ $type ][ $handle ]['current'], true ) ) {
 									array_push( $options['disabled'][ $type ][ $handle ]['current'], $current_id );
 								}
 							}
@@ -640,7 +631,7 @@ class Assets_Manager {
 
 							if ( isset( $options['disabled'][ $type ][ $handle ]['current'] ) ) {
 
-								$current_key = array_search( $current_id, $options['disabled'][ $type ][ $handle ]['current'] );
+								$current_key = array_search( $current_id, $options['disabled'][ $type ][ $handle ]['current'], true );
 
 								if ( false !== $current_key ) {
 									unset( $options['disabled'][ $type ][ $handle ]['current'][ $current_key ] );
@@ -695,12 +686,12 @@ class Assets_Manager {
 								$options['enabled'][ $type ][ $handle ]['current'] = [];
 							}
 
-							if ( ! in_array( $value['current'], $options['enabled'][ $type ][ $handle ]['current'] ) ) {
+							if ( ! in_array( $value['current'], $options['enabled'][ $type ][ $handle ]['current'], true ) ) {
 								array_push( $options['enabled'][ $type ][ $handle ]['current'], $value['current'] );
 							}
 						} else {
 							if ( isset( $options['enabled'][ $type ][ $handle ]['current'] ) ) {
-								$current_key = array_search( $current_id, $options['enabled'][ $type ][ $handle ]['current'] );
+								$current_key = array_search( $current_id, $options['enabled'][ $type ][ $handle ]['current'], true );
 
 								if ( false !== $current_key ) {
 									unset( $options['enabled'][ $type ][ $handle ]['current'][ $current_key ] );
@@ -721,7 +712,7 @@ class Assets_Manager {
 
 							foreach ( $value['post_types'] as $key => $post_type ) {
 								if ( isset( $options['enabled'][ $type ][ $handle ]['post_types'] ) ) {
-									if ( ! in_array( $post_type, $options['enabled'][ $type ][ $handle ]['post_types'] ) ) {
+									if ( ! in_array( $post_type, $options['enabled'][ $type ][ $handle ]['post_types'], true ) ) {
 										array_push( $options['enabled'][ $type ][ $handle ]['post_types'], $post_type );
 									}
 								}
@@ -801,7 +792,7 @@ class Assets_Manager {
 		$get_data = Helpers::clean( filter_input_array( INPUT_GET ) );
 
 		// Get assets type.
-		$type = current_filter() == 'script_loader_src' ? 'js' : 'css';
+		$type = current_filter() === 'script_loader_src' ? 'js' : 'css';
 
 		// Load Assets Manager settings.
 		$options         = get_option( 'perform_assets_manager_options' );
@@ -831,11 +822,11 @@ class Assets_Manager {
 			) ||
 			(
 				! empty( $options['disabled'][ $type ][ $handle ]['current'] ) &&
-				in_array( $current_id, $options['disabled'][ $type ][ $handle ]['current'] )
+				in_array( $current_id, $options['disabled'][ $type ][ $handle ]['current'], true )
 			)
 		) {
 
-			if ( ! empty( $options['enabled'][ $type ][ $handle ]['current'] ) && in_array( $current_id, $options['enabled'][ $type ][ $handle ]['current'] ) ) {
+			if ( ! empty( $options['enabled'][ $type ][ $handle ]['current'] ) && in_array( $current_id, $options['enabled'][ $type ][ $handle ]['current'], true ) ) {
 				return $src;
 			}
 
@@ -843,14 +834,14 @@ class Assets_Manager {
 				if (
 					'page' === get_option( 'show_on_front' ) &&
 					! empty( $options['enabled'][ $type ][ $handle ]['post_types'] ) &&
-					in_array( 'page', $options['enabled'][ $type ][ $handle ]['post_types'] )
+					in_array( 'page', $options['enabled'][ $type ][ $handle ]['post_types'], true )
 				) {
 					return $src;
 				}
 			} else {
 				if (
 					! empty( $options['enabled'][ $type ][ $handle ]['post_types'] ) &&
-					in_array( get_post_type(), $options['enabled'][ $type ][ $handle ]['post_types'] )
+					in_array( get_post_type(), $options['enabled'][ $type ][ $handle ]['post_types'], true )
 				) {
 					return $src;
 				}

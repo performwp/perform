@@ -36,24 +36,24 @@ class Filters {
 	 *
 	 * @return string
 	 */
-	public function add_admin_footer_text( $footerText ) {
+	public function add_admin_footer_text( $footer_text ) {
 		$current_screen = get_current_screen();
 
-		if ( true == stristr( $current_screen->base, 'perform' ) ) {
-
-			$ratingText = sprintf(
-				'%1$s <strong>%2$s</strong> %3$s <a href="%4$s" target="_blank" class="perform-rating-link">%5$s</a>',
-				esc_html__( 'If you love using', 'perform' ),
-				esc_html__( 'Perform WordPress Plugin', 'perform' ),
-				esc_html__( 'please leave us a', 'perform' ),
-				esc_url( 'https://wordpress.org/support/plugin/perform/reviews/?filter=5#postform' ),
-				esc_html__( 'rating. It takes a minute and helps a lot. Thanks in advance!', 'perform' ),
-			);
-
-			return $ratingText;
-		} else {
-			return $footerText;
+		// Don't update the footer text.
+		if ( ! stristr( $current_screen->base, 'perform_settings' ) ) {
+			return $footer_text;
 		}
+
+		$footer_text = sprintf(
+			'%1$s <strong>%2$s</strong> <a href="%4$s" target="_blank" class="perform-rating-link">%3$s</a> %5$s',
+			esc_html__( 'If you love using', 'perform' ),
+			esc_html__( 'Perform WordPress Plugin', 'perform' ),
+			esc_html__( 'please leave us a rating', 'perform' ),
+			esc_url( 'https://wordpress.org/support/plugin/perform/reviews/?filter=5#postform' ),
+			esc_html__( '. It takes a minute and helps a lot. Thanks in advance!', 'perform' ),
+		);
+
+		return $footer_text;
 	}
 
 	/**
@@ -69,7 +69,7 @@ class Filters {
 		$new_actions = [
 			'settings' => sprintf(
 				'<a href="%1$s">%2$s</a>',
-				admin_url( 'admin.php?page=perform' ),
+				admin_url( 'options-general.php?page=perform_settings' ),
 				esc_html__( 'Settings', 'perform' )
 			),
 			'support'  => sprintf(
