@@ -1,11 +1,11 @@
 === Perform ===
-Contributors: performwp, mehul0810
+Contributors: performwp, mehul0810, ankur0812
 Tags: performance, assets manager, scripts manager, menu cache, disable embeds, disable emoji
 Donate link: https://www.buymeacoffee.com/mehulgohil
 Requires at least: 4.8
-Tested up to: 5.6
-Requires PHP: 5.6
-Stable tag: 1.3.0
+Tested up to: 6.7
+Requires PHP: 7.4
+Stable tag: 1.3.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -64,7 +64,7 @@ Here's a few ways you can contribute to Perform:
 = Minimum Requirements =
 
 * WordPress 4.8 or greater
-* PHP version 5.6 or greater
+* PHP version 7.4 or greater
 * MySQL version 5.5 or greater
 
 = Automatic installation =
@@ -97,6 +97,11 @@ Yes, it does.
 Please make sure you make a backup of your database before updating any version to ensure that none of your data is lost.
 
 == Changelog ==
+
+= 1.3.1: November 13th, 2024 =
+Added support for WordPress 6.7
+Bumped minimum PHP version support from 5.6 to 7.4
+Added some automations quality control and security
 
 = 1.3.0: December 31st, 2020 =
 Moved to modern coding practices using namespaces
