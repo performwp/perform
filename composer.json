@@ -31,5 +31,11 @@
 		"psr-4": {
 			"Perform\\": "src/"
 		}
+	},
+	"config": {
+		"allow-plugins": {
+			"composer/installers": true,
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
 	}
 }
