@@ -6,7 +6,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Define plugin version in SemVer format.
 if ( ! defined( 'PERFORM_VERSION' ) ) {
-	define( 'PERFORM_VERSION', '1.3.1' );
+	define( 'PERFORM_VERSION', '2.0.0' );
+}
+
+// Define plugin slug.
+if ( ! defined( 'PERFORM_SLUG' ) ) {
+	define( 'PERFORM_SLUG', 'perform' );
 }
 
 // Define plugin root File.
