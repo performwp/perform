@@ -46,6 +46,9 @@ final class Plugin {
 	 * @return void
 	 */
 	public function register_services() {
+		// Load Freemius SDK.
+		$this->load_freemius();
+
 		// Load Admin Files.
 		new Settings\Api();
 		new Settings\Menu();
@@ -60,6 +63,33 @@ final class Plugin {
 		new Modules\Assets_Manager();
 		new Modules\Ssl_Manager();
 		new Modules\Woocommerce_Manager();
+	}
+
+	/**
+	 * Loads the Freemius SDK.
+	 * 
+	 * @since  1.4.0
+	 * @access public
+	 * 
+	 * @return void
+	 */
+	public function load_freemius() {
+		// Include Freemius SDK.
+        $perform_fs = fs_dynamic_init( array(
+			'id'                  => '18658',
+			'slug'                => 'perform',
+			'type'                => 'plugin',
+			'public_key'          => 'pk_d4518e758d9fc19cb25ffe77371fa',
+			'is_premium'          => false,
+			'has_addons'          => false,
+			'has_paid_plans'      => false,
+			'menu'                => array(
+				'slug'           => 'perform_settings',
+				'parent'         => array(
+					'slug' => 'options-general.php',
+				),
+			),
+		) );
 	}
 
 	/**
