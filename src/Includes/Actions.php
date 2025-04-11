@@ -60,6 +60,6 @@ class Actions {
 			return;
 		}
 
-		wp_enqueue_script( 'perform', PERFORM_PLUGIN_URL . 'assets/dist/js/perform.js', '', PERFORM_VERSION, false );
+		wp_enqueue_script( 'perform', PERFORM_PLUGIN_URL . 'assets/dist/js/perform.min.js', '', PERFORM_VERSION, false );
 	}
 }

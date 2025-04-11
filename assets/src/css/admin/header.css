@@ -1,0 +1,14 @@
+.perform-dashboard-header {
+    background-color: var(--bg-color);
+    margin-left: -20px;
+
+    .perform-dashboard-header-title {
+        img {
+            width: 250px;
+        }
+    }
+
+    .perform-header-navigation {
+        
+    }
+}
