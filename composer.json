@@ -14,7 +14,9 @@
 		"dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
 		"phpcompatibility/phpcompatibility-wp": "*",
 		"wp-coding-standards/wpcs": "*",
-		"automattic/vipwpcs": "^2.3"
+		"automattic/vipwpcs": "^2.3",
+		"phpstan/phpstan": "^1.10",
+		"phpstan/extension-installer": "^1.3"
 	},
 	"scripts": {
 		"post-install-cmd": [
@@ -36,7 +38,8 @@
 	"config": {
 		"allow-plugins": {
 			"composer/installers": true,
-			"dealerdirect/phpcodesniffer-composer-installer": true
+			"dealerdirect/phpcodesniffer-composer-installer": true,
+			"phpstan/extension-installer": true
 		}
 	}
 }
