@@ -98,6 +98,13 @@ Please make sure you make a backup of your database before updating any version 
 
 == Changelog ==
 
+= 1.4.0: unreleased, 2025 =
+- Added Freemius
+- Migrated from SASS to Postcss
+- Used wp-scripts efficiently
+- Add PHPStan
+- Improved Automation for overall security and performance
+
 = 1.3.1: November 13th, 2024 =
 - Added support for WordPress 6.7
 - Bumped minimum PHP version support from 5.6 to 7.4
