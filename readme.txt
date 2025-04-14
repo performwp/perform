@@ -104,6 +104,8 @@ Please make sure you make a backup of your database before updating any version 
 - Used wp-scripts efficiently
 - Add PHPStan
 - Improved Automation for overall security and performance
+- Improved Menu Cache
+- Improved Overall UI for performance
 
 = 1.3.1: November 13th, 2024 =
 - Added support for WordPress 6.7
