@@ -1,11 +1,7 @@
 <?php
 /**
  * Perform - Admin Menu
- *
- * @package    Perform
- * @subpackage Admin/Menu
- * @since      2.0.0
- * @author     Mehul Gohil <hello@mehulgohil.com>
+ * Optimized and enhanced for better performance and maintainability.
  */
 
 namespace Perform\Admin\Settings;
@@ -28,28 +24,32 @@ class Menu extends Api {
 	 * @return void
 	 */
 	public function __construct() {
-
 		$this->prefix = 'perform_';
-		$this->tabs   = [
-			'common'   => esc_html__( 'General', 'perform' ),
-			'ssl'      => esc_html__( 'SSL', 'perform' ),
-			'cdn'      => esc_html__( 'CDN', 'perform' ),
-			'advanced' => esc_html__( 'Advanced', 'perform' ),
-			// 'import_export' => __( 'Import/Export', 'perform' ),
-			// 'support'       => __( 'Support', 'perform' ),
-		];
-
-		// Display WooCommerce tab when WooCommerce plugin is active.
-		if ( Helpers::is_woocommerce_active() ) {
-			$this->tabs['woocommerce'] = esc_html__( 'WooCommerce', 'perform' );
-		}
-
-		// $this->add_tabs();
-		// $this->add_fields();
+		$this->tabs   = $this->initialize_tabs();
 
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 9 );
 		add_action( 'in_admin_header', [ $this, 'render_settings_page_header' ] );
 		add_action( 'wp_ajax_perform_save_settings', [ $this, 'save_settings' ] );
+	}
+
+	/**
+	 * Initialize tabs for the settings page.
+	 *
+	 * @return array
+	 */
+	private function initialize_tabs() {
+		$tabs = [
+			'general'  => esc_html__( 'General', 'perform' ),
+			'ssl'      => esc_html__( 'SSL', 'perform' ),
+			'cdn'      => esc_html__( 'CDN', 'perform' ),
+			'advanced' => esc_html__( 'Advanced', 'perform' ),
+		];
+
+		if ( Helpers::is_woocommerce_active() ) {
+			$tabs['woocommerce'] = esc_html__( 'WooCommerce', 'perform' );
+		}
+
+		return $tabs;
 	}
 
 	/**
@@ -76,19 +76,18 @@ class Menu extends Api {
 	 * @since  1.4.0
 	 * @access public
 	 *
-	 * @return void|mixed
+	 * @return void
 	 */
 	public function render_settings_page_header() {
 		$screen = get_current_screen();
 
-		// Bailout, if screen id doesn't match.
 		if ( 'settings_page_perform_settings' !== $screen->id ) {
 			return;
 		}
 		?>
 		<div class="perform-dashboard-header">
 			<div class="perform-dashboard-header-title">
-				<img src="<?php echo PERFORM_PLUGIN_URL . 'assets/dist/images/logo.png'; ?>" alt="<?php esc_html_e( 'PerformWP', 'perform' ); ?>"/>
+				<img src="<?php echo esc_url( PERFORM_PLUGIN_URL . 'assets/dist/images/logo.png' ); ?>" alt="<?php esc_attr_e( 'PerformWP', 'perform' ); ?>"/>
 			</div>
 			<?php $this->render_header_navigation(); ?>
 		</div>
@@ -105,44 +104,20 @@ class Menu extends Api {
 	 */
 	public function render_header_navigation() {
 		$current_tab = Helpers::get_current_tab();
-		$tabs        = apply_filters(
-			'perform_settings_navigation_tabs',
-			[
-				'general'  => [
-					'name' => esc_html__( 'General', 'perform' ),
-					'url'  => admin_url( 'options-general.php?page=perform_settings' ),
-				],
-				'ssl'      => [
-					'name' => esc_html__( 'SSL', 'perform' ),
-					'url'  => admin_url( 'options-general.php?page=perform_settings&tab=ssl' ),
-				],
-				'cdn'      => [
-					'name' => esc_html__( 'CDN', 'perform' ),
-					'url'  => admin_url( 'options-general.php?page=perform_settings&tab=cdn' ),
-				],
-				'advanced' => [
-					'name' => esc_html__( 'Advanced', 'perform' ),
-					'url'  => admin_url( 'options-general.php?page=perform_settings&tab=advanced' ),
-				],
-			],
-		);
+		$tabs        = apply_filters( 'perform_settings_navigation_tabs', $this->tabs );
 
-		// Don't print any markup if we only have one tab.
 		if ( count( $tabs ) === 1 ) {
 			return;
 		}
 		?>
 		<ul class="perform-header-navigation">
-			<?php
-			foreach ( $tabs as $slug => $tab ) {
-				printf(
-					'<li><a href="%1$s" class="%2$s">%3$s</a></li>',
-					esc_url( $tab['url'] ),
-					$slug === $current_tab ? 'active' : '',
-					esc_html( $tab['name'] )
-				);
-			}
-			?>
+			<?php foreach ( $tabs as $slug => $tab ) : ?>
+				<li>
+					<a href="<?php echo esc_url( admin_url( 'options-general.php?page=perform_settings&tab=' . $slug ) ); ?>" class="<?php echo esc_attr( $slug === $current_tab ? 'active' : '' ); ?>">
+						<?php echo esc_html( $tab ); ?>
+					</a>
+				</li>
+			<?php endforeach; ?>
 		</ul>
 		<?php
 	}
@@ -671,32 +646,23 @@ class Menu extends Api {
 
 		$new_settings = wp_parse_args( $posted_data, $settings );
 
-		// Store `DNS Prefetch` and `Preconnect` data as array.
-		$new_settings['dns_prefetch'] = ! empty( $new_settings['dns_prefetch'] ) ? explode( ' ', $new_settings['dns_prefetch'] ) : '';
-		$new_settings['preconnect']   = ! empty( $new_settings['preconnect'] ) ? explode( ' ', $new_settings['preconnect'] ) : '';
+		$new_settings['dns_prefetch'] = ! empty( $new_settings['dns_prefetch'] ) ? explode( "\n", $new_settings['dns_prefetch'] ) : '';
+		$new_settings['preconnect']   = ! empty( $new_settings['preconnect'] ) ? explode( "\n", $new_settings['preconnect'] ) : '';
 
-		// Unset not required settings.
-		unset( $new_settings['perform_settings_barrier'] );
-		unset( $new_settings['_wp_http_referer'] );
-		unset( $new_settings['action'] );
+		unset( $new_settings['perform_settings_barrier'], $new_settings['_wp_http_referer'], $new_settings['action'] );
 
-		// Save the admin settings.
 		$is_saved = update_option( 'perform_settings', $new_settings, false );
 
 		if ( $is_saved ) {
-			wp_send_json_success(
-				[
-					'type'    => 'success',
-					'message' => esc_html__( 'Settings saved successfully.', 'perform' ),
-				]
-			);
+			wp_send_json_success( [
+				'type'    => 'success',
+				'message' => esc_html__( 'Settings saved successfully.', 'perform' ),
+			] );
 		} else {
-			wp_send_json_error(
-				[
-					'type'    => 'error',
-					'message' => esc_html__( 'Unable to save the settings. Please try again.', 'perform' ),
-				]
-			);
+			wp_send_json_error( [
+				'type'    => 'error',
+				'message' => esc_html__( 'Unable to save the settings. Please try again.', 'perform' ),
+			] );
 		}
 	}
 }
