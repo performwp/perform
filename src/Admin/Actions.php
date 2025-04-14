@@ -41,6 +41,9 @@ class Actions {
 	public function registerAssets() {
 		wp_register_style( 'perform-admin', PERFORM_PLUGIN_URL . 'assets/dist/css/admin.css', '', PERFORM_VERSION );
 		wp_enqueue_style( 'perform-admin' );
+
+		wp_register_script( 'perform-admin', PERFORM_PLUGIN_URL . 'assets/dist/js/admin.min.js', '', PERFORM_VERSION );
+		wp_enqueue_script( 'perform-admin' );
 	}
 
 	/**
