@@ -63,6 +63,7 @@ final class Plugin {
 		new Modules\Assets_Manager();
 		new Modules\Ssl_Manager();
 		new Modules\Woocommerce_Manager();
+		new Modules\Menu_Cache();
 	}
 
 	/**

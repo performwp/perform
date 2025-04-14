@@ -8,6 +8,8 @@
  * @author     PerformWP <hello@performwp.com>
  */
 
+namespace Perform\Modules;
+
 // Bail out, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -16,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Menu_Cache
  *
- * @since 1.2.0
+ * Optimized and enhanced for improved performance.
  */
 class Menu_Cache {
 
@@ -107,31 +109,27 @@ class Menu_Cache {
 	 */
 	public function cache_nav_menu_output( $output, $args ) {
 
+			// Validate input arguments.
+		if ( empty( $args ) || ! is_object( $args ) ) {
+			return $output;
+		}
+
 		// Fetch the navigation menu object of a specific menu.
-		$menu = wp_get_nav_menu_object( $args->menu );
+		$menu = ! empty( $args->menu ) ? wp_get_nav_menu_object( $args->menu ) : null;
 
 		// Fetch all navigation menu locations.
 		$locations = get_nav_menu_locations();
 
 		// Fetch the navigation menu object based on theme location.
-		if (
-			! $menu &&
-			$args->theme_location &&
-			$locations &&
-			isset( $locations[ $args->theme_location ] )
-		) {
+		if ( ! $menu && ! empty( $args->theme_location ) && isset( $locations[ $args->theme_location ] ) ) {
 			$menu = wp_get_nav_menu_object( $locations[ $args->theme_location ] );
 		}
 
-		// If unable to find a menu, then fetch the first menu that has items.
-		if ( ! $menu && ! $args->theme_location ) {
-
+		// If unable to find a menu, fetch the first menu that has items.
+		if ( ! $menu ) {
 			$menus = wp_get_nav_menus();
-
 			foreach ( $menus as $maybe_menu ) {
-
 				$menu_items = wp_get_nav_menu_items( $maybe_menu->term_id, [ 'update_post_term_cache' => false ] );
-
 				if ( $menu_items ) {
 					$menu = $maybe_menu;
 					break;
@@ -139,24 +137,20 @@ class Menu_Cache {
 			}
 		}
 
-		if ( empty( $args->menu ) ) {
-			$args->menu = $menu;
+		if ( empty( $menu ) ) {
+			return $output;
 		}
 
+		$args->menu = $menu;
+
+		// Generate a unique cache key for the menu.
 		global $wp_query;
 		$menu_signature = md5( wp_json_encode( $args ) . $wp_query->query_vars_hash );
 
-		// We don’t actually need the references to all the cached versions of this menu,
-		// but we need to make sure the cache is not out of sync - transients are unreliable.
-		$cached_versions = get_transient( 'perform_menu_cache_menuid_' . $args->menu->term_id );
-
-		if ( false !== $cached_versions ) {
-
-			$cached_output = get_transient( 'perform_menu_cache_' . $menu_signature );
-
-			if ( false !== $cached_output ) {
-				$output = $cached_output;
-			}
+		// Attempt to retrieve cached menu output.
+		$cached_output = get_transient( 'perform_menu_cache_' . $menu_signature );
+		if ( false !== $cached_output ) {
+			return $cached_output;
 		}
 
 		return $output;
@@ -177,30 +171,32 @@ class Menu_Cache {
 	 */
 	public function cache_nav_menu( $nav_menu, $args ) {
 
+		// Validate input arguments.
+		if ( empty( $args ) || ! is_object( $args ) || empty( $args->menu->term_id ) ) {
+			return $nav_menu;
+		}
+
+		// Generate a unique cache key for the menu.
 		global $wp_query;
 		$menu_signature = md5( wp_json_encode( $args ) . $wp_query->query_vars_hash );
 
-		if ( isset( $args->menu->term_id ) ) {
+		// Set menu cache with a 6-month expiration.
+		set_transient( 'perform_menu_cache_' . $menu_signature, $nav_menu, 15552000 );
 
-			// Set menu cache.
-			set_transient( 'perform_menu_cache_' . $menu_signature, $nav_menu );
-
-			// Store a reference to this version of the menu, so we can purge it when needed.
-			$cached_versions = get_transient( 'perform_menu_cache_menuid_' . $args->menu->term_id );
-
-			if ( false === $cached_versions ) {
-				$cached_versions = [];
-			} else {
-				$cached_versions = json_decode( $cached_versions );
-			}
-
-			if ( ! in_array( $menu_signature, $cached_versions, true ) ) {
-				$cached_versions[] = $menu_signature;
-			}
-
-			// Set menu item cache.
-			set_transient( 'perform_menu_cache_menuid_' . $args->menu->term_id, wp_json_encode( $cached_versions ), 15552000 );
+		// Store a reference to this version of the menu, so we can purge it when needed.
+		$cached_versions = get_transient( 'perform_menu_cache_menuid_' . $args->menu->term_id );
+		if ( false === $cached_versions ) {
+			$cached_versions = [];
+		} else {
+			$cached_versions = json_decode( $cached_versions, true );
 		}
+
+		if ( ! in_array( $menu_signature, $cached_versions, true ) ) {
+			$cached_versions[] = $menu_signature;
+		}
+
+		// Update the cached versions reference with a 6-month expiration.
+		set_transient( 'perform_menu_cache_menuid_' . $args->menu->term_id, wp_json_encode( $cached_versions ), 15552000 );
 
 		return $nav_menu;
 	}
@@ -231,12 +227,13 @@ class Menu_Cache {
 
 				if ( false !== $cached_versions ) {
 
-					$cached_versions = json_decode( $cached_versions );
+					$cached_versions = json_decode( $cached_versions, true );
 
 					foreach ( $cached_versions as $menu_signature ) {
 						delete_transient( 'perform_menu_cache_' . $menu_signature );
 					}
 
+					// Reset the cached versions reference.
 					set_transient( 'perform_menu_cache_menuid_' . $menu->term_id, wp_json_encode( [] ), 15552000 );
 				}
 			}
