@@ -132,18 +132,18 @@ class Menu extends Api {
 			return;
 		}
 		?>
-		<div class="perform-header-navigation">
+		<ul class="perform-header-navigation">
 			<?php
 			foreach ( $tabs as $slug => $tab ) {
 				printf(
-					'<a href="%1$s" class="%2$s">%3$s</a>',
+					'<li><a href="%1$s" class="%2$s">%3$s</a></li>',
 					esc_url( $tab['url'] ),
 					$slug === $current_tab ? 'active' : '',
 					esc_html( $tab['name'] )
 				);
 			}
 			?>
-		</div>
+		</ul>
 		<?php
 	}
 
