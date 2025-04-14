@@ -130,7 +130,9 @@ class Woocommerce_Manager {
 	 * @return void
 	 */
 	public function disable_cart_fragmentation() {
-		wp_dequeue_script( 'wc-cart-fragments' );
+		if ( ! is_cart() && ! is_checkout() ) {
+			wp_dequeue_script( 'wc-cart-fragments' );
+		}
 	}
 
 	/**
