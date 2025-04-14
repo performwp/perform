@@ -93,7 +93,12 @@ class Basic {
 
 		// Disable RSS Feeds.
 		if ( ! empty( $this->settings['disable_rss_feeds'] ) ) {
-			add_action( 'template_redirect', [ $this, 'disable_rss_feeds' ], 1 );
+			// add_action( 'template_redirect', [ $this, 'disable_rss_feeds' ], 1 );
+			add_action( 'do_feed', [ $this, 'disable_rss_feeds' ], 1 );
+			add_action( 'do_feed_rdf', [ $this, 'disable_rss_feeds' ], 1 );
+			add_action( 'do_feed_rss', [ $this, 'disable_rss_feeds' ], 1 );
+			add_action( 'do_feed_rss2', [ $this, 'disable_rss_feeds' ], 1 );
+			add_action( 'do_feed_atom', [ $this, 'disable_rss_feeds' ], 1 );
 		}
 
 		// Disable RSS Feed Links.
@@ -455,28 +460,26 @@ class Basic {
 	 * @return void
 	 */
 	public function disable_rss_feeds() {
-		// Bailout, if it is not a feed or 404 page.
+		// Bailout if it's not a feed or it's a 404 page.
 		if ( ! is_feed() || is_404() ) {
 			return;
 		}
 
-		$feed = filter_input_array( INPUT_GET, 'feed' );
-
-		// Check for "feed" query parameter.
-		if ( ! empty( $feed ) ) {
+		// Check if "feed" is present in the query string.
+		if ( ! empty( $_GET['feed'] ) ) {
 			wp_redirect( esc_url_raw( remove_query_arg( 'feed' ) ), 301 );
 			exit;
 		}
 
-		// Unset "wp_query" feed variable.
-		if ( 'old' !== get_query_var( 'feed' ) ) {
+		// Unset the feed query var unless it's 'old'.
+		if ( get_query_var( 'feed' ) !== 'old' ) {
 			set_query_var( 'feed', '' );
 		}
 
-		// Allow WordPress redirect to the proper URL.
+		// Try canonical redirection.
 		redirect_canonical();
 
-		// Display error message, if redirect fails.
+		// If redirect fails, show a message.
 		$error_message = sprintf(
 			'%1$s <a href="%2$s">%3$s</a>',
 			esc_html__( 'No feed available, please visit', 'perform' ),
