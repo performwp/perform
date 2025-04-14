@@ -15,6 +15,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Menu extends Api {
+	/**
+	 * Tabs for the settings page.
+	 * 
+	 * @since 2.0.0
+	 * @access public
+	 * 
+	 * @var array
+	 */
+	public $tabs = [];
 
 	/**
 	 * Constructor
