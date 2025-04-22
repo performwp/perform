@@ -1,6 +1,6 @@
-=== Perform ===
+=== Perform - Performance Optimization for WordPress ===
 Contributors: performwp, mehul0810, ankur0812
-Tags: performance, assets manager, scripts manager, menu cache, disable embeds, disable emoji
+Tags: performance optimization, asset cleanup, assets manager, disable bloat, cleanup
 Donate link: https://www.buymeacoffee.com/mehulgohil
 Requires at least: 4.8
 Tested up to: 6.7
@@ -9,44 +9,71 @@ Stable tag: 1.3.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-Clean and Easy to use UI. Improves Performance and Loading Speed of your WordPress Site by disabling unused features and assets liks JS and CSS.
+Boost your WordPress site's performance by removing unused assets, scripts, and features. A lightweight alternative to Perfmatters and Asset Cleanup.
 
 == Description ==
-Perform will help you remove unnecessary styles, scripts, and features which adds up load to your WordPress site. Removing those unnecessary items from your WordPress site will help you improve performance and loading speed of your WordPress site just by installing and configuring the plugin.
 
-= Features =
-* Disable emoji
-* Disable embeds
-* Remove query strings
-* Disable XML-RPC
-* Remove jQuery Migrate
-* Hide WP version
-* Remove wlwmanifest link
-* Remove RSD link
-* Remove Shortlink
-* Disable RSS Feeds
-* Remove RSS Feed Links
-* Disable Self Pingbacks
-* Remove REST API Links
-* Disable Dashicons
-* Disable Password Strength Meter
-* Disable Heartbeat
-* Set Heartbeat Frequency
-* Limit Post Revisions
-* Set Autosave Intervals
-* Assets Manager ( Manage JS & CSS of themes and plugins )
-* SSL Manager
-* CDN Manager
-* DNS Prefetch
-* Preconnect
-* Navigation Menu Cache
-* Supports WooCommerce
+🚀 **Speed Up Your WordPress Site With Just a Few Clicks**
+
+Perform is a powerful yet user-friendly WordPress performance optimization plugin that helps you remove unnecessary bloat and optimize your site's loading speed. If you're familiar with plugins like Perfmatters or Asset Cleanup, you'll feel right at home with Perform.
+
+= 🎯 Why Choose Perform? =
+
+* **Simpler Than Alternatives:** Easy-to-use interface that doesn't overwhelm you with options
+* **Zero Configuration:** Works out of the box with sensible defaults
+* **Lightweight:** Won't slow down your admin panel like other optimization plugins
+* **Asset Manager:** Selectively disable CSS/JS files on a per-page basis
+* **No Conflicts:** Compatible with popular caching plugins and hosting providers
+
+= 🔥 Key Features =
+
+* **Assets Manager**
+  * Disable unused CSS and JS files
+  * Per-page optimization
+  * Compatible with page builders
+
+* **Speed Optimization**
+  * Remove jQuery Migrate
+  * Disable Emojis & Embeds
+  * Remove Query Strings
+  * Disable XML-RPC
+  * DNS Prefetch & Preconnect
+  * Navigation Menu Cache
+
+* **WordPress Cleanup**
+  * Disable WP Bloat
+  * Remove Version Numbers
+  * Optimize WooCommerce
+  * Control Heartbeat API
+  * Manage Post Revisions
+
+* **Advanced Features**
+  * SSL Manager
+  * CDN Integration
+  * WooCommerce Optimizer
+  * Assets Preloading
+
+= 🏆 Perfect For =
+
+* Website owners looking for a Perfmatters alternative
+* Developers who want granular control over assets
+* Anyone struggling with slow WordPress sites
+* WooCommerce store owners
+* Agencies managing multiple WordPress sites
+
+= 🤝 Compatible With =
+
+* Popular caching plugins (WP Rocket, WP Super Cache, etc.)
+* Major page builders (Elementor, Divi, etc.)
+* WooCommerce
+* Hosting providers with server-level caching
+* Modern WordPress themes
 
 = Connect with Perform - WordPress Plugin =
 
 Stay in touch with us for important plugin news and updates:
 
-* **[GitHub](https://github.com/mehul0810/perform-for-wp "Visit the development of Perform")**
+* **[GitHub](https://github.com/performwp/perform/ "Visit the development of Perform")**
 
 = Contribute to Perform - WordPress Plugin =
 
@@ -54,7 +81,7 @@ This plugin is proudly open source (GPL license) and we're always looking for mo
 
 Here's a few ways you can contribute to Perform:
 
-* Star/fork/watch the [Perform GitHub repository](https://github.com/mehul0810/perform "Visit the Perform GitHub Repo") to learn more about what issues we're tackling and the project is developing. If you've never worked with Github before, learn about [pull requests here](https://help.github.com/articles/about-pull-requests/) and submit one for Perform, we'd love to provide you our feedback.
+* Star/fork/watch the [Perform GitHub repository](https://github.com/performwp/perform "Visit the Perform GitHub Repo") to learn more about what issues we're tackling and the project is developing. If you've never worked with Github before, learn about [pull requests here](https://help.github.com/articles/about-pull-requests/) and submit one for Perform, we'd love to provide you our feedback.
 
 * Translate Perform into your native language. The best place to do that is here on wordpress.org. Go to [https://translate.wordpress.org/](https://translate.wordpress.org/projects/wp-plugins/perform), then search for your language, click the "Plugins" tab, then search for "Perform". When you've submitted at least 95% of Perform's strings, the language moderators will review and approve your translations and then they will be available to all WordPress users for your native language.
 
@@ -106,6 +133,7 @@ Please make sure you make a backup of your database before updating any version 
 - Improved Automation for overall security and performance
 - Improved Menu Cache
 - Improved Overall UI for performance
+- Improved Disable Cart Fragments
 
 = 1.3.1: November 13th, 2024 =
 - Added support for WordPress 6.7
