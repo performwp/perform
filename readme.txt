@@ -3,7 +3,7 @@ Contributors: performwp, mehul0810, ankur0812
 Tags: performance optimization, asset cleanup, assets manager, disable bloat, cleanup, speed optimization, wordpress speed
 Donate link: https://www.buymeacoffee.com/mehulgohil
 Requires at least: 4.8
-Tested up to: 6.7
+Tested up to: 6.8
 Requires PHP: 7.4
 Stable tag: 1.3.1
 License: GPLv3
@@ -145,6 +145,7 @@ Always back up your database before updating to a new version to prevent any dat
 - Improved menu cache and UI responsiveness.
 - Enhanced disable cart fragments feature.
 - Improve Plugin Uninstall Process.
+- WordPress 6.8 compatibility.
 
 = 1.3.1: November 13, 2024 =
 - WordPress 6.7 compatibility.
