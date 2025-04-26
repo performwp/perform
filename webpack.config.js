@@ -16,7 +16,7 @@ const config = {
 	mode,
 	entry: {
 		...defaultConfig.entry,
-		//perform: [ './assets/src/js/frontend/main.js', './assets/src/css/frontend/main.css'],
+		perform: [ './assets/src/js/frontend/main.js', './assets/src/css/frontend/main.css'],
 		admin: [ './assets/src/css/admin/admin.css', './assets/src/js/admin/main.js' ],
 	},
 	output: {
