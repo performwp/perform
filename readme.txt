@@ -137,13 +137,14 @@ Always back up your database before updating to a new version to prevent any dat
 
 == Changelog ==
 
-= 1.4.0: Unreleased (2025) =
+= 1.4.0: 26th April, 2025 =
 - Added Freemius integration.
 - Migrated styles from SASS to PostCSS.
 - Switched to wp-scripts for asset handling.
 - Added PHPStan for static analysis.
 - Improved menu cache and UI responsiveness.
 - Enhanced disable cart fragments feature.
+- Improve Plugin Uninstall Process.
 
 = 1.3.1: November 13, 2024 =
 - WordPress 6.7 compatibility.
