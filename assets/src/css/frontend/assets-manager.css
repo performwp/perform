@@ -5,7 +5,7 @@
 	bottom: 0;
 	left: 0;
 	right: 0;
-	background-color: '';
+	background-color: var(--primary-color);
 	overflow-y: auto;
 }
 
@@ -25,7 +25,7 @@
 
 		.perform-assets-manager-header-actions {
 			input[type='submit'] {
-				background-color: '';
+				background-color: var(--primary-color);
 				border: none;
 				padding: 8px 25px;
 				font-size: 13px;
@@ -33,6 +33,7 @@
 				border-radius: 5px;
 				text-transform: uppercase;
 				font-weight: 700;
+				cursor: pointer;
 			}
 		}
 	}
@@ -50,7 +51,7 @@
 .perform-assets-manager--title {
 	text-align: center;
 	width: 100%;
-	background-color: '';
+	background-color: var(--primary-color);
 	color: #fff;
 	padding: 20px 0;
 
@@ -65,8 +66,7 @@
 	margin: 15px 0;
 
 	h3 {
-		background-color: '';
-		color: #fff;
+		color: var(--primary-color);
 		text-transform: uppercase;
 		font-size: 20px;
 		font-weight: 700;
@@ -75,7 +75,7 @@
 
 	.perform-assets-manager--group {
 		padding: 20px;
-		border-bottom: 2px solid '';
+		border-bottom: 2px solid var(--primary-color);
 
 		.perform-assets-manager-group--title {
 			display: flex;

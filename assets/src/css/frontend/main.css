@@ -1,1 +1,3 @@
-@import 'assets-manager';
+@import url(../_mixins.css);
+@import url(../frontend/assets-manager.css);
+
