@@ -1,6 +1,6 @@
-=== Perform - Performance Optimization for WordPress ===
+=== Perform – Performance Optimization for WordPress ===
 Contributors: performwp, mehul0810, ankur0812
-Tags: performance optimization, asset cleanup, assets manager, disable bloat, cleanup
+Tags: performance optimization, asset cleanup, assets manager, disable bloat, cleanup, speed optimization, wordpress speed
 Donate link: https://www.buymeacoffee.com/mehulgohil
 Requires at least: 4.8
 Tested up to: 6.7
@@ -9,170 +9,177 @@ Stable tag: 1.3.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-Boost your WordPress site's performance by removing unused assets, scripts, and features. A lightweight alternative to Perfmatters and Asset Cleanup.
+Supercharge your WordPress site’s speed by removing unused assets, scripts, and features. A lightweight, no-bloat alternative to Perfmatters and Asset Cleanup.
 
 == Description ==
 
-🚀 **Speed Up Your WordPress Site With Just a Few Clicks**
+🚀 **Instantly Boost Your WordPress Site’s Performance**
 
-Perform is a powerful yet user-friendly WordPress performance optimization plugin that helps you remove unnecessary bloat and optimize your site's loading speed. If you're familiar with plugins like Perfmatters or Asset Cleanup, you'll feel right at home with Perform.
+Perform is a lightweight yet powerful WordPress performance optimization plugin that helps you clean up unnecessary bloat and load your site faster — all without complicated settings.
 
-= 🎯 Why Choose Perform? =
+If you're familiar with Perfmatters or Asset Cleanup, you'll feel right at home with Perform. It’s everything you need for faster load times, without the headache.
 
-* **Simpler Than Alternatives:** Easy-to-use interface that doesn't overwhelm you with options
-* **Zero Configuration:** Works out of the box with sensible defaults
-* **Lightweight:** Won't slow down your admin panel like other optimization plugins
-* **Asset Manager:** Selectively disable CSS/JS files on a per-page basis
-* **No Conflicts:** Compatible with popular caching plugins and hosting providers
+= 🎯 Why Perform is Different =
+
+* **Zero Setup Required:** Sensible defaults — just install and activate.
+* **Beginner-Friendly:** Intuitive design, even for non-technical users.
+* **Advanced Controls:** Fine-tune asset loading on a per-page basis.
+* **Highly Compatible:** Works perfectly with popular caching plugins, hosting providers, and page builders.
+* **Lightweight & Fast:** Minimal impact on your admin dashboard and server resources.
 
 = 🔥 Key Features =
 
-* **Assets Manager**
-  * Disable unused CSS and JS files
-  * Per-page optimization
-  * Compatible with page builders
+**Assets Manager**
+- Disable unused CSS and JS files.
+- Optimize assets per page/post.
+- Built for compatibility with Elementor, Divi, and other page builders.
 
-* **Speed Optimization**
-  * Remove jQuery Migrate
-  * Disable Emojis & Embeds
-  * Remove Query Strings
-  * Disable XML-RPC
-  * DNS Prefetch & Preconnect
-  * Navigation Menu Cache
+**Speed Optimization**
+- Remove jQuery Migrate.
+- Disable Emojis & Embeds.
+- Strip Query Strings.
+- Disable XML-RPC.
+- Add DNS Prefetch & Preconnect.
+- Cache navigation menus for instant clicks.
 
-* **WordPress Cleanup**
-  * Disable WP Bloat
-  * Remove Version Numbers
-  * Optimize WooCommerce
-  * Control Heartbeat API
-  * Manage Post Revisions
+**WordPress Cleanup**
+- Disable unnecessary WordPress features.
+- Remove WordPress version numbers.
+- Control and optimize WooCommerce behavior.
+- Fine-tune the Heartbeat API.
+- Manage Post Revisions.
 
-* **Advanced Features**
-  * SSL Manager
-  * CDN Integration
-  * WooCommerce Optimizer
-  * Assets Preloading
+**Advanced Tools**
+- SSL Manager for HTTPS redirection.
+- Native CDN Integration.
+- Assets Preloading.
+- WooCommerce Cart Fragment control.
 
 = 🏆 Perfect For =
 
-* Website owners looking for a Perfmatters alternative
-* Developers who want granular control over assets
-* Anyone struggling with slow WordPress sites
-* WooCommerce store owners
-* Agencies managing multiple WordPress sites
+- Website owners seeking a lightweight alternative to Perfmatters or Asset Cleanup.
+- Developers needing granular asset control.
+- Agencies optimizing multiple client sites.
+- WooCommerce store owners battling slow sites.
+- Anyone frustrated with WordPress speed issues!
 
 = 🤝 Compatible With =
 
-* Popular caching plugins (WP Rocket, WP Super Cache, etc.)
-* Major page builders (Elementor, Divi, etc.)
-* WooCommerce
-* Hosting providers with server-level caching
-* Modern WordPress themes
+- Popular caching plugins like WP Rocket, WP Super Cache, and W3 Total Cache.
+- Major page builders including Elementor, Divi, and Beaver Builder.
+- WooCommerce and WooCommerce extensions.
+- Managed WordPress hosting providers like Flywheel, Kinsta, and SiteGround.
 
-= Connect with Perform - WordPress Plugin =
+= ✨ Try It Instantly =
 
-Stay in touch with us for important plugin news and updates:
+Want to see Perform in action before installing?  
+👉 [![Try in Playground](https://playground.wordpress.net/try-in-playground.svg)](https://playground.wordpress.net/?plugin_slug=perform)
 
-* **[GitHub](https://github.com/performwp/perform/ "Visit the development of Perform")**
+Experience Perform live without installing anything!
 
-= Contribute to Perform - WordPress Plugin =
+= 💬 Connect with the Perform Community =
 
-This plugin is proudly open source (GPL license) and we're always looking for more contributors. Whether you know another language, can code like no one's business, or just have an idea, we would love your help and input.
+Stay connected for updates, discussions, and future improvements:
 
-Here's a few ways you can contribute to Perform:
+* 🌟 [GitHub Repository](https://github.com/performwp/perform/ "Contribute to Perform on GitHub")
 
-* Star/fork/watch the [Perform GitHub repository](https://github.com/performwp/perform "Visit the Perform GitHub Repo") to learn more about what issues we're tackling and the project is developing. If you've never worked with Github before, learn about [pull requests here](https://help.github.com/articles/about-pull-requests/) and submit one for Perform, we'd love to provide you our feedback.
+= 🤝 Contribute to Perform =
 
-* Translate Perform into your native language. The best place to do that is here on wordpress.org. Go to [https://translate.wordpress.org/](https://translate.wordpress.org/projects/wp-plugins/perform), then search for your language, click the "Plugins" tab, then search for "Perform". When you've submitted at least 95% of Perform's strings, the language moderators will review and approve your translations and then they will be available to all WordPress users for your native language.
+Perform is proudly open-source and community-driven!  
+You can help by:
 
+- ⭐ Starring or forking [our GitHub repo](https://github.com/performwp/perform).
+- 🛠 Submitting Pull Requests with fixes or new features.
+- 🌎 Translating Perform into your language at [WordPress Translate](https://translate.wordpress.org/projects/wp-plugins/perform).
+
+Every contribution makes Perform stronger for everyone!
 
 == Installation ==
 
 = Minimum Requirements =
 
-* WordPress 4.8 or greater
-* PHP version 7.4 or greater
-* MySQL version 5.5 or greater
+- WordPress 4.8 or higher
+- PHP 7.4 or higher
+- MySQL 5.5 or higher
 
-= Automatic installation =
+= Automatic Installation =
 
-Automatic installation is the easiest option as WordPress handles the file transfers itself and you don't need to leave your web browser. To do an automatic install of Perform, log in to your WordPress dashboard, navigate to the Plugins menu and click "Add New".
+1. Go to your WordPress dashboard.
+2. Navigate to Plugins → Add New.
+3. Search for "Perform".
+4. Click "Install Now" and activate.
 
-In the search field type "Perform" and click Search Plugins. Once you have found the plugin you can view details about it such as the point release, rating and description. Most importantly of course, you can install it by simply clicking "Install Now".
+= Manual Installation =
 
-= Manual installation =
-
-The manual installation method involves downloading our plugin and uploading it to your server via your favorite FTP application. The WordPress codex contains [instructions on how to do this here](https://codex.wordpress.org/Managing_Plugins#Manual_Plugin_Installation).
+1. Download the Perform plugin.
+2. Upload it to your `/wp-content/plugins/` directory via FTP or File Manager.
+3. Activate Perform from the "Plugins" screen in your WordPress dashboard.
 
 == Frequently Asked Questions ==
 
-= How can I get support for Perform? =
+= How do I get support? =
 
-We work hard to the best support possible for Perform. The [WordPress.org Support Forum](https://wordpress.org/support/plugin/perform) is used for free community based support. We continually monitor the forum and do our best to ensure everyone gets a response.
+For free support, visit our [WordPress.org Support Forum](https://wordpress.org/support/plugin/perform).  
+We actively monitor the forum and do our best to assist everyone.
 
-= Does it work with caching plugins like WP Rocket? =
-Yes, it does.
+= Is Perform compatible with caching plugins like WP Rocket? =
+Yes! Perform works seamlessly alongside caching plugins.
 
-= Does it work with plugins like Autoptimize? =
-Yes, it does.
+= Can I use Perform with Autoptimize? =
+Absolutely. Perform plays well with Autoptimize and other optimization tools.
 
-= Does it work with hosting providers like FlyWheel, Kinsta, and hosts with server-level caching? =
-Yes, it does.
+= Does it work with server-level caching providers like Flywheel and Kinsta? =
+Yes! Perform is tested with hosting providers offering aggressive server-side caching.
 
 == Upgrade Notice ==
 
-Please make sure you make a backup of your database before updating any version to ensure that none of your data is lost.
+Always back up your database before updating to a new version to prevent any data loss.
 
 == Changelog ==
 
-= 1.4.0: unreleased, 2025 =
-- Added Freemius
-- Migrated from SASS to Postcss
-- Used wp-scripts efficiently
-- Add PHPStan
-- Improved Automation for overall security and performance
-- Improved Menu Cache
-- Improved Overall UI for performance
-- Improved Disable Cart Fragments
+= 1.4.0: Unreleased (2025) =
+- Added Freemius integration.
+- Migrated styles from SASS to PostCSS.
+- Switched to wp-scripts for asset handling.
+- Added PHPStan for static analysis.
+- Improved menu cache and UI responsiveness.
+- Enhanced disable cart fragments feature.
 
-= 1.3.1: November 13th, 2024 =
-- Added support for WordPress 6.7
-- Bumped minimum PHP version support from 5.6 to 7.4
-- Added some automations quality control and security
+= 1.3.1: November 13, 2024 =
+- WordPress 6.7 compatibility.
+- Raised minimum PHP version requirement to 7.4.
+- Enhanced automation and security.
 
-= 1.3.0: December 31st, 2020 =
-- Moved to modern coding practices using namespaces
+= 1.3.0: December 31, 2020 =
+- Modernized coding practices with namespaces.
 
-= 1.2.3: December 31st, 2019 =
-- Resolved fatal error when `wp-config.php` file is not writable
+= 1.2.3: December 31, 2019 =
+- Fix: Handle writable wp-config.php scenarios safely.
 
-= 1.2.2: December 27th, 2019 =
-- Fix: cdn rewrite is not working [#16](https://github.com/mehul0810/perform/issues/16)
-- UI Improvements for Assets Manager
-- Simplified working of `wp-config.php` constants
-- Security Improvements
+= 1.2.2: December 27, 2019 =
+- Fix: CDN rewrite bug.
+- UI enhancements for Assets Manager.
+- Improved security and constants management.
 
-= 1.2.1: June 22th, 2019 =
-- Fix: redirect to welcome screen on plugin activation [#15](https://github.com/mehul0810/perform/issues/15)
-- General Design Improvements & Tweaks
-- User Experience Improvements for settings page
+= 1.2.1: June 22, 2019 =
+- Fix: Redirect to Welcome screen after activation.
+- UX improvements across settings screens.
 
-= 1.2.0: April 30th, 2019 =
-- Fix: add quick access to assets manager from admin listing [#10](https://github.com/mehul0810/perform/issues/10)
-- Feat: add menu cache [#11](https://github.com/mehul0810/issues/11)
-- Fix: generalise styling for assets manager with all the themes [#12](https://github.com/mehul0810/perform/issues/12)
+= 1.2.0: April 30, 2019 =
+- Added Menu Caching.
+- Generalized Asset Manager styles across themes.
 
-= 1.1.1: April 25th, 2019 =
-- Fix: display assets manager link in admin bar [#6](https://github.com/mehul0810/perform/issues/6)
+= 1.1.1: April 25, 2019 =
+- Fix: Display asset manager links in admin bar.
 
-= 1.1.0: April 25th, 2019 =
-- Feat: add support for assets manager [#1](https://github.com/mehul0810/perform/issues/1)
-- Fix: settings page is not visible with multisite setup [#5](https://github.com/mehul0810/perform/issues/5)
+= 1.1.0: April 25, 2019 =
+- Initial release of the Assets Manager.
 
-= 1.0.1: March 31st, 2019 =
-- Fix: incorrect linking for reviews in admin footer [#2](https://github.com/mehul0810/perform/issues/2)
-- Fix: woocommerce tab should be visible when woocommerce is active [#3](https://github.com/mehul0810/perform/issues/3)
-- Fix: disabling woocommerce widgets not working [#4](https://github.com/mehul0810/perform/issues/4)
+= 1.0.1: March 31, 2019 =
+- Fix: Review link in admin footer.
+- Fix: WooCommerce widgets toggle.
+- Fix: Multisite visibility issues.
 
-= 1.0.0: March 23rd, 2019 =
-- Initial Release. Yippee!
+= 1.0.0: March 23, 2019 =
+- Initial Release 🎉
+
