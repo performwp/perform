@@ -3,9 +3,9 @@ Contributors: performwp, mehul0810, ankur0812
 Tags: performance optimization, asset cleanup, assets manager, disable bloat, cleanup, speed optimization, wordpress speed
 Donate link: https://www.buymeacoffee.com/mehulgohil
 Requires at least: 4.8
-Tested up to: 6.7
+Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.3.1
+Stable tag: 1.4.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -137,13 +137,15 @@ Always back up your database before updating to a new version to prevent any dat
 
 == Changelog ==
 
-= 1.4.0: Unreleased (2025) =
+= 1.4.0 & 1.4.1: 26th April, 2025 =
 - Added Freemius integration.
 - Migrated styles from SASS to PostCSS.
 - Switched to wp-scripts for asset handling.
 - Added PHPStan for static analysis.
 - Improved menu cache and UI responsiveness.
 - Enhanced disable cart fragments feature.
+- Improve Plugin Uninstall Process.
+- WordPress 6.8 compatibility.
 
 = 1.3.1: November 13, 2024 =
 - WordPress 6.7 compatibility.
