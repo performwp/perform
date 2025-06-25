@@ -57,7 +57,7 @@ if ( inProduction ) {
 		destFile: 'languages/perform.pot',
 		relativeTo: './',
 		src: [ './**/*.php', '!./includes/libraries/**/*', '!./vendor/**/*' ],
-		bugReport: 'https://github.com/mehul0810/perform/issues/new',
+		bugReport: 'https://github.com/performwp/perform/issues/new',
 		team: 'PerformWP <hello@performwp.com>',
 	} );
 }
