@@ -48,16 +48,16 @@ class Menu extends Api {
 	 */
 	private function initialize_tabs() {
 		$tabs = [
-			'general'  => esc_html__( 'General', 'perform' ),
-			'ssl'      => esc_html__( 'SSL', 'perform' ),
-			'cdn'      => esc_html__( 'CDN', 'perform' ),
-			'advanced' => esc_html__( 'Advanced', 'perform' ),
+			'general'  => 'General',
+			'ssl'      => 'SSL',
+			'cdn'      => 'CDN',
+			'advanced' => 'Advanced',
 		];
-
+	
 		if ( Helpers::is_woocommerce_active() ) {
-			$tabs['woocommerce'] = esc_html__( 'WooCommerce', 'perform' );
+			$tabs['woocommerce'] = 'WooCommerce';
 		}
-
+	
 		return $tabs;
 	}
 
@@ -114,7 +114,7 @@ class Menu extends Api {
 	public function render_header_navigation() {
 		$current_tab = Helpers::get_current_tab();
 		$tabs        = apply_filters( 'perform_settings_navigation_tabs', $this->tabs );
-
+	
 		if ( count( $tabs ) === 1 ) {
 			return;
 		}
@@ -123,7 +123,7 @@ class Menu extends Api {
 			<?php foreach ( $tabs as $slug => $tab ) : ?>
 				<li>
 					<a href="<?php echo esc_url( admin_url( 'options-general.php?page=perform_settings&tab=' . $slug ) ); ?>" class="<?php echo esc_attr( $slug === $current_tab ? 'active' : '' ); ?>">
-						<?php echo esc_html( $tab ); ?>
+						<?php echo esc_html__( $tab, 'perform' ); // Translate here ?>
 					</a>
 				</li>
 			<?php endforeach; ?>
@@ -174,8 +174,8 @@ class Menu extends Api {
 				[
 					'id'        => 'disable_emojis',
 					'type'      => 'checkbox',
-					'name'      => esc_html__( 'Disable Emoji\'s', 'perform' ),
-					'desc'      => esc_html__( 'Enabling this will disable the usage of emoji\'s in WordPress Posts, Pages, and Custom Post Types.', 'perform' ),
+					'name'      => 'Disable Emoji\'s',
+					'desc'      => 'Enabling this will disable the usage of emoji\'s in WordPress Posts, Pages, and Custom Post Types.',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -186,8 +186,8 @@ class Menu extends Api {
 				[
 					'id'        => 'disable_embeds',
 					'type'      => 'checkbox',
-					'name'      => esc_html__( 'Disable Embeds', 'perform' ),
-					'desc'      => esc_html__( 'Removes WordPress Embed JavaScript file (wp-embed.min.js).', 'perform' ),
+					'name'      => 'Disable Embeds',
+					'desc'      => 'Removes WordPress Embed JavaScript file (wp-embed.min.js).',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -198,8 +198,8 @@ class Menu extends Api {
 				[
 					'id'        => 'remove_query_strings',
 					'type'      => 'checkbox',
-					'name'      => esc_html__( 'Remove Query Strings', 'perform' ),
-					'desc'      => esc_html__( 'Remove query strings from static resources (CSS, JS).', 'perform' ),
+					'name'      => 'Remove Query Strings',
+					'desc'      => 'Remove query strings from static resources (CSS, JS).',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -210,8 +210,8 @@ class Menu extends Api {
 				[
 					'id'        => 'disable_xmlrpc',
 					'type'      => 'checkbox',
-					'name'      => esc_html__( 'Disable XML-RPC', 'perform' ),
-					'desc'      => esc_html__( 'Disables WordPress XML-RPC functionality.', 'perform' ),
+					'name'      => 'Disable XML-RPC',
+					'desc'      => 'Disables WordPress XML-RPC functionality.',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -222,8 +222,8 @@ class Menu extends Api {
 				[
 					'id'        => 'remove_jquery_migrate',
 					'type'      => 'checkbox',
-					'name'      => esc_html__( 'Remove jQuery Migrate', 'perform' ),
-					'desc'      => esc_html__( 'Removes jQuery Migrate JS file (jquery-migrate.min.js).', 'perform' ),
+					'name'      => 'Remove jQuery Migrate',
+					'desc'      => 'Removes jQuery Migrate JS file (jquery-migrate.min.js).',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -234,8 +234,8 @@ class Menu extends Api {
 				[
 					'id'        => 'hide_wp_version',
 					'type'      => 'checkbox',
-					'name'      => esc_html__( 'Hide WP Version', 'perform' ),
-					'desc'      => esc_html__( 'Removes WordPress version generator meta tag.', 'perform' ),
+					'name'      => 'Hide WP Version',
+					'desc'      => 'Removes WordPress version generator meta tag.',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -246,8 +246,8 @@ class Menu extends Api {
 				[
 					'id'        => 'remove_wlwmanifest_link',
 					'type'      => 'checkbox',
-					'name'      => esc_html__( 'Remove wlwmanifest Link', 'perform' ),
-					'desc'      => esc_html__( 'Remove wlwmanifest link tag. It is usually used to support Windows Live Writer.', 'perform' ),
+					'name'      => 'Remove wlwmanifest Link',
+					'desc'      => 'Remove wlwmanifest link tag. It is usually used to support Windows Live Writer.',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -258,8 +258,8 @@ class Menu extends Api {
 				[
 					'id'        => 'remove_rsd_link',
 					'type'      => 'checkbox',
-					'name'      => esc_html__( 'Remove RSD Link', 'perform' ),
-					'desc'      => esc_html__( 'Remove RSD (Real Simple Discovery) link tag.', 'perform' ),
+					'name'      => 'Remove RSD Link',
+					'desc'      => 'Remove RSD (Real Simple Discovery) link tag.',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -270,8 +270,8 @@ class Menu extends Api {
 				[
 					'id'        => 'remove_shortlink',
 					'type'      => 'checkbox',
-					'name'      => esc_html__( 'Remove Shortlink', 'perform' ),
-					'desc'      => esc_html__( 'Remove Shortlink link tag.', 'perform' ),
+					'name'      => 'Remove Shortlink',
+					'desc'      => 'Remove Shortlink link tag.',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -282,8 +282,8 @@ class Menu extends Api {
 				[
 					'id'        => 'disable_rss_feeds',
 					'type'      => 'checkbox',
-					'name'      => esc_html__( 'Disable RSS Feeds', 'perform' ),
-					'desc'      => esc_html__( 'Disable WordPress generated RSS feeds and 301 redirect URL to parent.', 'perform' ),
+					'name'      => 'Disable RSS Feeds',
+					'desc'      => 'Disable WordPress generated RSS feeds and 301 redirect URL to parent.',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -294,8 +294,8 @@ class Menu extends Api {
 				[
 					'id'        => 'remove_feed_links',
 					'type'      => 'checkbox',
-					'name'      => esc_html__( 'Remove RSS Feed Links', 'perform' ),
-					'desc'      => esc_html__( 'Disable WordPress generated RSS feed link tags.', 'perform' ),
+					'name'      => 'Remove RSS Feed Links',
+					'desc'      => 'Disable WordPress generated RSS feed link tags.',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -306,8 +306,8 @@ class Menu extends Api {
 				[
 					'id'        => 'remove_rest_api_links',
 					'type'      => 'checkbox',
-					'name'      => esc_html__( 'Remove REST API Links', 'perform' ),
-					'desc'      => esc_html__( 'Removes REST API link tag from the front end and the REST API header link from page requests.', 'perform' ),
+					'name'      => 'Remove REST API Links',
+					'desc'      => 'Removes REST API link tag from the front end and the REST API header link from page requests.',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -318,8 +318,8 @@ class Menu extends Api {
 				[
 					'id'        => 'disable_self_pingbacks',
 					'type'      => 'checkbox',
-					'name'      => esc_html__( 'Disable Self Pingbacks', 'perform' ),
-					'desc'      => esc_html__( 'Disable Self Pingbacks (generated when linking to an article on your own blog).', 'perform' ),
+					'name'      => 'Disable Self Pingbacks',
+					'desc'      => 'Disable Self Pingbacks (generated when linking to an article on your own blog).',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -330,8 +330,8 @@ class Menu extends Api {
 				[
 					'id'        => 'disable_dashicons',
 					'type'      => 'checkbox',
-					'name'      => esc_html__( 'Disable Dashicons', 'perform' ),
-					'desc'      => esc_html__( 'Disables dashicons js on the front end when not logged in.', 'perform' ),
+					'name'      => 'Disable Dashicons',
+					'desc'      => 'Disables dashicons js on the front end when not logged in.',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -342,8 +342,8 @@ class Menu extends Api {
 				[
 					'id'        => 'disable_password_strength_meter',
 					'type'      => 'checkbox',
-					'name'      => esc_html__( 'Disable Password Strength Meter', 'perform' ),
-					'desc'      => esc_html__( 'Removes WordPress and WooCommerce Password Strength Meter scripts from non essential pages.', 'perform' ),
+					'name'      => 'Disable Password Strength Meter',
+					'desc'      => 'Removes WordPress and WooCommerce Password Strength Meter scripts from non essential pages.',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -354,13 +354,13 @@ class Menu extends Api {
 				[
 					'id'        => 'disable_heartbeat',
 					'type'      => 'select',
-					'name'      => esc_html__( 'Disable Heartbeat', 'perform' ),
+					'name'      => 'Disable Heartbeat',
 					'options'   => [
-						''                   => esc_html__( 'Default', 'perform' ),
-						'disable_everywhere' => esc_html__( 'Disable Everywhere', 'perform' ),
-						'allow_posts'        => esc_html__( 'Only Allow When Editing Posts/Pages', 'perform' ),
+						''                   => 'Default',
+						'disable_everywhere' => 'Disable Everywhere',
+						'allow_posts'        => 'Only Allow When Editing Posts/Pages',
 					],
-					'desc'      => esc_html__( 'Disable WordPress Heartbeat everywhere or in certain areas (used for auto saving and revision tracking).', 'perform' ),
+					'desc'      => 'Disable WordPress Heartbeat everywhere or in certain areas (used for auto saving and revision tracking).',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -371,14 +371,14 @@ class Menu extends Api {
 				[
 					'id'        => 'heartbeat_frequency',
 					'type'      => 'select',
-					'name'      => esc_html__( 'Heartbeat Frequency', 'perform' ),
+					'name'      => 'Heartbeat Frequency',
 					'options'   => [
-						''   => sprintf( esc_html__( '%s Seconds', 'perform' ), '15' ) . ' (' . esc_html__( 'Default', 'perform' ) . ')',
-						'30' => sprintf( esc_html__( '%s Seconds', 'perform' ), '30' ),
-						'45' => sprintf( esc_html__( '%s Seconds', 'perform' ), '45' ),
-						'60' => sprintf( esc_html__( '%s Seconds', 'perform' ), '60' ),
+						''   => '15 Seconds (Default)',
+						'30' => '30 Seconds',
+						'45' => '45 Seconds',
+						'60' => '60 Seconds',
 					],
-					'desc'      => esc_html__( 'Disable WordPress Heartbeat everywhere or in certain areas (used for auto saving and revision tracking).', 'perform' ),
+					'desc'      => 'Disable WordPress Heartbeat everywhere or in certain areas (used for auto saving and revision tracking).',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -389,10 +389,10 @@ class Menu extends Api {
 				[
 					'id'        => 'limit_post_revisions',
 					'type'      => 'select',
-					'name'      => esc_html__( 'Limit Post Revisions', 'perform' ),
+					'name'      => 'Limit Post Revisions',
 					'options'   => [
-						''      => esc_html__( 'Default', 'perform' ),
-						'false' => esc_html__( 'Disable Post Revisions', 'perform' ),
+						''      => 'Default',
+						'false' => 'Disable Post Revisions',
 						'1'     => '1',
 						'2'     => '2',
 						'3'     => '3',
@@ -404,7 +404,7 @@ class Menu extends Api {
 						'25'    => '25',
 						'30'    => '30',
 					],
-					'desc'      => esc_html__( 'Limits the maximum amount of revisions that are allowed for posts and pages.', 'perform' ),
+					'desc'      => 'Limits the maximum amount of revisions that are allowed for posts and pages.',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -415,15 +415,15 @@ class Menu extends Api {
 				[
 					'id'        => 'autosave_interval',
 					'type'      => 'select',
-					'name'      => esc_html__( 'Autosave Interval', 'perform' ),
+					'name'      => 'Autosave Interval',
 					'options'   => [
-						''    => esc_html__( '1 Minute', 'perform' ) . ' (' . esc_html__( 'Default', 'perform' ) . ')',
-						'120' => sprintf( esc_html__( '%s Minutes', 'perform' ), '2' ),
-						'180' => sprintf( esc_html__( '%s Minutes', 'perform' ), '3' ),
-						'240' => sprintf( esc_html__( '%s Minutes', 'perform' ), '4' ),
-						'300' => sprintf( esc_html__( '%s Minutes', 'perform' ), '5' ),
+						''    => '1 Minute (Default)',
+						'120' => '2 Minutes',
+						'180' => '3 Minutes',
+						'240' => '4 Minutes',
+						'300' => '5 Minutes',
 					],
-					'desc'      => esc_html__( 'Controls how often WordPress will auto save posts and pages while editing.', 'perform' ),
+					'desc'      => 'Controls how often WordPress will auto save posts and pages while editing.',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -436,8 +436,8 @@ class Menu extends Api {
 				[
 					'id'        => 'enable_ssl',
 					'type'      => 'checkbox',
-					'name'      => esc_html__( 'Enable SSL', 'perform' ),
-					'desc'      => esc_html__( 'Enabling this setting will let you automatically redirect visitors  to the SSL enabled URL of your website.', 'perform' ),
+					'name'      => 'Enable SSL',
+					'desc'      => 'Enabling this setting will let you automatically redirect visitors  to the SSL enabled URL of your website.',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -450,8 +450,8 @@ class Menu extends Api {
 				[
 					'id'        => 'enable_cdn',
 					'type'      => 'checkbox',
-					'name'      => esc_html__( 'Enable CDN Rewrite', 'perform' ),
-					'desc'      => esc_html__( 'Enables rewriting of your site URLs with your CDN URLs which can be configured below.', 'perform' ),
+					'name'      => 'Enable CDN Rewrite',
+					'desc'      => 'Enables rewriting of your site URLs with your CDN URLs which can be configured below.',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -462,8 +462,8 @@ class Menu extends Api {
 				[
 					'id'        => 'cdn_url',
 					'type'      => 'url',
-					'name'      => esc_html__( 'CDN URL', 'perform' ),
-					'desc'      => esc_html__( 'Enter your CDN URL without the trailing backslash. Example: https://cdn.example.com', 'perform' ),
+					'name'      => 'CDN URL',
+					'desc'      => 'Enter your CDN URL without the trailing backslash. Example: https://cdn.example.com',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -475,8 +475,8 @@ class Menu extends Api {
 					'id'          => 'cdn_directories',
 					'type'        => 'text',
 					'placeholder' => 'wp-content, wp-includes',
-					'name'        => esc_html__( 'Included Directories', 'perform' ),
-					'desc'        => esc_html__( 'Enter any directories you would like to be included in CDN rewriting, separated by commas (,). Default: wp-content,wp-includes', 'perform' ),
+					'name'        => 'Included Directories',
+					'desc'        => 'Enter any directories you would like to be included in CDN rewriting, separated by commas (,). Default: wp-content,wp-includes',
 					'help_link'   => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -488,8 +488,8 @@ class Menu extends Api {
 					'id'          => 'cdn_exclusions',
 					'type'        => 'text',
 					'placeholder' => '.php',
-					'name'        => esc_html__( 'CDN Exclusions', 'perform' ),
-					'desc'        => esc_html__( 'Enter any directories or file extensions you would like to be excluded from CDN rewriting, separated by commas (,). Default: .php', 'perform' ),
+					'name'        => 'CDN Exclusions',
+					'desc'        => 'Enter any directories or file extensions you would like to be excluded from CDN rewriting, separated by commas (,). Default: .php',
 					'help_link'   => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -502,8 +502,8 @@ class Menu extends Api {
 				[
 					'id'        => 'enable_navigation_menu_cache',
 					'type'      => 'checkbox',
-					'name'      => esc_html__( 'Enable Menu Cache', 'perform' ),
-					'desc'      => esc_html__( 'Enables the Navigation Menu Cache which will provide you the ability to cache all the menus on your WordPress site to reduce the time taken by outputting the menu\'s.', 'perform' ),
+					'name'      => 'Enable Menu Cache',
+					'desc'      => 'Enables the Navigation Menu Cache which will provide you the ability to cache all the menus on your WordPress site to reduce the time taken by outputting the menu\'s.',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -514,8 +514,8 @@ class Menu extends Api {
 				[
 					'id'        => 'enable_assets_manager',
 					'type'      => 'checkbox',
-					'name'      => esc_html__( 'Enable Assets Manager', 'perform' ),
-					'desc'      => esc_html__( 'Enables the Assets Manager which will provide you the ability to enable or disable CSS and JS files on per-page basis.', 'perform' ),
+					'name'      => 'Enable Assets Manager',
+					'desc'      => 'Enables the Assets Manager which will provide you the ability to enable or disable CSS and JS files on per-page basis.',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -527,8 +527,8 @@ class Menu extends Api {
 					'id'        => 'dns_prefetch',
 					'type'      => 'textarea',
 					'data_type' => 'one_per_line',
-					'name'      => esc_html__( 'DNS Prefetch', 'perform' ),
-					'desc'      => esc_html__( 'Resolve domain names before a user clicks. Format: //domain.tld (one per line)', 'perform' ),
+					'name'      => 'DNS Prefetch',
+					'desc'      => 'Resolve domain names before a user clicks. Format: //domain.tld (one per line)',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -539,8 +539,8 @@ class Menu extends Api {
 				[
 					'id'        => 'preconnect',
 					'type'      => 'textarea',
-					'name'      => esc_html__( 'Preconnect', 'perform' ),
-					'desc'      => esc_html__( 'Preconnect allows the browser to set up early connections before an HTTP request, eliminating roundtrip latency and saving time for users. Format: scheme://domain.tld (one per line)', 'perform' ),
+					'name'      => 'Preconnect',
+					'desc'      => 'Preconnect allows the browser to set up early connections before an HTTP request, eliminating roundtrip latency and saving time for users. Format: scheme://domain.tld (one per line)',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -551,8 +551,8 @@ class Menu extends Api {
 				[
 					'id'        => 'remove_data_on_uninstall',
 					'type'      => 'checkbox',
-					'name'      => esc_html__( 'Remove Data on Uninstall', 'perform' ),
-					'desc'      => esc_html__( 'When enabled, this will cause all the options data to be removed from your database when the plugin is uninstalled.', 'perform' ),
+					'name'      => 'Remove Data on Uninstall',
+					'desc'      => 'When enabled, this will cause all the options data to be removed from your database when the plugin is uninstalled.',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -565,8 +565,8 @@ class Menu extends Api {
 				[
 					'id'        => 'disable_woocommerce_assets',
 					'type'      => 'checkbox',
-					'name'      => esc_html__( 'Disable Default Assets', 'perform' ),
-					'desc'      => esc_html__( 'Disables WooCommerce default scripts and styles except on product, cart, and checkout pages.', 'perform' ),
+					'name'      => 'Disable Default Assets',
+					'desc'      => 'Disables WooCommerce default scripts and styles except on product, cart, and checkout pages.',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -577,8 +577,8 @@ class Menu extends Api {
 				[
 					'id'        => 'disable_woocommerce_cart_fragmentation',
 					'type'      => 'checkbox',
-					'name'      => esc_html__( 'Disable Cart Fragmentation', 'perform' ),
-					'desc'      => esc_html__( 'Completely disables WooCommerce cart fragmentation script.', 'perform' ),
+					'name'      => 'Disable Cart Fragmentation',
+					'desc'      => 'Completely disables WooCommerce cart fragmentation script.',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -589,8 +589,8 @@ class Menu extends Api {
 				[
 					'id'        => 'disable_woocommerce_status',
 					'type'      => 'checkbox',
-					'name'      => esc_html__( 'Disable Status Meta-box', 'perform' ),
-					'desc'      => esc_html__( 'Disables WooCommerce status meta-box from the WP Admin Dashboard.', 'perform' ),
+					'name'      => 'Disable Status Meta-box',
+					'desc'      => 'Disables WooCommerce status meta-box from the WP Admin Dashboard.',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
@@ -601,8 +601,8 @@ class Menu extends Api {
 				[
 					'id'        => 'disable_woocommerce_widgets',
 					'type'      => 'checkbox',
-					'name'      => esc_html__( 'Disable Widgets', 'perform' ),
-					'desc'      => esc_html__( 'Disables all WooCommerce widgets.', 'perform' ),
+					'name'      => 'Disable Widgets',
+					'desc'      => 'Disables all WooCommerce widgets.',
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,

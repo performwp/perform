@@ -32,9 +32,6 @@ final class Plugin {
 
 		// Register services used throughout the plugin.
 		add_action( 'plugins_loaded', [ $this, 'register_services' ] );
-
-		// Load text domain.
-		add_action( 'init', [ $this, 'load_plugin_textdomain' ] );
 	}
 
 	/**
@@ -50,10 +47,12 @@ final class Plugin {
 		$this->load_freemius();
 
 		// Load Admin Files.
-		new Settings\Api();
-		new Settings\Menu();
-		new Admin\Actions();
-		new Admin\Filters();
+		if( is_admin() ) {
+			new Settings\Api();
+			new Settings\Menu();
+			new Admin\Actions();
+			new Admin\Filters();
+		}
 
 		// Load Frontend Files.
 		new Includes\Actions();
@@ -91,22 +90,6 @@ final class Plugin {
 				),
 			),
 		) );
-	}
-
-	/**
-	 * Loads the plugin's translated strings.
-	 *
-	 * @since  1.0.0
-	 * @access public
-	 *
-	 * @return void
-	 */
-	public function load_plugin_textdomain() {
-		load_plugin_textdomain(
-			'perform',
-			false,
-			dirname( plugin_basename( PERFORM_PLUGIN_FILE ) ) . '/languages/'
-		);
 	}
 
 	/**
