@@ -84,7 +84,7 @@ class Api {
 					<?php foreach ( $fields as $field ) : ?>
 						<tr>
 							<th scope="row">
-								<?php echo esc_html( $field['name'] ); ?>
+								<?php echo esc_html__( $field['name'], 'perform' ); ?>
 								<?php echo $this->render_help_link( $field['help_link'] ); ?>
 							</th>
 							<td>
@@ -159,7 +159,7 @@ class Api {
 			esc_attr( $field['id'] ),
 			esc_attr( $field['id'] ),
 			$is_checked,
-			esc_html( $field['desc'] )
+			esc_html__( $field['desc'], 'perform' )
 		);
 	}
 
@@ -183,7 +183,7 @@ class Api {
 				'<option value="%s" %s>%s</option>',
 				esc_attr( $option_slug ),
 				$is_selected,
-				esc_html( $option_value )
+				esc_html__( $option_value, 'perform' )
 			);
 		}
 
@@ -214,7 +214,7 @@ class Api {
 			esc_attr( $field['id'] ),
 			esc_attr( $placeholder ),
 			esc_attr( $value ),
-			esc_html( $field['desc'] )
+			esc_html__( $field['desc'], 'perform' )
 		);
 	}
 
@@ -238,7 +238,7 @@ class Api {
 			esc_attr( $field['id'] ),
 			esc_attr( $placeholder ),
 			esc_attr( $value ),
-			esc_html( $field['desc'] )
+			esc_html__( $field['desc'], 'perform' )
 		);
 	}
 
@@ -262,7 +262,7 @@ class Api {
 			esc_attr( $field['id'] ),
 			esc_attr( $placeholder ),
 			esc_textarea( $value ),
-			esc_html( $field['desc'] )
+			esc_html__( $field['desc'], 'perform' )
 		);
 	}
 }
