@@ -1,7 +1,7 @@
 const path = require('path');
 const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
-const ImageminPlugin = require( 'imagemin-webpack-plugin' ).default;
+//const ImageminPlugin = require( 'imagemin-webpack-plugin' ).default;
 const { CleanWebpackPlugin } = require( 'clean-webpack-plugin' );
 const MiniCSSExtractPlugin = require( 'mini-css-extract-plugin' );
 const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
@@ -48,7 +48,7 @@ const config = {
 if ( inProduction ) {
 	// Minify images.
 	// Must go after CopyWebpackPlugin above: https://github.com/Klathmon/imagemin-webpack-plugin#example-usage
-	config.plugins.push( new ImageminPlugin( { test: /\.(jpe?g|png|gif|svg)$/i } ) );
+	//config.plugins.push( new ImageminPlugin( { test: /\.(jpe?g|png|gif|svg)$/i } ) );
 
 	// POT file.
 	wpPot( {

@@ -7,7 +7,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language-Team: PerformWP <hello@performwp.com>\n"
-"POT-Creation-Date: 2025-04-11 18:59+0000\n"
+"POT-Creation-Date: 2025-07-01 13:22+0000\n"
 "Report-Msgid-Bugs-To: https://github.com/mehul0810/perform/issues/new\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
@@ -16,450 +16,450 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/Admin/Actions.php:76
+#: perform/src/Admin/Actions.php:79, src/Admin/Actions.php:79
 msgid "Close Assets Manager"
 msgstr ""
 
-#: src/Admin/Actions.php:74, src/Modules/Assets_Manager.php:112
+#: perform/src/Admin/Actions.php:77, perform/src/Modules/Assets_Manager.php:112, src/Admin/Actions.php:77, src/Modules/Assets_Manager.php:112
 msgid "Assets Manager"
 msgstr ""
 
-#: src/Admin/Actions.php:83, src/Modules/Assets_Manager.php:103, src/Admin/Settings/Menu.php:65, src/Admin/Settings/Menu.php:66
+#: perform/src/Admin/Actions.php:86, perform/src/Modules/Assets_Manager.php:103, perform/src/Admin/Settings/Menu.php:74, perform/src/Admin/Settings/Menu.php:75, src/Admin/Actions.php:86, src/Modules/Assets_Manager.php:103, src/Admin/Settings/Menu.php:74, src/Admin/Settings/Menu.php:75
 msgid "Perform"
 msgstr ""
 
-#: src/Admin/Actions.php:103
+#: perform/src/Admin/Actions.php:106, src/Admin/Actions.php:106
 msgid "Support Forum"
 msgstr ""
 
-#: src/Admin/Filters.php:49
+#: perform/src/Admin/Filters.php:49, src/Admin/Filters.php:49
 msgid "If you love using"
 msgstr ""
 
-#: src/Admin/Filters.php:50
+#: perform/src/Admin/Filters.php:50, src/Admin/Filters.php:50
 msgid "Perform WordPress Plugin"
 msgstr ""
 
-#: src/Admin/Filters.php:51
+#: perform/src/Admin/Filters.php:51, src/Admin/Filters.php:51
 msgid "please leave us a rating"
 msgstr ""
 
-#: src/Admin/Filters.php:53
+#: perform/src/Admin/Filters.php:53, src/Admin/Filters.php:53
 msgid ". It takes a minute and helps a lot. Thanks in advance!"
 msgstr ""
 
-#: src/Admin/Filters.php:73
+#: perform/src/Admin/Filters.php:73, src/Admin/Filters.php:73
 msgid "Settings"
 msgstr ""
 
-#: src/Admin/Filters.php:78
+#: perform/src/Admin/Filters.php:78, src/Admin/Filters.php:78
 msgid "Support"
 msgstr ""
 
-#: src/Admin/Filters.php:98
+#: perform/src/Admin/Filters.php:98, src/Admin/Filters.php:98
 msgid "Manage Assets"
 msgstr ""
 
-#: src/Modules/Assets_Manager.php:106
+#: perform/src/Modules/Assets_Manager.php:106, src/Modules/Assets_Manager.php:106
 msgid "Save"
 msgstr ""
 
-#: src/Modules/Assets_Manager.php:115
+#: perform/src/Modules/Assets_Manager.php:115, src/Modules/Assets_Manager.php:115
 msgid "Offload unnecessary assets (JS and CSS) from this page."
 msgstr ""
 
-#: src/Modules/Assets_Manager.php:295
+#: perform/src/Modules/Assets_Manager.php:295, src/Modules/Assets_Manager.php:295
 msgid "Handle"
 msgstr ""
 
-#: src/Modules/Assets_Manager.php:298
+#: perform/src/Modules/Assets_Manager.php:298, src/Modules/Assets_Manager.php:298
 msgid "Type"
 msgstr ""
 
-#: src/Modules/Assets_Manager.php:301
+#: perform/src/Modules/Assets_Manager.php:301, src/Modules/Assets_Manager.php:301
 msgid "Size"
 msgstr ""
 
-#: src/Modules/Assets_Manager.php:304
+#: perform/src/Modules/Assets_Manager.php:304, src/Modules/Assets_Manager.php:304
 msgid "Status"
 msgstr ""
 
-#: src/Modules/Assets_Manager.php:307
+#: perform/src/Modules/Assets_Manager.php:307, src/Modules/Assets_Manager.php:307
 msgid "Actions"
 msgstr ""
 
-#: src/Modules/Assets_Manager.php:368
+#: perform/src/Modules/Assets_Manager.php:368, src/Modules/Assets_Manager.php:368
 msgid "View File"
 msgstr ""
 
-#: src/Modules/Assets_Manager.php:416
+#: perform/src/Modules/Assets_Manager.php:416, src/Modules/Assets_Manager.php:416
 msgid "All assets in this group have been disabled. Please enable the group to individually manager assets."
 msgstr ""
 
-#: src/Modules/Assets_Manager.php:437, src/Modules/Assets_Manager.php:526
+#: perform/src/Modules/Assets_Manager.php:437, perform/src/Modules/Assets_Manager.php:526, src/Modules/Assets_Manager.php:437, src/Modules/Assets_Manager.php:526
 msgid "Current URL"
 msgstr ""
 
-#: src/Modules/Assets_Manager.php:438
+#: perform/src/Modules/Assets_Manager.php:438, src/Modules/Assets_Manager.php:438
 msgid "Everywhere"
 msgstr ""
 
-#: src/Modules/Assets_Manager.php:443
+#: perform/src/Modules/Assets_Manager.php:443, src/Modules/Assets_Manager.php:443
 msgid "Disable on"
 msgstr ""
 
-#: src/Modules/Assets_Manager.php:489
+#: perform/src/Modules/Assets_Manager.php:489, src/Modules/Assets_Manager.php:489
 msgid "ON"
 msgstr ""
 
-#: src/Modules/Assets_Manager.php:492
+#: perform/src/Modules/Assets_Manager.php:492, src/Modules/Assets_Manager.php:492
 msgid "OFF"
 msgstr ""
 
-#: src/Modules/Assets_Manager.php:519
+#: perform/src/Modules/Assets_Manager.php:519, src/Modules/Assets_Manager.php:519
 msgid "Exceptions"
 msgstr ""
 
-#: src/Modules/Basic.php:482
+#: perform/src/Modules/Basic.php:485, src/Modules/Basic.php:485
 msgid "No feed available, please visit"
 msgstr ""
 
-#: src/Modules/Basic.php:484
+#: perform/src/Modules/Basic.php:487, src/Modules/Basic.php:487
 msgid "Home"
 msgstr ""
 
-#: src/Admin/Settings/Api.php:47
+#: perform/src/Admin/Settings/Api.php:48, src/Admin/Settings/Api.php:48
 msgid "Save Settings"
 msgstr ""
 
-#: src/Admin/Settings/Api.php:51
+#: perform/src/Admin/Settings/Api.php:52, src/Admin/Settings/Api.php:52
 msgid "Saving..."
 msgstr ""
 
-#: src/Admin/Settings/Api.php:131
+#: perform/src/Admin/Settings/Api.php:138, src/Admin/Settings/Api.php:138
 msgid "Learn more"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:34, src/Admin/Settings/Menu.php:112
+#: perform/src/Admin/Settings/Menu.php:51, src/Admin/Settings/Menu.php:51
 msgid "General"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:35, src/Admin/Settings/Menu.php:116
+#: perform/src/Admin/Settings/Menu.php:52, src/Admin/Settings/Menu.php:52
 msgid "SSL"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:36, src/Admin/Settings/Menu.php:120
+#: perform/src/Admin/Settings/Menu.php:53, src/Admin/Settings/Menu.php:53
 msgid "CDN"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:37, src/Admin/Settings/Menu.php:124
+#: perform/src/Admin/Settings/Menu.php:54, src/Admin/Settings/Menu.php:54
 msgid "Advanced"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:44
+#: perform/src/Admin/Settings/Menu.php:58, src/Admin/Settings/Menu.php:58
 msgid "WooCommerce"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:91
+#: perform/src/Admin/Settings/Menu.php:99, src/Admin/Settings/Menu.php:99
 msgid "PerformWP"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:193
+#: perform/src/Admin/Settings/Menu.php:177, src/Admin/Settings/Menu.php:177
 msgid "Disable Emoji's"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:194
+#: perform/src/Admin/Settings/Menu.php:178, src/Admin/Settings/Menu.php:178
 msgid "Enabling this will disable the usage of emoji's in WordPress Posts, Pages, and Custom Post Types."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:205
+#: perform/src/Admin/Settings/Menu.php:189, src/Admin/Settings/Menu.php:189
 msgid "Disable Embeds"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:206
+#: perform/src/Admin/Settings/Menu.php:190, src/Admin/Settings/Menu.php:190
 msgid "Removes WordPress Embed JavaScript file (wp-embed.min.js)."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:217
+#: perform/src/Admin/Settings/Menu.php:201, src/Admin/Settings/Menu.php:201
 msgid "Remove Query Strings"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:218
+#: perform/src/Admin/Settings/Menu.php:202, src/Admin/Settings/Menu.php:202
 msgid "Remove query strings from static resources (CSS, JS)."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:229
+#: perform/src/Admin/Settings/Menu.php:213, src/Admin/Settings/Menu.php:213
 msgid "Disable XML-RPC"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:230
+#: perform/src/Admin/Settings/Menu.php:214, src/Admin/Settings/Menu.php:214
 msgid "Disables WordPress XML-RPC functionality."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:241
+#: perform/src/Admin/Settings/Menu.php:225, src/Admin/Settings/Menu.php:225
 msgid "Remove jQuery Migrate"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:242
+#: perform/src/Admin/Settings/Menu.php:226, src/Admin/Settings/Menu.php:226
 msgid "Removes jQuery Migrate JS file (jquery-migrate.min.js)."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:253
+#: perform/src/Admin/Settings/Menu.php:237, src/Admin/Settings/Menu.php:237
 msgid "Hide WP Version"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:254
+#: perform/src/Admin/Settings/Menu.php:238, src/Admin/Settings/Menu.php:238
 msgid "Removes WordPress version generator meta tag."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:265
+#: perform/src/Admin/Settings/Menu.php:249, src/Admin/Settings/Menu.php:249
 msgid "Remove wlwmanifest Link"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:266
+#: perform/src/Admin/Settings/Menu.php:250, src/Admin/Settings/Menu.php:250
 msgid "Remove wlwmanifest link tag. It is usually used to support Windows Live Writer."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:277
+#: perform/src/Admin/Settings/Menu.php:261, src/Admin/Settings/Menu.php:261
 msgid "Remove RSD Link"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:278
+#: perform/src/Admin/Settings/Menu.php:262, src/Admin/Settings/Menu.php:262
 msgid "Remove RSD (Real Simple Discovery) link tag."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:289
+#: perform/src/Admin/Settings/Menu.php:273, src/Admin/Settings/Menu.php:273
 msgid "Remove Shortlink"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:290
+#: perform/src/Admin/Settings/Menu.php:274, src/Admin/Settings/Menu.php:274
 msgid "Remove Shortlink link tag."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:301
+#: perform/src/Admin/Settings/Menu.php:285, src/Admin/Settings/Menu.php:285
 msgid "Disable RSS Feeds"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:302
+#: perform/src/Admin/Settings/Menu.php:286, src/Admin/Settings/Menu.php:286
 msgid "Disable WordPress generated RSS feeds and 301 redirect URL to parent."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:313
+#: perform/src/Admin/Settings/Menu.php:297, src/Admin/Settings/Menu.php:297
 msgid "Remove RSS Feed Links"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:314
+#: perform/src/Admin/Settings/Menu.php:298, src/Admin/Settings/Menu.php:298
 msgid "Disable WordPress generated RSS feed link tags."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:325
+#: perform/src/Admin/Settings/Menu.php:309, src/Admin/Settings/Menu.php:309
 msgid "Remove REST API Links"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:326
+#: perform/src/Admin/Settings/Menu.php:310, src/Admin/Settings/Menu.php:310
 msgid "Removes REST API link tag from the front end and the REST API header link from page requests."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:337
+#: perform/src/Admin/Settings/Menu.php:321, src/Admin/Settings/Menu.php:321
 msgid "Disable Self Pingbacks"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:338
+#: perform/src/Admin/Settings/Menu.php:322, src/Admin/Settings/Menu.php:322
 msgid "Disable Self Pingbacks (generated when linking to an article on your own blog)."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:349
+#: perform/src/Admin/Settings/Menu.php:333, src/Admin/Settings/Menu.php:333
 msgid "Disable Dashicons"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:350
+#: perform/src/Admin/Settings/Menu.php:334, src/Admin/Settings/Menu.php:334
 msgid "Disables dashicons js on the front end when not logged in."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:361
+#: perform/src/Admin/Settings/Menu.php:345, src/Admin/Settings/Menu.php:345
 msgid "Disable Password Strength Meter"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:362
+#: perform/src/Admin/Settings/Menu.php:346, src/Admin/Settings/Menu.php:346
 msgid "Removes WordPress and WooCommerce Password Strength Meter scripts from non essential pages."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:373
+#: perform/src/Admin/Settings/Menu.php:357, src/Admin/Settings/Menu.php:357
 msgid "Disable Heartbeat"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:375, src/Admin/Settings/Menu.php:392, src/Admin/Settings/Menu.php:410, src/Admin/Settings/Menu.php:436
+#: perform/src/Admin/Settings/Menu.php:359, perform/src/Admin/Settings/Menu.php:376, perform/src/Admin/Settings/Menu.php:394, perform/src/Admin/Settings/Menu.php:420, src/Admin/Settings/Menu.php:359, src/Admin/Settings/Menu.php:376, src/Admin/Settings/Menu.php:394, src/Admin/Settings/Menu.php:420
 msgid "Default"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:376
+#: perform/src/Admin/Settings/Menu.php:360, src/Admin/Settings/Menu.php:360
 msgid "Disable Everywhere"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:377
+#: perform/src/Admin/Settings/Menu.php:361, src/Admin/Settings/Menu.php:361
 msgid "Only Allow When Editing Posts/Pages"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:379, src/Admin/Settings/Menu.php:397
+#: perform/src/Admin/Settings/Menu.php:363, perform/src/Admin/Settings/Menu.php:381, src/Admin/Settings/Menu.php:363, src/Admin/Settings/Menu.php:381
 msgid "Disable WordPress Heartbeat everywhere or in certain areas (used for auto saving and revision tracking)."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:390
+#: perform/src/Admin/Settings/Menu.php:374, src/Admin/Settings/Menu.php:374
 msgid "Heartbeat Frequency"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:392, src/Admin/Settings/Menu.php:393, src/Admin/Settings/Menu.php:394, src/Admin/Settings/Menu.php:395
+#: perform/src/Admin/Settings/Menu.php:376, perform/src/Admin/Settings/Menu.php:377, perform/src/Admin/Settings/Menu.php:378, perform/src/Admin/Settings/Menu.php:379, src/Admin/Settings/Menu.php:376, src/Admin/Settings/Menu.php:377, src/Admin/Settings/Menu.php:378, src/Admin/Settings/Menu.php:379
 msgid "%s Seconds"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:408
+#: perform/src/Admin/Settings/Menu.php:392, src/Admin/Settings/Menu.php:392
 msgid "Limit Post Revisions"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:411
+#: perform/src/Admin/Settings/Menu.php:395, src/Admin/Settings/Menu.php:395
 msgid "Disable Post Revisions"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:423
+#: perform/src/Admin/Settings/Menu.php:407, src/Admin/Settings/Menu.php:407
 msgid "Limits the maximum amount of revisions that are allowed for posts and pages."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:434
+#: perform/src/Admin/Settings/Menu.php:418, src/Admin/Settings/Menu.php:418
 msgid "Autosave Interval"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:436
+#: perform/src/Admin/Settings/Menu.php:420, src/Admin/Settings/Menu.php:420
 msgid "1 Minute"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:437, src/Admin/Settings/Menu.php:438, src/Admin/Settings/Menu.php:439, src/Admin/Settings/Menu.php:440
+#: perform/src/Admin/Settings/Menu.php:421, perform/src/Admin/Settings/Menu.php:422, perform/src/Admin/Settings/Menu.php:423, perform/src/Admin/Settings/Menu.php:424, src/Admin/Settings/Menu.php:421, src/Admin/Settings/Menu.php:422, src/Admin/Settings/Menu.php:423, src/Admin/Settings/Menu.php:424
 msgid "%s Minutes"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:442
+#: perform/src/Admin/Settings/Menu.php:426, src/Admin/Settings/Menu.php:426
 msgid "Controls how often WordPress will auto save posts and pages while editing."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:455
+#: perform/src/Admin/Settings/Menu.php:439, src/Admin/Settings/Menu.php:439
 msgid "Enable SSL"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:456
+#: perform/src/Admin/Settings/Menu.php:440, src/Admin/Settings/Menu.php:440
 msgid "Enabling this setting will let you automatically redirect visitors  to the SSL enabled URL of your website."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:469
+#: perform/src/Admin/Settings/Menu.php:453, src/Admin/Settings/Menu.php:453
 msgid "Enable CDN Rewrite"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:470
+#: perform/src/Admin/Settings/Menu.php:454, src/Admin/Settings/Menu.php:454
 msgid "Enables rewriting of your site URLs with your CDN URLs which can be configured below."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:481
+#: perform/src/Admin/Settings/Menu.php:465, src/Admin/Settings/Menu.php:465
 msgid "CDN URL"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:482
+#: perform/src/Admin/Settings/Menu.php:466, src/Admin/Settings/Menu.php:466
 msgid "Enter your CDN URL without the trailing backslash. Example: https://cdn.example.com"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:494
+#: perform/src/Admin/Settings/Menu.php:478, src/Admin/Settings/Menu.php:478
 msgid "Included Directories"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:495
+#: perform/src/Admin/Settings/Menu.php:479, src/Admin/Settings/Menu.php:479
 msgid "Enter any directories you would like to be included in CDN rewriting, separated by commas (,). Default: wp-content,wp-includes"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:507
+#: perform/src/Admin/Settings/Menu.php:491, src/Admin/Settings/Menu.php:491
 msgid "CDN Exclusions"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:508
+#: perform/src/Admin/Settings/Menu.php:492, src/Admin/Settings/Menu.php:492
 msgid "Enter any directories or file extensions you would like to be excluded from CDN rewriting, separated by commas (,). Default: .php"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:521
+#: perform/src/Admin/Settings/Menu.php:505, src/Admin/Settings/Menu.php:505
 msgid "Enable Menu Cache"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:522
+#: perform/src/Admin/Settings/Menu.php:506, src/Admin/Settings/Menu.php:506
 msgid "Enables the Navigation Menu Cache which will provide you the ability to cache all the menus on your WordPress site to reduce the time taken by outputting the menu's."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:533
+#: perform/src/Admin/Settings/Menu.php:517, src/Admin/Settings/Menu.php:517
 msgid "Enable Assets Manager"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:534
+#: perform/src/Admin/Settings/Menu.php:518, src/Admin/Settings/Menu.php:518
 msgid "Enables the Assets Manager which will provide you the ability to enable or disable CSS and JS files on per-page basis."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:546
+#: perform/src/Admin/Settings/Menu.php:530, src/Admin/Settings/Menu.php:530
 msgid "DNS Prefetch"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:547
+#: perform/src/Admin/Settings/Menu.php:531, src/Admin/Settings/Menu.php:531
 msgid "Resolve domain names before a user clicks. Format: //domain.tld (one per line)"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:558
+#: perform/src/Admin/Settings/Menu.php:542, src/Admin/Settings/Menu.php:542
 msgid "Preconnect"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:559
+#: perform/src/Admin/Settings/Menu.php:543, src/Admin/Settings/Menu.php:543
 msgid "Preconnect allows the browser to set up early connections before an HTTP request, eliminating roundtrip latency and saving time for users. Format: scheme://domain.tld (one per line)"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:570
+#: perform/src/Admin/Settings/Menu.php:554, src/Admin/Settings/Menu.php:554
 msgid "Remove Data on Uninstall"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:571
+#: perform/src/Admin/Settings/Menu.php:555, src/Admin/Settings/Menu.php:555
 msgid "When enabled, this will cause all the options data to be removed from your database when the plugin is uninstalled."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:584
+#: perform/src/Admin/Settings/Menu.php:568, src/Admin/Settings/Menu.php:568
 msgid "Disable Default Assets"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:585
+#: perform/src/Admin/Settings/Menu.php:569, src/Admin/Settings/Menu.php:569
 msgid "Disables WooCommerce default scripts and styles except on product, cart, and checkout pages."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:596
+#: perform/src/Admin/Settings/Menu.php:580, src/Admin/Settings/Menu.php:580
 msgid "Disable Cart Fragmentation"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:597
+#: perform/src/Admin/Settings/Menu.php:581, src/Admin/Settings/Menu.php:581
 msgid "Completely disables WooCommerce cart fragmentation script."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:608
+#: perform/src/Admin/Settings/Menu.php:592, src/Admin/Settings/Menu.php:592
 msgid "Disable Status Meta-box"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:609
+#: perform/src/Admin/Settings/Menu.php:593, src/Admin/Settings/Menu.php:593
 msgid "Disables WooCommerce status meta-box from the WP Admin Dashboard."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:620
+#: perform/src/Admin/Settings/Menu.php:604, src/Admin/Settings/Menu.php:604
 msgid "Disable Widgets"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:621
+#: perform/src/Admin/Settings/Menu.php:605, src/Admin/Settings/Menu.php:605
 msgid "Disables all WooCommerce widgets."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:649
+#: perform/src/Admin/Settings/Menu.php:633, src/Admin/Settings/Menu.php:633
 msgid "Check our documentation"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:697
+#: perform/src/Admin/Settings/Menu.php:673, src/Admin/Settings/Menu.php:673
 msgid "Unable to save the settings. Please try again."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:690
+#: perform/src/Admin/Settings/Menu.php:668, src/Admin/Settings/Menu.php:668
 msgid "Settings saved successfully."
 msgstr ""
