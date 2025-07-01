@@ -184,7 +184,7 @@ class Basic {
 		remove_action( 'wp_head', 'wp_generator' );
 
 		// Return empty string to the generator using filter hook.
-		add_filter( 'the_generator', __return_empty_string() );
+		add_filter( 'the_generator', '__return_empty_string' );
 	}
 
 	/**
