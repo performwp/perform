@@ -203,7 +203,7 @@ class Menu extends Api {
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
-							'https://performwp.com/docs/remove-query-strings'
+							'https://performwp.com/docs/remove-query-strings-from-static-resources/'
 						)
 					),
 				],
@@ -227,7 +227,7 @@ class Menu extends Api {
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
-							'https://performwp.com/docs/remove-jquery-migrate'
+							'https://performwp.com/docs/remove-jquery-migrate/'
 						)
 					),
 				],
@@ -311,7 +311,7 @@ class Menu extends Api {
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
-							'https://performwp.com/docs/remove-rest-api-links'
+							'https://performwp.com/docs/disable-wordpress-rest-api/'
 						)
 					),
 				],
@@ -335,7 +335,7 @@ class Menu extends Api {
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
-							'https://performwp.com/docs/disable-dashicons'
+							'https://performwp.com/docs/remove-dashicons/'
 						)
 					),
 				],
@@ -347,7 +347,7 @@ class Menu extends Api {
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
-							'https://performwp.com/docs/disable-password-strength-meter'
+							'https://performwp.com/docs/disable-password-strength-meter/'
 						)
 					),
 				],
@@ -532,7 +532,7 @@ class Menu extends Api {
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
-							'https://performwp.com/docs/dns-prefetch'
+							'https://performwp.com/docs/dns-prefetching/'
 						)
 					),
 				],
@@ -582,7 +582,7 @@ class Menu extends Api {
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
-							'https://performwp.com/docs/disable-woocommerce-cart-fragmentation'
+							'https://performwp.com/docs/disable-woocommerce-cart-fragments/'
 						)
 					),
 				],
@@ -594,7 +594,7 @@ class Menu extends Api {
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
-							'https://performwp.com/docs/disable-woocommerce-status'
+							'https://performwp.com/docs/disable-woocommerce-status-metabox/'
 						)
 					),
 				],
@@ -606,7 +606,7 @@ class Menu extends Api {
 					'help_link' => esc_url(
 						add_query_arg(
 							$utm_args,
-							'https://performwp.com/docs/disable-widgets'
+							'https://performwp.com/docs/disable-woocommerce-widgets/'
 						)
 					),
 				],
