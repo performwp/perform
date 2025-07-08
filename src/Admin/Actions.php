@@ -56,6 +56,7 @@ class Actions {
 				'docsUrl' => defined('PERFORM_PLUGIN_DOCS_URL') ? PERFORM_PLUGIN_DOCS_URL : 'https://performwp.com/docs/',
 				'logoUrl' => plugins_url( 'assets/dist/images/logo.png', PERFORM_PLUGIN_FILE ),
 				'tabs'    => \Perform\Includes\Helpers::get_settings_tabs(),
+				'fields'  => \Perform\Includes\Helpers::get_settings_fields(), // Expose fields to JS
 			]
 		);
 	}

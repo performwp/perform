@@ -230,6 +230,46 @@ class Helpers {
 	}
 
 	/**
+	 * Get settings fields for the settings page, grouped by tab and card.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @return array
+	 */
+	public static function get_settings_fields() {
+		$utm_args = [
+			'utm_source'   => 'admin-settings',
+			'utm_medium'   => 'plugin',
+			'utm_campaign' => 'perform',
+		];
+		return [
+			'general' => [
+				[
+					'title' => esc_html__('General Settings', 'perform'),
+					'description' => esc_html__('General performance and cleanup options.', 'perform'),
+					'fields' => [
+						[
+							'id'        => 'disable_emojis',
+							'type'      => 'checkbox',
+							'name'      => esc_html__( 'Disable Emoji\'s', 'perform' ),
+							'desc'      => esc_html__( 'Enabling this will disable the usage of emoji\'s in WordPress Posts, Pages, and Custom Post Types.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/disable-emojis'
+								)
+							),
+						],
+						// ...existing general fields...
+					]
+				]
+			],
+			// ...other tabs (ssl, cdn, advanced, woocommerce) with similar card structure...
+		];
+	}
+
+	/**
 	 * Compress HTML.
 	 *
 	 * This function will be used to remove whitespaces around HTML tags.
