@@ -94,7 +94,7 @@ class Menu extends Api {
 			return;
 		}
 		?>
-		<div id="perform-settings-page"></div>
+		<div id="perform-settings-page" class="perform-settings-page"></div>
 		<div class="perform-dashboard-header">
 			<div class="perform-dashboard-header-title">
 				<img src="<?php echo esc_url( PERFORM_PLUGIN_URL . 'assets/dist/images/logo.png' ); ?>" alt="<?php esc_attr_e( 'PerformWP', 'perform' ); ?>"/>

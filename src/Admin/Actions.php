@@ -44,6 +44,16 @@ class Actions {
 
 		wp_register_script( 'perform-admin', PERFORM_PLUGIN_URL . 'assets/dist/js/admin.min.js', '', PERFORM_VERSION );
 		wp_enqueue_script( 'perform-admin' );
+
+		wp_localize_script(
+        'perform-admin',
+        'performwpSettings',
+        [
+            'version' => defined('PERFORM_VERSION') ? PERFORM_VERSION : '',
+            'docsUrl' => defined('PERFORM_PLUGIN_DOCS_URL') ? PERFORM_PLUGIN_DOCS_URL : 'https://performwp.com/docs/',
+            'logoUrl' => plugins_url( 'assets/dist/images/logo.png', PERFORM_PLUGIN_FILE ),
+        ]
+    );
 	}
 
 	/**

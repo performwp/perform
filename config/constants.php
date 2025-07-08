@@ -28,3 +28,8 @@ if ( ! defined( 'PERFORM_PLUGIN_DIR' ) ) {
 if ( ! defined( 'PERFORM_PLUGIN_URL' ) ) {
 	define( 'PERFORM_PLUGIN_URL', plugin_dir_url( PERFORM_PLUGIN_FILE ) );
 }
+
+// Define plugin docs URL
+if ( ! defined( 'PERFORM_PLUGIN_DOCS_URL' ) ) {
+	define( 'PERFORM_PLUGIN_DOCS_URL', 'https://performwp.com/docs/' );
+}

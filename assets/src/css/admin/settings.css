@@ -1,3 +1,26 @@
+.perform-settings-page {
+	margin-left: -20px;
+}
+
+.perform-settings-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 24px;
+	background-color: var(--white-color);
+	padding: 0px 20px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.perform-plugin-version {
+	font-size: 10px;
+	color: var(--white-color);
+	background-color: var(--primary-color);
+	padding: 3px 8px;
+	border-radius: 5px;
+}
+
+
 .perform-admin-settings-wrap {
   display: flex;
 }
