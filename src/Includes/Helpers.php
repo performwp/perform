@@ -209,6 +209,27 @@ class Helpers {
 	}
 
 	/**
+	 * Get settings tabs for the settings page.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @return array
+	 */
+	public static function get_settings_tabs() {
+		$tabs = [
+			'general'  => esc_html__( 'General', 'perform' ),
+			'ssl'      => esc_html__( 'SSL', 'perform' ),
+			'cdn'      => esc_html__( 'CDN', 'perform' ),
+			'advanced' => esc_html__( 'Advanced', 'perform' ),
+		];
+		if ( self::is_woocommerce_active() ) {
+			$tabs['woocommerce'] = esc_html__( 'WooCommerce', 'perform' );
+		}
+		return $tabs;
+	}
+
+	/**
 	 * Compress HTML.
 	 *
 	 * This function will be used to remove whitespaces around HTML tags.

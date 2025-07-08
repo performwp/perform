@@ -39,6 +39,9 @@ class Actions {
 	 * @return void
 	 */
 	public function registerAssets() {
+		// Loads the WordPress components styles.
+		wp_enqueue_style( 'wp-components' );
+
 		wp_register_style( 'perform-admin', PERFORM_PLUGIN_URL . 'assets/dist/css/admin.css', '', PERFORM_VERSION );
 		wp_enqueue_style( 'perform-admin' );
 
@@ -46,14 +49,15 @@ class Actions {
 		wp_enqueue_script( 'perform-admin' );
 
 		wp_localize_script(
-        'perform-admin',
-        'performwpSettings',
-        [
-            'version' => defined('PERFORM_VERSION') ? PERFORM_VERSION : '',
-            'docsUrl' => defined('PERFORM_PLUGIN_DOCS_URL') ? PERFORM_PLUGIN_DOCS_URL : 'https://performwp.com/docs/',
-            'logoUrl' => plugins_url( 'assets/dist/images/logo.png', PERFORM_PLUGIN_FILE ),
-        ]
-    );
+			'perform-admin',
+			'performwpSettings',
+			[
+				'version' => defined('PERFORM_VERSION') ? PERFORM_VERSION : '',
+				'docsUrl' => defined('PERFORM_PLUGIN_DOCS_URL') ? PERFORM_PLUGIN_DOCS_URL : 'https://performwp.com/docs/',
+				'logoUrl' => plugins_url( 'assets/dist/images/logo.png', PERFORM_PLUGIN_FILE ),
+				'tabs'    => \Perform\Includes\Helpers::get_settings_tabs(),
+			]
+		);
 	}
 
 	/**

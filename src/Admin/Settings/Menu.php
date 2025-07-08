@@ -34,31 +34,11 @@ class Menu extends Api {
 	 */
 	public function __construct() {
 		$this->prefix = 'perform_';
-		$this->tabs   = $this->initialize_tabs();
+		$this->tabs   = Helpers::get_settings_tabs();
 
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 9 );
 		add_action( 'in_admin_header', [ $this, 'render_settings_page_header' ] );
 		add_action( 'wp_ajax_perform_save_settings', [ $this, 'save_settings' ] );
-	}
-
-	/**
-	 * Initialize tabs for the settings page.
-	 *
-	 * @return array
-	 */
-	private function initialize_tabs() {
-		$tabs = [
-			'general'  => esc_html__( 'General', 'perform' ),
-			'ssl'      => esc_html__( 'SSL', 'perform' ),
-			'cdn'      => esc_html__( 'CDN', 'perform' ),
-			'advanced' => esc_html__( 'Advanced', 'perform' ),
-		];
-
-		if ( Helpers::is_woocommerce_active() ) {
-			$tabs['woocommerce'] = esc_html__( 'WooCommerce', 'perform' );
-		}
-
-		return $tabs;
 	}
 
 	/**
