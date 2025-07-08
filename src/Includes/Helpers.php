@@ -218,7 +218,7 @@ class Helpers {
 	 */
 	public static function get_settings_tabs() {
 		$tabs = [
-			'general'  => esc_html__( 'General', 'perform' ),
+			'bloat'  => esc_html__( 'Bloat', 'perform' ),
 			'ssl'      => esc_html__( 'SSL', 'perform' ),
 			'cdn'      => esc_html__( 'CDN', 'perform' ),
 			'advanced' => esc_html__( 'Advanced', 'perform' ),
@@ -244,14 +244,14 @@ class Helpers {
 			'utm_campaign' => 'perform',
 		];
 		return [
-			'general' => [
+			'bloat' => [
 				[
-					'title' => esc_html__('General Settings', 'perform'),
-					'description' => esc_html__('General performance and cleanup options.', 'perform'),
+					'title' => esc_html__('Bloat Settings', 'perform'),
+					'description' => esc_html__('Settings to reduce bloat and improve performance.', 'perform'),
 					'fields' => [
 						[
 							'id'        => 'disable_emojis',
-							'type'      => 'checkbox',
+							'type'      => 'toggle',
 							'name'      => esc_html__( 'Disable Emoji\'s', 'perform' ),
 							'desc'      => esc_html__( 'Enabling this will disable the usage of emoji\'s in WordPress Posts, Pages, and Custom Post Types.', 'perform' ),
 							'help_link' => esc_url(
@@ -261,11 +261,138 @@ class Helpers {
 								)
 							),
 						],
-						// ...existing general fields...
+						[
+							'id'        => 'disable_embeds',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Disable Embeds', 'perform' ),
+							'desc'      => esc_html__( 'Enabling this will disable the usage of embeds in WordPress Posts, Pages, and Custom Post Types.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/disable-embeds'
+								)
+							),
+						],
+
 					]
 				]
 			],
-			// ...other tabs (ssl, cdn, advanced, woocommerce) with similar card structure...
+			'ssl' => [
+				[
+					'title' => esc_html__('SSL Settings', 'perform'),
+					'description' => esc_html__('Settings to manage SSL and HTTPS related configurations.', 'perform'),
+					'fields' => [
+						[
+							'id'        => 'force_ssl',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Force SSL', 'perform' ),
+							'desc'      => esc_html__( 'Enabling this will force all traffic to use SSL.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/force-ssl'
+								)
+							),
+						],
+					]
+				]
+			],
+			'cdn' => [
+				[
+					'title' => esc_html__('CDN Settings', 'perform'),
+					'description' => esc_html__('Settings to manage CDN configurations.', 'perform'),
+					'fields' => [
+						[
+							'id'        => 'enable_cdn',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Enable CDN', 'perform' ),
+							'desc'      => esc_html__( 'Enabling this will allow you to use a CDN for your static assets.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/cdn-manager'
+								)
+							),
+						],
+						[
+							'id'        => 'cdn_url',
+							'type'      => 'text',
+							'name'      => esc_html__( 'CDN URL', 'perform' ),
+							'desc'      => esc_html__( 'Enter the URL of your CDN provider.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/cdn-manager'
+								)
+							),
+						],
+					]
+				]
+			],
+			'advanced' => [
+				[
+					'title' => esc_html__('Advanced Settings', 'perform'),
+					'description' => esc_html__('Settings for advanced configurations.', 'perform'),
+					'fields' => [
+						[
+							'id'        => 'enable_assets_manager',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Enable Assets Manager', 'perform' ),
+							'desc'      => esc_html__( 'Enabling this will allow you to manage your assets more effectively.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/assets-manager'
+								)
+							),
+						],
+						[
+							'id'        => 'enable_menu_cache',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Enable Menu Cache', 'perform' ),
+							'desc'      => esc_html__( 'Enabling this will cache your menu items for better performance.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/menu-cache'
+								)
+							),
+						],
+					]
+				]
+			],
+			'woocommerce' => [
+				[
+					'title' => esc_html__('WooCommerce Settings', 'perform'),
+					'description' => esc_html__('Settings specific to WooCommerce.', 'perform'),
+					'fields' => [
+						[
+							'id'        => 'enable_woocommerce_manager',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Enable WooCommerce Manager', 'perform' ),
+							'desc'      => esc_html__( 'Enabling this will allow you to manage WooCommerce specific settings.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/woocommerce-manager'
+								)
+							),
+						],
+						[
+							'id'        => 'woocommerce_cache',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Enable WooCommerce Cache', 'perform' ),
+							'desc'      => esc_html__( 'Enabling this will cache WooCommerce pages for better performance.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/woocommerce-cache'
+								)
+							),
+						],
+					]
+				]
+			],
 		];
 	}
 
