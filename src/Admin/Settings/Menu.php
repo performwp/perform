@@ -17,10 +17,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Menu extends Api {
 	/**
 	 * Tabs for the settings page.
-	 * 
+	 *
 	 * @since 2.0.0
 	 * @access public
-	 * 
+	 *
 	 * @var array
 	 */
 	public $tabs = [];
@@ -94,6 +94,7 @@ class Menu extends Api {
 			return;
 		}
 		?>
+		<div id="perform-settings-page"></div>
 		<div class="perform-dashboard-header">
 			<div class="perform-dashboard-header-title">
 				<img src="<?php echo esc_url( PERFORM_PLUGIN_URL . 'assets/dist/images/logo.png' ); ?>" alt="<?php esc_attr_e( 'PerformWP', 'perform' ); ?>"/>

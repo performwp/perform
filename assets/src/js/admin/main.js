@@ -1,3 +1,17 @@
+import { render } from '@wordpress/element';
+import SettingsApp from './SettingsApp';
+
+document.addEventListener('DOMContentLoaded', () => {
+  const el = document.getElementById('perform-settings-page');
+  if (el) {
+    render(
+      <SettingsApp />,
+      el
+    );
+  }
+});
+
+
 document.addEventListener( 'DOMContentLoaded', () => {
 	const saveBtn = document.getElementById( 'perform-save-settings' );
 	const formElement = document.getElementById( 'perform-admin-settings-form' );
