@@ -246,14 +246,14 @@ class Helpers {
 		return [
 			'bloat' => [
 				[
-					'title' => esc_html__('Bloat Settings', 'perform'),
-					'description' => esc_html__('Settings to reduce bloat and improve performance.', 'perform'),
+					'title' => esc_html__('Assets Optimization', 'perform'),
+					'description' => esc_html__('Fine-tune how WordPress loads scripts and assets across your site. Disabling unnecessary features reduces HTTP requests, removes bloat, and improves load times for your visitors.', 'perform'),
 					'fields' => [
 						[
 							'id'        => 'disable_emojis',
 							'type'      => 'toggle',
-							'name'      => esc_html__( 'Disable Emoji\'s', 'perform' ),
-							'desc'      => esc_html__( 'Enabling this will disable the usage of emoji\'s in WordPress Posts, Pages, and Custom Post Types.', 'perform' ),
+							'name'      => __( 'Disable Emoji\'s', 'perform' ),
+							'desc'      => __( 'Enabling this will disable the usage of emoji\'s in WordPress Posts, Pages, and Custom Post Types.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -270,6 +270,248 @@ class Helpers {
 								add_query_arg(
 									$utm_args,
 									'https://performwp.com/docs/disable-embeds'
+								)
+							),
+						],
+					],
+				],
+				[
+					'title' => esc_html__('Bloat Settings', 'perform'),
+					'description' => esc_html__('Settings to reduce bloat and improve performance.', 'perform'),
+					'fields' => [
+						[
+							'id'        => 'remove_query_strings',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Remove Query Strings', 'perform' ),
+							'desc'      => esc_html__( 'Remove query strings from static resources (CSS, JS).', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/remove-query-strings'
+								)
+							),
+						],
+						[
+							'id'        => 'disable_xmlrpc',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Disable XML-RPC', 'perform' ),
+							'desc'      => esc_html__( 'Disables WordPress XML-RPC functionality.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/disable-xmlrpc'
+								)
+							),
+						],
+						[
+							'id'        => 'remove_jquery_migrate',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Remove jQuery Migrate', 'perform' ),
+							'desc'      => esc_html__( 'Removes jQuery Migrate JS file (jquery-migrate.min.js).', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/remove-jquery-migrate'
+								)
+							),
+						],
+						[
+							'id'        => 'hide_wp_version',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Hide WP Version', 'perform' ),
+							'desc'      => esc_html__( 'Removes WordPress version generator meta tag.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/hide-wp-version'
+								)
+							),
+						],
+						[
+							'id'        => 'remove_wlwmanifest_link',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Remove wlwmanifest Link', 'perform' ),
+							'desc'      => esc_html__( 'Remove wlwmanifest link tag. It is usually used to support Windows Live Writer.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/remove-wlwmanifest-link'
+								)
+							),
+						],
+						[
+							'id'        => 'remove_rsd_link',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Remove RSD Link', 'perform' ),
+							'desc'      => esc_html__( 'Remove RSD (Real Simple Discovery) link tag.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/remove-rsd-link'
+								)
+							),
+						],
+						[
+							'id'        => 'remove_shortlink',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Remove Shortlink', 'perform' ),
+							'desc'      => esc_html__( 'Remove Shortlink link tag.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/remove-shortlink'
+								)
+							),
+						],
+						[
+							'id'        => 'disable_rss_feeds',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Disable RSS Feeds', 'perform' ),
+							'desc'      => esc_html__( 'Disable WordPress generated RSS feeds and 301 redirect URL to parent.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/disable-rss-feeds'
+								)
+							),
+						],
+						[
+							'id'        => 'remove_feed_links',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Remove RSS Feed Links', 'perform' ),
+							'desc'      => esc_html__( 'Disable WordPress generated RSS feed link tags.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/remove-rss-feed-links'
+								)
+							),
+						],
+						[
+							'id'        => 'remove_rest_api_links',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Remove REST API Links', 'perform' ),
+							'desc'      => esc_html__( 'Removes REST API link tag from the front end and the REST API header link from page requests.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/remove-rest-api-links'
+								)
+							),
+						],
+						[
+							'id'        => 'disable_self_pingbacks',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Disable Self Pingbacks', 'perform' ),
+							'desc'      => esc_html__( 'Disable Self Pingbacks (generated when linking to an article on your own blog).', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/disable-self-pingbacks'
+								)
+							),
+						],
+						[
+							'id'        => 'disable_dashicons',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Disable Dashicons', 'perform' ),
+							'desc'      => esc_html__( 'Disables dashicons js on the front end when not logged in.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/disable-dashicons'
+								)
+							),
+						],
+						[
+							'id'        => 'disable_password_strength_meter',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Disable Password Strength Meter', 'perform' ),
+							'desc'      => esc_html__( 'Removes WordPress and WooCommerce Password Strength Meter scripts from non essential pages.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/disable-password-strength-meter'
+								)
+							),
+						],
+						[
+							'id'        => 'disable_heartbeat',
+							'type'      => 'select',
+							'name'      => esc_html__( 'Disable Heartbeat', 'perform' ),
+							'options'   => [
+								''                   => esc_html__( 'Default', 'perform' ),
+								'disable_everywhere' => esc_html__( 'Disable Everywhere', 'perform' ),
+								'allow_posts'        => esc_html__( 'Only Allow When Editing Posts/Pages', 'perform' ),
+							],
+							'desc'      => esc_html__( 'Disable WordPress Heartbeat everywhere or in certain areas (used for auto saving and revision tracking).', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/disable-heartbeat'
+								)
+							),
+						],
+						[
+							'id'        => 'heartbeat_frequency',
+							'type'      => 'select',
+							'name'      => esc_html__( 'Heartbeat Frequency', 'perform' ),
+							'options'   => [
+								''   => sprintf( esc_html__( '%s Seconds', 'perform' ), '15' ) . ' (' . esc_html__( 'Default', 'perform' ) . ')',
+								'30' => sprintf( esc_html__( '%s Seconds', 'perform' ), '30' ),
+								'45' => sprintf( esc_html__( '%s Seconds', 'perform' ), '45' ),
+								'60' => sprintf( esc_html__( '%s Seconds', 'perform' ), '60' ),
+							],
+							'desc'      => esc_html__( 'Disable WordPress Heartbeat everywhere or in certain areas (used for auto saving and revision tracking).', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/disable-heartbeat'
+								)
+							),
+						],
+						[
+							'id'        => 'limit_post_revisions',
+							'type'      => 'select',
+							'name'      => esc_html__( 'Limit Post Revisions', 'perform' ),
+							'options'   => [
+								''      => esc_html__( 'Default', 'perform' ),
+								'false' => esc_html__( 'Disable Post Revisions', 'perform' ),
+								'1'     => '1',
+								'2'     => '2',
+								'3'     => '3',
+								'4'     => '4',
+								'5'     => '5',
+								'10'    => '10',
+								'15'    => '15',
+								'20'    => '20',
+								'25'    => '25',
+								'30'    => '30',
+							],
+							'desc'      => esc_html__( 'Limits the maximum amount of revisions that are allowed for posts and pages.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/limit-post-revisions'
+								)
+							),
+						],
+						[
+							'id'        => 'autosave_interval',
+							'type'      => 'select',
+							'name'      => esc_html__( 'Autosave Interval', 'perform' ),
+							'options'   => [
+								''    => esc_html__( '1 Minute', 'perform' ) . ' (' . esc_html__( 'Default', 'perform' ) . ')',
+								'120' => sprintf( esc_html__( '%s Minutes', 'perform' ), '2' ),
+								'180' => sprintf( esc_html__( '%s Minutes', 'perform' ), '3' ),
+								'240' => sprintf( esc_html__( '%s Minutes', 'perform' ), '4' ),
+								'300' => sprintf( esc_html__( '%s Minutes', 'perform' ), '5' ),
+							],
+							'desc'      => esc_html__( 'Controls how often WordPress will auto save posts and pages while editing.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/autosave-intervals'
 								)
 							),
 						],

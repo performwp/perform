@@ -62,14 +62,12 @@ const SettingsNav = () => {
       <div className="perform-settings-cards">
         {cards.map((card, idx) => (
           <Card key={idx} style={{ marginBottom: '24px' }}>
-            <CardHeader>
-              <strong>{card.title}</strong>
+            <CardHeader style={{ alignItems: 'flex-start', flexDirection: 'column' }}>
+              <h3 className='perform-card-title'>{card.title}</h3>
+              {card.description && (
+                <p className='perform-card-description'>{card.description}</p>
+              )}
             </CardHeader>
-            {card.description && (
-              <CardBody>
-                <p>{card.description}</p>
-              </CardBody>
-            )}
             {card.fields && card.fields.length > 0 && (
               <CardBody>
                 {card.fields.map((field) =>

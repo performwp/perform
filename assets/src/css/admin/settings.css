@@ -26,6 +26,13 @@
 	margin-bottom: 20px;
 }
 
+
+.perform-card-title,
+.perform-card-description {
+	margin: 0;
+}
+
+
 .perform-admin-settings-wrap {
   display: flex;
 }
