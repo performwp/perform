@@ -200,6 +200,9 @@ class Menu extends Api {
 				'version' => PERFORM_VERSION,
 				'docsUrl' => 'https://performwp.com/docs/',
 				'logoUrl' => PERFORM_PLUGIN_URL . 'assets/dist/images/logo.png',
+				'nonce'   => wp_create_nonce( 'perform_save_settings' ),
+				// Expose currently saved settings so the React app can initialize from persisted values
+				'saved'   => Helpers::get_settings(),
 				'tabs'    => Helpers::get_settings_tabs(),
 				'fields'  => Helpers::get_settings_fields(), // Expose fields here
 			]
@@ -215,7 +218,31 @@ class Menu extends Api {
 	 * @return void
 	 */
 	public function save_settings() {
-		$posted_data = Helpers::clean( $_POST );
+		// Verify nonce for the AJAX request.
+		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['nonce'] ), 'perform_save_settings' ) ) {
+			wp_send_json_error(
+				[
+					'type'    => 'error',
+					'message' => esc_html__( 'Security check failed.', 'perform' ),
+				]
+			);
+		}
+
+		// If the JS sent a JSON payload in `data`, decode it. Otherwise fall back to regular POST fields.
+		$posted_data = [];
+		if ( isset( $_POST['data'] ) ) {
+			$raw = wp_unslash( $_POST['data'] );
+			$decoded = json_decode( $raw, true );
+			if ( is_array( $decoded ) ) {
+				// Clean decoded values recursively
+				$posted_data = Helpers::clean( $decoded );
+			} else {
+				// Fallback: clean the entire $_POST array
+				$posted_data = Helpers::clean( $_POST );
+			}
+		} else {
+			$posted_data = Helpers::clean( $_POST );
+		}
 		$settings    = Helpers::get_settings();
 
 		$new_settings = wp_parse_args( $posted_data, $settings );
@@ -223,7 +250,8 @@ class Menu extends Api {
 		$new_settings['dns_prefetch'] = ! empty( $new_settings['dns_prefetch'] ) ? explode( "\n", $new_settings['dns_prefetch'] ) : '';
 		$new_settings['preconnect']   = ! empty( $new_settings['preconnect'] ) ? explode( "\n", $new_settings['preconnect'] ) : '';
 
-		unset( $new_settings['perform_settings_barrier'], $new_settings['_wp_http_referer'], $new_settings['action'] );
+		// Remove control fields that should not be stored
+		unset( $new_settings['perform_settings_barrier'], $new_settings['_wp_http_referer'], $new_settings['action'], $new_settings['nonce'], $new_settings['data'] );
 
 		$is_saved = update_option( 'perform_settings', $new_settings, false );
 

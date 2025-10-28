@@ -246,9 +246,9 @@ class Helpers {
 		return [
 			'bloat' => [
 				[
-					'title' => esc_html__('Assets Optimization', 'perform'),
+					'title'       => esc_html__('Assets Optimization', 'perform'),
 					'description' => esc_html__('Fine-tune how WordPress loads scripts and assets across your site. Disabling unnecessary features reduces HTTP requests, removes bloat, and improves load times for your visitors.', 'perform'),
-					'fields' => [
+					'fields'      => [
 						[
 							'id'        => 'disable_emojis',
 							'type'      => 'toggle',
@@ -273,12 +273,18 @@ class Helpers {
 								)
 							),
 						],
-					],
-				],
-				[
-					'title' => esc_html__('Bloat Settings', 'perform'),
-					'description' => esc_html__('Settings to reduce bloat and improve performance.', 'perform'),
-					'fields' => [
+						[
+							'id'        => 'remove_jquery_migrate',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Remove jQuery Migrate', 'perform' ),
+							'desc'      => esc_html__( 'Removes jQuery Migrate JS file (jquery-migrate.min.js).', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/remove-jquery-migrate'
+								)
+							),
+						],
 						[
 							'id'        => 'remove_query_strings',
 							'type'      => 'toggle',
@@ -292,6 +298,36 @@ class Helpers {
 							),
 						],
 						[
+							'id'        => 'disable_dashicons',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Disable Dashicons', 'perform' ),
+							'desc'      => esc_html__( 'Disables dashicons js on the front end when not logged in.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/disable-dashicons'
+								)
+							),
+						],
+						[
+							'id'        => 'disable_password_strength_meter',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Disable Password Strength Meter', 'perform' ),
+							'desc'      => esc_html__( 'Removes WordPress and WooCommerce Password Strength Meter scripts from non essential pages.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/disable-password-strength-meter'
+								)
+							),
+						],
+					],
+				],
+				[
+					'title'       => __('Security & Privacy Hardening', 'perform'),
+					'description' => __('Enhance your site\'s privacy and reduce potential security vulnerabilities by disabling or hiding services and metadata often targeted by bots and attackers. These tweaks help safeguard your WordPress installation without breaking essential features.', 'perform'),
+					'fields'      => [
+						[
 							'id'        => 'disable_xmlrpc',
 							'type'      => 'toggle',
 							'name'      => esc_html__( 'Disable XML-RPC', 'perform' ),
@@ -300,18 +336,6 @@ class Helpers {
 								add_query_arg(
 									$utm_args,
 									'https://performwp.com/docs/disable-xmlrpc'
-								)
-							),
-						],
-						[
-							'id'        => 'remove_jquery_migrate',
-							'type'      => 'toggle',
-							'name'      => esc_html__( 'Remove jQuery Migrate', 'perform' ),
-							'desc'      => esc_html__( 'Removes jQuery Migrate JS file (jquery-migrate.min.js).', 'perform' ),
-							'help_link' => esc_url(
-								add_query_arg(
-									$utm_args,
-									'https://performwp.com/docs/remove-jquery-migrate'
 								)
 							),
 						],
@@ -363,6 +387,12 @@ class Helpers {
 								)
 							),
 						],
+					],
+				],
+				[
+					'title'       => __('Feed Controls', 'perform'),
+					'description' => __('Take control over how WordPress exposes feeds and API endpoints. Disabling or removing unnecessary RSS feeds and API links minimizes the attack surface and reduces unwanted scraping or bandwidth usage.', 'perform'),
+					'fields'      => [
 						[
 							'id'        => 'disable_rss_feeds',
 							'type'      => 'toggle',
@@ -399,6 +429,12 @@ class Helpers {
 								)
 							),
 						],
+					],
+				],
+				[
+					'title'       => __('Feed Controls', 'perform'),
+					'description' => __('Take control over how WordPress exposes feeds and API endpoints. Disabling or removing unnecessary RSS feeds and API links minimizes the attack surface and reduces unwanted scraping or bandwidth usage.', 'perform'),
+					'fields'      => [
 						[
 							'id'        => 'disable_self_pingbacks',
 							'type'      => 'toggle',
@@ -408,30 +444,6 @@ class Helpers {
 								add_query_arg(
 									$utm_args,
 									'https://performwp.com/docs/disable-self-pingbacks'
-								)
-							),
-						],
-						[
-							'id'        => 'disable_dashicons',
-							'type'      => 'toggle',
-							'name'      => esc_html__( 'Disable Dashicons', 'perform' ),
-							'desc'      => esc_html__( 'Disables dashicons js on the front end when not logged in.', 'perform' ),
-							'help_link' => esc_url(
-								add_query_arg(
-									$utm_args,
-									'https://performwp.com/docs/disable-dashicons'
-								)
-							),
-						],
-						[
-							'id'        => 'disable_password_strength_meter',
-							'type'      => 'toggle',
-							'name'      => esc_html__( 'Disable Password Strength Meter', 'perform' ),
-							'desc'      => esc_html__( 'Removes WordPress and WooCommerce Password Strength Meter scripts from non essential pages.', 'perform' ),
-							'help_link' => esc_url(
-								add_query_arg(
-									$utm_args,
-									'https://performwp.com/docs/disable-password-strength-meter'
 								)
 							),
 						],
@@ -470,6 +482,12 @@ class Helpers {
 								)
 							),
 						],
+					],
+				],
+				[
+					'title'       => __('Feed Controls', 'perform'),
+					'description' => __('Take control over how WordPress exposes feeds and API endpoints. Disabling or removing unnecessary RSS feeds and API links minimizes the attack surface and reduces unwanted scraping or bandwidth usage.', 'perform'),
+					'fields'      => [
 						[
 							'id'        => 'limit_post_revisions',
 							'type'      => 'select',
@@ -515,9 +533,8 @@ class Helpers {
 								)
 							),
 						],
-
-					]
-				]
+					],
+				],
 			],
 			'ssl' => [
 				[

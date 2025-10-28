@@ -32,6 +32,10 @@
 	margin: 0;
 }
 
+.perform-settings-content {
+    padding: 0 20px;
+}
+
 
 .perform-admin-settings-wrap {
   display: flex;

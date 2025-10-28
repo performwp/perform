@@ -1,39 +1,88 @@
-import { TabPanel, Card, CardHeader, CardBody, ToggleControl, TextControl } from '@wordpress/components';
+import { TabPanel, Card, CardHeader, CardBody, ToggleControl, TextControl, SelectControl } from '@wordpress/components';
 import { useState, useMemo } from '@wordpress/element';
 
 const FIELD_COMPONENTS = {
   toggle: ToggleControl,
   text: TextControl,
+  select: SelectControl,
+};
+
+const normalizeOptions = (options) => {
+  if (!options) return [];
+  if (Array.isArray(options)) {
+    if (options.length === 0) return [];
+    if (typeof options[0] === 'object' && (options[0].label !== undefined || options[0].value !== undefined)) {
+      return options.map((opt) => ({ label: opt.label ?? String(opt.value), value: opt.value ?? opt.label }));
+    }
+    return options.map((opt) => ({ label: String(opt), value: opt }));
+  }
+  if (typeof options === 'object') {
+    return Object.keys(options).map((key) => ({ label: options[key], value: key }));
+  }
+  return [];
 };
 
 const renderField = (field, value, onChange) => {
-  const { type, id, name, desc, ...rest } = field;
+  const { type = 'text', id, name, desc, options, placeholder, style: fieldStyle, className: fieldClass, ...rest } = field;
   const Component = FIELD_COMPONENTS[type] || null;
   if (!Component) return <div key={id}>Unsupported field type: {type}</div>;
 
-  // Map props for each field type
-  const props = {
-    key: id,
+  const common = {
+    // key moved to wrapper
     label: name,
     help: desc,
-    value: value,
-    onChange: (val) => onChange(id, val),
     ...rest,
   };
+
   if (type === 'toggle') {
-    props.checked = !!value;
-    delete props.value;
-    props.onChange = (checked) => onChange(id, checked);
+    return (
+      <ToggleControl
+        {...common}
+        checked={!!value}
+        onChange={(checked) => onChange(id, checked)}
+      />
+    );
   }
-  return <Component {...props} />;
+
+  if (type === 'text') {
+    return (
+      <TextControl
+        {...common}
+        value={value ?? ''}
+        placeholder={placeholder}
+        onChange={(val) => onChange(id, val)}
+      />
+    );
+  }
+
+  if (type === 'select') {
+    const opts = normalizeOptions(options);
+    return (
+      <SelectControl
+        {...common}
+        className={fieldClass ?? 'perform-select-control'}
+        value={value ?? (opts[0] ? opts[0].value : '')}
+        options={opts}
+        onChange={(val) => onChange(id, val)}
+      />
+    );
+  }
+
+  return <Component {...common} value={value} onChange={(val) => onChange(id, val)} />;
 };
 
-const SettingsNav = () => {
-  const tabs = window.performwpSettings?.tabs || {};
-  const fields = window.performwpSettings?.fields || {};
+const SettingsNav = ({ tabs: propTabs, fields: propFields, activeTab: propActiveTab, onTabChange: propOnTabChange, fieldValues: propFieldValues, onFieldChange: propOnFieldChange }) => {
+  const tabs = propTabs || window.performwpSettings?.tabs || {};
+  const fields = propFields || window.performwpSettings?.fields || {};
   const tabKeys = Object.keys(tabs);
-  const [activeTab, setActiveTab] = useState(tabKeys[0] || '');
-  const [fieldValues, setFieldValues] = useState({});
+
+  const [internalActiveTab, setInternalActiveTab] = useState(tabKeys[0] || '');
+  const activeTab = propActiveTab ?? internalActiveTab;
+  const onTabChange = propOnTabChange ?? setInternalActiveTab;
+
+  const [internalFieldValues, setInternalFieldValues] = useState({});
+  const fieldValues = propFieldValues ?? internalFieldValues;
+  const onFieldChange = propOnFieldChange ?? ((id, val) => setInternalFieldValues((p) => ({ ...p, [id]: val })));
 
   if (!tabKeys.length) return null;
 
@@ -42,41 +91,40 @@ const SettingsNav = () => {
     title: tabs[slug],
   }));
 
-  // Memoize cards/sections for the current tab
   const cards = useMemo(() => fields[activeTab] || [], [fields, activeTab]);
-
-  const handleFieldChange = (id, value) => {
-    setFieldValues((prev) => ({ ...prev, [id]: value }));
-  };
 
   return (
     <>
-      <TabPanel
-        className="perform-settings-tab-panel"
-        tabs={tabPanelTabs}
-        initialTabName={activeTab}
-        onSelect={setActiveTab}
-      >
-        {() => null}
-      </TabPanel>
-      <div className="perform-settings-cards">
-        {cards.map((card, idx) => (
-          <Card key={idx} style={{ marginBottom: '24px' }}>
-            <CardHeader style={{ alignItems: 'flex-start', flexDirection: 'column' }}>
-              <h3 className='perform-card-title'>{card.title}</h3>
-              {card.description && (
-                <p className='perform-card-description'>{card.description}</p>
-              )}
-            </CardHeader>
-            {card.fields && card.fields.length > 0 && (
-              <CardBody>
-                {card.fields.map((field) =>
-                  renderField(field, fieldValues[field.id], handleFieldChange)
+      <div className="perform-settings-content">
+        <TabPanel
+          className="perform-settings-tab-panel"
+          tabs={tabPanelTabs}
+          initialTabName={activeTab}
+          onSelect={onTabChange}
+        >
+          {() => null}
+        </TabPanel>
+        <div className="perform-settings-cards">
+          {cards.map((card, idx) => (
+            <Card key={idx} style={{ marginBottom: '24px' }}>
+              <CardHeader style={{ alignItems: 'flex-start', flexDirection: 'column' }}>
+                <h3 className='perform-card-title'>{card.title}</h3>
+                {card.description && (
+                  <p className='perform-card-description'>{card.description}</p>
                 )}
-              </CardBody>
-            )}
-          </Card>
-        ))}
+              </CardHeader>
+              {card.fields && card.fields.length > 0 && (
+                <CardBody>
+                  {card.fields.map((field) => (
+                    <div key={field.id} className="perform-field" style={{ marginBottom: 16 }}>
+                      {renderField(field, fieldValues[field.id], onFieldChange)}
+                    </div>
+                  ))}
+                </CardBody>
+              )}
+            </Card>
+          ))}
+        </div>
       </div>
     </>
   );

@@ -45,7 +45,7 @@ class Actions {
 		wp_register_style( 'perform-admin', PERFORM_PLUGIN_URL . 'assets/dist/css/admin.css', '', PERFORM_VERSION );
 		wp_enqueue_style( 'perform-admin' );
 
-		wp_register_script( 'perform-admin', PERFORM_PLUGIN_URL . 'assets/dist/js/admin.min.js', '', PERFORM_VERSION );
+		wp_register_script( 'perform-admin', PERFORM_PLUGIN_URL . 'assets/dist/js/admin.min.js', [ 'wp-element', 'wp-components', 'wp-i18n' ], PERFORM_VERSION );
 		wp_enqueue_script( 'perform-admin' );
 
 		wp_localize_script(
@@ -55,6 +55,7 @@ class Actions {
 				'version' => defined('PERFORM_VERSION') ? PERFORM_VERSION : '',
 				'docsUrl' => defined('PERFORM_PLUGIN_DOCS_URL') ? PERFORM_PLUGIN_DOCS_URL : 'https://performwp.com/docs/',
 				'logoUrl' => plugins_url( 'assets/dist/images/logo.png', PERFORM_PLUGIN_FILE ),
+				'nonce'   => wp_create_nonce( 'perform_save_settings' ),
 				'tabs'    => \Perform\Includes\Helpers::get_settings_tabs(),
 				'fields'  => \Perform\Includes\Helpers::get_settings_fields(), // Expose fields to JS
 			]
