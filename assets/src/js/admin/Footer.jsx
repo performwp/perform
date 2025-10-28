@@ -16,7 +16,8 @@ const Footer = ({ dirty, saving, message, onSave }) => {
       display: 'flex',
       justifyContent: 'flex-end',
       gap: 12,
-      alignItems: 'center'
+      alignItems: 'center',
+	  marginBottom: '-20px',
     }}>
       <div style={{ marginRight: 'auto' }} />
       {message && message.text && (
