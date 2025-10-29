@@ -123,6 +123,16 @@ class Menu extends Api {
 	 * @return void
 	 */
 	public function save_settings() {
+		// Capability check: ensure the current user can manage options.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error(
+				[
+					'type'    => 'error',
+					'message' => esc_html__( 'Insufficient permissions.', 'perform' ),
+				]
+			);
+		}
+
 		// Verify nonce for the AJAX request.
 		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['nonce'] ), 'perform_save_settings' ) ) {
 			wp_send_json_error(
