@@ -134,7 +134,7 @@ const SettingsNav = ({ tabs: propTabs, fields: propFields, activeTab: propActive
         </TabPanel>
         <div className="perform-settings-cards">
           {cards.map((card, idx) => (
-            <Card key={idx} style={{ marginBottom: '24px' }}>
+            <Card key={idx} style={{ marginBottom: '24px', boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)', borderRadius: 0 }}>
               <CardHeader style={{ alignItems: 'flex-start', flexDirection: 'column' }}>
                 <h3 className='perform-card-title'>{card.title}</h3>
                 {card.description && (
