@@ -218,11 +218,14 @@ class Helpers {
 	 */
 	public static function get_settings_tabs() {
 		$tabs = [
-			'bloat'  => esc_html__( 'Bloat', 'perform' ),
-			'ssl'      => esc_html__( 'SSL', 'perform' ),
+			'general'  => esc_html__( 'General', 'perform' ),
+			'bloat'    => esc_html__( 'Bloat', 'perform' ),
+			'assets'   => esc_html__( 'Assets', 'perform' ),
 			'cdn'      => esc_html__( 'CDN', 'perform' ),
 			'advanced' => esc_html__( 'Advanced', 'perform' ),
 		];
+
+		// Add WooCommerce tab if WooCommerce is active.
 		if ( self::is_woocommerce_active() ) {
 			$tabs['woocommerce'] = esc_html__( 'WooCommerce', 'perform' );
 		}
@@ -238,22 +241,57 @@ class Helpers {
 	 * @return array
 	 */
 	public static function get_settings_fields() {
+		// Generate UTM args for help links.
 		$utm_args = [
 			'utm_source'   => 'admin-settings',
 			'utm_medium'   => 'plugin',
 			'utm_campaign' => 'perform',
 		];
+
+		// Settings Fields.
 		return [
+			'general' => [
+				[
+					'title'       => esc_html__('General Settings', 'perform'),
+					'description' => esc_html__('Configure general performance settings for your WordPress site.', 'perform'),
+					'fields'      => [
+						[
+							'id'        => 'force_ssl',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Force SSL', 'perform' ),
+							'desc'      => esc_html__( 'Enabling this will force all traffic to use SSL.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/force-ssl'
+								)
+							),
+						],
+						[
+							'id'        => 'enable_menu_cache',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Enable Menu Cache', 'perform' ),
+							'desc'      => esc_html__( 'Enabling this will cache your menu items for better performance.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/menu-cache'
+								)
+							),
+						],
+					],
+				]
+			],
 			'bloat' => [
 				[
-					'title'       => esc_html__('Assets Optimization', 'perform'),
-					'description' => esc_html__('Fine-tune how WordPress loads scripts and assets across your site. Disabling unnecessary features reduces HTTP requests, removes bloat, and improves load times for your visitors.', 'perform'),
+					'title'       => esc_html__('Frontend Optimization', 'perform'),
+					'description' => esc_html__('Remove unnecessary frontend scripts and tags that add extra requests or bytes to every page. These optimizations reduce file requests, improve cacheability, and clean up redundant page elements.', 'perform'),
 					'fields'      => [
 						[
 							'id'        => 'disable_emojis',
 							'type'      => 'toggle',
 							'name'      => __( 'Disable Emoji\'s', 'perform' ),
-							'desc'      => __( 'Enabling this will disable the usage of emoji\'s in WordPress Posts, Pages, and Custom Post Types.', 'perform' ),
+							'desc'      => __( 'Prevents WordPress from loading the emoji detection script and related styles, reducing one extra HTTP request.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -265,7 +303,7 @@ class Helpers {
 							'id'        => 'disable_embeds',
 							'type'      => 'toggle',
 							'name'      => esc_html__( 'Disable Embeds', 'perform' ),
-							'desc'      => esc_html__( 'Enabling this will disable the usage of embeds in WordPress Posts, Pages, and Custom Post Types.', 'perform' ),
+							'desc'      => esc_html__( 'Removes the WordPress Embed script (wp-embed.min.js) used for embedding posts and media across sites.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -274,22 +312,10 @@ class Helpers {
 							),
 						],
 						[
-							'id'        => 'remove_jquery_migrate',
-							'type'      => 'toggle',
-							'name'      => esc_html__( 'Remove jQuery Migrate', 'perform' ),
-							'desc'      => esc_html__( 'Removes jQuery Migrate JS file (jquery-migrate.min.js).', 'perform' ),
-							'help_link' => esc_url(
-								add_query_arg(
-									$utm_args,
-									'https://performwp.com/docs/remove-jquery-migrate'
-								)
-							),
-						],
-						[
 							'id'        => 'remove_query_strings',
 							'type'      => 'toggle',
 							'name'      => esc_html__( 'Remove Query Strings', 'perform' ),
-							'desc'      => esc_html__( 'Remove query strings from static resources (CSS, JS).', 'perform' ),
+							'desc'      => esc_html__( 'Strips version query strings from static resources (?ver=) to improve caching efficiency on CDNs and browsers.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -298,10 +324,22 @@ class Helpers {
 							),
 						],
 						[
+							'id'        => 'remove_jquery_migrate',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Remove jQuery Migrate', 'perform' ),
+							'desc'      => esc_html__( 'Prevents loading of the legacy jquery-migrate.min.js file, used mainly for backward compatibility with outdated scripts.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/remove-jquery-migrate'
+								)
+							),
+						],
+						[
 							'id'        => 'disable_dashicons',
 							'type'      => 'toggle',
 							'name'      => esc_html__( 'Disable Dashicons', 'perform' ),
-							'desc'      => esc_html__( 'Disables dashicons js on the front end when not logged in.', 'perform' ),
+							'desc'      => esc_html__( 'Prevents loading the dashicons.css icon font on the frontend for non-logged-in visitors.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -310,40 +348,10 @@ class Helpers {
 							),
 						],
 						[
-							'id'        => 'disable_password_strength_meter',
-							'type'      => 'toggle',
-							'name'      => esc_html__( 'Disable Password Strength Meter', 'perform' ),
-							'desc'      => esc_html__( 'Removes WordPress and WooCommerce Password Strength Meter scripts from non essential pages.', 'perform' ),
-							'help_link' => esc_url(
-								add_query_arg(
-									$utm_args,
-									'https://performwp.com/docs/disable-password-strength-meter'
-								)
-							),
-						],
-					],
-				],
-				[
-					'title'       => __('Security & Privacy Hardening', 'perform'),
-					'description' => __('Enhance your site\'s privacy and reduce potential security vulnerabilities by disabling or hiding services and metadata often targeted by bots and attackers. These tweaks help safeguard your WordPress installation without breaking essential features.', 'perform'),
-					'fields'      => [
-						[
-							'id'        => 'disable_xmlrpc',
-							'type'      => 'toggle',
-							'name'      => esc_html__( 'Disable XML-RPC', 'perform' ),
-							'desc'      => esc_html__( 'Disables WordPress XML-RPC functionality.', 'perform' ),
-							'help_link' => esc_url(
-								add_query_arg(
-									$utm_args,
-									'https://performwp.com/docs/disable-xmlrpc'
-								)
-							),
-						],
-						[
 							'id'        => 'hide_wp_version',
 							'type'      => 'toggle',
 							'name'      => esc_html__( 'Hide WP Version', 'perform' ),
-							'desc'      => esc_html__( 'Removes WordPress version generator meta tag.', 'perform' ),
+							'desc'      => esc_html__( 'Removes the WordPress version meta tag from the page source, reducing page markup size slightly.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -355,7 +363,7 @@ class Helpers {
 							'id'        => 'remove_wlwmanifest_link',
 							'type'      => 'toggle',
 							'name'      => esc_html__( 'Remove wlwmanifest Link', 'perform' ),
-							'desc'      => esc_html__( 'Remove wlwmanifest link tag. It is usually used to support Windows Live Writer.', 'perform' ),
+							'desc'      => esc_html__( 'Removes the Windows Live Writer manifest tag, an obsolete feature unused on modern sites.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -367,7 +375,7 @@ class Helpers {
 							'id'        => 'remove_rsd_link',
 							'type'      => 'toggle',
 							'name'      => esc_html__( 'Remove RSD Link', 'perform' ),
-							'desc'      => esc_html__( 'Remove RSD (Real Simple Discovery) link tag.', 'perform' ),
+							'desc'      => esc_html__( 'Removes the Real Simple Discovery (RSD) tag used by remote publishing tools.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -379,7 +387,7 @@ class Helpers {
 							'id'        => 'remove_shortlink',
 							'type'      => 'toggle',
 							'name'      => esc_html__( 'Remove Shortlink', 'perform' ),
-							'desc'      => esc_html__( 'Remove Shortlink link tag.', 'perform' ),
+							'desc'      => esc_html__( 'Removes the rel="shortlink" tag generated for posts to reduce unnecessary metadata output.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -390,14 +398,44 @@ class Helpers {
 					],
 				],
 				[
-					'title'       => __('Feed Controls', 'perform'),
-					'description' => __('Take control over how WordPress exposes feeds and API endpoints. Disabling or removing unnecessary RSS feeds and API links minimizes the attack surface and reduces unwanted scraping or bandwidth usage.', 'perform'),
+					'title'       => esc_html__('Network Requests and Endpoints', 'perform'),
+					'description' => esc_html__('Disable unused services that generate background or external HTTP requests. Ideal for sites that don\'t rely on remote publishing or REST-based integrations.', 'perform'),
+					'fields'      => [
+						[
+							'id'        => 'disable_xmlrpc',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Disable XML-RPC', 'perform' ),
+							'desc'      => esc_html__( 'Disables WordPress XML-RPC functionality, which handles remote publishing and pingbacks, saving processing overhead.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/disable-xmlrpc'
+								)
+							),
+						],
+						[
+							'id'        => 'remove_rest_api_links',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Remove REST API Links', 'perform' ),
+							'desc'      => esc_html__( 'Removes REST API discovery links from the site header and page responses, reducing unnecessary HTTP headers.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/remove-rest-api-links'
+								)
+							),
+						],
+					],
+				],
+				[
+					'title'       => esc_html__('Feed and Discovery Optimization', 'perform'),
+					'description' => esc_html__('Stop generating feed files and related discovery tags that most modern sites don\'t need. Helps reduce crawl requests and prevents unnecessary feed generation.', 'perform'),
 					'fields'      => [
 						[
 							'id'        => 'disable_rss_feeds',
 							'type'      => 'toggle',
 							'name'      => esc_html__( 'Disable RSS Feeds', 'perform' ),
-							'desc'      => esc_html__( 'Disable WordPress generated RSS feeds and 301 redirect URL to parent.', 'perform' ),
+							'desc'      => esc_html__( 'Disables WordPress-generated RSS feeds and redirects feed URLs back to the homepage.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -409,7 +447,7 @@ class Helpers {
 							'id'        => 'remove_feed_links',
 							'type'      => 'toggle',
 							'name'      => esc_html__( 'Remove RSS Feed Links', 'perform' ),
-							'desc'      => esc_html__( 'Disable WordPress generated RSS feed link tags.', 'perform' ),
+							'desc'      => esc_html__( 'Removes all RSS feed link tags from the site’s header.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -417,33 +455,33 @@ class Helpers {
 								)
 							),
 						],
-						[
-							'id'        => 'remove_rest_api_links',
-							'type'      => 'toggle',
-							'name'      => esc_html__( 'Remove REST API Links', 'perform' ),
-							'desc'      => esc_html__( 'Removes REST API link tag from the front end and the REST API header link from page requests.', 'perform' ),
-							'help_link' => esc_url(
-								add_query_arg(
-									$utm_args,
-									'https://performwp.com/docs/remove-rest-api-links'
-								)
-							),
-						],
 					],
 				],
 				[
-					'title'       => __('Feed Controls', 'perform'),
-					'description' => __('Take control over how WordPress exposes feeds and API endpoints. Disabling or removing unnecessary RSS feeds and API links minimizes the attack surface and reduces unwanted scraping or bandwidth usage.', 'perform'),
+					'title'       => esc_html__('Editor & Backend Performance', 'perform'),
+					'description' => esc_html__('Limit WordPress background activity during content editing to reduce CPU and database usage. These controls keep your admin fast, reduce CPU cycles, and optimize database performance.', 'perform'),
 					'fields'      => [
 						[
 							'id'        => 'disable_self_pingbacks',
 							'type'      => 'toggle',
 							'name'      => esc_html__( 'Disable Self Pingbacks', 'perform' ),
-							'desc'      => esc_html__( 'Disable Self Pingbacks (generated when linking to an article on your own blog).', 'perform' ),
+							'desc'      => esc_html__( 'Prevents WordPress from sending self-pingbacks when linking to your own posts.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
 									'https://performwp.com/docs/disable-self-pingbacks'
+								)
+							),
+						],
+						[
+							'id'        => 'disable_password_strength_meter',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Disable Password Strength Meter', 'perform' ),
+							'desc'      => esc_html__( 'Prevents loading of the password strength meter script (zxcvbn.js) on non-essential admin pages.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/disable-password-strength-meter'
 								)
 							),
 						],
@@ -456,7 +494,7 @@ class Helpers {
 								'disable_everywhere' => esc_html__( 'Disable Everywhere', 'perform' ),
 								'allow_posts'        => esc_html__( 'Only Allow When Editing Posts/Pages', 'perform' ),
 							],
-							'desc'      => esc_html__( 'Disable WordPress Heartbeat everywhere or in certain areas (used for auto saving and revision tracking).', 'perform' ),
+							'desc'      => esc_html__( 'Stops or limits the WordPress Heartbeat API that sends frequent AJAX requests from the browser to the server.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -474,7 +512,7 @@ class Helpers {
 								'45' => sprintf( esc_html__( '%s Seconds', 'perform' ), '45' ),
 								'60' => sprintf( esc_html__( '%s Seconds', 'perform' ), '60' ),
 							],
-							'desc'      => esc_html__( 'Disable WordPress Heartbeat everywhere or in certain areas (used for auto saving and revision tracking).', 'perform' ),
+							'desc'      => esc_html__( 'Adjusts how often the Heartbeat API runs (lower frequency = fewer background requests).', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -482,12 +520,6 @@ class Helpers {
 								)
 							),
 						],
-					],
-				],
-				[
-					'title'       => __('Feed Controls', 'perform'),
-					'description' => __('Take control over how WordPress exposes feeds and API endpoints. Disabling or removing unnecessary RSS feeds and API links minimizes the attack surface and reduces unwanted scraping or bandwidth usage.', 'perform'),
-					'fields'      => [
 						[
 							'id'        => 'limit_post_revisions',
 							'type'      => 'select',
@@ -506,7 +538,7 @@ class Helpers {
 								'25'    => '25',
 								'30'    => '30',
 							],
-							'desc'      => esc_html__( 'Limits the maximum amount of revisions that are allowed for posts and pages.', 'perform' ),
+							'desc'      => esc_html__( 'Limits the number of post revisions stored in the database to prevent bloat.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -525,7 +557,7 @@ class Helpers {
 								'240' => sprintf( esc_html__( '%s Minutes', 'perform' ), '4' ),
 								'300' => sprintf( esc_html__( '%s Minutes', 'perform' ), '5' ),
 							],
-							'desc'      => esc_html__( 'Controls how often WordPress will auto save posts and pages while editing.', 'perform' ),
+							'desc'      => esc_html__( 'Controls how often posts are autosaved while editing, reducing unnecessary database writes.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -536,20 +568,44 @@ class Helpers {
 					],
 				],
 			],
-			'ssl' => [
+			'assets' => [
 				[
-					'title' => esc_html__('SSL Settings', 'perform'),
-					'description' => esc_html__('Settings to manage SSL and HTTPS related configurations.', 'perform'),
+					'title' => esc_html__('Assets Optimization', 'perform'),
+					'description' => esc_html__('Settings to manage asset loading and optimization.', 'perform'),
 					'fields' => [
 						[
-							'id'        => 'force_ssl',
+							'id'        => 'enable_assets_manager',
 							'type'      => 'toggle',
-							'name'      => esc_html__( 'Force SSL', 'perform' ),
-							'desc'      => esc_html__( 'Enabling this will force all traffic to use SSL.', 'perform' ),
+							'name'      => esc_html__( 'Enable Assets Manager', 'perform' ),
+							'desc'      => esc_html__( 'Enabling this will allow you to manage your assets more effectively.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
-									'https://performwp.com/docs/force-ssl'
+									'https://performwp.com/docs/assets-manager'
+								)
+							),
+						],
+						[
+							'id'        => 'dns_prefetch',
+							'type'      => 'textarea',
+							'name'      => esc_html__( 'DNS Prefetch', 'perform' ),
+							'desc'      => esc_html__( 'Resolve domain names before a user clicks. Format: //domain.tld (one per line)', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/dns-prefetch'
+								)
+							),
+						],
+						[
+							'id'        => 'preconnect',
+							'type'      => 'textarea',
+							'name'      => esc_html__( 'Preconnect', 'perform' ),
+							'desc'      => esc_html__( 'Establish a connection to another origin before a user clicks. Format: //domain.tld (one per line)', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/preconnect'
 								)
 							),
 						],
@@ -585,6 +641,30 @@ class Helpers {
 								)
 							),
 						],
+						[
+							'id'        => 'cdn_directories',
+							'type'      => 'text',
+							'name'      => esc_html__( 'Included Directories', 'perform' ),
+							'desc'      => esc_html__( 'Enter any directories you would like to be included in CDN rewriting, separated by commas (,). Default: wp-content,wp-includes', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/cdn-rewrite'
+								)
+							),
+						],
+						[
+							'id'        => 'cdn_exclusions',
+							'type'      => 'text',
+							'name'      => esc_html__( 'CDN Exclusions', 'perform' ),
+							'desc'      => esc_html__( 'Enter any directories or file extensions you would like to be excluded from CDN rewriting, separated by commas (,). Default: .php', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/cdn-rewrite'
+								)
+							),
+						],
 					]
 				]
 			],
@@ -594,26 +674,14 @@ class Helpers {
 					'description' => esc_html__('Settings for advanced configurations.', 'perform'),
 					'fields' => [
 						[
-							'id'        => 'enable_assets_manager',
+							'id'        => 'remove_data_on_uninstall',
 							'type'      => 'toggle',
-							'name'      => esc_html__( 'Enable Assets Manager', 'perform' ),
-							'desc'      => esc_html__( 'Enabling this will allow you to manage your assets more effectively.', 'perform' ),
+							'name'      => esc_html__( 'Remove Data on Uninstall', 'perform' ),
+							'desc'      => esc_html__( 'Enabling this will remove all plugin data upon uninstallation.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
-									'https://performwp.com/docs/assets-manager'
-								)
-							),
-						],
-						[
-							'id'        => 'enable_menu_cache',
-							'type'      => 'toggle',
-							'name'      => esc_html__( 'Enable Menu Cache', 'perform' ),
-							'desc'      => esc_html__( 'Enabling this will cache your menu items for better performance.', 'perform' ),
-							'help_link' => esc_url(
-								add_query_arg(
-									$utm_args,
-									'https://performwp.com/docs/menu-cache'
+									'https://performwp.com/docs/clean-uninstall'
 								)
 							),
 						],
