@@ -7,7 +7,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language-Team: PerformWP <hello@performwp.com>\n"
-"POT-Creation-Date: 2025-10-28 17:44+0000\n"
+"POT-Creation-Date: 2025-10-29 17:37+0000\n"
 "Report-Msgid-Bugs-To: https://github.com/performwp/perform/issues/new\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
@@ -24,7 +24,7 @@ msgstr ""
 msgid "Assets Manager"
 msgstr ""
 
-#: src/Admin/Actions.php:102, src/Modules/Assets_Manager.php:103, src/Admin/Settings/Menu.php:55, src/Admin/Settings/Menu.php:56
+#: src/Admin/Actions.php:102, src/Modules/Assets_Manager.php:103, src/Admin/Settings/Menu.php:54, src/Admin/Settings/Menu.php:55
 msgid "Perform"
 msgstr ""
 
@@ -60,311 +60,375 @@ msgstr ""
 msgid "Manage Assets"
 msgstr ""
 
-#: src/Includes/Helpers.php:221
+#: src/Includes/Helpers.php:246
+msgid "General"
+msgstr ""
+
+#: src/Includes/Helpers.php:247
 msgid "Bloat"
 msgstr ""
 
-#: src/Includes/Helpers.php:222
-msgid "SSL"
-msgstr ""
-
-#: src/Includes/Helpers.php:223
-msgid "CDN"
-msgstr ""
-
-#: src/Includes/Helpers.php:224
-msgid "Advanced"
-msgstr ""
-
-#: src/Includes/Helpers.php:227
-msgid "WooCommerce"
+#: src/Includes/Helpers.php:248
+msgid "Assets"
 msgstr ""
 
 #: src/Includes/Helpers.php:249
-msgid "Assets Optimization"
+msgid "CDN"
 msgstr ""
 
 #: src/Includes/Helpers.php:250
-msgid "Fine-tune how WordPress loads scripts and assets across your site. Disabling unnecessary features reduces HTTP requests, removes bloat, and improves load times for your visitors."
+msgid "Advanced"
 msgstr ""
 
 #: src/Includes/Helpers.php:255
-msgid "Disable Emoji's"
-msgstr ""
-
-#: src/Includes/Helpers.php:256
-msgid "Enabling this will disable the usage of emoji's in WordPress Posts, Pages, and Custom Post Types."
-msgstr ""
-
-#: src/Includes/Helpers.php:267
-msgid "Disable Embeds"
-msgstr ""
-
-#: src/Includes/Helpers.php:268
-msgid "Enabling this will disable the usage of embeds in WordPress Posts, Pages, and Custom Post Types."
-msgstr ""
-
-#: src/Includes/Helpers.php:279
-msgid "Remove jQuery Migrate"
+msgid "WooCommerce"
 msgstr ""
 
 #: src/Includes/Helpers.php:280
-msgid "Removes jQuery Migrate JS file (jquery-migrate.min.js)."
+msgid "General Settings"
 msgstr ""
 
-#: src/Includes/Helpers.php:291
-msgid "Remove Query Strings"
+#: src/Includes/Helpers.php:281
+msgid "Configure general performance settings for your WordPress site."
 msgstr ""
 
-#: src/Includes/Helpers.php:292
-msgid "Remove query strings from static resources (CSS, JS)."
-msgstr ""
-
-#: src/Includes/Helpers.php:303
-msgid "Disable Dashicons"
-msgstr ""
-
-#: src/Includes/Helpers.php:304
-msgid "Disables dashicons js on the front end when not logged in."
-msgstr ""
-
-#: src/Includes/Helpers.php:315
-msgid "Disable Password Strength Meter"
-msgstr ""
-
-#: src/Includes/Helpers.php:316
-msgid "Removes WordPress and WooCommerce Password Strength Meter scripts from non essential pages."
-msgstr ""
-
-#: src/Includes/Helpers.php:327
-msgid "Security & Privacy Hardening"
-msgstr ""
-
-#: src/Includes/Helpers.php:328
-msgid "Enhance your site's privacy and reduce potential security vulnerabilities by disabling or hiding services and metadata often targeted by bots and attackers. These tweaks help safeguard your WordPress installation without breaking essential features."
-msgstr ""
-
-#: src/Includes/Helpers.php:333
-msgid "Disable XML-RPC"
-msgstr ""
-
-#: src/Includes/Helpers.php:334
-msgid "Disables WordPress XML-RPC functionality."
-msgstr ""
-
-#: src/Includes/Helpers.php:345
-msgid "Hide WP Version"
-msgstr ""
-
-#: src/Includes/Helpers.php:346
-msgid "Removes WordPress version generator meta tag."
-msgstr ""
-
-#: src/Includes/Helpers.php:357
-msgid "Remove wlwmanifest Link"
-msgstr ""
-
-#: src/Includes/Helpers.php:358
-msgid "Remove wlwmanifest link tag. It is usually used to support Windows Live Writer."
-msgstr ""
-
-#: src/Includes/Helpers.php:369
-msgid "Remove RSD Link"
-msgstr ""
-
-#: src/Includes/Helpers.php:370
-msgid "Remove RSD (Real Simple Discovery) link tag."
-msgstr ""
-
-#: src/Includes/Helpers.php:381
-msgid "Remove Shortlink"
-msgstr ""
-
-#: src/Includes/Helpers.php:382
-msgid "Remove Shortlink link tag."
-msgstr ""
-
-#: src/Includes/Helpers.php:393, src/Includes/Helpers.php:435, src/Includes/Helpers.php:488
-msgid "Feed Controls"
-msgstr ""
-
-#: src/Includes/Helpers.php:394, src/Includes/Helpers.php:436, src/Includes/Helpers.php:489
-msgid "Take control over how WordPress exposes feeds and API endpoints. Disabling or removing unnecessary RSS feeds and API links minimizes the attack surface and reduces unwanted scraping or bandwidth usage."
-msgstr ""
-
-#: src/Includes/Helpers.php:399
-msgid "Disable RSS Feeds"
-msgstr ""
-
-#: src/Includes/Helpers.php:400
-msgid "Disable WordPress generated RSS feeds and 301 redirect URL to parent."
-msgstr ""
-
-#: src/Includes/Helpers.php:411
-msgid "Remove RSS Feed Links"
-msgstr ""
-
-#: src/Includes/Helpers.php:412
-msgid "Disable WordPress generated RSS feed link tags."
-msgstr ""
-
-#: src/Includes/Helpers.php:423
-msgid "Remove REST API Links"
-msgstr ""
-
-#: src/Includes/Helpers.php:424
-msgid "Removes REST API link tag from the front end and the REST API header link from page requests."
-msgstr ""
-
-#: src/Includes/Helpers.php:441
-msgid "Disable Self Pingbacks"
-msgstr ""
-
-#: src/Includes/Helpers.php:442
-msgid "Disable Self Pingbacks (generated when linking to an article on your own blog)."
-msgstr ""
-
-#: src/Includes/Helpers.php:453
-msgid "Disable Heartbeat"
-msgstr ""
-
-#: src/Includes/Helpers.php:455, src/Includes/Helpers.php:472, src/Includes/Helpers.php:496, src/Includes/Helpers.php:522
-msgid "Default"
-msgstr ""
-
-#: src/Includes/Helpers.php:456
-msgid "Disable Everywhere"
-msgstr ""
-
-#: src/Includes/Helpers.php:457
-msgid "Only Allow When Editing Posts/Pages"
-msgstr ""
-
-#: src/Includes/Helpers.php:459, src/Includes/Helpers.php:477
-msgid "Disable WordPress Heartbeat everywhere or in certain areas (used for auto saving and revision tracking)."
-msgstr ""
-
-#: src/Includes/Helpers.php:470
-msgid "Heartbeat Frequency"
-msgstr ""
-
-#: src/Includes/Helpers.php:472, src/Includes/Helpers.php:473, src/Includes/Helpers.php:474, src/Includes/Helpers.php:475
-msgid "%s Seconds"
-msgstr ""
-
-#: src/Includes/Helpers.php:494
-msgid "Limit Post Revisions"
-msgstr ""
-
-#: src/Includes/Helpers.php:497
-msgid "Disable Post Revisions"
-msgstr ""
-
-#: src/Includes/Helpers.php:509
-msgid "Limits the maximum amount of revisions that are allowed for posts and pages."
-msgstr ""
-
-#: src/Includes/Helpers.php:520
-msgid "Autosave Interval"
-msgstr ""
-
-#: src/Includes/Helpers.php:522
-msgid "1 Minute"
-msgstr ""
-
-#: src/Includes/Helpers.php:523, src/Includes/Helpers.php:524, src/Includes/Helpers.php:525, src/Includes/Helpers.php:526
-msgid "%s Minutes"
-msgstr ""
-
-#: src/Includes/Helpers.php:528
-msgid "Controls how often WordPress will auto save posts and pages while editing."
-msgstr ""
-
-#: src/Includes/Helpers.php:541
-msgid "SSL Settings"
-msgstr ""
-
-#: src/Includes/Helpers.php:542
-msgid "Settings to manage SSL and HTTPS related configurations."
-msgstr ""
-
-#: src/Includes/Helpers.php:547
+#: src/Includes/Helpers.php:286
 msgid "Force SSL"
 msgstr ""
 
-#: src/Includes/Helpers.php:548
+#: src/Includes/Helpers.php:287
 msgid "Enabling this will force all traffic to use SSL."
 msgstr ""
 
-#: src/Includes/Helpers.php:561
-msgid "CDN Settings"
-msgstr ""
-
-#: src/Includes/Helpers.php:562
-msgid "Settings to manage CDN configurations."
-msgstr ""
-
-#: src/Includes/Helpers.php:567
-msgid "Enable CDN"
-msgstr ""
-
-#: src/Includes/Helpers.php:568
-msgid "Enabling this will allow you to use a CDN for your static assets."
-msgstr ""
-
-#: src/Includes/Helpers.php:579
-msgid "CDN URL"
-msgstr ""
-
-#: src/Includes/Helpers.php:580
-msgid "Enter the URL of your CDN provider."
-msgstr ""
-
-#: src/Includes/Helpers.php:593
-msgid "Advanced Settings"
-msgstr ""
-
-#: src/Includes/Helpers.php:594
-msgid "Settings for advanced configurations."
-msgstr ""
-
-#: src/Includes/Helpers.php:599
-msgid "Enable Assets Manager"
-msgstr ""
-
-#: src/Includes/Helpers.php:600
-msgid "Enabling this will allow you to manage your assets more effectively."
-msgstr ""
-
-#: src/Includes/Helpers.php:611
+#: src/Includes/Helpers.php:298
 msgid "Enable Menu Cache"
 msgstr ""
 
-#: src/Includes/Helpers.php:612
+#: src/Includes/Helpers.php:299
 msgid "Enabling this will cache your menu items for better performance."
 msgstr ""
 
-#: src/Includes/Helpers.php:625
-msgid "WooCommerce Settings"
+#: src/Includes/Helpers.php:312
+msgid "Frontend Optimization"
 msgstr ""
 
-#: src/Includes/Helpers.php:626
-msgid "Settings specific to WooCommerce."
+#: src/Includes/Helpers.php:313
+msgid "Remove unnecessary frontend scripts and tags that add extra requests or bytes to every page. These optimizations reduce file requests, improve cacheability, and clean up redundant page elements."
 msgstr ""
 
-#: src/Includes/Helpers.php:631
-msgid "Enable WooCommerce Manager"
+#: src/Includes/Helpers.php:318
+msgid "Disable Emoji's"
 msgstr ""
 
-#: src/Includes/Helpers.php:632
-msgid "Enabling this will allow you to manage WooCommerce specific settings."
+#: src/Includes/Helpers.php:319
+msgid "Prevents WordPress from loading the emoji detection script and related styles, reducing one extra HTTP request."
+msgstr ""
+
+#: src/Includes/Helpers.php:330
+msgid "Disable Embeds"
+msgstr ""
+
+#: src/Includes/Helpers.php:331
+msgid "Removes the WordPress Embed script (wp-embed.min.js) used for embedding posts and media across sites."
+msgstr ""
+
+#: src/Includes/Helpers.php:342
+msgid "Remove Query Strings"
+msgstr ""
+
+#: src/Includes/Helpers.php:343
+msgid "Strips version query strings from static resources (?ver=) to improve caching efficiency on CDNs and browsers."
+msgstr ""
+
+#: src/Includes/Helpers.php:354
+msgid "Remove jQuery Migrate"
+msgstr ""
+
+#: src/Includes/Helpers.php:355
+msgid "Prevents loading of the legacy jquery-migrate.min.js file, used mainly for backward compatibility with outdated scripts."
+msgstr ""
+
+#: src/Includes/Helpers.php:366
+msgid "Disable Dashicons"
+msgstr ""
+
+#: src/Includes/Helpers.php:367
+msgid "Prevents loading the dashicons.css icon font on the frontend for non-logged-in visitors."
+msgstr ""
+
+#: src/Includes/Helpers.php:378
+msgid "Hide WP Version"
+msgstr ""
+
+#: src/Includes/Helpers.php:379
+msgid "Removes the WordPress version meta tag from the page source, reducing page markup size slightly."
+msgstr ""
+
+#: src/Includes/Helpers.php:390
+msgid "Remove wlwmanifest Link"
+msgstr ""
+
+#: src/Includes/Helpers.php:391
+msgid "Removes the Windows Live Writer manifest tag, an obsolete feature unused on modern sites."
+msgstr ""
+
+#: src/Includes/Helpers.php:402
+msgid "Remove RSD Link"
+msgstr ""
+
+#: src/Includes/Helpers.php:403
+msgid "Removes the Real Simple Discovery (RSD) tag used by remote publishing tools."
+msgstr ""
+
+#: src/Includes/Helpers.php:414
+msgid "Remove Shortlink"
+msgstr ""
+
+#: src/Includes/Helpers.php:415
+msgid "Removes the rel=\"shortlink\" tag generated for posts to reduce unnecessary metadata output."
+msgstr ""
+
+#: src/Includes/Helpers.php:426
+msgid "Network Requests and Endpoints"
+msgstr ""
+
+#: src/Includes/Helpers.php:427
+msgid "Disable unused services that generate background or external HTTP requests. Ideal for sites that don't rely on remote publishing or REST-based integrations."
+msgstr ""
+
+#: src/Includes/Helpers.php:432
+msgid "Disable XML-RPC"
+msgstr ""
+
+#: src/Includes/Helpers.php:433
+msgid "Disables WordPress XML-RPC functionality, which handles remote publishing and pingbacks, saving processing overhead."
+msgstr ""
+
+#: src/Includes/Helpers.php:444
+msgid "Remove REST API Links"
+msgstr ""
+
+#: src/Includes/Helpers.php:445
+msgid "Removes REST API discovery links from the site header and page responses, reducing unnecessary HTTP headers."
+msgstr ""
+
+#: src/Includes/Helpers.php:456
+msgid "Feed and Discovery Optimization"
+msgstr ""
+
+#: src/Includes/Helpers.php:457
+msgid "Stop generating feed files and related discovery tags that most modern sites don't need. Helps reduce crawl requests and prevents unnecessary feed generation."
+msgstr ""
+
+#: src/Includes/Helpers.php:462
+msgid "Disable RSS Feeds"
+msgstr ""
+
+#: src/Includes/Helpers.php:463
+msgid "Disables WordPress-generated RSS feeds and redirects feed URLs back to the homepage."
+msgstr ""
+
+#: src/Includes/Helpers.php:474
+msgid "Remove RSS Feed Links"
+msgstr ""
+
+#: src/Includes/Helpers.php:475
+msgid "Removes all RSS feed link tags from the site’s header."
+msgstr ""
+
+#: src/Includes/Helpers.php:486
+msgid "Editor and Backend Performance"
+msgstr ""
+
+#: src/Includes/Helpers.php:487
+msgid "Limit WordPress background activity during content editing to reduce CPU and database usage. These controls keep your admin fast, reduce CPU cycles, and optimize database performance."
+msgstr ""
+
+#: src/Includes/Helpers.php:492
+msgid "Disable Self Pingbacks"
+msgstr ""
+
+#: src/Includes/Helpers.php:493
+msgid "Prevents WordPress from sending self-pingbacks when linking to your own posts."
+msgstr ""
+
+#: src/Includes/Helpers.php:504
+msgid "Disable Password Strength Meter"
+msgstr ""
+
+#: src/Includes/Helpers.php:505
+msgid "Prevents loading of the password strength meter script (zxcvbn.js) on non-essential admin pages."
+msgstr ""
+
+#: src/Includes/Helpers.php:516
+msgid "Disable Heartbeat"
+msgstr ""
+
+#: src/Includes/Helpers.php:518, src/Includes/Helpers.php:535, src/Includes/Helpers.php:553, src/Includes/Helpers.php:579
+msgid "Default"
+msgstr ""
+
+#: src/Includes/Helpers.php:519
+msgid "Disable Everywhere"
+msgstr ""
+
+#: src/Includes/Helpers.php:520
+msgid "Only Allow When Editing Posts/Pages"
+msgstr ""
+
+#: src/Includes/Helpers.php:522
+msgid "Stops or limits the WordPress Heartbeat API that sends frequent AJAX requests from the browser to the server."
+msgstr ""
+
+#: src/Includes/Helpers.php:533
+msgid "Heartbeat Frequency"
+msgstr ""
+
+#: src/Includes/Helpers.php:535, src/Includes/Helpers.php:536, src/Includes/Helpers.php:537, src/Includes/Helpers.php:538
+msgid "%s Seconds"
+msgstr ""
+
+#: src/Includes/Helpers.php:540
+msgid "Adjusts how often the Heartbeat API runs (lower frequency = fewer background requests)."
+msgstr ""
+
+#: src/Includes/Helpers.php:551
+msgid "Limit Post Revisions"
+msgstr ""
+
+#: src/Includes/Helpers.php:554
+msgid "Disable Post Revisions"
+msgstr ""
+
+#: src/Includes/Helpers.php:566
+msgid "Limits the number of post revisions stored in the database to prevent bloat."
+msgstr ""
+
+#: src/Includes/Helpers.php:577
+msgid "Autosave Interval"
+msgstr ""
+
+#: src/Includes/Helpers.php:579
+msgid "1 Minute"
+msgstr ""
+
+#: src/Includes/Helpers.php:580, src/Includes/Helpers.php:581, src/Includes/Helpers.php:582, src/Includes/Helpers.php:583
+msgid "%s Minutes"
+msgstr ""
+
+#: src/Includes/Helpers.php:585
+msgid "Controls how often posts are autosaved while editing, reducing unnecessary database writes."
+msgstr ""
+
+#: src/Includes/Helpers.php:598
+msgid "Assets Optimization"
+msgstr ""
+
+#: src/Includes/Helpers.php:599
+msgid "Settings to manage asset loading and optimization."
+msgstr ""
+
+#: src/Includes/Helpers.php:604
+msgid "Enable Assets Manager"
+msgstr ""
+
+#: src/Includes/Helpers.php:605
+msgid "Enabling this will allow you to manage your assets more effectively."
+msgstr ""
+
+#: src/Includes/Helpers.php:616
+msgid "DNS Prefetch"
+msgstr ""
+
+#: src/Includes/Helpers.php:617
+msgid "Resolve domain names before a user clicks. Format: //domain.tld (one per line)"
+msgstr ""
+
+#: src/Includes/Helpers.php:628
+msgid "Preconnect"
+msgstr ""
+
+#: src/Includes/Helpers.php:629
+msgid "Establish a connection to another origin before a user clicks. Format: //domain.tld (one per line)"
+msgstr ""
+
+#: src/Includes/Helpers.php:642
+msgid "CDN Settings"
 msgstr ""
 
 #: src/Includes/Helpers.php:643
+msgid "Settings to manage CDN configurations."
+msgstr ""
+
+#: src/Includes/Helpers.php:648
+msgid "Enable CDN"
+msgstr ""
+
+#: src/Includes/Helpers.php:649
+msgid "Enabling this will allow you to use a CDN for your static assets."
+msgstr ""
+
+#: src/Includes/Helpers.php:660
+msgid "CDN URL"
+msgstr ""
+
+#: src/Includes/Helpers.php:661
+msgid "Enter the URL of your CDN provider."
+msgstr ""
+
+#: src/Includes/Helpers.php:672
+msgid "Included Directories"
+msgstr ""
+
+#: src/Includes/Helpers.php:673
+msgid "Enter any directories you would like to be included in CDN rewriting, separated by commas (,). Default: wp-content,wp-includes"
+msgstr ""
+
+#: src/Includes/Helpers.php:684
+msgid "CDN Exclusions"
+msgstr ""
+
+#: src/Includes/Helpers.php:685
+msgid "Enter any directories or file extensions you would like to be excluded from CDN rewriting, separated by commas (,). Default: .php"
+msgstr ""
+
+#: src/Includes/Helpers.php:698
+msgid "Advanced Settings"
+msgstr ""
+
+#: src/Includes/Helpers.php:699
+msgid "Settings for advanced configurations."
+msgstr ""
+
+#: src/Includes/Helpers.php:704
+msgid "Remove Data on Uninstall"
+msgstr ""
+
+#: src/Includes/Helpers.php:705
+msgid "Enabling this will remove all plugin data upon uninstallation."
+msgstr ""
+
+#: src/Includes/Helpers.php:718
+msgid "WooCommerce Settings"
+msgstr ""
+
+#: src/Includes/Helpers.php:719
+msgid "Settings specific to WooCommerce."
+msgstr ""
+
+#: src/Includes/Helpers.php:724
+msgid "Enable WooCommerce Manager"
+msgstr ""
+
+#: src/Includes/Helpers.php:725
+msgid "Enabling this will allow you to manage WooCommerce specific settings."
+msgstr ""
+
+#: src/Includes/Helpers.php:736
 msgid "Enable WooCommerce Cache"
 msgstr ""
 
-#: src/Includes/Helpers.php:644
+#: src/Includes/Helpers.php:737
 msgid "Enabling this will cache WooCommerce pages for better performance."
 msgstr ""
 
@@ -448,22 +512,18 @@ msgstr ""
 msgid "Learn more"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:81
-msgid "PerformWP"
+#: src/Admin/Settings/Menu.php:131
+msgid "Insufficient permissions."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:166
-msgid "Check our documentation"
-msgstr ""
-
-#: src/Admin/Settings/Menu.php:226
+#: src/Admin/Settings/Menu.php:141
 msgid "Security check failed."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:266
+#: src/Admin/Settings/Menu.php:238
 msgid "Unable to save the settings. Please try again."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:261
+#: src/Admin/Settings/Menu.php:233
 msgid "Settings saved successfully."
 msgstr ""
