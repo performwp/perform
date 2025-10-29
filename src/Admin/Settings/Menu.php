@@ -158,15 +158,72 @@ class Menu extends Api {
 		} else {
 			$posted_data = Helpers::clean( $_POST );
 		}
-		$settings    = Helpers::get_settings();
+		$settings = Helpers::get_settings();
 
-		$new_settings = wp_parse_args( $posted_data, $settings );
+		// Per-field sanitization based on field definitions provided by Helpers::get_settings_fields().
+		$sanitized_post = [];
+		foreach ( $posted_data as $key => $val ) {
+			// Skip known control keys early
+			if ( in_array( $key, [ 'perform_settings_barrier', '_wp_http_referer', 'action', 'nonce', 'data' ], true ) ) {
+				continue;
+			}
 
+			// If value is an array, recursively clean it (for list-type fields)
+			if ( is_array( $val ) ) {
+				$sanitized_post[ $key ] = Helpers::clean( $val );
+				continue;
+			}
+
+			$field_def = Helpers::find_field_by_id( $key );
+			$raw_val   = wp_unslash( $val );
+
+			if ( $field_def && isset( $field_def['type'] ) ) {
+				switch ( $field_def['type'] ) {
+					case 'toggle':
+						// Normalize truthy values to 1, else 0
+						$sanitized_post[ $key ] = ! empty( $raw_val ) && '0' !== $raw_val ? 1 : 0;
+						break;
+					case 'textarea':
+						$sanitized_post[ $key ] = sanitize_textarea_field( $raw_val );
+						break;
+					case 'url':
+						$sanitized_post[ $key ] = esc_url_raw( $raw_val );
+						break;
+					case 'select':
+						// Ensure value is one of allowed options when provided
+						$opts   = $field_def['options'] ?? [];
+						$is_ok  = false;
+						if ( is_array( $opts ) && ! empty( $opts ) ) {
+							// If associative array (value=>label) check keys, otherwise check values
+							$keys = array_keys( $opts );
+							$vals = array_values( $opts );
+							if ( array_diff_key( $opts, array_values( $opts ) ) ) {
+								// associative
+								$is_ok = in_array( $raw_val, $keys, true );
+							} else {
+								$is_ok = in_array( $raw_val, $vals, true );
+							}
+						}
+						$sanitized_post[ $key ] = $is_ok ? sanitize_text_field( $raw_val ) : '';
+						break;
+					case 'number':
+						$sanitized_post[ $key ] = is_numeric( $raw_val ) ? intval( $raw_val ) : 0;
+						break;
+					default:
+						$sanitized_post[ $key ] = sanitize_text_field( $raw_val );
+				}
+			} else {
+				// No field definition found – fall back to a safe cleaning
+				$sanitized_post[ $key ] = is_scalar( $raw_val ) ? sanitize_text_field( $raw_val ) : Helpers::clean( $raw_val );
+			}
+		}
+
+		// Merge sanitized values with existing settings to preserve missing keys
+		$new_settings = wp_parse_args( $sanitized_post, is_array( $settings ) ? $settings : [] );
+
+		// Handle newline-separated lists
 		$new_settings['dns_prefetch'] = ! empty( $new_settings['dns_prefetch'] ) ? explode( "\n", $new_settings['dns_prefetch'] ) : '';
 		$new_settings['preconnect']   = ! empty( $new_settings['preconnect'] ) ? explode( "\n", $new_settings['preconnect'] ) : '';
-
-		// Remove control fields that should not be stored
-		unset( $new_settings['perform_settings_barrier'], $new_settings['_wp_http_referer'], $new_settings['action'], $new_settings['nonce'], $new_settings['data'] );
 
 		$is_saved = update_option( 'perform_settings', $new_settings, false );
 

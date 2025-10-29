@@ -210,6 +210,30 @@ class Helpers {
 	}
 
 	/**
+	 * Find a field definition by its id across all tabs/cards.
+	 *
+	 * @param string $id Field id to look up.
+	 *
+	 * @return array|null Field definition array or null if not found.
+	 */
+	public static function find_field_by_id( $id ) {
+		$fields = self::get_settings_fields();
+		foreach ( $fields as $tab => $cards ) {
+			foreach ( $cards as $card ) {
+				if ( empty( $card['fields'] ) || ! is_array( $card['fields'] ) ) {
+					continue;
+				}
+				foreach ( $card['fields'] as $field ) {
+					if ( isset( $field['id'] ) && $field['id'] === $id ) {
+						return $field;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Get settings tabs for the settings page.
 	 *
 	 * @since 2.0.0
