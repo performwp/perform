@@ -141,10 +141,11 @@ class Helpers {
 	 */
 	public static function clean( $var ) {
 		if ( is_array( $var ) ) {
-			return array_map( [ __CLASS__, __METHOD__ ], $var );
-		} else {
-			return is_scalar( $var ) ? sanitize_text_field( wp_unslash( $var ) ) : $var;
+			// Recursively clean array values by calling this same method.
+			return array_map( [ __CLASS__, 'clean' ], $var );
 		}
+
+		return is_scalar( $var ) ? sanitize_text_field( wp_unslash( $var ) ) : $var;
 	}
 
 	/**
