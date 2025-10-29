@@ -1,9 +1,10 @@
-import { TabPanel, Card, CardHeader, CardBody, ToggleControl, TextControl, SelectControl } from '@wordpress/components';
+import { TabPanel, Card, CardHeader, CardBody, ToggleControl, TextControl, SelectControl, TextareaControl } from '@wordpress/components';
 import { useState, useMemo } from '@wordpress/element';
 
 const FIELD_COMPONENTS = {
   toggle: ToggleControl,
   text: TextControl,
+  textarea: TextareaControl,
   select: SelectControl,
 };
 
@@ -50,6 +51,20 @@ const renderField = (field, value, onChange) => {
         {...common}
         value={value ?? ''}
         placeholder={placeholder}
+        onChange={(val) => onChange(id, val)}
+      />
+    );
+  }
+
+  if (type === 'textarea') {
+    // allow optional rows property on the field definition
+    const rows = field.rows ?? 5;
+    return (
+      <TextareaControl
+        {...common}
+        value={value ?? ''}
+        placeholder={placeholder}
+        rows={rows}
         onChange={(val) => onChange(id, val)}
       />
     );
