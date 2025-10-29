@@ -53,3 +53,18 @@
   text-decoration: none;
   color: var(--text-color);
 }
+
+/* Help link styling for settings fields */
+.perform-help-link {
+	text-decoration: none; /* remove underline */
+	color: var(--primary-color);
+	font-weight: 500;
+}
+.perform-help-link:hover,
+.perform-help-link:focus {
+	text-decoration: underline; /* show underline on hover for affordance */
+	color: var(--primary-color) !important;
+}
+.perform-help-icon {
+	margin-left: 0;
+}

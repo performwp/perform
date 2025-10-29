@@ -24,14 +24,27 @@ const normalizeOptions = (options) => {
 };
 
 const renderField = (field, value, onChange) => {
-  const { type = 'text', id, name, desc, options, placeholder, style: fieldStyle, className: fieldClass, ...rest } = field;
+  const { type = 'text', id, name, desc, help_link, options, placeholder, style: fieldStyle, className: fieldClass, ...rest } = field;
   const Component = FIELD_COMPONENTS[type] || null;
   if (!Component) return <div key={id}>Unsupported field type: {type}</div>;
 
   const common = {
     // key moved to wrapper
     label: name,
-    help: desc,
+    // Render description with optional "Learn more" link when provided
+    help: (
+      <span>
+        {desc}
+        {help_link && (
+          <>
+            {' '}
+            <a href={help_link} target="_blank" rel="noopener noreferrer" className="perform-help-link">
+              Learn more <span className="perform-help-icon">→</span>
+            </a>
+          </>
+        )}
+      </span>
+    ),
     ...rest,
   };
 

@@ -458,7 +458,7 @@ class Helpers {
 					],
 				],
 				[
-					'title'       => esc_html__('Editor & Backend Performance', 'perform'),
+					'title'       => esc_html__('Editor and Backend Performance', 'perform'),
 					'description' => esc_html__('Limit WordPress background activity during content editing to reduce CPU and database usage. These controls keep your admin fast, reduce CPU cycles, and optimize database performance.', 'perform'),
 					'fields'      => [
 						[
@@ -570,9 +570,9 @@ class Helpers {
 			],
 			'assets' => [
 				[
-					'title' => esc_html__('Assets Optimization', 'perform'),
+					'title'       => esc_html__('Assets Optimization', 'perform'),
 					'description' => esc_html__('Settings to manage asset loading and optimization.', 'perform'),
-					'fields' => [
+					'fields'      => [
 						[
 							'id'        => 'enable_assets_manager',
 							'type'      => 'toggle',
@@ -614,9 +614,9 @@ class Helpers {
 			],
 			'cdn' => [
 				[
-					'title' => esc_html__('CDN Settings', 'perform'),
+					'title'       => esc_html__('CDN Settings', 'perform'),
 					'description' => esc_html__('Settings to manage CDN configurations.', 'perform'),
-					'fields' => [
+					'fields'      => [
 						[
 							'id'        => 'enable_cdn',
 							'type'      => 'toggle',
@@ -670,9 +670,9 @@ class Helpers {
 			],
 			'advanced' => [
 				[
-					'title' => esc_html__('Advanced Settings', 'perform'),
+					'title'       => esc_html__('Advanced Settings', 'perform'),
 					'description' => esc_html__('Settings for advanced configurations.', 'perform'),
-					'fields' => [
+					'fields'      => [
 						[
 							'id'        => 'remove_data_on_uninstall',
 							'type'      => 'toggle',
@@ -690,9 +690,9 @@ class Helpers {
 			],
 			'woocommerce' => [
 				[
-					'title' => esc_html__('WooCommerce Settings', 'perform'),
+					'title'       => esc_html__('WooCommerce Settings', 'perform'),
 					'description' => esc_html__('Settings specific to WooCommerce.', 'perform'),
-					'fields' => [
+					'fields'      => [
 						[
 							'id'        => 'enable_woocommerce_manager',
 							'type'      => 'toggle',
