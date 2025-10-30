@@ -293,7 +293,7 @@ class Helpers {
 							),
 						],
 						[
-							'id'        => 'enable_menu_cache',
+							'id'        => 'enable_navigation_menu_cache',
 							'type'      => 'toggle',
 							'name'      => esc_html__( 'Enable Menu Cache', 'perform' ),
 							'desc'      => esc_html__( 'Enabling this will cache your menu items for better performance.', 'perform' ),
