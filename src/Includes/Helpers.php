@@ -281,7 +281,7 @@ class Helpers {
 					'description' => esc_html__('Configure general performance settings for your WordPress site.', 'perform'),
 					'fields'      => [
 						[
-							'id'        => 'force_ssl',
+							'id'        => 'enable_ssl',
 							'type'      => 'toggle',
 							'name'      => esc_html__( 'Force SSL', 'perform' ),
 							'desc'      => esc_html__( 'Enabling this will force all traffic to use SSL.', 'perform' ),
