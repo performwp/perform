@@ -32,9 +32,6 @@ const SettingsApp = () => {
   const messageTimerRef = useRef(null);
 
   // dirty detection
-  const dirty = useMemo(() => {
-    return Object.keys(fieldValues).some((k) => fieldValues[k] !== initialValues[k]);
-  }, [fieldValues, initialValues]);
 
   const handleFieldChange = (id, value) => {
     setFieldValues((prev) => ({ ...prev, [id]: value }));
