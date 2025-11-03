@@ -64,18 +64,18 @@ jobs:
       - name: Lint against parse errors
         run: composer lint -- --checkstyle > ./lint-report.xml || true
 
-      - name: Install cs2pr and show lint results in PR
+      - name: Show lint results in PR
         if: ${{ always() }}
         run: |
-          composer global require --no-interaction staabm/cs2pr
-          if [ -x "$HOME/.composer/vendor/bin/cs2pr" ]; then
+          # Prefer project's vendor binary installed via composer
+          if [ -x "vendor/bin/cs2pr" ]; then
+            vendor/bin/cs2pr ./lint-report.xml || true
+          elif [ -x "$HOME/.composer/vendor/bin/cs2pr" ]; then
             $HOME/.composer/vendor/bin/cs2pr ./lint-report.xml || true
           elif [ -x "$HOME/.config/composer/vendor/bin/cs2pr" ]; then
             $HOME/.config/composer/vendor/bin/cs2pr ./lint-report.xml || true
-          elif [ -x "vendor/bin/cs2pr" ]; then
-            vendor/bin/cs2pr ./lint-report.xml || true
           else
-            echo "cs2pr binary not found after install" && exit 0
+            echo "vendor/bin/cs2pr not found; skipping annotation" && exit 0
           fi
 
       - name: Lint blueprint file

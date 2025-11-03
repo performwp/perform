@@ -62,17 +62,16 @@ jobs:
         id: phpcs
         run: composer check-cs -- --no-cache --report-full --report-checkstyle=./phpcs-report.xml
 
-      - name: Install cs2pr and show PHPCS results in PR
+      - name: Show PHPCS results in PR
         if: ${{ always() && steps.phpcs.outcome == 'failure' }}
         run: |
-          composer global require --no-interaction staabm/cs2pr
-          # try common global composer bin locations
-          if [ -x "$HOME/.composer/vendor/bin/cs2pr" ]; then
-            $HOME/.composer/vendor/bin/cs2pr ./phpcs-report.xml
+          # Prefer the project's vendor binary (installed by composer install in CI).
+          if [ -x "vendor/bin/cs2pr" ]; then
+            vendor/bin/cs2pr ./phpcs-report.xml || true
+          elif [ -x "$HOME/.composer/vendor/bin/cs2pr" ]; then
+            $HOME/.composer/vendor/bin/cs2pr ./phpcs-report.xml || true
           elif [ -x "$HOME/.config/composer/vendor/bin/cs2pr" ]; then
-            $HOME/.config/composer/vendor/bin/cs2pr ./phpcs-report.xml
-          elif [ -x "vendor/bin/cs2pr" ]; then
-            vendor/bin/cs2pr ./phpcs-report.xml
+            $HOME/.config/composer/vendor/bin/cs2pr ./phpcs-report.xml || true
           else
-            echo "cs2pr binary not found after install" && exit 0
+            echo "vendor/bin/cs2pr not found; skipping annotation" && exit 0
           fi
