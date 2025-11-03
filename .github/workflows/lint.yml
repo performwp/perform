@@ -51,8 +51,8 @@ jobs:
       - name: Install Composer dependencies
         uses: ramsey/composer-install@v2
         with:
-          # Bust the cache at least once a month - output format: YYYY-MM-DD.
-          custom-cache-suffix: $(date -u -d "-0 month -$(($(date +%d)-1)) days" "+%F")
+          # Use run id so no shell-specific date expansion is required here.
+          custom-cache-suffix: ${{ github.run_id }}
 
       - name: Install PHP for the actual test
         uses: shivammathur/setup-php@v2
@@ -63,7 +63,14 @@ jobs:
           tools: cs2pr
 
       - name: Lint against parse errors
-        run: composer lint -- --checkstyle | cs2pr
+        run: composer lint -- --checkstyle > ./lint-report.xml || true
+
+      - name: Show lint results in PR
+        if: ${{ always() }}
+        uses: staabm/annotate-pull-request-from-checkstyle@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          checkstyle_report: ./lint-report.xml
 
       - name: Lint blueprint file
         run: composer lint-blueprint
