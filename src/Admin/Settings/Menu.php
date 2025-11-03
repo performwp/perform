@@ -38,7 +38,7 @@ class Menu extends Api {
 
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 9 );
 		add_action( 'wp_ajax_perform_save_settings', [ $this, 'save_settings' ] );
-		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_assets' ] ); // Added for React settings localization
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_assets' ] );
 	}
 
 	/**
