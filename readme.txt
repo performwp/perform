@@ -32,7 +32,12 @@ Features
 - Menu caching and lightweight transient caching for faster navigation.
 - Developer-friendly hooks and filters for custom integrations.
 
-Screenshots
+Other Plugins
+- [OneCaptcha](https://onecaptcha.com): Connect popular captcha providers with WordPress forms for SPAM prevention
+- [WP Theme Switcher](https://wpthemeswitcher.com): Use multiple themes on your WordPress site at once. Useful for theme migration projects.
+- [WordPress Development Services](https://mehulgohil.com): Want to build something amazing in WordPress space. I'm here to help. Let's discuss!
+
+== Screenshots ==
 
 1. Settings overview: global optimization toggles.
 2. Assets Manager: disable CSS/JS per page.
