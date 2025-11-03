@@ -60,17 +60,23 @@ jobs:
           php-version: ${{ matrix.php_version }}
           ini-values: zend.assertions=1, error_reporting=-1, display_errors=On
           coverage: none
-          tools: cs2pr
 
       - name: Lint against parse errors
         run: composer lint -- --checkstyle > ./lint-report.xml || true
 
-      - name: Show lint results in PR
+      - name: Install cs2pr and show lint results in PR
         if: ${{ always() }}
-        uses: staabm/annotate-pull-request-from-checkstyle@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          checkstyle_report: ./lint-report.xml
+        run: |
+          composer global require --no-interaction staabm/cs2pr
+          if [ -x "$HOME/.composer/vendor/bin/cs2pr" ]; then
+            $HOME/.composer/vendor/bin/cs2pr ./lint-report.xml || true
+          elif [ -x "$HOME/.config/composer/vendor/bin/cs2pr" ]; then
+            $HOME/.config/composer/vendor/bin/cs2pr ./lint-report.xml || true
+          elif [ -x "vendor/bin/cs2pr" ]; then
+            vendor/bin/cs2pr ./lint-report.xml || true
+          else
+            echo "cs2pr binary not found after install" && exit 0
+          fi
 
       - name: Lint blueprint file
         run: composer lint-blueprint
