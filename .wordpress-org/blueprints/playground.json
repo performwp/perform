@@ -1,0 +1,18 @@
+{
+    "landingPage": "/wp-admin/options-general.php?page=perform",
+    "features": {
+        "networking": true
+    },
+	"plugins": [
+        "perform"
+    ],
+    "preferredVersions": {
+        "php": "8.2",
+        "wp": "6.8"
+    },
+    "steps": [
+        {
+            "step": "login"
+        }
+    ]
+}
