@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Define plugin version in SemVer format.
 if ( ! defined( 'PERFORM_VERSION' ) ) {
-	define( 'PERFORM_VERSION', '1.4.1' );
+	define( 'PERFORM_VERSION', '1.5.0' );
 }
 
 // Define plugin root File.
@@ -27,4 +27,9 @@ if ( ! defined( 'PERFORM_PLUGIN_DIR' ) ) {
 // Define plugin directory URL.
 if ( ! defined( 'PERFORM_PLUGIN_URL' ) ) {
 	define( 'PERFORM_PLUGIN_URL', plugin_dir_url( PERFORM_PLUGIN_FILE ) );
+}
+
+// Define plugin docs URL
+if ( ! defined( 'PERFORM_PLUGIN_DOCS_URL' ) ) {
+	define( 'PERFORM_PLUGIN_DOCS_URL', 'https://performwp.com/docs/' );
 }

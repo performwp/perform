@@ -17,7 +17,7 @@ const config = {
 	entry: {
 		...defaultConfig.entry,
 		perform: [ './assets/src/js/frontend/main.js', './assets/src/css/frontend/main.css'],
-		admin: [ './assets/src/css/admin/admin.css', './assets/src/js/admin/main.js' ],
+		admin: [ './assets/src/css/admin/admin.css', './assets/src/js/admin/main.js'],
 	},
 	output: {
 		...defaultConfig.output,
@@ -57,7 +57,7 @@ if ( inProduction ) {
 		destFile: 'languages/perform.pot',
 		relativeTo: './',
 		src: [ './**/*.php', '!./includes/libraries/**/*', '!./vendor/**/*' ],
-		bugReport: 'https://github.com/mehul0810/perform/issues/new',
+		bugReport: 'https://github.com/performwp/perform/issues/new',
 		team: 'PerformWP <hello@performwp.com>',
 	} );
 }

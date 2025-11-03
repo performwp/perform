@@ -1,9 +1,9 @@
 {
   "name": "perform",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "Web Performance Optimization Plugin for WordPress",
   "homepage": "https://github.com/performwp/perform#readme",
-  "license": "GPL-2.0-or-later",
+  "license": "GPL-3.0-or-later",
   "author": {
     "name": "PerformWP",
     "email": "hello@performwp.com",
@@ -26,6 +26,8 @@
     "plugin-zip": "wp-scripts plugin-zip"
   },
   "devDependencies": {
+    "@wordpress/components": "^29.12.0",
+    "@wordpress/element": "^6.26.0",
     "@wordpress/scripts": "^27.1.0",
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^12.0.2",

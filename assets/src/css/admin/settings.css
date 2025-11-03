@@ -1,3 +1,42 @@
+.perform-settings-page {
+	margin-left: -20px;
+}
+
+.perform-settings-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 24px;
+	background-color: var(--white-color);
+	padding: 0px 20px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.perform-plugin-version {
+	font-size: 10px;
+	color: var(--white-color);
+	background-color: var(--primary-color);
+	padding: 3px 8px;
+	border-radius: 5px;
+}
+
+.perform-settings-tab-panel {
+	background-color: var(--bg-color);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+	margin-bottom: 20px;
+}
+
+
+.perform-card-title,
+.perform-card-description {
+	margin: 0;
+}
+
+.perform-settings-content {
+    padding: 0 20px;
+}
+
+
 .perform-admin-settings-wrap {
   display: flex;
 }
@@ -13,4 +52,19 @@
   font-size: 10px;
   text-decoration: none;
   color: var(--text-color);
+}
+
+/* Help link styling for settings fields */
+.perform-help-link {
+	text-decoration: none; /* remove underline */
+	color: var(--primary-color);
+	font-weight: 500;
+}
+.perform-help-link:hover,
+.perform-help-link:focus {
+	text-decoration: underline; /* show underline on hover for affordance */
+	color: var(--primary-color) !important;
+}
+.perform-help-icon {
+	margin-left: 0;
 }
