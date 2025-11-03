@@ -5,11 +5,11 @@ Donate link: https://www.buymeacoffee.com/mehulgohil
 Requires at least: 4.8
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.5.0
+Stable tag: 1.5.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-Lightweight performance plugin to remove unused assets, optimize loading order, and speed up WordPress sites; ideal for WooCommerce, page builders and busy sites.
+Lightweight performance plugin to remove unused assets, optimize loading order, and speed up WordPress sites; ideal for WooCommerce, page builders and more.
 
 == Description ==
 
@@ -65,6 +65,9 @@ For help and troubleshooting, use our WordPress.org support forum: https://wordp
 Contributions and bug reports welcome on GitHub: https://github.com/performwp/perform
 
 == Changelog ==
+
+= 1.5.1 - 2025-11-15 =
+- Fixed Preview Blueprint
 
 = 1.5.0 - 2025-11-01 =
 - Upgraded Settings UI to look and feel premium.
