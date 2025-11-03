@@ -30,11 +30,11 @@ final class Plugin {
 		register_activation_hook( PERFORM_PLUGIN_FILE, [ $this, 'activate' ] );
 		register_deactivation_hook( PERFORM_PLUGIN_FILE, [ $this, 'deactivate' ] );
 
-		// Register services used throughout the plugin.
-		add_action( 'plugins_loaded', [ $this, 'register_services' ] );
-
 		// Load text domain.
-		add_action( 'init', [ $this, 'load_plugin_textdomain' ] );
+		add_action( 'plugins_loaded', [ $this, 'load_plugin_textdomain' ], 9 );
+
+		// Register services used throughout the plugin.
+		add_action( 'plugins_loaded', [ $this, 'register_services' ], 10 );
 	}
 
 	/**
