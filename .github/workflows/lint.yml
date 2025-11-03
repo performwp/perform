@@ -66,17 +66,10 @@ jobs:
 
       - name: Show lint results in PR
         if: ${{ always() }}
-        run: |
-          # Prefer project's vendor binary installed via composer
-          if [ -x "vendor/bin/cs2pr" ]; then
-            vendor/bin/cs2pr ./lint-report.xml || true
-          elif [ -x "$HOME/.composer/vendor/bin/cs2pr" ]; then
-            $HOME/.composer/vendor/bin/cs2pr ./lint-report.xml || true
-          elif [ -x "$HOME/.config/composer/vendor/bin/cs2pr" ]; then
-            $HOME/.config/composer/vendor/bin/cs2pr ./lint-report.xml || true
-          else
-            echo "vendor/bin/cs2pr not found; skipping annotation" && exit 0
-          fi
+        uses: staabm/annotate-pull-request-from-checkstyle@v2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          checkstyle_report: ./lint-report.xml
 
       - name: Lint blueprint file
         run: composer lint-blueprint
