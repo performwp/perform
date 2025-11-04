@@ -32,7 +32,7 @@ final class Plugin {
 
 		// Register services used throughout the plugin.
 		add_action( 'plugins_loaded', [ $this, 'register_services' ] );
-
+		
 		// Load text domain.
 		add_action( 'init', [ $this, 'load_plugin_textdomain' ] );
 	}
