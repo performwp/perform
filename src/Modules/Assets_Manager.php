@@ -100,7 +100,7 @@ class Assets_Manager {
 			<form id="perform-assets-manager--form" method='POST'>
 				<div class="perform-assets-manager--header">
 					<div class="perform-assets-manager--logo">
-						<img src="<?php echo PERFORM_PLUGIN_URL . 'assets/dist/images/logo.png'; ?>" alt="<?php esc_html_e( 'Perform', 'perform' ); ?>" />
+						<img src="<?php echo esc_url( PERFORM_PLUGIN_URL . 'assets/dist/images/logo.png' ); ?>" alt="<?php esc_html_e( 'Perform', 'perform' ); ?>" />
 					</div>
 					<div class="perform-assets-manager-header-actions">
 						<input type="submit" name="perform_assets_manager" value="<?php esc_html_e( 'Save', 'perform' ); ?>" />
@@ -120,7 +120,7 @@ class Assets_Manager {
 							if ( ! empty( $groups ) ) {
 								?>
 								<div class="perform-assets-manager--section">
-									<h3><?php echo ucwords( $category ); ?></h3>
+									<h3><?php echo esc_html( ucwords( $category ) ); ?></h3>
 									<?php
 									if ( 'misc' !== $category ) {
 										foreach ( $groups as $group => $details ) {
@@ -366,8 +366,8 @@ class Assets_Manager {
 					</td>
 					<td class="perform-assets-manager--url">
 						<a href="<?php echo esc_url( $src ); ?>" target="_blank"><?php esc_html_e( 'View File', 'perform' ); ?></a>
-						<input type="hidden" name="<?php echo esc_html( "relations[{$type}][{$handle}][category]" ); ?>" value="<?php echo $category; ?>" />
-						<input type="hidden" name="<?php echo esc_html( "relations[{$type}][{$handle}][group]" ); ?>", value="<?php echo $group; ?>" />
+						<input type="hidden" name="<?php echo esc_html( "relations[{$type}][{$handle}][category]" ); ?>" value="<?php echo esc_attr( $category ); ?>" />
+						<input type="hidden" name="<?php echo esc_html( "relations[{$type}][{$handle}][group]" ); ?>", value="<?php echo esc_attr( $group ); ?>" />
 					</td>
 				</tr>
 			<?php
@@ -456,9 +456,9 @@ class Assets_Manager {
 					$is_checked = checked( $is_disabled_key, 1, false );
 				}
 				?>
-				<label for="<?php echo esc_html( "disabled-{$type}-{$handle}-{$key}" ); ?>">
-					<input type="radio" name="disabled[<?php echo $type; ?>][<?php echo $handle; ?>]" id="<?php echo esc_html( "disabled-{$type}-{$handle}-{$key}" ); ?>" class="perform-disable-assets" value="<?php echo $key; ?>"<?php echo $is_checked; ?>/>
-					<?php echo $value; ?>
+				<label for="<?php echo esc_attr( "disabled-{$type}-{$handle}-{$key}" ); ?>">
+					<input type="radio" name="<?php echo esc_attr( "disabled[{$type}][{$handle}]" ); ?>" id="<?php echo esc_attr( "disabled-{$type}-{$handle}-{$key}" ); ?>" class="perform-disable-assets" value="<?php echo esc_attr( $key ); ?>"<?php echo wp_kses_post( $is_checked ); ?>/>
+					<?php echo esc_html( $value ); ?>
 				</label>
 				<?php
 			}
@@ -484,11 +484,11 @@ class Assets_Manager {
 		$is_selected        = ( $is_disabled_handle && is_array( $this->selected_options['disabled'][ $type ][ $handle ] ) ) ? 'selected="selected"' : '';
 		$disable_class      = ! empty( $is_selected ) ? 'disabled' : '';
 		?>
-		<select name="status[<?php echo esc_html( $type ); ?>][<?php echo esc_html( $handle ); ?>]" class="perform-status-select <?php echo esc_html( $disable_class ); ?>">
+		<select name="<?php echo esc_attr( "status[{$type}][{$handle}]" ); ?>" class="perform-status-select <?php echo esc_html( $disable_class ); ?>">
 			<option value='enabled' class='perform-option-enabled'>
 				<?php echo esc_attr__( 'ON', 'perform' ); ?>
 			</option>
-			<option value='disabled' class='perform-option-everywhere' <?php echo $is_selected; ?>>
+			<option value='disabled' class='perform-option-everywhere' <?php echo wp_kses_post( $is_selected ); ?>>
 				<?php echo esc_attr__( 'OFF', 'perform' ); ?>
 			</option>
 		</select>
@@ -520,9 +520,9 @@ class Assets_Manager {
 			</div>
 
 			<div class="perform-assets-manager-exception--options">
-				<input type="hidden" name="enabled[<?php echo $type; ?>][<?php echo $handle; ?>][current]" value="" />
-				<label for="<?php echo "{$type}-{$handle}-enable-current"; ?>">
-					<input type="checkbox" name="enabled[<?php echo $type; ?>][<?php echo $handle; ?>][current]" id="<?php echo "{$type}-{$handle}-enable-current"; ?>" value="<?php echo $current_id; ?>" <?php echo $is_current_checked; ?>/>
+				<input type="hidden" name="<?php echo esc_attr( "enabled[{$type}][{$handle}][current]" ); ?>" value="" />
+				<label for="<?php echo esc_attr( "{$type}-{$handle}-enable-current" ); ?>">
+					<input type="checkbox" name="<?php echo esc_attr( "enabled[{$type}][{$handle}][current]" ); ?>" id="<?php echo esc_attr( "{$type}-{$handle}-enable-current" ); ?>" value="<?php echo esc_attr( $current_id ); ?>" <?php echo wp_kses_post( $is_current_checked ); ?>/>
 					<?php esc_html_e( 'Current URL', 'perform' ); ?>
 				</label>
 
@@ -540,15 +540,15 @@ class Assets_Manager {
 						unset( $post_types['attachment'] );
 					}
 					?>
-					<input type="hidden" name="enabled[<?php echo $type; ?>][<?php echo $handle; ?>][post_types]" value="" />
+					<input type="hidden" name="<?php echo esc_attr( "enabled[{$type}][{$handle}][post_types]" ); ?>" value="" />
 					<?php
 
 					foreach ( $post_types as $key => $value ) {
 						$is_post_type_selected = ( is_array( $selected_post_types ) && in_array( $key, $selected_post_types, true ) ) ? ' checked="checked"' : '';
 						?>
-						<label for="<?php echo "{$type}-{$handle}-enable-{$key}"; ?>">
-							<input type="checkbox" name="enabled[<?php echo $type; ?>][<?php echo $handle; ?>][post_types][]" id="<?php echo "{$type}-{$handle}-enable-{$key}"; ?>" value="<?php echo $key; ?>" <?php echo $is_post_type_selected; ?> />
-							<?php echo $value->label; ?>
+						<label for="<?php echo esc_attr( "{$type}-{$handle}-enable-{$key}" ); ?>">
+							<input type="checkbox" name="<?php echo esc_attr( "enabled[{$type}][{$handle}][post_types][]" ); ?>" id="<?php echo esc_attr( "{$type}-{$handle}-enable-{$key}" ); ?>" value="<?php echo esc_attr( $key ); ?>" <?php echo wp_kses_post( $is_post_type_selected ); ?> />
+							<?php echo esc_html( $value->label ); ?>
 						</label>
 						<?php
 					}

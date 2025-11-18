@@ -49,12 +49,12 @@ class Api {
 		?>
 		<div class="perform-admin-settings--save-wrap">
 			<?php wp_nonce_field( 'perform-save-settings', 'perform_settings_barrier' ); ?>
-			<input id="perform-save-settings" type="button" class="button button-primary" value="<?php echo $save_text; ?>" data-default-text="<?php echo $save_text; ?>" data-saving-text="<?php esc_html_e( 'Saving...', 'perform' ); ?>"/>
+			<input id="perform-save-settings" type="button" class="button button-primary" value="<?php echo esc_attr( $save_text ); ?>" data-default-text="<?php echo esc_attr( $save_text ); ?>" data-saving-text="<?php esc_attr_e( 'Saving...', 'perform' ); ?>"/>
 			<div class="perform-admin-settings--save-notices">
 			</div>
 		</div>
 		<?php
-		echo ob_get_clean();
+		echo wp_kses_post( ob_get_clean() );
 	}
 
 	/**
@@ -85,10 +85,10 @@ class Api {
 						<tr>
 							<th scope="row">
 								<?php echo esc_html( $field['name'] ); ?>
-								<?php echo $this->render_help_link( $field['help_link'] ); ?>
+								<?php echo wp_kses_post( $this->render_help_link( $field['help_link'] ) ); ?>
 							</th>
 							<td>
-								<?php echo $this->render_field( $field ); ?>
+								<?php echo wp_kses_post( $this->render_field( $field ) ); ?>
 							</td>
 						</tr>
 					<?php endforeach; ?>

@@ -412,7 +412,7 @@ class Helpers {
 							'id'        => 'remove_shortlink',
 							'type'      => 'toggle',
 							'name'      => esc_html__( 'Remove Shortlink', 'perform' ),
-							'desc'      => esc_html__( 'Removes the rel="shortlink" tag generated for posts to reduce unnecessary metadata output.', 'perform' ),
+							'desc'      => __( 'Removes the rel="shortlink" tag generated for posts to reduce unnecessary metadata output.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -532,9 +532,13 @@ class Helpers {
 							'type'      => 'select',
 							'name'      => esc_html__( 'Heartbeat Frequency', 'perform' ),
 							'options'   => [
+								/* translators: %s: Number of seconds */
 								''   => sprintf( esc_html__( '%s Seconds', 'perform' ), '15' ) . ' (' . esc_html__( 'Default', 'perform' ) . ')',
+								/* translators: %s: Number of seconds */
 								'30' => sprintf( esc_html__( '%s Seconds', 'perform' ), '30' ),
+								/* translators: %s: Number of seconds */
 								'45' => sprintf( esc_html__( '%s Seconds', 'perform' ), '45' ),
+								/* translators: %s: Number of seconds */
 								'60' => sprintf( esc_html__( '%s Seconds', 'perform' ), '60' ),
 							],
 							'desc'      => esc_html__( 'Adjusts how often the Heartbeat API runs (lower frequency = fewer background requests).', 'perform' ),
@@ -577,9 +581,13 @@ class Helpers {
 							'name'      => esc_html__( 'Autosave Interval', 'perform' ),
 							'options'   => [
 								''    => esc_html__( '1 Minute', 'perform' ) . ' (' . esc_html__( 'Default', 'perform' ) . ')',
+								/* translators: %s: Number of minutes */
 								'120' => sprintf( esc_html__( '%s Minutes', 'perform' ), '2' ),
+								/* translators: %s: Number of minutes */
 								'180' => sprintf( esc_html__( '%s Minutes', 'perform' ), '3' ),
+								/* translators: %s: Number of minutes */
 								'240' => sprintf( esc_html__( '%s Minutes', 'perform' ), '4' ),
+								/* translators: %s: Number of minutes */
 								'300' => sprintf( esc_html__( '%s Minutes', 'perform' ), '5' ),
 							],
 							'desc'      => esc_html__( 'Controls how often posts are autosaved while editing, reducing unnecessary database writes.', 'perform' ),
