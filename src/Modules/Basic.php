@@ -486,7 +486,7 @@ class Basic {
 			esc_url( home_url( '/' ) ),
 			esc_html__( 'Home', 'perform' )
 		);
-		wp_die( $error_message );
+		wp_die( wp_kses_post( $error_message ) );
 	}
 
 	/**
@@ -609,8 +609,17 @@ class Basic {
 			}
 		}
 
-		// Trim whitespace from start and end along with between HTML tags.
-		echo Helpers::compress_html( ob_get_clean() );
+		$compressed = Helpers::compress_html( ob_get_clean() );
+
+		// Allow only specific HTML tags to comply with WP security standards.
+		$allowed = [
+			'link' => [
+				'rel'  => [],
+				'href' => [],
+			],
+		];
+
+		echo wp_kses( $compressed, $allowed );
 	}
 
 	/**
@@ -633,7 +642,18 @@ class Basic {
 			}
 		}
 
-		// Trim whitespace from start and end along with between HTML tags.
-		echo Helpers::compress_html( ob_get_clean() );
+		// Compress HTML
+		$compressed = Helpers::compress_html( ob_get_clean() );
+
+		// Define only the allowed HTML tags for this output.
+		$allowed = [
+			'link' => [
+				'rel'  => true,
+				'href' => true,
+			],
+		];
+
+		// Output sanitized HTML
+		echo wp_kses( $compressed, $allowed );
 	}
 }
