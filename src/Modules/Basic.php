@@ -467,7 +467,7 @@ class Basic {
 
 		// Check if "feed" is present in the query string.
 		if ( ! empty( $_GET['feed'] ) ) {
-			wp_redirect( esc_url_raw( remove_query_arg( 'feed' ) ), 301 );
+			wp_safe_redirect( esc_url_raw( remove_query_arg( 'feed' ) ), 301 );
 			exit;
 		}
 
