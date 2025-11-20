@@ -168,12 +168,17 @@ class Helpers {
 	 *
 	 * @return bool
 	 */
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended
 	public static function can_display_assets_manager() {
-		if ( isset( $_GET['perform'] ) ) {
-			return true;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( empty( $_GET['perform'] ) ) {
+			return false;
 		}
 
-		return false;
+		// Sanitize for safety.
+		$perform = sanitize_text_field( wp_unslash( $_GET['perform'] ) );
+
+		return ! empty( $perform );
 	}
 
 	/**
@@ -187,14 +192,17 @@ class Helpers {
 	 * @return string
 	 */
 	public static function get_current_tab() {
-		$screen      = get_current_screen();
-		$current_tab = ! empty( $_GET['tab'] ) ? $_GET['tab'] : '';
+
+		$screen = get_current_screen();
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : '';
 
 		if ( 'settings_page_perform_settings' === $screen->id ) {
-			$current_tab = ! empty( $current_tab ) ? $current_tab : 'general';
+			$tab = $tab ?: 'general';
 		}
 
-		return $current_tab;
+		return $tab;
 	}
 
 	/**
