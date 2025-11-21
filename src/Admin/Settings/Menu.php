@@ -134,7 +134,7 @@ class Menu extends Api {
 		}
 
 		// Verify nonce for the AJAX request.
-		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['nonce'] ), 'perform_save_settings' ) ) {
+		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'perform_save_settings' ) ) {
 			wp_send_json_error(
 				[
 					'type'    => 'error',
@@ -146,7 +146,7 @@ class Menu extends Api {
 		// If the JS sent a JSON payload in `data`, decode it. Otherwise fall back to regular POST fields.
 		$posted_data = [];
 		if ( isset( $_POST['data'] ) ) {
-			$raw = wp_unslash( $_POST['data'] );
+			$raw = sanitize_textarea_field ( wp_unslash( $_POST['data'] ));
 			$decoded = json_decode( $raw, true );
 			if ( is_array( $decoded ) ) {
 				// Clean decoded values recursively
