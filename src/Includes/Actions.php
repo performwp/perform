@@ -42,7 +42,7 @@ class Actions {
 			return;
 		}
 
-		wp_enqueue_style( 'perform', PERFORM_PLUGIN_URL . 'assets/dist/css/perform.css' );
+		wp_enqueue_style( 'perform', PERFORM_PLUGIN_URL . 'assets/dist/css/perform.css', '', PERFORM_VERSION );
 	}
 
 	/**
