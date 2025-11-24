@@ -21,40 +21,11 @@ class Filters {
 	 * @return void
 	 */
 	public function __construct() {
-		add_filter( 'admin_footer_text', [ $this, 'add_admin_footer_text' ] );
 		add_filter( 'plugin_action_links_' . PERFORM_PLUGIN_BASENAME, [ $this, 'add_plugin_action_links' ] );
 		add_filter( 'post_row_actions', [ $this, 'add_row_actions' ], 10, 2 );
 		add_filter( 'page_row_actions', [ $this, 'add_row_actions' ], 10, 2 );
 	}
 
-	/**
-	 * Add rating links to the admin dashboard.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $footer_text The existing footer text
-	 *
-	 * @return string
-	 */
-	public function add_admin_footer_text( $footer_text ) {
-		$current_screen = get_current_screen();
-
-		// Don't update the footer text.
-		if ( ! stristr( $current_screen->base, 'perform_settings' ) ) {
-			return $footer_text;
-		}
-
-		$footer_text = sprintf(
-			'%1$s <strong>%2$s</strong> <a href="%4$s" target="_blank" class="perform-rating-link">%3$s</a> %5$s',
-			esc_html__( 'If you love using', 'perform' ),
-			esc_html__( 'Perform WordPress Plugin', 'perform' ),
-			esc_html__( 'please leave us a rating', 'perform' ),
-			esc_url( 'https://wordpress.org/support/plugin/perform/reviews/?filter=5#postform' ),
-			esc_html__( '. It takes a minute and helps a lot. Thanks in advance!', 'perform' ),
-		);
-
-		return $footer_text;
-	}
 
 	/**
 	 * Plugin page action links.
