@@ -88,7 +88,9 @@ class Actions {
 			home_url( $wp->request )
 		);
 
-		if ( ! isset( $_GET['perform'] ) ) {
+		$perform_flag = filter_input( INPUT_GET, 'perform', FILTER_SANITIZE_SPECIAL_CHARS );
+
+		if ( empty( $perform_flag ) ) {
 			$href     .= ! empty( $server_data['QUERY_STRING'] ) ? '&perform' : '?perform';
 			$menu_text = esc_html__( 'Assets Manager', 'perform' );
 		} else {
