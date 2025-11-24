@@ -1,4 +1,4 @@
-=== Perform – Performance Optimization for WordPress ===
+=== Perform ===
 Contributors: performwp, mehul0810, ankur0812
 Tags: performance, caching, cdn, assets, optimize
 Donate link: https://www.buymeacoffee.com/mehulgohil

@@ -14,7 +14,7 @@
  *
  * @wordpress-plugin
  *
- * Plugin Name: Perform - Optimize Performance
+ * Plugin Name: Perform
  * Plugin URI: https://performwp.com/
  * Description: This plugin adds toolset for performance and speed improvements to your WordPress sites.
  * Version: 1.5.0
