@@ -110,12 +110,9 @@ class Cdn_Manager {
 				}
 			}
 
-			// Don't Rewrite if Previewing.
-			if (
-				is_admin_bar_showing() &&
-				isset( $_GET['preview'] ) &&
-				'true' === $_GET['preview']
-			) {
+			$preview_flag = filter_input( INPUT_GET, 'preview', FILTER_SANITIZE_SPECIAL_CHARS );
+
+			if ( is_admin_bar_showing() && $preview_flag === 'true' ) {
 				return $url[0];
 			}
 
