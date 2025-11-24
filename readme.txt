@@ -9,7 +9,7 @@ Stable tag: 1.5.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-Lightweight performance plugin to remove unused assets, optimize loading order, and speed up WordPress sites; ideal for WooCommerce, page builders and busy sites.
+Lightweight performance plugin to remove unused assets, optimize loading order, and speed up WordPress sites, including WooCommerce.
 
 == Description ==
 
@@ -39,8 +39,10 @@ Other Plugins
 
 == Screenshots ==
 
-1. Settings overview: global optimization toggles.
-2. Assets Manager: disable CSS/JS per page.
+1. General Settings Screen
+2. Bloat Settings Screen
+3. Assets Settings Screen
+4. CDN Settings Screen
 
 == Installation ==
 
@@ -98,15 +100,6 @@ Contributions and bug reports welcome on GitHub: https://github.com/performwp/pe
 
 Always backup your database before updating. Follow the changelog for breaking changes.
 
-== Screenshots ==
-
-1. General Settings Screen
-2. Bloat Settings Screen
-3. Assets Settings Screen
-4. CDN Settings Screen
-
 == Contributors ==
 
 performwp, mehul0810, ankur0812
-
-
