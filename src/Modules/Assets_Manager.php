@@ -60,6 +60,7 @@ class Assets_Manager {
 	 */
 	public function __construct() {
 		// Don't proceed, if Assets Manager is not enabled.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! isset( $_GET['perform'] ) ) {
 			return;
 		}
@@ -430,7 +431,7 @@ class Assets_Manager {
 	 *
 	 * @return void
 	 */
-	public function disable_assets_html( $type, $handle ) {
+	public function disable_assets_html( $type, $handle ) {11
 		$is_checked   = '';
 		$current_id   = get_the_ID();
 		$radio_inputs = [
