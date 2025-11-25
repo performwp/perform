@@ -465,8 +465,11 @@ class Basic {
 			return;
 		}
 
-		// Check if "feed" is present in the query string.
-		if ( ! empty( $_GET['feed'] ) ) {
+		// Check if "feed" param exists.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$feed_param = isset( $_GET['feed'] ) ? sanitize_text_field( wp_unslash( $_GET['feed'] ) ) : '';
+
+		if ( ! empty( $feed_param ) ) {
 			wp_safe_redirect( esc_url_raw( remove_query_arg( 'feed' ) ), 301 );
 			exit;
 		}
