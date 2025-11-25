@@ -431,7 +431,7 @@ class Assets_Manager {
 	 *
 	 * @return void
 	 */
-	public function disable_assets_html( $type, $handle ) {11
+	public function disable_assets_html( $type, $handle ) {
 		$is_checked   = '';
 		$current_id   = get_the_ID();
 		$radio_inputs = [
