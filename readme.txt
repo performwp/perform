@@ -5,7 +5,7 @@ Donate link: https://www.buymeacoffee.com/mehulgohil
 Requires at least: 4.8
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.5.0
+Stable tag: 1.5.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -65,6 +65,11 @@ For help and troubleshooting, use our WordPress.org support forum: https://wordp
 Contributions and bug reports welcome on GitHub: https://github.com/performwp/perform
 
 == Changelog ==
+
+= 1.5.1 - 2025-12-06 =
+- Added compatibility to WordPress 6.9
+- Upgraded Freemius SDK to 2.13
+- Upgraded WPCS to 3.3
 
 = 1.5.0 - 2025-11-01 =
 - Upgraded Settings UI to look and feel premium.
