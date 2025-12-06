@@ -70,6 +70,7 @@ Contributions and bug reports welcome on GitHub: https://github.com/performwp/pe
 - Added compatibility to WordPress 6.9
 - Upgraded Freemius SDK to 2.13
 - Upgraded WPCS to 3.3
+- Resolved load text domain warning
 
 = 1.5.0 - 2025-11-01 =
 - Upgraded Settings UI to look and feel premium.
