@@ -3,13 +3,13 @@ Contributors: performwp, mehul0810, ankur0812
 Tags: performance, caching, cdn, assets, optimize
 Donate link: https://www.buymeacoffee.com/mehulgohil
 Requires at least: 4.8
-Tested up to: 6.8
+Tested up to: 6.9
 Requires PHP: 7.4
 Stable tag: 1.5.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-Lightweight performance plugin to remove unused assets, optimize loading order, and speed up WordPress sites; ideal for WooCommerce, page builders and busy sites.
+Speed up your WordPress site by removing unused assets, optimize loading order, and much more; ideal for WooCommerce, page builders and busy sites.
 
 == Description ==
 
