@@ -7,8 +7,8 @@
         "perform"
     ],
     "preferredVersions": {
-        "php": "8.2",
-        "wp": "6.8"
+        "php": "8.4",
+        "wp": "6.9"
     },
     "steps": [
         {
