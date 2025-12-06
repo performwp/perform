@@ -16,16 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Menu extends Api {
 	/**
-	 * Tabs for the settings page.
-	 *
-	 * @since 2.0.0
-	 * @access public
-	 *
-	 * @var array
-	 */
-	public $tabs = [];
-
-	/**
 	 * Constructor
 	 *
 	 * @since 2.0.0
@@ -34,7 +24,6 @@ class Menu extends Api {
 	 */
 	public function __construct() {
 		$this->prefix = 'perform_';
-		$this->tabs   = Helpers::get_settings_tabs();
 
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 9 );
 		add_action( 'wp_ajax_perform_save_settings', [ $this, 'save_settings' ] );

@@ -243,18 +243,30 @@ class Helpers {
 	 */
 	public static function get_settings_tabs() {
 		$tabs = [
-			'general'  => esc_html__( 'General', 'perform' ),
-			'bloat'    => esc_html__( 'Bloat', 'perform' ),
-			'assets'   => esc_html__( 'Assets', 'perform' ),
-			'cdn'      => esc_html__( 'CDN', 'perform' ),
-			'advanced' => esc_html__( 'Advanced', 'perform' ),
+			'general'  => 'General',
+			'bloat'    => 'Bloat',
+			'assets'   => 'Assets',
+			'cdn'      => 'CDN',
+			'advanced' => 'Advanced',
 		];
 
 		// Add WooCommerce tab if WooCommerce is active.
 		if ( self::is_woocommerce_active() ) {
-			$tabs['woocommerce'] = esc_html__( 'WooCommerce', 'perform' );
+			$tabs['woocommerce'] = 'WooCommerce';
 		}
-		return $tabs;
+
+        /**
+         * ✅ Safe translation wrapper
+         * Translate only after init, otherwise return plain labels.
+         */
+        if ( did_action( 'init' ) ) {
+            foreach ( $tabs as $key => $label ) {
+                $tabs[ $key ] = esc_html__( $label, 'perform' );
+            }
+        }
+
+		//return $tabs;
+		return apply_filters( 'perform_settings_tabs', $tabs );
 	}
 
 	/**
