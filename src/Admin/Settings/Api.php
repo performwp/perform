@@ -49,7 +49,7 @@ class Api {
 		?>
 		<div class="perform-admin-settings--save-wrap">
 			<?php wp_nonce_field( 'perform-save-settings', 'perform_settings_barrier' ); ?>
-			<input id="perform-save-settings" type="button" class="button button-primary" value="<?php echo $save_text; ?>" data-default-text="<?php echo $save_text; ?>" data-saving-text="<?php esc_html_e( 'Saving...', 'perform' ); ?>"/>
+			<input id="perform-save-settings" type="button" class="button button-primary" value="<?php echo esc_attr( $save_text ); ?>" data-default-text="<?php echo esc_attr( $save_text ); ?>" data-saving-text="<?php echo esc_attr__( 'Saving...', 'perform' ); ?>"/>
 			<div class="perform-admin-settings--save-notices">
 			</div>
 		</div>
@@ -78,7 +78,7 @@ class Api {
 		}
 
 		?>
-		<form id="perform-admin-settings-form" action="POST">
+		<form id="perform-admin-settings-form" method="POST">
 			<table class="form-table" role="presentation">
 				<tbody>
 					<?php foreach ( $fields as $field ) : ?>

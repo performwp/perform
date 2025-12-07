@@ -97,7 +97,8 @@ class Assets_Manager {
 		$assets_list = $this->prepare_assets_list();
 		?>
 		<div id="perform-assets-manager" class="perform-assets-manager">
-			<form id="perform-assets-manager--form" method='POST'>
+			<form id="perform-assets-manager--form" method="POST">
+				<?php wp_nonce_field( 'perform_assets_manager_save', 'perform_assets_manager_nonce' ); ?>
 				<div class="perform-assets-manager--header">
 					<div class="perform-assets-manager--logo">
 						<img src="<?php echo PERFORM_PLUGIN_URL . 'assets/dist/images/logo.png'; ?>" alt="<?php esc_html_e( 'Perform', 'perform' ); ?>" />
@@ -366,8 +367,8 @@ class Assets_Manager {
 					</td>
 					<td class="perform-assets-manager--url">
 						<a href="<?php echo esc_url( $src ); ?>" target="_blank"><?php esc_html_e( 'View File', 'perform' ); ?></a>
-						<input type="hidden" name="<?php echo esc_html( "relations[{$type}][{$handle}][category]" ); ?>" value="<?php echo $category; ?>" />
-						<input type="hidden" name="<?php echo esc_html( "relations[{$type}][{$handle}][group]" ); ?>", value="<?php echo $group; ?>" />
+							<input type="hidden" name="<?php echo esc_attr( "relations[{$type}][{$handle}][category]" ); ?>" value="<?php echo esc_attr( $category ); ?>" />
+							<input type="hidden" name="<?php echo esc_attr( "relations[{$type}][{$handle}][group]" ); ?>" value="<?php echo esc_attr( $group ); ?>" />
 					</td>
 				</tr>
 			<?php
@@ -457,8 +458,8 @@ class Assets_Manager {
 				}
 				?>
 				<label for="<?php echo esc_html( "disabled-{$type}-{$handle}-{$key}" ); ?>">
-					<input type="radio" name="disabled[<?php echo $type; ?>][<?php echo $handle; ?>]" id="<?php echo esc_html( "disabled-{$type}-{$handle}-{$key}" ); ?>" class="perform-disable-assets" value="<?php echo $key; ?>"<?php echo $is_checked; ?>/>
-					<?php echo $value; ?>
+							<input type="radio" name="disabled[<?php echo esc_attr( $type ); ?>][<?php echo esc_attr( $handle ); ?>]" id="<?php echo esc_attr( "disabled-{$type}-{$handle}-{$key}" ); ?>" class="perform-disable-assets" value="<?php echo esc_attr( $key ); ?>"<?php echo $is_checked; ?>/>
+							<?php echo esc_html( $value ); ?>
 				</label>
 				<?php
 			}
@@ -520,9 +521,9 @@ class Assets_Manager {
 			</div>
 
 			<div class="perform-assets-manager-exception--options">
-				<input type="hidden" name="enabled[<?php echo $type; ?>][<?php echo $handle; ?>][current]" value="" />
-				<label for="<?php echo "{$type}-{$handle}-enable-current"; ?>">
-					<input type="checkbox" name="enabled[<?php echo $type; ?>][<?php echo $handle; ?>][current]" id="<?php echo "{$type}-{$handle}-enable-current"; ?>" value="<?php echo $current_id; ?>" <?php echo $is_current_checked; ?>/>
+							<input type="hidden" name="enabled[<?php echo esc_attr( $type ); ?>][<?php echo esc_attr( $handle ); ?>][current]" value="" />
+							<label for="<?php echo esc_attr( "{$type}-{$handle}-enable-current" ); ?>">
+								<input type="checkbox" name="enabled[<?php echo esc_attr( $type ); ?>][<?php echo esc_attr( $handle ); ?>][current]" id="<?php echo esc_attr( "{$type}-{$handle}-enable-current" ); ?>" value="<?php echo esc_attr( $current_id ); ?>" <?php echo $is_current_checked; ?>/>
 					<?php esc_html_e( 'Current URL', 'perform' ); ?>
 				</label>
 
@@ -540,15 +541,15 @@ class Assets_Manager {
 						unset( $post_types['attachment'] );
 					}
 					?>
-					<input type="hidden" name="enabled[<?php echo $type; ?>][<?php echo $handle; ?>][post_types]" value="" />
+							<input type="hidden" name="enabled[<?php echo esc_attr( $type ); ?>][<?php echo esc_attr( $handle ); ?>][post_types]" value="" />
 					<?php
 
 					foreach ( $post_types as $key => $value ) {
 						$is_post_type_selected = ( is_array( $selected_post_types ) && in_array( $key, $selected_post_types, true ) ) ? ' checked="checked"' : '';
 						?>
 						<label for="<?php echo "{$type}-{$handle}-enable-{$key}"; ?>">
-							<input type="checkbox" name="enabled[<?php echo $type; ?>][<?php echo $handle; ?>][post_types][]" id="<?php echo "{$type}-{$handle}-enable-{$key}"; ?>" value="<?php echo $key; ?>" <?php echo $is_post_type_selected; ?> />
-							<?php echo $value->label; ?>
+								<input type="checkbox" name="enabled[<?php echo esc_attr( $type ); ?>][<?php echo esc_attr( $handle ); ?>][post_types][]" id="<?php echo esc_attr( "{$type}-{$handle}-enable-{$key}" ); ?>" value="<?php echo esc_attr( $key ); ?>" <?php echo $is_post_type_selected; ?> />
+								<?php echo esc_html( $value->label ); ?>
 						</label>
 						<?php
 					}
@@ -568,8 +569,18 @@ class Assets_Manager {
 	 * @return array
 	 */
 	public function save_assets_manager_settings() {
-		$post_data = Helpers::clean( filter_input_array( INPUT_POST ) );
-		$get_data  = Helpers::clean( filter_input_array( INPUT_GET ) );
+ 		// Capability check.
+ 		if ( ! current_user_can( 'manage_options' ) ) {
+ 			return;
+ 		}
+
+ 		// Require the expected nonce and verify it to protect against CSRF.
+ 		if ( ! isset( $_POST['perform_assets_manager_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['perform_assets_manager_nonce'] ), 'perform_assets_manager_save' ) ) {
+ 			return;
+ 		}
+
+ 		$post_data = Helpers::clean( filter_input_array( INPUT_POST ) );
+ 		$get_data  = Helpers::clean( filter_input_array( INPUT_GET ) );
 
 		if (
 			isset( $get_data['perform'] ) &&

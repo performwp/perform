@@ -57,17 +57,20 @@ class Ssl_Manager {
 	 * @return void
 	 */
 	public function wp_redirect_to_ssl() {
-		$server_data = filter_input_array( INPUT_SERVER );
+		// Prefer the configured site URL host instead of trusting HTTP_HOST.
+		$host = parse_url( home_url(), PHP_URL_HOST );
 
-		// Bailout, if HTTP Host doesn't exist in server variables.
-		if ( ! array_key_exists( 'HTTP_HOST', $server_data ) ) {
-			return;
+		// Fallback to server host if site URL parsing fails.
+		if ( empty( $host ) && ! empty( $_SERVER['HTTP_HOST'] ) ) {
+			$host = sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) );
 		}
 
-		$redirect_url = "https://{$server_data['HTTP_HOST']}{$server_data['REQUEST_URI']}";
+		$uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '/';
+
+		$redirect_url = set_url_scheme( 'https://' . $host . $uri, 'https' );
 		$redirect_url = apply_filters( 'perform_wp_redirect_url_to_ssl', $redirect_url );
 
-		wp_safe_redirect( $redirect_url, 301 );
+		wp_safe_redirect( esc_url_raw( $redirect_url ), 301 );
 		exit;
 	}
 }
