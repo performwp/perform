@@ -28,9 +28,7 @@ class DisableXmlrpc extends AbstractModule {
 	 *
 	 * @return string
 	 */
-	protected static function get_option_key(): string {
-		return 'disable_xmlrpc';
-	}
+	protected static $option_key = 'disable_xmlrpc';
 
 	/**
 	 * Register hooks and filters for this module.

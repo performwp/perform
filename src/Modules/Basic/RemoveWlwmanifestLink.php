@@ -22,15 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 2.0.0
  */
 class RemoveWlwmanifestLink extends AbstractModule {
-
-	/**
-	 * Get the option key for this module.
-	 *
-	 * @return string
-	 */
-	protected static function get_option_key(): string {
-		return 'remove_wlwmanifest_link';
-	}
+    protected static $option_key = 'remove_wlwmanifest_link';
 
 	/**
 	 * Register hooks and filters for this module.

@@ -22,15 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 2.0.0
  */
 class DisableDashicons extends AbstractModule {
-
-	/**
-	 * Get the option key for this module.
-	 *
-	 * @return string
-	 */
-	protected static function get_option_key(): string {
-		return 'disable_dashicons';
-	}
+    protected static $option_key = 'disable_dashicons';
 
 	/**
 	 * Register hooks and filters for this module.
