@@ -8,7 +8,7 @@
  * @author     PerformWP <hello@performwp.com>
  */
 
-namespace Perform\Modules;
+namespace Perform\Modules\MenuCache;
 
 // Bail out, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Optimized and enhanced for improved performance.
  */
-class Menu_Cache {
+class Menu_Cache implements ModuleInterface {
 
 	/**
 	 * Log Menu Start.
@@ -83,14 +83,21 @@ class Menu_Cache {
 	public $uncached_total_time;
 
 	/**
-	 * Menu_Cache Constructor.
+	 * Determine whether this module should be loaded.
 	 *
-	 * @since  1.2.0
-	 * @access public
+	 * @return bool
+	 */
+	public function should_load(): bool {
+		$settings = Helpers::get_settings();
+		return isset( $settings['enable_navigation_menu_cache'] ) && ! empty( $settings['enable_navigation_menu_cache'] );
+	}
+
+	/**
+	 * Register hooks and filters for this module.
 	 *
 	 * @return void
 	 */
-	public function __construct() {
+	public function register(): void {
 		add_filter( 'pre_wp_nav_menu', [ $this, 'cache_nav_menu_output' ], 10, 2 );
 		add_filter( 'wp_nav_menu', [ $this, 'cache_nav_menu' ], 10, 2 );
 		add_action( 'wp_update_nav_menu', [ $this, 'update_nav_menu_cache' ], 10, 2 );

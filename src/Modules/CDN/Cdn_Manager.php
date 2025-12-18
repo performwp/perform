@@ -9,7 +9,7 @@
  * @author     PerformWP <hello@performwp.com>
  */
 
-namespace Perform\Modules;
+namespace Perform\Modules\CDN;
 
 use Perform\Includes\Helpers;
 
@@ -23,22 +23,23 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.0.0
  */
-class Cdn_Manager {
+class Cdn_Manager implements ModuleInterface {
 
 	/**
-	 * Perform_CDN_Manager constructor.
+	 * Determine whether this module should be loaded.
 	 *
-	 * @since  1.0.0
-	 * @access public
+	 * @return bool
+	 */
+	public function should_load(): bool {
+		return Helpers::get_option( 'enable_cdn', 'perform_cdn', false );
+	}
+
+	/**
+	 * Register hooks and filters for this module.
 	 *
 	 * @return void
 	 */
-	public function __construct() {
-		// Bailout, if the CDN is not enabled.
-		if ( ! Helpers::get_option( 'enable_cdn', 'perform_cdn', false ) ) {
-			return;
-		}
-
+	public function register(): void {
 		add_action( 'template_redirect', [ $this, 'rewrite_with_cdn' ], 1 );
 	}
 

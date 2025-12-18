@@ -9,7 +9,7 @@
  * @author     PerformWP <hello@performwp.com>
  */
 
-namespace Perform\Modules;
+namespace Perform\Modules\WooCommerce;
 
 use Perform\Includes\Helpers;
 
@@ -23,17 +23,26 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.0.0
  */
-class Woocommerce_Manager {
+class Woocommerce_Manager implements ModuleInterface {
 
 	/**
-	 * Constructor.
+	 * Determine whether this module should be loaded.
 	 *
-	 * @since  1.0.0
-	 * @access public
+	 * @return bool
+	 */
+	public function should_load(): bool {
+		return Helpers::get_option( 'disable_woocommerce_assets', 'perform_woocommerce' ) ||
+			   Helpers::get_option( 'disable_woocommerce_cart_fragmentation', 'perform_woocommerce' ) ||
+			   Helpers::get_option( 'disable_woocommerce_status', 'perform_woocommerce' ) ||
+			   Helpers::get_option( 'disable_woocommerce_widgets', 'perform_woocommerce' );
+	}
+
+	/**
+	 * Register hooks and filters for this module.
 	 *
 	 * @return void
 	 */
-	public function __construct() {
+	public function register(): void {
 		/**
 		 * Disable Default WooCommerce Assets.
 		 *

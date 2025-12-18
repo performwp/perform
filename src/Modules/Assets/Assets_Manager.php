@@ -9,7 +9,7 @@
  * @author PerformWP <hello@performwp.com>
  */
 
-namespace Perform\Modules;
+namespace Perform\Modules\Assets;
 
 use Perform\Includes\Helpers;
 
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Assets_Manager {
+class Assets_Manager implements ModuleInterface {
 
 	/**
 	 * Loaded Assets.
@@ -58,31 +58,33 @@ class Assets_Manager {
 	 *
 	 * @return void
 	 */
-	public function __construct() {
-		// Don't proceed, if Assets Manager is not enabled.
-		if ( ! isset( $_GET['perform'] ) ) {
-			return;
-		}
-
-		// Don't proceed, if not accessed by administrator.
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
-
+	/**
+	 * Determine whether this module should be loaded.
+	 *
+	 * @return bool
+	 */
+	public function should_load(): bool {
 		$settings = Helpers::get_settings();
+		return isset( $settings['enable_assets_manager'] ) && ! empty( $settings['enable_assets_manager'] );
+	}
 
-		// Don't proceed, if `Assets Manager` is not enabled.
-		if ( ! isset( $settings['enable_assets_manager'] ) || empty( $settings['enable_assets_manager'] ) ) {
-			return;
-		}
-
+	/**
+	 * Register hooks and filters for this module.
+	 *
+	 * @return void
+	 */
+	public function register(): void {
 		$this->selected_options = get_option( 'perform_assets_manager_options' );
 
-		add_action( 'wp_footer', [ $this, 'assets_manager_html' ], 1000 );
 		add_action( 'template_redirect', [ $this, 'save_assets_manager_settings' ], 10, 2 );
 
 		add_filter( 'script_loader_src', [ $this, 'dequeue_assets' ], 1000, 2 );
 		add_filter( 'style_loader_src', [ $this, 'dequeue_assets' ], 1000, 2 );
+
+		// Only add HTML if accessed by admin with perform param.
+		if ( isset( $_GET['perform'] ) && current_user_can( 'manage_options' ) ) {
+			add_action( 'wp_footer', [ $this, 'assets_manager_html' ], 1000 );
+		}
 	}
 
 	/**

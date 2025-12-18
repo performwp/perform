@@ -9,7 +9,7 @@
  * @author     PerformWP <hello@performwp.com>
  */
 
-namespace Perform\Modules;
+namespace Perform\Modules\SSL;
 
 use Perform\Includes\Helpers;
 
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Ssl_Manager {
+class Ssl_Manager implements ModuleInterface {
 
 	/**
 	 * Is SSL Enabled?
@@ -30,20 +30,22 @@ class Ssl_Manager {
 	public $is_ssl_enabled;
 
 	/**
-	 * Constructor.
+	 * Determine whether this module should be loaded.
 	 *
-	 * @since  1.0.0
-	 * @access public
-	 *
-	 * @throws Exception
+	 * @return bool
+	 */
+	public function should_load(): bool {
+		return Helpers::get_option( 'enable_ssl', 'perform_ssl', false );
+	}
+
+	/**
+	 * Register hooks and filters for this module.
 	 *
 	 * @return void
 	 */
-	public function __construct() {
-		$this->is_ssl_enabled = Helpers::get_option( 'enable_ssl', 'perform_ssl', false );
-
+	public function register(): void {
 		// Proceed, only if site accessed with non-HTTP url.
-		if ( ! is_ssl() && $this->is_ssl_enabled ) {
+		if ( ! is_ssl() ) {
 			$this->wp_redirect_to_ssl();
 		}
 	}

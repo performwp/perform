@@ -4,6 +4,7 @@ namespace Perform;
 use Perform\Admin;
 use Perform\Admin\Settings;
 use Perform\Modules;
+use Perform\Includes\Helpers;
 
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -32,7 +33,7 @@ final class Plugin {
 
 		// Register services used throughout the plugin.
 		add_action( 'plugins_loaded', [ $this, 'register_services' ] );
-		
+
 		// Load text domain.
 		add_action( 'init', [ $this, 'load_plugin_textdomain' ] );
 	}
@@ -58,20 +59,49 @@ final class Plugin {
 		// Load Frontend Files.
 		new Includes\Actions();
 		new Includes\Filters();
-		new Modules\Basic();
-		new Modules\Cdn_Manager();
-		new Modules\Assets_Manager();
-		new Modules\Ssl_Manager();
-		new Modules\Woocommerce_Manager();
-		new Modules\Menu_Cache();
+
+		// Centralized module loader - preserves backward compatibility with
+		// modules that still register hooks in their constructors while
+		// supporting new modules implementing ModuleInterface.
+		$settings = Helpers::get_settings() ?: [];
+
+		$loader = new Modules\Loader( $settings );
+
+		$loader->register_modules([
+			Modules\Basic::class,
+			Modules\Basic\DisableEmoji::class,
+			Modules\Basic\DisableEmbeds::class,
+			Modules\Basic\RemoveQueryStrings::class,
+			Modules\Basic\DisableXmlrpc::class,
+			Modules\Basic\RemoveJqueryMigrate::class,
+			Modules\Basic\HideWpVersion::class,
+			Modules\Basic\RemoveWlwmanifestLink::class,
+			Modules\Basic\RemoveRsdLink::class,
+			Modules\Basic\RemoveShortlink::class,
+			Modules\Basic\DisableRssFeeds::class,
+			Modules\Basic\DisableFeedLinks::class,
+			Modules\Basic\DisableSelfPingbacks::class,
+			Modules\Basic\RemoveRestApiLinks::class,
+			Modules\Basic\DisableDashicons::class,
+			Modules\Basic\DisablePasswordStrengthMeter::class,
+			Modules\Basic\LimitPostRevisions::class,
+			Modules\Basic\DnsPrefetch::class,
+			Modules\Basic\Preconnect::class,
+			Modules\Basic\Heartbeat::class,
+			Modules\CDN\Cdn_Manager::class,
+			Modules\Assets\Assets_Manager::class,
+			Modules\SSL\Ssl_Manager::class,
+			Modules\WooCommerce\Woocommerce_Manager::class,
+			Modules\MenuCache\Menu_Cache::class,
+		]);
 	}
 
 	/**
 	 * Loads the Freemius SDK.
-	 * 
+	 *
 	 * @since  1.4.0
 	 * @access public
-	 * 
+	 *
 	 * @return void
 	 */
 	public function load_freemius() {
