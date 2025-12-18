@@ -10,6 +10,9 @@
 
 namespace Perform\Modules\MenuCache;
 
+use Perform\Includes\Helpers;
+use Perform\Modules\ModuleInterface;
+
 // Bail out, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

@@ -10,6 +10,7 @@
 namespace Perform\Modules\Basic;
 
 use Perform\Includes\Helpers;
+use Perform\Modules\ModuleInterface;
 
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
