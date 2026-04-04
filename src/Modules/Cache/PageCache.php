@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Page_Cache implements ModuleInterface {
+class PageCache implements ModuleInterface {
 	/**
 	 * Cache directory.
 	 *
