@@ -32,10 +32,10 @@ class WooManager implements ModuleInterface {
 	 * @return bool
 	 */
 	public function should_load(): bool {
-		return Helpers::get_option( 'disable_woocommerce_assets', 'perform_woocommerce' ) ||
-			   Helpers::get_option( 'disable_woocommerce_cart_fragmentation', 'perform_woocommerce' ) ||
-			   Helpers::get_option( 'disable_woocommerce_status', 'perform_woocommerce' ) ||
-			   Helpers::get_option( 'disable_woocommerce_widgets', 'perform_woocommerce' );
+		return Helpers::get_option( 'disable_woocommerce_assets', 'perform_settings' ) ||
+			   Helpers::get_option( 'disable_woocommerce_cart_fragmentation', 'perform_settings' ) ||
+			   Helpers::get_option( 'disable_woocommerce_status', 'perform_settings' ) ||
+			   Helpers::get_option( 'disable_woocommerce_widgets', 'perform_settings' );
 	}
 
 	/**
@@ -49,7 +49,7 @@ class WooManager implements ModuleInterface {
 		 *
 		 * @since 1.0.0
 		 */
-		$disable_assets = Helpers::get_option( 'disable_woocommerce_assets', 'perform_woocommerce' );
+		$disable_assets = Helpers::get_option( 'disable_woocommerce_assets', 'perform_settings' );
 		if ( $disable_assets ) {
 			add_action( 'wp_enqueue_scripts', [ $this, 'disable_assets' ], 99 );
 		}
@@ -59,7 +59,7 @@ class WooManager implements ModuleInterface {
 		 *
 		 * @since 1.0.0
 		 */
-		$disable_cart_fragmentation = Helpers::get_option( 'disable_woocommerce_cart_fragmentation', 'perform_woocommerce' );
+		$disable_cart_fragmentation = Helpers::get_option( 'disable_woocommerce_cart_fragmentation', 'perform_settings' );
 		if ( $disable_cart_fragmentation ) {
 			add_action( 'wp_enqueue_scripts', [ $this, 'disable_cart_fragmentation' ], 99 );
 		}
@@ -69,7 +69,7 @@ class WooManager implements ModuleInterface {
 		 *
 		 * @since 1.0.0
 		 */
-		$disable_status_metabox = Helpers::get_option( 'disable_woocommerce_status', 'perform_woocommerce' );
+		$disable_status_metabox = Helpers::get_option( 'disable_woocommerce_status', 'perform_settings' );
 		if ( $disable_status_metabox ) {
 			add_action( 'wp_dashboard_setup', [ $this, 'disable_status_metabox' ] );
 		}
@@ -79,7 +79,7 @@ class WooManager implements ModuleInterface {
 		 *
 		 * @since 1.0.0
 		 */
-		$disable_widgets = Helpers::get_option( 'disable_woocommerce_widgets', 'perform_woocommerce' );
+		$disable_widgets = Helpers::get_option( 'disable_woocommerce_widgets', 'perform_settings' );
 		if ( $disable_widgets ) {
 			add_action( 'widgets_init', [ $this, 'disable_widgets' ], 99 );
 		}

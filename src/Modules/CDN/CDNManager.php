@@ -32,7 +32,7 @@ class CDNManager implements ModuleInterface {
 	 * @return bool
 	 */
 	public function should_load(): bool {
-		return Helpers::get_option( 'enable_cdn', 'perform_cdn', false );
+		return Helpers::get_option( 'enable_cdn', 'perform_settings', false );
 	}
 
 	/**
@@ -80,7 +80,7 @@ class CDNManager implements ModuleInterface {
 		$site_url        = quotemeta( get_option( 'home' ) );
 		$url_regex       = '(https?:|)' . substr( $site_url, strpos( $site_url, '//' ) );
 		$directories     = 'wp\-content|wp\-includes';
-		$cdn_directories = Helpers::get_option( 'cdn_directories', 'perform_cdn' );
+			$cdn_directories = Helpers::get_option( 'cdn_directories', 'perform_settings' );
 
 		if ( ! empty( $cdn_directories ) ) {
 			$directory_list = array_map( 'trim', explode( ',', $cdn_directories ) );
@@ -106,10 +106,10 @@ class CDNManager implements ModuleInterface {
 	 * @return string
 	 */
 	public function rewrited_cdn_url( $url ) {
-		$cdn_url = Helpers::get_option( 'cdn_url', 'perform_cdn' );
+			$cdn_url = Helpers::get_option( 'cdn_url', 'perform_settings' );
 
 		if ( ! empty( $cdn_url ) ) {
-			$cdn_exclusions = Helpers::get_option( 'cdn_exclusions', 'perform_cdn' );
+				$cdn_exclusions = Helpers::get_option( 'cdn_exclusions', 'perform_settings' );
 
 			// Don't Rewrite URL, if Excluded.
 			if ( ! empty( $cdn_exclusions ) ) {

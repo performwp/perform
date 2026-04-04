@@ -61,6 +61,20 @@ class PageCache implements ModuleInterface {
 	private $lock_key = '';
 
 	/**
+	 * Stats storage service.
+	 *
+	 * @var StatsStore|null
+	 */
+	private $stats_store = null;
+
+	/**
+	 * URL normalizer service.
+	 *
+	 * @var UrlNormalizer|null
+	 */
+	private $url_normalizer = null;
+
+	/**
 	 * Determine whether this module should be loaded.
 	 *
 	 * @return bool
@@ -76,6 +90,8 @@ class PageCache implements ModuleInterface {
 	 */
 	public function register(): void {
 		$this->cache_dir = trailingslashit( WP_CONTENT_DIR ) . 'cache/perform/';
+		$this->stats_store = new StatsStore();
+		$this->url_normalizer = new UrlNormalizer();
 
 		add_filter( 'cron_schedules', [ $this, 'register_cron_schedule' ] );
 		add_action( 'init', [ $this, 'maybe_schedule_events' ] );
@@ -83,6 +99,7 @@ class PageCache implements ModuleInterface {
 		add_action( 'template_redirect', [ $this, 'maybe_serve_cache' ], 0 );
 		add_action( 'template_redirect', [ $this, 'start_output_buffer' ], 9999 );
 		add_action( 'shutdown', [ $this, 'record_slow_uncached_request' ], 9999 );
+		add_action( 'shutdown', [ $this, 'flush_stats' ], 10000 );
 
 		add_action( 'save_post', [ $this, 'purge_related_urls_for_post' ], 10, 3 );
 		add_action( 'deleted_post', [ $this, 'purge_related_urls_for_deleted_post' ], 10, 1 );
@@ -165,20 +182,22 @@ class PageCache implements ModuleInterface {
 
 		if ( $meta && is_string( $html ) && ! $is_regen_request ) {
 			$now = time();
-			if ( ! empty( $meta['expires'] ) && $now <= (int) $meta['expires'] ) {
-				$this->increment_stat( 'hits' );
-				$this->send_cache_headers( 'HIT' );
-				echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				exit;
-			}
+				if ( ! empty( $meta['expires'] ) && $now <= (int) $meta['expires'] ) {
+					$this->increment_stat( 'hits' );
+					$this->send_cache_headers( 'HIT' );
+					$this->flush_stats();
+					echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					exit;
+				}
 
-			if ( ! empty( $meta['swr_expires'] ) && $now <= (int) $meta['swr_expires'] ) {
-				$this->increment_stat( 'stale_hits' );
-				$this->send_cache_headers( 'STALE' );
-				$this->maybe_trigger_async_regeneration( $this->current_url );
-				echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				exit;
-			}
+				if ( ! empty( $meta['swr_expires'] ) && $now <= (int) $meta['swr_expires'] ) {
+					$this->increment_stat( 'stale_hits' );
+					$this->send_cache_headers( 'STALE' );
+					$this->maybe_trigger_async_regeneration( $this->current_url );
+					$this->flush_stats();
+					echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					exit;
+				}
 		}
 
 		// Miss path: acquire lock to avoid stampede.
@@ -186,12 +205,13 @@ class PageCache implements ModuleInterface {
 			$this->increment_stat( 'lock_waits' );
 
 			// If lock is held and stale exists, prefer stale over full uncached render.
-			if ( $meta && is_string( $html ) ) {
-				$this->increment_stat( 'stale_hits' );
-				$this->send_cache_headers( 'STALE-LOCK' );
-				echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				exit;
-			}
+				if ( $meta && is_string( $html ) ) {
+					$this->increment_stat( 'stale_hits' );
+					$this->send_cache_headers( 'STALE-LOCK' );
+					$this->flush_stats();
+					echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					exit;
+				}
 
 			$this->increment_stat( 'misses' );
 			$this->record_top_miss( $this->current_url );
@@ -842,53 +862,8 @@ class PageCache implements ModuleInterface {
 	 * @return string
 	 */
 	private function normalize_url( $url ) {
-		$parts = wp_parse_url( $url );
-		if ( ! is_array( $parts ) ) {
-			return esc_url_raw( $url );
-		}
-
-		$scheme = isset( $parts['scheme'] ) ? strtolower( $parts['scheme'] ) : 'https';
-		$host   = isset( $parts['host'] ) ? strtolower( $parts['host'] ) : '';
-		$path   = isset( $parts['path'] ) ? $parts['path'] : '/';
-		$path   = '/' . ltrim( $path, '/' );
-
-		$query_params = [];
-		if ( ! empty( $parts['query'] ) ) {
-			parse_str( $parts['query'], $query_params );
-		}
-
-		$ignore_params = [
-			'fbclid',
-			'gclid',
-			'msclkid',
-			'mc_cid',
-			'mc_eid',
-		];
-		$separate_params_raw = (string) Helpers::get_option( 'cache_separate_query_params', 'perform_settings', '' );
-		$separate_params     = array_filter( array_map( 'trim', explode( ',', $separate_params_raw ) ) );
-
-		$filtered = [];
-		foreach ( $query_params as $key => $value ) {
-			$key_str = strtolower( (string) $key );
-			if ( 0 === strpos( $key_str, 'utm_' ) || in_array( $key_str, $ignore_params, true ) ) {
-				continue;
-			}
-
-			if ( ! empty( $separate_params ) && ! in_array( $key_str, $separate_params, true ) ) {
-				continue;
-			}
-
-			$filtered[ $key_str ] = $value;
-		}
-
-		if ( ! empty( $filtered ) ) {
-			ksort( $filtered );
-			$query = http_build_query( $filtered );
-		} else {
-			$query = '';
-		}
-
-		return $scheme . '://' . $host . $path . ( '' !== $query ? '?' . $query : '' );
+		$service = $this->get_url_normalizer();
+		return $service->normalize( $url );
 	}
 
 	/**
@@ -899,7 +874,8 @@ class PageCache implements ModuleInterface {
 	 * @return string
 	 */
 	private function get_cache_key_for_url( $normalized_url ) {
-		return md5( $normalized_url );
+		$service = $this->get_url_normalizer();
+		return $service->key_for_url( $normalized_url );
 	}
 
 	/**
@@ -1045,13 +1021,8 @@ class PageCache implements ModuleInterface {
 	 * @return void
 	 */
 	private function increment_stat( $key ) {
-		$stats = get_option( 'perform_cache_stats', [] );
-		if ( ! is_array( $stats ) ) {
-			$stats = [];
-		}
-
-		$stats[ $key ] = isset( $stats[ $key ] ) ? ( (int) $stats[ $key ] + 1 ) : 1;
-		update_option( 'perform_cache_stats', $stats, false );
+		$store = $this->get_stats_store();
+		$store->increment( $key );
 	}
 
 	/**
@@ -1063,12 +1034,8 @@ class PageCache implements ModuleInterface {
 	 * @return void
 	 */
 	private function set_stat_value( $key, $value ) {
-		$stats = get_option( 'perform_cache_stats', [] );
-		if ( ! is_array( $stats ) ) {
-			$stats = [];
-		}
-		$stats[ $key ] = $value;
-		update_option( 'perform_cache_stats', $stats, false );
+		$store = $this->get_stats_store();
+		$store->set_value( $key, $value );
 	}
 
 	/**
@@ -1097,12 +1064,8 @@ class PageCache implements ModuleInterface {
 	 * @return array<string, int|float>
 	 */
 	private function get_stat_map( $key ) {
-		$stats = get_option( 'perform_cache_stats', [] );
-		if ( ! is_array( $stats ) || ! isset( $stats[ $key ] ) || ! is_array( $stats[ $key ] ) ) {
-			return [];
-		}
-
-		return $stats[ $key ];
+		$store = $this->get_stats_store();
+		return $store->get_map( $key );
 	}
 
 	/**
@@ -1114,12 +1077,43 @@ class PageCache implements ModuleInterface {
 	 * @return void
 	 */
 	private function set_stat_map( $key, $value ) {
-		$stats = get_option( 'perform_cache_stats', [] );
-		if ( ! is_array( $stats ) ) {
-			$stats = [];
+		$store = $this->get_stats_store();
+		$store->set_map( $key, $value );
+	}
+
+	/**
+	 * Flush in-memory stats to DB.
+	 *
+	 * @return void
+	 */
+	public function flush_stats() {
+		$store = $this->get_stats_store();
+		$store->flush();
+	}
+
+	/**
+	 * Get or initialize stats store.
+	 *
+	 * @return StatsStore
+	 */
+	private function get_stats_store() {
+		if ( ! ( $this->stats_store instanceof StatsStore ) ) {
+			$this->stats_store = new StatsStore();
 		}
 
-		$stats[ $key ] = $value;
-		update_option( 'perform_cache_stats', $stats, false );
+		return $this->stats_store;
+	}
+
+	/**
+	 * Get or initialize URL normalizer.
+	 *
+	 * @return UrlNormalizer
+	 */
+	private function get_url_normalizer() {
+		if ( ! ( $this->url_normalizer instanceof UrlNormalizer ) ) {
+			$this->url_normalizer = new UrlNormalizer();
+		}
+
+		return $this->url_normalizer;
 	}
 }

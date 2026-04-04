@@ -59,12 +59,12 @@ class Helpers {
 	 *
 	 * @param string $option  Settings field name.
 	 * @param string $section The section name this field belongs to.
-	 * @param string $default Default text if it's not found.
+	 * @param mixed  $default Default value if it's not found.
 	 *
 	 * @since  2.0.0
 	 * @access public
 	 *
-	 * @return string
+	 * @return mixed
 	 */
 	public static function get_option( $option, $section, $default = '' ) {
 		$options = get_option( $section );
@@ -116,7 +116,7 @@ class Helpers {
 	 * @return bool
 	 */
 	public static function is_assets_manager_enabled() {
-		return self::get_option( 'enable_assets_manager', 'perform_advanced', false );
+		return self::get_option( 'enable_assets_manager', 'perform_settings', false );
 	}
 
 	/**

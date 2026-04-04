@@ -50,8 +50,10 @@ final class Plugin {
 		// Load Freemius SDK.
 		$this->load_freemius();
 
+		// Ensure legacy settings are migrated to perform_settings.
+		Settings\Migrator::maybe_migrate_legacy_settings();
+
 		// Load Admin Files.
-		new Settings\Api();
 		new Settings\Menu();
 		new Admin\Actions();
 		new Admin\Filters();

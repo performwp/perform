@@ -36,7 +36,7 @@ class SSLManager implements ModuleInterface {
 	 * @return bool
 	 */
 	public function should_load(): bool {
-		return Helpers::get_option( 'enable_ssl', 'perform_ssl', false );
+		return Helpers::get_option( 'enable_ssl', 'perform_settings', false );
 	}
 
 	/**

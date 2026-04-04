@@ -30,7 +30,7 @@ class Heartbeat implements ModuleInterface {
 	 * @return bool
 	 */
 	public function should_load(): bool {
-		return ! empty( Helpers::get_option( 'disable_heartbeat', 'perform_common' ) ) || ! empty( Helpers::get_option( 'heartbeat_frequency', 'perform_common' ) );
+		return ! empty( Helpers::get_option( 'disable_heartbeat', 'perform_settings' ) ) || ! empty( Helpers::get_option( 'heartbeat_frequency', 'perform_settings' ) );
 	}
 
 	/**
@@ -42,7 +42,7 @@ class Heartbeat implements ModuleInterface {
 		$this->disable_heartbeat();
 
 		// Limit Heartbeat frequency when appropriate.
-		if ( 'disable_everywhere' !== Helpers::get_option( 'disable_heartbeat', 'perform_common' ) ) {
+		if ( 'disable_everywhere' !== Helpers::get_option( 'disable_heartbeat', 'perform_settings' ) ) {
 			add_filter( 'heartbeat_settings', [ $this, 'heartbeat_frequency' ] );
 		}
 	}
@@ -56,7 +56,7 @@ class Heartbeat implements ModuleInterface {
 	 * @return void
 	 */
 	public function disable_heartbeat() {
-		$disable_heartbeat = Helpers::get_option( 'disable_heartbeat', 'perform_common' );
+		$disable_heartbeat = Helpers::get_option( 'disable_heartbeat', 'perform_settings' );
 
 		if ( 'disable_everywhere' === $disable_heartbeat ) {
 			wp_deregister_script( 'heartbeat' );
@@ -86,7 +86,7 @@ class Heartbeat implements ModuleInterface {
 	 * @return array
 	 */
 	public function heartbeat_frequency( $settings ) {
-		$heartbeat_frequency = Helpers::get_option( 'heartbeat_frequency', 'perform_common' );
+		$heartbeat_frequency = Helpers::get_option( 'heartbeat_frequency', 'perform_settings' );
 
 		if ( ! empty( $heartbeat_frequency ) ) {
 			$settings['interval'] = intval( $heartbeat_frequency );

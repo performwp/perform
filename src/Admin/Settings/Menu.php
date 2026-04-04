@@ -6,7 +6,7 @@
 
 namespace Perform\Admin\Settings;
 
-use Perform\Admin\Settings\Api;
+use Perform\Admin\Settings\ClientPayload;
 use Perform\Includes\Helpers;
 
 // Bailout, if accessed directly.
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Menu extends Api {
+class Menu {
 	/**
 	 * Constructor
 	 *
@@ -23,8 +23,6 @@ class Menu extends Api {
 	 * @return void
 	 */
 	public function __construct() {
-		$this->prefix = 'perform_';
-
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 9 );
 		add_action( 'wp_ajax_perform_save_settings', [ $this, 'save_settings' ] );
 	}
@@ -115,7 +113,7 @@ class Menu extends Api {
 
 		// Per-field sanitization based on field definitions provided by Helpers::get_settings_fields().
 		$sanitized_post = [];
-		foreach ( $posted_data as $key => $val ) {
+			foreach ( $posted_data as $key => $val ) {
 			// Skip known control keys early
 			if ( in_array( $key, [ 'perform_settings_barrier', '_wp_http_referer', 'action', 'nonce', 'data' ], true ) ) {
 				continue;
@@ -127,10 +125,15 @@ class Menu extends Api {
 				continue;
 			}
 
-			$field_def = Helpers::find_field_by_id( $key );
-			$raw_val   = wp_unslash( $val );
+				$field_def = Helpers::find_field_by_id( $key );
+				$raw_val   = wp_unslash( $val );
 
-			if ( $field_def && isset( $field_def['type'] ) ) {
+				// Keep existing secrets when UI sends masked placeholder.
+				if ( in_array( $key, ClientPayload::get_sensitive_keys(), true ) && ClientPayload::is_masked_secret( $raw_val ) ) {
+					continue;
+				}
+
+				if ( $field_def && isset( $field_def['type'] ) ) {
 				switch ( $field_def['type'] ) {
 					case 'toggle':
 						// Normalize truthy values to 1, else 0
