@@ -55,6 +55,8 @@ function perform_handle_plugin_uninstall() {
 				delete_option( $option );
 			}
 			delete_option( 'perform_assets_manager_options' );
+			delete_option( 'perform_cache_preload_queue' );
+			delete_option( 'perform_cache_stats' );
 		}
 	}
 }

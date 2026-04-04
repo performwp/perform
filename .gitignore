@@ -42,6 +42,8 @@ dwsync.xml
 intermediate
 .idea
 cache
+!src/Modules/Cache/
+!src/Modules/Cache/**
 node_modules
 assets/dist/
 

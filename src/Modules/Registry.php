@@ -41,6 +41,7 @@ final class Registry {
 			Basic\DnsPrefetch::class,
 			Basic\Preconnect::class,
 			Basic\Heartbeat::class,
+			Cache\Page_Cache::class,
 			CDN\Cdn_Manager::class,
 			Assets\Assets_Manager::class,
 			SSL\Ssl_Manager::class,

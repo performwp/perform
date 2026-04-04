@@ -257,6 +257,7 @@ class Helpers {
 			'bloat'    => 'Bloat',
 			'assets'   => 'Assets',
 			'cdn'      => 'CDN',
+			'cache'    => 'Cache',
 			'advanced' => 'Advanced',
 		];
 
@@ -659,7 +660,7 @@ class Helpers {
 					]
 				]
 			],
-			'cdn' => [
+				'cdn' => [
 				[
 					'title'       => esc_html__('CDN Settings', 'perform'),
 					'description' => esc_html__('Settings to manage CDN configurations.', 'perform'),
@@ -714,8 +715,158 @@ class Helpers {
 						],
 					]
 				]
-			],
-			'advanced' => [
+				],
+				'cache' => [
+					[
+						'title'       => esc_html__( 'Full-Page Cache', 'perform' ),
+						'description' => esc_html__( 'Enable full-page caching with stale-while-revalidate and stampede protection.', 'perform' ),
+						'fields'      => [
+							[
+								'id'        => 'enable_page_cache',
+								'type'      => 'toggle',
+								'name'      => esc_html__( 'Enable Full-Page Cache', 'perform' ),
+								'desc'      => esc_html__( 'Caches full HTML responses for anonymous visitors.', 'perform' ),
+								'help_link' => esc_url(
+									add_query_arg(
+										$utm_args,
+										'https://performwp.com/docs/page-cache'
+									)
+								),
+							],
+							[
+								'id'        => 'page_cache_ttl',
+								'type'      => 'select',
+								'name'      => esc_html__( 'Cache TTL', 'perform' ),
+								'options'   => [
+									'300'   => esc_html__( '5 Minutes', 'perform' ),
+									'900'   => esc_html__( '15 Minutes', 'perform' ),
+									'1800'  => esc_html__( '30 Minutes', 'perform' ),
+									'3600'  => esc_html__( '1 Hour', 'perform' ),
+									'21600' => esc_html__( '6 Hours', 'perform' ),
+									'86400' => esc_html__( '24 Hours', 'perform' ),
+								],
+								'desc'      => esc_html__( 'How long a page remains fresh before becoming stale.', 'perform' ),
+								'help_link' => esc_url(
+									add_query_arg(
+										$utm_args,
+										'https://performwp.com/docs/page-cache'
+									)
+								),
+							],
+							[
+								'id'        => 'page_cache_swr_ttl',
+								'type'      => 'select',
+								'name'      => esc_html__( 'Stale Revalidate Window', 'perform' ),
+								'options'   => [
+									'900'   => esc_html__( '15 Minutes', 'perform' ),
+									'1800'  => esc_html__( '30 Minutes', 'perform' ),
+									'3600'  => esc_html__( '1 Hour', 'perform' ),
+									'21600' => esc_html__( '6 Hours', 'perform' ),
+									'43200' => esc_html__( '12 Hours', 'perform' ),
+									'86400' => esc_html__( '24 Hours', 'perform' ),
+								],
+								'desc'      => esc_html__( 'Serve stale pages while refreshing them in the background.', 'perform' ),
+								'help_link' => esc_url(
+									add_query_arg(
+										$utm_args,
+										'https://performwp.com/docs/page-cache'
+									)
+								),
+							],
+							[
+								'id'        => 'cache_separate_query_params',
+								'type'      => 'text',
+								'name'      => esc_html__( 'Separate Query Params', 'perform' ),
+								'desc'      => esc_html__( 'Comma-separated query keys that should generate separate cache entries. Tracking params are ignored automatically.', 'perform' ),
+								'help_link' => esc_url(
+									add_query_arg(
+										$utm_args,
+										'https://performwp.com/docs/page-cache-query-params'
+									)
+								),
+							],
+						],
+					],
+					[
+						'title'       => esc_html__( 'Preload and Observability', 'perform' ),
+						'description' => esc_html__( 'Warm cache from sitemaps and monitor cache effectiveness.', 'perform' ),
+						'fields'      => [
+							[
+								'id'        => 'enable_cache_preload',
+								'type'      => 'toggle',
+								'name'      => esc_html__( 'Enable Adaptive Preloader', 'perform' ),
+								'desc'      => esc_html__( 'Preloads cache from sitemap and high-miss URLs using adaptive request rate.', 'perform' ),
+								'help_link' => esc_url(
+									add_query_arg(
+										$utm_args,
+										'https://performwp.com/docs/page-cache-preload'
+									)
+								),
+							],
+							[
+								'id'        => 'cache_slow_request_threshold_ms',
+								'type'      => 'select',
+								'name'      => esc_html__( 'Slow Request Threshold', 'perform' ),
+								'options'   => [
+									'500'  => esc_html__( '500ms', 'perform' ),
+									'800'  => esc_html__( '800ms', 'perform' ),
+									'1200' => esc_html__( '1200ms', 'perform' ),
+									'2000' => esc_html__( '2000ms', 'perform' ),
+								],
+								'desc'      => esc_html__( 'Tracks uncached requests slower than this value in observability stats.', 'perform' ),
+								'help_link' => esc_url(
+									add_query_arg(
+										$utm_args,
+										'https://performwp.com/docs/page-cache-observability'
+									)
+								),
+							],
+						],
+					],
+					[
+						'title'       => esc_html__( 'Cloudflare', 'perform' ),
+						'description' => esc_html__( 'Sync local cache purge events to Cloudflare (free-tier friendly).', 'perform' ),
+						'fields'      => [
+							[
+								'id'        => 'enable_cloudflare_cache_sync',
+								'type'      => 'toggle',
+								'name'      => esc_html__( 'Enable Cloudflare Cache Sync', 'perform' ),
+								'desc'      => esc_html__( 'Purge Cloudflare URLs when Perform purges local cache.', 'perform' ),
+								'help_link' => esc_url(
+									add_query_arg(
+										$utm_args,
+										'https://performwp.com/docs/cloudflare-cache-sync'
+									)
+								),
+							],
+							[
+								'id'        => 'cloudflare_zone_id',
+								'type'      => 'text',
+								'name'      => esc_html__( 'Cloudflare Zone ID', 'perform' ),
+								'desc'      => esc_html__( 'Your Cloudflare Zone ID.', 'perform' ),
+								'help_link' => esc_url(
+									add_query_arg(
+										$utm_args,
+										'https://performwp.com/docs/cloudflare-cache-sync'
+									)
+								),
+							],
+							[
+								'id'        => 'cloudflare_api_token',
+								'type'      => 'text',
+								'name'      => esc_html__( 'Cloudflare API Token', 'perform' ),
+								'desc'      => esc_html__( 'API token with Zone:Cache Purge permission.', 'perform' ),
+								'help_link' => esc_url(
+									add_query_arg(
+										$utm_args,
+										'https://performwp.com/docs/cloudflare-cache-sync'
+									)
+								),
+							],
+						],
+					],
+				],
+				'advanced' => [
 				[
 					'title'       => esc_html__('Advanced Settings', 'perform'),
 					'description' => esc_html__('Settings for advanced configurations.', 'perform'),
