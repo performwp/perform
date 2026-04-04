@@ -41,6 +41,13 @@ class Loader {
                 continue;
             }
 
+            if ( ! is_subclass_of( $module_class, ModuleInterface::class ) ) {
+                if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+                    error_log( sprintf( 'Perform: skipped %s because it does not implement ModuleInterface.', $module_class ) );
+                }
+                continue;
+            }
+
             try {
                 // Modules extending AbstractModule support settings injection.
                 if ( is_subclass_of( $module_class, AbstractModule::class ) ) {
@@ -64,16 +71,7 @@ class Loader {
                 continue;
             }
 
-            // If the module implements ModuleInterface, use its lifecycle.
-            if ( $module instanceof ModuleInterface ) {
-                if ( $module->should_load() ) {
-                    $module->register();
-                }
-                continue;
-            }
-
-            // Backwards compatibility: if an older module exposes register(), call it.
-            if ( method_exists( $module, 'register' ) ) {
+            if ( $module->should_load() ) {
                 $module->register();
             }
         }
