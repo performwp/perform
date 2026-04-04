@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Ssl_Manager implements ModuleInterface {
+class SslManager implements ModuleInterface {
 
 	/**
 	 * Is SSL Enabled?

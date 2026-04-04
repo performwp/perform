@@ -19,11 +19,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Menu_Cache
+ * Class MenuCache
  *
  * Optimized and enhanced for improved performance.
  */
-class Menu_Cache implements ModuleInterface {
+class MenuCache implements ModuleInterface {
 
 	/**
 	 * Log Menu Start.

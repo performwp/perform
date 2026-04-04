@@ -20,11 +20,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Woocommerce_Manager
+ * Class WoocommerceManager
  *
  * @since 1.0.0
  */
-class Woocommerce_Manager implements ModuleInterface {
+class WoocommerceManager implements ModuleInterface {
 
 	/**
 	 * Determine whether this module should be loaded.

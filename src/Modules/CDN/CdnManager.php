@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.0.0
  */
-class Cdn_Manager implements ModuleInterface {
+class CdnManager implements ModuleInterface {
 
 	/**
 	 * Determine whether this module should be loaded.

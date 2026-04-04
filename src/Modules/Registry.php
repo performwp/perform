@@ -42,11 +42,11 @@ final class Registry {
 			Basic\Preconnect::class,
 			Basic\Heartbeat::class,
 			Cache\PageCache::class,
-			CDN\Cdn_Manager::class,
-			Assets\Assets_Manager::class,
-			SSL\Ssl_Manager::class,
-			WooCommerce\Woocommerce_Manager::class,
-			MenuCache\Menu_Cache::class,
+			CDN\CdnManager::class,
+			Assets\AssetsManager::class,
+			SSL\SslManager::class,
+			WooCommerce\WoocommerceManager::class,
+			MenuCache\MenuCache::class,
 		];
 	}
 }

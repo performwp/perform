@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Assets_Manager implements ModuleInterface {
+class AssetsManager implements ModuleInterface {
 
 	/**
 	 * Loaded Assets.
