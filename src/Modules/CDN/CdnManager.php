@@ -20,11 +20,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class CdnManager
+ * Class CDNManager
  *
  * @since 1.0.0
  */
-class CdnManager implements ModuleInterface {
+class CDNManager implements ModuleInterface {
 
 	/**
 	 * Determine whether this module should be loaded.

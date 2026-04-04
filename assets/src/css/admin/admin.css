@@ -1,4 +1,4 @@
- @import url(../mixins.css);
+ @import url(../_mixins.css);
  @import url(./header.css);
  @import url(../admin/welcome.css);
  @import url(../admin/settings.css);
