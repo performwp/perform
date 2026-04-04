@@ -42,14 +42,22 @@ class Loader {
             }
 
             try {
-                $ref  = new \ReflectionClass( $module_class );
-                $ctor = $ref->getConstructor();
-                if ( $ctor && $ctor->getNumberOfParameters() > 0 ) {
-                    $module = $ref->newInstance( $this->settings );
+                // Modules extending AbstractModule support settings injection.
+                if ( is_subclass_of( $module_class, AbstractModule::class ) ) {
+                    $module = new $module_class( $this->settings );
                 } else {
-                    $module = $ref->newInstance();
+                    $module = new $module_class();
                 }
             } catch ( \Throwable $e ) {
+                /**
+                 * Fires when a module cannot be instantiated.
+                 *
+                 * @param string     $module_class Module class name.
+                 * @param string     $message      Error message.
+                 * @param \Throwable $e            Exception/error object.
+                 */
+                do_action( 'perform_module_load_error', $module_class, $e->getMessage(), $e );
+
                 if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
                     error_log( sprintf( 'Perform: failed to instantiate %s — %s', $module_class, $e->getMessage() ) );
                 }

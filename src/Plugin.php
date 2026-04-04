@@ -63,38 +63,12 @@ final class Plugin {
 		// Centralized module loader - preserves backward compatibility with
 		// modules that still register hooks in their constructors while
 		// supporting new modules implementing ModuleInterface.
-		$settings = Helpers::get_settings() ?: [];
+			$settings = Helpers::get_settings() ?: [];
 
-		$loader = new Modules\Loader( $settings );
+			$loader = new Modules\Loader( $settings );
 
-		$loader->register_modules([
-			Modules\Basic::class,
-			Modules\Basic\DisableEmoji::class,
-			Modules\Basic\DisableEmbeds::class,
-			Modules\Basic\RemoveQueryStrings::class,
-			Modules\Basic\DisableXmlrpc::class,
-			Modules\Basic\RemoveJqueryMigrate::class,
-			Modules\Basic\HideWpVersion::class,
-			Modules\Basic\RemoveWlwmanifestLink::class,
-			Modules\Basic\RemoveRsdLink::class,
-			Modules\Basic\RemoveShortlink::class,
-			Modules\Basic\DisableRssFeeds::class,
-			Modules\Basic\DisableFeedLinks::class,
-			Modules\Basic\DisableSelfPingbacks::class,
-			Modules\Basic\RemoveRestApiLinks::class,
-			Modules\Basic\DisableDashicons::class,
-			Modules\Basic\DisablePasswordStrengthMeter::class,
-			Modules\Basic\LimitPostRevisions::class,
-			Modules\Basic\DnsPrefetch::class,
-			Modules\Basic\Preconnect::class,
-			Modules\Basic\Heartbeat::class,
-			Modules\CDN\Cdn_Manager::class,
-			Modules\Assets\Assets_Manager::class,
-			Modules\SSL\Ssl_Manager::class,
-			Modules\WooCommerce\Woocommerce_Manager::class,
-			Modules\MenuCache\Menu_Cache::class,
-		]);
-	}
+			$loader->register_modules( Modules\Registry::all() );
+		}
 
 	/**
 	 * Loads the Freemius SDK.
