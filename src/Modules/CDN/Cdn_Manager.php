@@ -50,6 +50,15 @@ class Cdn_Manager implements ModuleInterface {
 	 * @since 1.2.2
 	 */
 	public function rewrite_with_cdn() {
+		// Avoid buffering non-HTML/frontend contexts.
+		if ( is_admin() || wp_doing_ajax() || wp_doing_cron() || is_feed() || is_trackback() || is_preview() ) {
+			return;
+		}
+
+		if ( ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || ( defined( 'WP_CLI' ) && WP_CLI ) ) {
+			return;
+		}
+
 		ob_start( [ $this, 'rewrite_with_cdn_url' ] );
 	}
 
@@ -64,6 +73,10 @@ class Cdn_Manager implements ModuleInterface {
 	 * @return mixed
 	 */
 	public function rewrite_with_cdn_url( $html ) {
+		if ( ! is_string( $html ) || '' === $html ) {
+			return $html;
+		}
+
 		$site_url        = quotemeta( get_option( 'home' ) );
 		$url_regex       = '(https?:|)' . substr( $site_url, strpos( $site_url, '//' ) );
 		$directories     = 'wp\-content|wp\-includes';

@@ -45,10 +45,29 @@ class Ssl_Manager implements ModuleInterface {
 	 * @return void
 	 */
 	public function register(): void {
-		// Proceed, only if site accessed with non-HTTP url.
-		if ( ! is_ssl() ) {
-			$this->wp_redirect_to_ssl();
+		add_action( 'template_redirect', [ $this, 'maybe_redirect_to_ssl' ], 1 );
+	}
+
+	/**
+	 * Conditionally redirect frontend traffic to HTTPS.
+	 *
+	 * @return void
+	 */
+	public function maybe_redirect_to_ssl() {
+		// Only handle regular frontend HTML requests.
+		if ( is_admin() || wp_doing_ajax() || wp_doing_cron() ) {
+			return;
 		}
+
+		if ( ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || ( defined( 'WP_CLI' ) && WP_CLI ) ) {
+			return;
+		}
+
+		if ( is_ssl() || headers_sent() ) {
+			return;
+		}
+
+		$this->wp_redirect_to_ssl();
 	}
 
 	/**
