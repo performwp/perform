@@ -126,14 +126,15 @@ class Assets_Manager implements ModuleInterface {
 								<div class="perform-assets-manager--section">
 									<h3><?php echo ucwords( $category ); ?></h3>
 									<?php
-									if ( 'misc' !== $category ) {
-										foreach ( $groups as $group => $details ) {
-											$this->print_assets_manager_group( $category, $group, $details );
-										}
-									} else {
-										$details = [
-											'assets' => $groups,
-										];
+										if ( 'misc' !== $category ) {
+											foreach ( $groups as $group => $details ) {
+												$this->print_assets_manager_group( $category, $group, $details );
+											}
+										} else {
+											$group   = 'misc';
+											$details = [
+												'assets' => $groups,
+											];
 										$this->print_assets_manager_group( $category, $group, $details );
 									}
 

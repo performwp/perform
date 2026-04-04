@@ -55,6 +55,24 @@ abstract class AbstractModule implements ModuleInterface {
     }
 
     /**
+     * Get this module's setting value from the injected settings first,
+     * then fall back to persisted settings for backwards compatibility.
+     *
+     * @return mixed|null
+     */
+    protected function get_setting() {
+        if ( null === static::$option_key ) {
+            return null;
+        }
+
+        if ( is_array( $this->settings ) && array_key_exists( static::$option_key, $this->settings ) ) {
+            return $this->settings[ static::$option_key ];
+        }
+
+        return Helpers::get_option( static::$option_key, 'perform_settings', null );
+    }
+
+    /**
      * Child classes must implement register() to attach hooks.
      *
      * @return void

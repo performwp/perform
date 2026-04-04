@@ -39,6 +39,11 @@ class Actions {
 	 * @return void
 	 */
 	public function registerAssets() {
+		$screen = get_current_screen();
+		if ( empty( $screen ) || 'settings_page_perform_settings' !== $screen->id ) {
+			return;
+		}
+
 		// Loads the WordPress components styles.
 		wp_enqueue_style( 'wp-components' );
 
@@ -56,6 +61,7 @@ class Actions {
 				'docsUrl' => defined('PERFORM_PLUGIN_DOCS_URL') ? PERFORM_PLUGIN_DOCS_URL : 'https://performwp.com/docs/',
 				'logoUrl' => plugins_url( 'assets/dist/images/logo.png', PERFORM_PLUGIN_FILE ),
 				'nonce'   => wp_create_nonce( 'perform_save_settings' ),
+				'saved'   => \Perform\Includes\Helpers::get_settings(),
 				'tabs'    => \Perform\Includes\Helpers::get_settings_tabs(),
 				'fields'  => \Perform\Includes\Helpers::get_settings_fields(), // Expose fields to JS
 			]
@@ -100,7 +106,7 @@ class Actions {
 			[
 				'id'    => 'perform',
 				'title' => esc_html__( 'Perform', 'perform' ),
-				'href'  => esc_url( admin_url( 'options-general.php?page=perform' ) ),
+				'href'  => esc_url( admin_url( 'options-general.php?page=perform_settings' ) ),
 			]
 		);
 

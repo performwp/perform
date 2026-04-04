@@ -27,7 +27,6 @@ class Menu extends Api {
 
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 9 );
 		add_action( 'wp_ajax_perform_save_settings', [ $this, 'save_settings' ] );
-		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_assets' ] );
 	}
 
 	/**
@@ -66,41 +65,6 @@ class Menu extends Api {
 		?>
 		<div id="perform-settings-page" class="perform-settings-page"></div>
 		<?php
-	}
-
-	/**
-	 * Enqueue admin assets and localize settings data for React app.
-	 */
-	public function enqueue_admin_assets() {
-		$screen = get_current_screen();
-		if ( 'settings_page_perform_settings' !== $screen->id ) {
-			return;
-		}
-
-		// Enqueue your React app script here if not already done.
-		wp_enqueue_script(
-			'perform-admin-settings',
-			PERFORM_PLUGIN_URL . 'assets/dist/js/admin-settings.js',
-			[ 'wp-element', 'wp-components', 'wp-i18n' ],
-			PERFORM_VERSION,
-			true
-		);
-
-		// Localize settings data, including fields.
-		wp_localize_script(
-			'perform-admin-settings',
-			'performwpSettings',
-			[
-				'version' => PERFORM_VERSION,
-				'docsUrl' => 'https://performwp.com/docs/',
-				'logoUrl' => PERFORM_PLUGIN_URL . 'assets/dist/images/logo.png',
-				'nonce'   => wp_create_nonce( 'perform_save_settings' ),
-				// Expose currently saved settings so the React app can initialize from persisted values
-				'saved'   => Helpers::get_settings(),
-				'tabs'    => Helpers::get_settings_tabs(),
-				'fields'  => Helpers::get_settings_fields(), // Expose fields here
-			]
-		);
 	}
 
 	/**

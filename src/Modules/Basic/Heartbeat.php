@@ -66,7 +66,7 @@ class Heartbeat implements ModuleInterface {
 			if ( 'index.php' === $pagenow ) {
 				wp_deregister_script( 'heartbeat' );
 			}
-		} elseif ( 'allow_only_on_post_edit_pages' === $disable_heartbeat ) {
+		} elseif ( 'allow_only_on_post_edit_pages' === $disable_heartbeat || 'allow_posts' === $disable_heartbeat ) {
 			global $pagenow;
 
 			if ( 'post.php' !== $pagenow && 'post-new.php' !== $pagenow ) {

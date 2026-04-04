@@ -50,6 +50,8 @@ class Helpers {
 		) {
 			return false;
 		}
+
+		return true;
 	}
 
 	/**
@@ -67,8 +69,16 @@ class Helpers {
 	public static function get_option( $option, $section, $default = '' ) {
 		$options = get_option( $section );
 
-		if ( isset( $options[ $option ] ) ) {
+		if ( is_array( $options ) && array_key_exists( $option, $options ) ) {
 			return $options[ $option ];
+		}
+
+		// Backward-compatible fallback for modules migrated to consolidated settings.
+		if ( 'perform_settings' !== $section ) {
+			$settings = get_option( 'perform_settings' );
+			if ( is_array( $settings ) && array_key_exists( $option, $settings ) ) {
+				return $settings[ $option ];
+			}
 		}
 
 		return $default;

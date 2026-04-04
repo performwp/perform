@@ -19,6 +19,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 function perform_handle_plugin_uninstall() {
 
 	$setting_types = array(
+		'perform_settings',
 		'perform_common',
 		'perform_ssl',
 		'perform_cdn',
@@ -28,10 +29,13 @@ function perform_handle_plugin_uninstall() {
 		'perform_support',
 	);
 
-	if ( function_exists( 'perform_get_option' ) ) {
-		$remove_data_on_uninstall = perform_get_option( 'remove_data_on_uninstall', 'perform_advanced' );
-	} else {
-		$remove_data_on_uninstall = true; // Default to true on uninstall if not accessible.
+	$remove_data_on_uninstall = false;
+
+	$current_settings = get_option( 'perform_settings' );
+	if ( is_array( $current_settings ) && isset( $current_settings['remove_data_on_uninstall'] ) ) {
+		$remove_data_on_uninstall = ! empty( $current_settings['remove_data_on_uninstall'] );
+	} elseif ( function_exists( 'perform_get_option' ) ) {
+		$remove_data_on_uninstall = (bool) perform_get_option( 'remove_data_on_uninstall', 'perform_advanced' );
 	}
 
 	if ( $remove_data_on_uninstall ) {
@@ -44,12 +48,13 @@ function perform_handle_plugin_uninstall() {
 					foreach ( $setting_types as $option ) {
 						delete_blog_option( (int) $site->blog_id, $option );
 					}
+					}
 				}
-			}
 		} else {
 			foreach ( $setting_types as $option ) {
 				delete_option( $option );
 			}
+			delete_option( 'perform_assets_manager_options' );
 		}
 	}
 }
