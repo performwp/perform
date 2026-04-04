@@ -3,7 +3,7 @@
 Guidance for AI coding agents working on the Perform WordPress plugin.
 
 ## Project Snapshot
-- Plugin: `Perform - Optimize Performance`
+- Plugin: `Perform`
 - Current public line: `1.5.1`
 - Active release branch in this workspace: `release/1.6.0`
 - Stack:
@@ -19,7 +19,9 @@ Guidance for AI coding agents working on the Perform WordPress plugin.
   - `perform_cdn`
   - `perform_woocommerce`
   - `perform_advanced`
-- Current consolidated settings also exist in `perform_settings`; code must tolerate both.
+- `perform_settings` is the standard canonical settings store for Perform.
+- Add/maintain an automatic migration routine that migrates legacy settings into `perform_settings` when `perform_settings` does not exist.
+- Keep runtime reads tolerant of both consolidated and legacy settings during migration windows.
 - Do not change public hook names unless absolutely required; if required, add compatibility shims.
 
 ## Repository Layout
@@ -62,6 +64,11 @@ Guidance for AI coding agents working on the Perform WordPress plugin.
 - Scope admin scripts/styles to plugin screens only.
 - Avoid repeated expensive lookups in hot paths; cache per-request where practical.
 - Keep module registration lightweight; no expensive work during bootstrap.
+
+## UI/UX Implementation Rules
+- Prefer WordPress Design System components for plugin UI wherever possible.
+- Build settings/admin UI using React with `@wordpress/components`, `@wordpress/element`, and related WordPress packages.
+- Avoid custom UI primitives when equivalent WP Design System components exist.
 
 ## Build, Lint, and Analysis Commands
 - JS/CSS dev build:
