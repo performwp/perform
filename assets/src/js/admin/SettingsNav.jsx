@@ -23,6 +23,11 @@ const normalizeOptions = (options) => {
   return [];
 };
 
+const SENSITIVE_KEYS = window.performwpSettings?.sensitiveKeys || [];
+const MASKED_SECRET_VALUE = window.performwpSettings?.maskedSecretValue || '__PERFORM_MASKED_SECRET__';
+
+const isSensitiveField = (fieldId) => SENSITIVE_KEYS.includes(fieldId);
+
 const renderField = (field, value, onChange) => {
   const { type = 'text', id, name, desc, help_link, options, placeholder, style: fieldStyle, className: fieldClass, ...rest } = field;
   const Component = FIELD_COMPONENTS[type] || null;
@@ -59,10 +64,33 @@ const renderField = (field, value, onChange) => {
   }
 
   if (type === 'text') {
+    const sensitive = isSensitiveField(id);
+    const shownValue = sensitive && value === MASKED_SECRET_VALUE ? '' : (value ?? '');
+    const enhancedHelp = sensitive
+      ? (
+          <span>
+            {desc}
+            {' '}
+            <em>{value === MASKED_SECRET_VALUE ? 'Existing secret is saved. Enter a new value only if you want to replace it.' : ''}</em>
+            {help_link && (
+              <>
+                {' '}
+                <a href={help_link} target="_blank" rel="noopener noreferrer" className="perform-help-link">
+                  Learn more <span className="perform-help-icon">→</span>
+                </a>
+              </>
+            )}
+          </span>
+        )
+      : common.help;
+
     return (
       <TextControl
         {...common}
-        value={value ?? ''}
+        type={sensitive ? 'password' : 'text'}
+        autoComplete={sensitive ? 'new-password' : undefined}
+        help={enhancedHelp}
+        value={shownValue}
         placeholder={placeholder}
         onChange={(val) => onChange(id, val)}
       />

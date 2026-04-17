@@ -1,4 +1,4 @@
-# Copyright (C) 2025 Perform
+# Copyright (C) 2026 Perform
 # This file is distributed under the same license as the Perform package.
 msgid ""
 msgstr ""
@@ -7,7 +7,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language-Team: PerformWP <hello@performwp.com>\n"
-"POT-Creation-Date: 2025-10-29 17:37+0000\n"
+"POT-Creation-Date: 2026-04-17 06:06+0000\n"
 "Report-Msgid-Bugs-To: https://github.com/performwp/perform/issues/new\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
@@ -16,19 +16,19 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/Admin/Actions.php:95
+#: src/Admin/Actions.php:104
 msgid "Close Assets Manager"
 msgstr ""
 
-#: src/Admin/Actions.php:93, src/Modules/Assets_Manager.php:112
+#: src/Admin/Actions.php:102, src/Modules/Assets/AssetsManager.php:116
 msgid "Assets Manager"
 msgstr ""
 
-#: src/Admin/Actions.php:102, src/Modules/Assets_Manager.php:103, src/Admin/Settings/Menu.php:54, src/Admin/Settings/Menu.php:55
+#: src/Admin/Actions.php:111, src/Admin/Settings/Menu.php:40, src/Admin/Settings/Menu.php:41, src/Modules/Assets/AssetsManager.php:107
 msgid "Perform"
 msgstr ""
 
-#: src/Admin/Actions.php:122
+#: src/Admin/Actions.php:131
 msgid "Support Forum"
 msgstr ""
 
@@ -60,444 +60,492 @@ msgstr ""
 msgid "Manage Assets"
 msgstr ""
 
-#: src/Includes/Helpers.php:246
-msgid "General"
-msgstr ""
-
-#: src/Includes/Helpers.php:247
-msgid "Bloat"
-msgstr ""
-
-#: src/Includes/Helpers.php:248
-msgid "Assets"
-msgstr ""
-
-#: src/Includes/Helpers.php:249
-msgid "CDN"
-msgstr ""
-
-#: src/Includes/Helpers.php:250
-msgid "Advanced"
-msgstr ""
-
-#: src/Includes/Helpers.php:255
-msgid "WooCommerce"
-msgstr ""
-
-#: src/Includes/Helpers.php:280
+#: src/Includes/Helpers.php:303
 msgid "General Settings"
 msgstr ""
 
-#: src/Includes/Helpers.php:281
+#: src/Includes/Helpers.php:304
 msgid "Configure general performance settings for your WordPress site."
 msgstr ""
 
-#: src/Includes/Helpers.php:286
+#: src/Includes/Helpers.php:309
 msgid "Force SSL"
 msgstr ""
 
-#: src/Includes/Helpers.php:287
+#: src/Includes/Helpers.php:310
 msgid "Enabling this will force all traffic to use SSL."
 msgstr ""
 
-#: src/Includes/Helpers.php:298
+#: src/Includes/Helpers.php:321
 msgid "Enable Menu Cache"
 msgstr ""
 
-#: src/Includes/Helpers.php:299
+#: src/Includes/Helpers.php:322
 msgid "Enabling this will cache your menu items for better performance."
 msgstr ""
 
-#: src/Includes/Helpers.php:312
+#: src/Includes/Helpers.php:335
 msgid "Frontend Optimization"
 msgstr ""
 
-#: src/Includes/Helpers.php:313
+#: src/Includes/Helpers.php:336
 msgid "Remove unnecessary frontend scripts and tags that add extra requests or bytes to every page. These optimizations reduce file requests, improve cacheability, and clean up redundant page elements."
 msgstr ""
 
-#: src/Includes/Helpers.php:318
+#: src/Includes/Helpers.php:341
 msgid "Disable Emoji's"
 msgstr ""
 
-#: src/Includes/Helpers.php:319
+#: src/Includes/Helpers.php:342
 msgid "Prevents WordPress from loading the emoji detection script and related styles, reducing one extra HTTP request."
 msgstr ""
 
-#: src/Includes/Helpers.php:330
+#: src/Includes/Helpers.php:353
 msgid "Disable Embeds"
 msgstr ""
 
-#: src/Includes/Helpers.php:331
+#: src/Includes/Helpers.php:354
 msgid "Removes the WordPress Embed script (wp-embed.min.js) used for embedding posts and media across sites."
 msgstr ""
 
-#: src/Includes/Helpers.php:342
+#: src/Includes/Helpers.php:365
 msgid "Remove Query Strings"
 msgstr ""
 
-#: src/Includes/Helpers.php:343
+#: src/Includes/Helpers.php:366
 msgid "Strips version query strings from static resources (?ver=) to improve caching efficiency on CDNs and browsers."
 msgstr ""
 
-#: src/Includes/Helpers.php:354
+#: src/Includes/Helpers.php:377
 msgid "Remove jQuery Migrate"
 msgstr ""
 
-#: src/Includes/Helpers.php:355
+#: src/Includes/Helpers.php:378
 msgid "Prevents loading of the legacy jquery-migrate.min.js file, used mainly for backward compatibility with outdated scripts."
 msgstr ""
 
-#: src/Includes/Helpers.php:366
+#: src/Includes/Helpers.php:389
 msgid "Disable Dashicons"
 msgstr ""
 
-#: src/Includes/Helpers.php:367
+#: src/Includes/Helpers.php:390
 msgid "Prevents loading the dashicons.css icon font on the frontend for non-logged-in visitors."
 msgstr ""
 
-#: src/Includes/Helpers.php:378
+#: src/Includes/Helpers.php:401
 msgid "Hide WP Version"
 msgstr ""
 
-#: src/Includes/Helpers.php:379
+#: src/Includes/Helpers.php:402
 msgid "Removes the WordPress version meta tag from the page source, reducing page markup size slightly."
 msgstr ""
 
-#: src/Includes/Helpers.php:390
+#: src/Includes/Helpers.php:413
 msgid "Remove wlwmanifest Link"
 msgstr ""
 
-#: src/Includes/Helpers.php:391
+#: src/Includes/Helpers.php:414
 msgid "Removes the Windows Live Writer manifest tag, an obsolete feature unused on modern sites."
 msgstr ""
 
-#: src/Includes/Helpers.php:402
+#: src/Includes/Helpers.php:425
 msgid "Remove RSD Link"
 msgstr ""
 
-#: src/Includes/Helpers.php:403
+#: src/Includes/Helpers.php:426
 msgid "Removes the Real Simple Discovery (RSD) tag used by remote publishing tools."
 msgstr ""
 
-#: src/Includes/Helpers.php:414
+#: src/Includes/Helpers.php:437
 msgid "Remove Shortlink"
 msgstr ""
 
-#: src/Includes/Helpers.php:415
+#: src/Includes/Helpers.php:438
 msgid "Removes the rel=\"shortlink\" tag generated for posts to reduce unnecessary metadata output."
 msgstr ""
 
-#: src/Includes/Helpers.php:426
+#: src/Includes/Helpers.php:449
 msgid "Network Requests and Endpoints"
 msgstr ""
 
-#: src/Includes/Helpers.php:427
+#: src/Includes/Helpers.php:450
 msgid "Disable unused services that generate background or external HTTP requests. Ideal for sites that don't rely on remote publishing or REST-based integrations."
 msgstr ""
 
-#: src/Includes/Helpers.php:432
+#: src/Includes/Helpers.php:455
 msgid "Disable XML-RPC"
 msgstr ""
 
-#: src/Includes/Helpers.php:433
+#: src/Includes/Helpers.php:456
 msgid "Disables WordPress XML-RPC functionality, which handles remote publishing and pingbacks, saving processing overhead."
 msgstr ""
 
-#: src/Includes/Helpers.php:444
+#: src/Includes/Helpers.php:467
 msgid "Remove REST API Links"
 msgstr ""
 
-#: src/Includes/Helpers.php:445
+#: src/Includes/Helpers.php:468
 msgid "Removes REST API discovery links from the site header and page responses, reducing unnecessary HTTP headers."
 msgstr ""
 
-#: src/Includes/Helpers.php:456
+#: src/Includes/Helpers.php:479
 msgid "Feed and Discovery Optimization"
 msgstr ""
 
-#: src/Includes/Helpers.php:457
+#: src/Includes/Helpers.php:480
 msgid "Stop generating feed files and related discovery tags that most modern sites don't need. Helps reduce crawl requests and prevents unnecessary feed generation."
 msgstr ""
 
-#: src/Includes/Helpers.php:462
+#: src/Includes/Helpers.php:485
 msgid "Disable RSS Feeds"
 msgstr ""
 
-#: src/Includes/Helpers.php:463
+#: src/Includes/Helpers.php:486
 msgid "Disables WordPress-generated RSS feeds and redirects feed URLs back to the homepage."
 msgstr ""
 
-#: src/Includes/Helpers.php:474
+#: src/Includes/Helpers.php:497
 msgid "Remove RSS Feed Links"
 msgstr ""
 
-#: src/Includes/Helpers.php:475
+#: src/Includes/Helpers.php:498
 msgid "Removes all RSS feed link tags from the site’s header."
 msgstr ""
 
-#: src/Includes/Helpers.php:486
+#: src/Includes/Helpers.php:509
 msgid "Editor and Backend Performance"
 msgstr ""
 
-#: src/Includes/Helpers.php:487
+#: src/Includes/Helpers.php:510
 msgid "Limit WordPress background activity during content editing to reduce CPU and database usage. These controls keep your admin fast, reduce CPU cycles, and optimize database performance."
 msgstr ""
 
-#: src/Includes/Helpers.php:492
+#: src/Includes/Helpers.php:515
 msgid "Disable Self Pingbacks"
 msgstr ""
 
-#: src/Includes/Helpers.php:493
+#: src/Includes/Helpers.php:516
 msgid "Prevents WordPress from sending self-pingbacks when linking to your own posts."
 msgstr ""
 
-#: src/Includes/Helpers.php:504
+#: src/Includes/Helpers.php:527
 msgid "Disable Password Strength Meter"
 msgstr ""
 
-#: src/Includes/Helpers.php:505
+#: src/Includes/Helpers.php:528
 msgid "Prevents loading of the password strength meter script (zxcvbn.js) on non-essential admin pages."
 msgstr ""
 
-#: src/Includes/Helpers.php:516
+#: src/Includes/Helpers.php:539
 msgid "Disable Heartbeat"
 msgstr ""
 
-#: src/Includes/Helpers.php:518, src/Includes/Helpers.php:535, src/Includes/Helpers.php:553, src/Includes/Helpers.php:579
+#: src/Includes/Helpers.php:541, src/Includes/Helpers.php:558, src/Includes/Helpers.php:576, src/Includes/Helpers.php:602
 msgid "Default"
 msgstr ""
 
-#: src/Includes/Helpers.php:519
+#: src/Includes/Helpers.php:542
 msgid "Disable Everywhere"
 msgstr ""
 
-#: src/Includes/Helpers.php:520
+#: src/Includes/Helpers.php:543
 msgid "Only Allow When Editing Posts/Pages"
 msgstr ""
 
-#: src/Includes/Helpers.php:522
+#: src/Includes/Helpers.php:545
 msgid "Stops or limits the WordPress Heartbeat API that sends frequent AJAX requests from the browser to the server."
 msgstr ""
 
-#: src/Includes/Helpers.php:533
+#: src/Includes/Helpers.php:556
 msgid "Heartbeat Frequency"
 msgstr ""
 
-#: src/Includes/Helpers.php:535, src/Includes/Helpers.php:536, src/Includes/Helpers.php:537, src/Includes/Helpers.php:538
+#: src/Includes/Helpers.php:558, src/Includes/Helpers.php:559, src/Includes/Helpers.php:560, src/Includes/Helpers.php:561
 msgid "%s Seconds"
 msgstr ""
 
-#: src/Includes/Helpers.php:540
+#: src/Includes/Helpers.php:563
 msgid "Adjusts how often the Heartbeat API runs (lower frequency = fewer background requests)."
 msgstr ""
 
-#: src/Includes/Helpers.php:551
+#: src/Includes/Helpers.php:574
 msgid "Limit Post Revisions"
 msgstr ""
 
-#: src/Includes/Helpers.php:554
+#: src/Includes/Helpers.php:577
 msgid "Disable Post Revisions"
 msgstr ""
 
-#: src/Includes/Helpers.php:566
+#: src/Includes/Helpers.php:589
 msgid "Limits the number of post revisions stored in the database to prevent bloat."
 msgstr ""
 
-#: src/Includes/Helpers.php:577
+#: src/Includes/Helpers.php:600
 msgid "Autosave Interval"
 msgstr ""
 
-#: src/Includes/Helpers.php:579
+#: src/Includes/Helpers.php:602
 msgid "1 Minute"
 msgstr ""
 
-#: src/Includes/Helpers.php:580, src/Includes/Helpers.php:581, src/Includes/Helpers.php:582, src/Includes/Helpers.php:583
+#: src/Includes/Helpers.php:603, src/Includes/Helpers.php:604, src/Includes/Helpers.php:605, src/Includes/Helpers.php:606
 msgid "%s Minutes"
 msgstr ""
 
-#: src/Includes/Helpers.php:585
+#: src/Includes/Helpers.php:608
 msgid "Controls how often posts are autosaved while editing, reducing unnecessary database writes."
 msgstr ""
 
-#: src/Includes/Helpers.php:598
+#: src/Includes/Helpers.php:621
 msgid "Assets Optimization"
 msgstr ""
 
-#: src/Includes/Helpers.php:599
+#: src/Includes/Helpers.php:622
 msgid "Settings to manage asset loading and optimization."
 msgstr ""
 
-#: src/Includes/Helpers.php:604
+#: src/Includes/Helpers.php:627
 msgid "Enable Assets Manager"
 msgstr ""
 
-#: src/Includes/Helpers.php:605
+#: src/Includes/Helpers.php:628
 msgid "Enabling this will allow you to manage your assets more effectively."
 msgstr ""
 
-#: src/Includes/Helpers.php:616
+#: src/Includes/Helpers.php:639
 msgid "DNS Prefetch"
 msgstr ""
 
-#: src/Includes/Helpers.php:617
+#: src/Includes/Helpers.php:640
 msgid "Resolve domain names before a user clicks. Format: //domain.tld (one per line)"
 msgstr ""
 
-#: src/Includes/Helpers.php:628
+#: src/Includes/Helpers.php:651
 msgid "Preconnect"
 msgstr ""
 
-#: src/Includes/Helpers.php:629
+#: src/Includes/Helpers.php:652
 msgid "Establish a connection to another origin before a user clicks. Format: //domain.tld (one per line)"
 msgstr ""
 
-#: src/Includes/Helpers.php:642
+#: src/Includes/Helpers.php:665
 msgid "CDN Settings"
 msgstr ""
 
-#: src/Includes/Helpers.php:643
+#: src/Includes/Helpers.php:666
 msgid "Settings to manage CDN configurations."
 msgstr ""
 
-#: src/Includes/Helpers.php:648
+#: src/Includes/Helpers.php:671
 msgid "Enable CDN"
 msgstr ""
 
-#: src/Includes/Helpers.php:649
+#: src/Includes/Helpers.php:672
 msgid "Enabling this will allow you to use a CDN for your static assets."
 msgstr ""
 
-#: src/Includes/Helpers.php:660
+#: src/Includes/Helpers.php:683
 msgid "CDN URL"
 msgstr ""
 
-#: src/Includes/Helpers.php:661
+#: src/Includes/Helpers.php:684
 msgid "Enter the URL of your CDN provider."
 msgstr ""
 
-#: src/Includes/Helpers.php:672
+#: src/Includes/Helpers.php:695
 msgid "Included Directories"
 msgstr ""
 
-#: src/Includes/Helpers.php:673
+#: src/Includes/Helpers.php:696
 msgid "Enter any directories you would like to be included in CDN rewriting, separated by commas (,). Default: wp-content,wp-includes"
 msgstr ""
 
-#: src/Includes/Helpers.php:684
+#: src/Includes/Helpers.php:707
 msgid "CDN Exclusions"
 msgstr ""
 
-#: src/Includes/Helpers.php:685
+#: src/Includes/Helpers.php:708
 msgid "Enter any directories or file extensions you would like to be excluded from CDN rewriting, separated by commas (,). Default: .php"
 msgstr ""
 
-#: src/Includes/Helpers.php:698
+#: src/Includes/Helpers.php:721
+msgid "Full-Page Cache"
+msgstr ""
+
+#: src/Includes/Helpers.php:722
+msgid "Enable full-page caching with stale-while-revalidate and stampede protection."
+msgstr ""
+
+#: src/Includes/Helpers.php:727
+msgid "Enable Full-Page Cache"
+msgstr ""
+
+#: src/Includes/Helpers.php:728
+msgid "Caches full HTML responses for anonymous visitors."
+msgstr ""
+
+#: src/Includes/Helpers.php:739
+msgid "Cache TTL"
+msgstr ""
+
+#: src/Includes/Helpers.php:741
+msgid "5 Minutes"
+msgstr ""
+
+#: src/Includes/Helpers.php:742, src/Includes/Helpers.php:761
+msgid "15 Minutes"
+msgstr ""
+
+#: src/Includes/Helpers.php:743, src/Includes/Helpers.php:762
+msgid "30 Minutes"
+msgstr ""
+
+#: src/Includes/Helpers.php:744, src/Includes/Helpers.php:763
+msgid "1 Hour"
+msgstr ""
+
+#: src/Includes/Helpers.php:745, src/Includes/Helpers.php:764
+msgid "6 Hours"
+msgstr ""
+
+#: src/Includes/Helpers.php:746, src/Includes/Helpers.php:766
+msgid "24 Hours"
+msgstr ""
+
+#: src/Includes/Helpers.php:748
+msgid "How long a page remains fresh before becoming stale."
+msgstr ""
+
+#: src/Includes/Helpers.php:759
+msgid "Stale Revalidate Window"
+msgstr ""
+
+#: src/Includes/Helpers.php:765
+msgid "12 Hours"
+msgstr ""
+
+#: src/Includes/Helpers.php:768
+msgid "Serve stale pages while refreshing them in the background."
+msgstr ""
+
+#: src/Includes/Helpers.php:779
+msgid "Separate Query Params"
+msgstr ""
+
+#: src/Includes/Helpers.php:780
+msgid "Comma-separated query keys that should generate separate cache entries. Tracking params are ignored automatically."
+msgstr ""
+
+#: src/Includes/Helpers.php:791
+msgid "Preload and Observability"
+msgstr ""
+
+#: src/Includes/Helpers.php:792
+msgid "Warm cache from sitemaps and monitor cache effectiveness."
+msgstr ""
+
+#: src/Includes/Helpers.php:797
+msgid "Enable Adaptive Preloader"
+msgstr ""
+
+#: src/Includes/Helpers.php:798
+msgid "Preloads cache from sitemap and high-miss URLs using adaptive request rate."
+msgstr ""
+
+#: src/Includes/Helpers.php:809
+msgid "Slow Request Threshold"
+msgstr ""
+
+#: src/Includes/Helpers.php:811
+msgid "500ms"
+msgstr ""
+
+#: src/Includes/Helpers.php:812
+msgid "800ms"
+msgstr ""
+
+#: src/Includes/Helpers.php:813
+msgid "1200ms"
+msgstr ""
+
+#: src/Includes/Helpers.php:814
+msgid "2000ms"
+msgstr ""
+
+#: src/Includes/Helpers.php:816
+msgid "Tracks uncached requests slower than this value in observability stats."
+msgstr ""
+
+#: src/Includes/Helpers.php:827
+msgid "Cloudflare"
+msgstr ""
+
+#: src/Includes/Helpers.php:828
+msgid "Sync local cache purge events to Cloudflare (free-tier friendly)."
+msgstr ""
+
+#: src/Includes/Helpers.php:833
+msgid "Enable Cloudflare Cache Sync"
+msgstr ""
+
+#: src/Includes/Helpers.php:834
+msgid "Purge Cloudflare URLs when Perform purges local cache."
+msgstr ""
+
+#: src/Includes/Helpers.php:845
+msgid "Cloudflare Zone ID"
+msgstr ""
+
+#: src/Includes/Helpers.php:846
+msgid "Your Cloudflare Zone ID."
+msgstr ""
+
+#: src/Includes/Helpers.php:857
+msgid "Cloudflare API Token"
+msgstr ""
+
+#: src/Includes/Helpers.php:858
+msgid "API token with Zone:Cache Purge permission."
+msgstr ""
+
+#: src/Includes/Helpers.php:871
 msgid "Advanced Settings"
 msgstr ""
 
-#: src/Includes/Helpers.php:699
+#: src/Includes/Helpers.php:872
 msgid "Settings for advanced configurations."
 msgstr ""
 
-#: src/Includes/Helpers.php:704
+#: src/Includes/Helpers.php:877
 msgid "Remove Data on Uninstall"
 msgstr ""
 
-#: src/Includes/Helpers.php:705
+#: src/Includes/Helpers.php:878
 msgid "Enabling this will remove all plugin data upon uninstallation."
 msgstr ""
 
-#: src/Includes/Helpers.php:718
+#: src/Includes/Helpers.php:891
 msgid "WooCommerce Settings"
 msgstr ""
 
-#: src/Includes/Helpers.php:719
+#: src/Includes/Helpers.php:892
 msgid "Settings specific to WooCommerce."
 msgstr ""
 
-#: src/Includes/Helpers.php:724
+#: src/Includes/Helpers.php:897
 msgid "Enable WooCommerce Manager"
 msgstr ""
 
-#: src/Includes/Helpers.php:725
+#: src/Includes/Helpers.php:898
 msgid "Enabling this will allow you to manage WooCommerce specific settings."
 msgstr ""
 
-#: src/Includes/Helpers.php:736
+#: src/Includes/Helpers.php:909
 msgid "Enable WooCommerce Cache"
 msgstr ""
 
-#: src/Includes/Helpers.php:737
+#: src/Includes/Helpers.php:910
 msgid "Enabling this will cache WooCommerce pages for better performance."
-msgstr ""
-
-#: src/Modules/Assets_Manager.php:106
-msgid "Save"
-msgstr ""
-
-#: src/Modules/Assets_Manager.php:115
-msgid "Offload unnecessary assets (JS and CSS) from this page."
-msgstr ""
-
-#: src/Modules/Assets_Manager.php:295
-msgid "Handle"
-msgstr ""
-
-#: src/Modules/Assets_Manager.php:298
-msgid "Type"
-msgstr ""
-
-#: src/Modules/Assets_Manager.php:301
-msgid "Size"
-msgstr ""
-
-#: src/Modules/Assets_Manager.php:304
-msgid "Status"
-msgstr ""
-
-#: src/Modules/Assets_Manager.php:307
-msgid "Actions"
-msgstr ""
-
-#: src/Modules/Assets_Manager.php:368
-msgid "View File"
-msgstr ""
-
-#: src/Modules/Assets_Manager.php:416
-msgid "All assets in this group have been disabled. Please enable the group to individually manager assets."
-msgstr ""
-
-#: src/Modules/Assets_Manager.php:437, src/Modules/Assets_Manager.php:526
-msgid "Current URL"
-msgstr ""
-
-#: src/Modules/Assets_Manager.php:438
-msgid "Everywhere"
-msgstr ""
-
-#: src/Modules/Assets_Manager.php:443
-msgid "Disable on"
-msgstr ""
-
-#: src/Modules/Assets_Manager.php:489
-msgid "ON"
-msgstr ""
-
-#: src/Modules/Assets_Manager.php:492
-msgid "OFF"
-msgstr ""
-
-#: src/Modules/Assets_Manager.php:519
-msgid "Exceptions"
-msgstr ""
-
-#: src/Modules/Basic.php:485
-msgid "No feed available, please visit"
-msgstr ""
-
-#: src/Modules/Basic.php:487
-msgid "Home"
 msgstr ""
 
 #: src/Admin/Settings/Api.php:48
@@ -512,18 +560,150 @@ msgstr ""
 msgid "Learn more"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:131
+#: src/Admin/Settings/Menu.php:82
 msgid "Insufficient permissions."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:141
+#: src/Admin/Settings/Menu.php:92
 msgid "Security check failed."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:238
+#: src/Admin/Settings/Menu.php:194
 msgid "Unable to save the settings. Please try again."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:233
+#: src/Admin/Settings/Menu.php:189
 msgid "Settings saved successfully."
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:110
+msgid "Save"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:119
+msgid "Offload unnecessary assets (JS and CSS) from this page."
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:300
+msgid "Handle"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:303
+msgid "Type"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:306
+msgid "Size"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:309
+msgid "Status"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:312
+msgid "Actions"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:373
+msgid "View File"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:421
+msgid "All assets in this group have been disabled. Please enable the group to individually manager assets."
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:442, src/Modules/Assets/AssetsManager.php:531
+msgid "Current URL"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:443
+msgid "Everywhere"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:448
+msgid "Disable on"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:494
+msgid "ON"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:497
+msgid "OFF"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:524
+msgid "Exceptions"
+msgstr ""
+
+#: src/Modules/Basic/DisableRssFeeds.php:50
+msgid "No feed available, please visit the homepage!"
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:127
+msgid "Every 5 minutes (Perform Cache)"
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:449, src/Modules/Cache/PageCache.php:478
+msgid "Perform Cache Observability"
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:450
+msgid "Perform Cache Stats"
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:479
+msgid "Live cache effectiveness and warmup health metrics."
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:483
+msgid "Cache Hit Ratio"
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:484
+msgid "Hits"
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:485
+msgid "Stale Hits"
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:486, src/Modules/Cache/PageCache.php:495
+msgid "Misses"
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:487
+msgid "Bypasses"
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:488
+msgid "Lock Waits"
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:489
+msgid "Preload Queue Size"
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:490
+msgid "Preload Requests"
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:494
+msgid "Top Missed URLs"
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:497
+msgid "Slow Uncached URLs (ms)"
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:498
+msgid "Render Time (ms)"
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:513
+msgid "No data yet."
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:520
+msgid "URL"
 msgstr ""

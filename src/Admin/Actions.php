@@ -63,6 +63,8 @@ class Actions {
 					'logoUrl' => plugins_url( 'assets/dist/images/logo.png', PERFORM_PLUGIN_FILE ),
 					'nonce'   => wp_create_nonce( 'perform_save_settings' ),
 					'saved'   => ClientPayload::sanitize_for_client( (array) \Perform\Includes\Helpers::get_settings() ),
+					'sensitiveKeys' => ClientPayload::get_sensitive_keys(),
+					'maskedSecretValue' => ClientPayload::MASKED_SECRET,
 					'tabs'    => \Perform\Includes\Helpers::get_settings_tabs(),
 					'fields'  => \Perform\Includes\Helpers::get_settings_fields(), // Expose fields to JS
 				]
