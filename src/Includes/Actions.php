@@ -42,7 +42,8 @@ class Actions {
 			return;
 		}
 
-		wp_enqueue_style( 'perform', PERFORM_PLUGIN_URL . 'assets/dist/css/perform.css' );
+		wp_enqueue_style( 'wp-components' );
+		wp_enqueue_style( 'perform', PERFORM_PLUGIN_URL . 'assets/dist/css/perform.css', [ 'wp-components' ], PERFORM_VERSION );
 	}
 
 	/**
@@ -60,6 +61,6 @@ class Actions {
 			return;
 		}
 
-		wp_enqueue_script( 'perform', PERFORM_PLUGIN_URL . 'assets/dist/js/perform.min.js', '', PERFORM_VERSION, false );
+		wp_enqueue_script( 'perform', PERFORM_PLUGIN_URL . 'assets/dist/js/perform.min.js', [ 'wp-components', 'wp-element', 'wp-i18n' ], PERFORM_VERSION, false );
 	}
 }

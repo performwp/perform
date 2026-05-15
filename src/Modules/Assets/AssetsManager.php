@@ -97,9 +97,21 @@ class AssetsManager implements ModuleInterface {
 	 * @return mixed
 	 */
 	public function assets_manager_html() {
-		$assets_list = $this->prepare_assets_list();
-		$summary     = $this->get_assets_summary( $assets_list );
-		$current_url = get_permalink();
+		$assets_list              = $this->prepare_assets_list();
+		$summary                  = $this->get_assets_summary( $assets_list );
+		$scanner_controls_labels  = [
+			'search'            => __( 'Search detected assets', 'perform' ),
+			'searchPlaceholder' => __( 'Search by handle, source, or file URL', 'perform' ),
+			'filters'           => __( 'Filter detected assets', 'perform' ),
+			'all'               => __( 'All', 'perform' ),
+			'plugins'           => __( 'Plugins', 'perform' ),
+			'themes'            => __( 'Themes', 'perform' ),
+			'misc'              => __( 'Other', 'perform' ),
+			'js'                => __( 'JS', 'perform' ),
+			'css'               => __( 'CSS', 'perform' ),
+			'disabled'          => __( 'Disabled', 'perform' ),
+		];
+		$current_url              = get_permalink();
 		if ( empty( $current_url ) ) {
 			$current_url = home_url( add_query_arg( [] ) );
 		}
@@ -157,17 +169,11 @@ class AssetsManager implements ModuleInterface {
 							</div>
 						</div>
 						<div class="perform-assets-manager--toolbar">
-							<label class="screen-reader-text" for="perform-assets-manager-search"><?php esc_html_e( 'Search detected assets', 'perform' ); ?></label>
-							<input id="perform-assets-manager-search" type="search" placeholder="<?php esc_attr_e( 'Search by handle, source, or file URL', 'perform' ); ?>" />
-							<div class="perform-assets-manager--filters" aria-label="<?php esc_attr_e( 'Filter detected assets', 'perform' ); ?>">
-								<button type="button" class="is-active" data-perform-filter="all" aria-pressed="true"><?php esc_html_e( 'All', 'perform' ); ?></button>
-								<button type="button" data-perform-filter="plugins" aria-pressed="false"><?php esc_html_e( 'Plugins', 'perform' ); ?></button>
-								<button type="button" data-perform-filter="themes" aria-pressed="false"><?php esc_html_e( 'Themes', 'perform' ); ?></button>
-								<button type="button" data-perform-filter="misc" aria-pressed="false"><?php esc_html_e( 'Other', 'perform' ); ?></button>
-								<button type="button" data-perform-filter="js" aria-pressed="false"><?php esc_html_e( 'JS', 'perform' ); ?></button>
-								<button type="button" data-perform-filter="css" aria-pressed="false"><?php esc_html_e( 'CSS', 'perform' ); ?></button>
-								<button type="button" data-perform-filter="disabled" aria-pressed="false"><?php esc_html_e( 'Disabled', 'perform' ); ?></button>
-							</div>
+							<div
+								id="perform-assets-manager-controls-root"
+								class="perform-assets-manager--controls-root"
+								data-labels="<?php echo esc_attr( wp_json_encode( $scanner_controls_labels ) ); ?>"
+							></div>
 						</div>
 					</div>
 						<?php

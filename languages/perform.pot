@@ -7,7 +7,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language-Team: PerformWP <hello@performwp.com>\n"
-"POT-Creation-Date: 2026-05-15 15:00+0000\n"
+"POT-Creation-Date: 2026-05-15 15:29+0000\n"
 "Report-Msgid-Bugs-To: https://github.com/performwp/perform/issues/new\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
@@ -20,11 +20,11 @@ msgstr ""
 msgid "Close Assets Manager"
 msgstr ""
 
-#: src/Admin/Actions.php:102, src/Modules/Assets/AssetsManager.php:129
+#: src/Admin/Actions.php:102, src/Modules/Assets/AssetsManager.php:141
 msgid "Assets Manager"
 msgstr ""
 
-#: src/Admin/Actions.php:111, src/Admin/Settings/Menu.php:40, src/Admin/Settings/Menu.php:41, src/Modules/Assets/AssetsManager.php:112
+#: src/Admin/Actions.php:111, src/Admin/Settings/Menu.php:40, src/Admin/Settings/Menu.php:41, src/Modules/Assets/AssetsManager.php:124
 msgid "Perform"
 msgstr ""
 
@@ -576,162 +576,162 @@ msgstr ""
 msgid "Settings saved successfully."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:114
-msgid "Page asset scanner"
-msgstr ""
-
-#: src/Modules/Assets/AssetsManager.php:115
-msgid "Perform Assets Manager"
-msgstr ""
-
-#: src/Modules/Assets/AssetsManager.php:119
-msgid "Close"
-msgstr ""
-
-#: src/Modules/Assets/AssetsManager.php:120
-msgid "Save changes"
-msgstr ""
-
-#: src/Modules/Assets/AssetsManager.php:126
-msgid "Current page"
-msgstr ""
-
-#: src/Modules/Assets/AssetsManager.php:132
-msgid "Review scripts and styles detected on this page, then disable only the assets you have verified are not needed."
-msgstr ""
-
-#: src/Modules/Assets/AssetsManager.php:136
-msgid "Asset scan summary"
-msgstr ""
-
-#: src/Modules/Assets/AssetsManager.php:139
-msgid "Detected assets"
-msgstr ""
-
-#: src/Modules/Assets/AssetsManager.php:143
-msgid "JavaScript"
-msgstr ""
-
-#: src/Modules/Assets/AssetsManager.php:147, src/Modules/Assets/AssetsManager.php:168
-msgid "CSS"
-msgstr ""
-
-#: src/Modules/Assets/AssetsManager.php:151
-msgid "Disabled rules"
-msgstr ""
-
-#: src/Modules/Assets/AssetsManager.php:155
-msgid "Known file size"
-msgstr ""
-
-#: src/Modules/Assets/AssetsManager.php:160
+#: src/Modules/Assets/AssetsManager.php:103
 msgid "Search detected assets"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:161
+#: src/Modules/Assets/AssetsManager.php:104
 msgid "Search by handle, source, or file URL"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:162
+#: src/Modules/Assets/AssetsManager.php:105
 msgid "Filter detected assets"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:163
+#: src/Modules/Assets/AssetsManager.php:106
 msgid "All"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:164
+#: src/Modules/Assets/AssetsManager.php:107
 msgid "Plugins"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:165
+#: src/Modules/Assets/AssetsManager.php:108
 msgid "Themes"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:166, src/Modules/Assets/AssetsManager.php:487
+#: src/Modules/Assets/AssetsManager.php:109, src/Modules/Assets/AssetsManager.php:493
 msgid "Other"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:167
+#: src/Modules/Assets/AssetsManager.php:110
 msgid "JS"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:169
+#: src/Modules/Assets/AssetsManager.php:111, src/Modules/Assets/AssetsManager.php:159
+msgid "CSS"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:112
 msgid "Disabled"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:198
+#: src/Modules/Assets/AssetsManager.php:126
+msgid "Page asset scanner"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:127
+msgid "Perform Assets Manager"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:131
+msgid "Close"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:132
+msgid "Save changes"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:138
+msgid "Current page"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:144
+msgid "Review scripts and styles detected on this page, then disable only the assets you have verified are not needed."
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:148
+msgid "Asset scan summary"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:151
+msgid "Detected assets"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:155
+msgid "JavaScript"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:163
+msgid "Disabled rules"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:167
+msgid "Known file size"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:204
 msgid "No assets match the current scan filter."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:488
+#: src/Modules/Assets/AssetsManager.php:494
 msgid "WordPress core, CDN, and uncategorized assets"
 msgstr ""
 
 #. translators: %d: number of assets.
-#: src/Modules/Assets/AssetsManager.php:493, src/Modules/Assets/AssetsManager.php:472
+#: src/Modules/Assets/AssetsManager.php:499, src/Modules/Assets/AssetsManager.php:478
 msgid "%d detected asset"
 msgid_plural "%d detected assets"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Modules/Assets/AssetsManager.php:507
+#: src/Modules/Assets/AssetsManager.php:513
 msgid "Handle"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:510
+#: src/Modules/Assets/AssetsManager.php:516
 msgid "Type"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:513
+#: src/Modules/Assets/AssetsManager.php:519
 msgid "Size"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:516
+#: src/Modules/Assets/AssetsManager.php:522
 msgid "Status"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:519
+#: src/Modules/Assets/AssetsManager.php:525
 msgid "Actions"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:577
+#: src/Modules/Assets/AssetsManager.php:583
 msgid "External"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:585
+#: src/Modules/Assets/AssetsManager.php:591
 msgid "View File"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:632
+#: src/Modules/Assets/AssetsManager.php:638
 msgid "All assets in this group have been disabled. Enable the group again to manage individual assets."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:653, src/Modules/Assets/AssetsManager.php:743
+#: src/Modules/Assets/AssetsManager.php:659, src/Modules/Assets/AssetsManager.php:749
 msgid "Current URL"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:654
+#: src/Modules/Assets/AssetsManager.php:660
 msgid "Everywhere"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:659
+#: src/Modules/Assets/AssetsManager.php:665
 msgid "Disable on"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:705
+#: src/Modules/Assets/AssetsManager.php:711
 msgid "Asset loading status"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:707
+#: src/Modules/Assets/AssetsManager.php:713
 msgid "ON"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:710
+#: src/Modules/Assets/AssetsManager.php:716
 msgid "OFF"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:736
+#: src/Modules/Assets/AssetsManager.php:742
 msgid "Exceptions"
 msgstr ""
 
