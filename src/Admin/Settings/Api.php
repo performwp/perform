@@ -133,7 +133,7 @@ class Api {
 		}
 
 		return sprintf(
-			'<a href="%s" class="perform-tooltip" target="_blank" title="%s">?</a>',
+			'<a href="%s" class="perform-tooltip" target="_blank" rel="noopener noreferrer" title="%s">?</a>',
 			esc_url( $url ),
 			esc_attr__( 'Learn more', 'perform' )
 		);

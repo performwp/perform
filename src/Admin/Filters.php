@@ -45,7 +45,7 @@ class Filters {
 		}
 
 		$footer_text = sprintf(
-			'%1$s <strong>%2$s</strong> <a href="%4$s" target="_blank" class="perform-rating-link">%3$s</a> %5$s',
+			'%1$s <strong>%2$s</strong> <a href="%4$s" target="_blank" rel="noopener noreferrer" class="perform-rating-link">%3$s</a> %5$s',
 			esc_html__( 'If you love using', 'perform' ),
 			esc_html__( 'Perform WordPress Plugin', 'perform' ),
 			esc_html__( 'please leave us a rating', 'perform' ),
@@ -73,8 +73,8 @@ class Filters {
 				esc_html__( 'Settings', 'perform' )
 			),
 			'support'  => sprintf(
-				'<a target="_blank" href="%1$s">%2$s</a>',
-				esc_url_raw( 'https://wordpress.org/support/plugin/perform/' ),
+				'<a target="_blank" rel="noopener noreferrer" href="%1$s">%2$s</a>',
+				esc_url( 'https://wordpress.org/support/plugin/perform/' ),
 				esc_html__( 'Support', 'perform' )
 			),
 		];
@@ -93,7 +93,7 @@ class Filters {
 	public function add_row_actions( $actions, $post ) {
 		if ( 'publish' === $post->post_status ) {
 			$actions['assets_manager'] = sprintf(
-				'<a href="%1$s" target="_blank">%2$s</a>',
+				'<a href="%1$s" target="_blank" rel="noopener noreferrer">%2$s</a>',
 				esc_url( get_the_permalink( $post->ID ) . '?perform' ),
 				esc_html__( 'Manage Assets', 'perform' )
 			);

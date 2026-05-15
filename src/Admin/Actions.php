@@ -119,7 +119,7 @@ class Actions {
 				'parent' => 'perform',
 				'id'     => 'assets-manager',
 				'title'  => $menu_text,
-				'href'   => $href,
+				'href'   => esc_url( $href ),
 			]
 		);
 
