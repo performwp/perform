@@ -1,66 +1,178 @@
-document.addEventListener( 'DOMContentLoaded', function() {
-	const allStatusDropdown = document.querySelectorAll( '.perform-status-select' );
-	const allStatusDropdownWrap = document.querySelectorAll( '.perform-assets-manager--status' );
-	const allDisableAssetsWrap = document.querySelectorAll( '.perform-assets-manager-disable-assets' );
-	const allAssetsGroup = document.querySelectorAll( '.perform-assets-manager--group' );
+( function () {
+	function setHidden( element, hidden ) {
+		if ( ! element ) {
+			return;
+		}
 
-	Array.prototype.forEach.call( allStatusDropdown, function( element ) {
-		element.addEventListener( 'change', function( e ) {
-			if ( this.classList.contains( 'disabled' ) ) {
-				this.classList.remove( 'disabled' );
-			} else {
-				this.classList.add( 'disabled' );
-			}
+		element.hidden = hidden;
+	}
+
+	function syncAssetStatus( selectElement ) {
+		const isDisabled = 'disabled' === selectElement.value;
+		const statusCell = selectElement.closest( '.perform-assets-manager--status' );
+		const row = selectElement.closest( '[data-perform-asset-row]' );
+		const singleOptions = statusCell
+			? statusCell.querySelector( '.perform-assets-manager-disable-single-asset' )
+			: null;
+
+		selectElement.classList.toggle( 'disabled', isDisabled );
+		setHidden( singleOptions, ! isDisabled );
+
+		if ( row ) {
+			row.dataset.performAssetStatus = isDisabled ? 'disabled' : 'enabled';
+			row.dataset.performOwnStatus = row.dataset.performAssetStatus;
+		}
+
+		document.dispatchEvent( new Event( 'performAssetsManagerFilterRefresh' ) );
+	}
+
+	function syncGroupStatus( selectElement ) {
+		const group = selectElement.closest( '[data-perform-group]' );
+
+		if ( ! group ) {
+			return;
+		}
+
+		const isDisabled = 'disabled' === selectElement.value;
+		const groupOptions = group.querySelector( '.perform-assets-manager-disable-group-assets' );
+		const assetTable = group.querySelector( '.perform-assets-manager--assets-table' );
+
+		selectElement.classList.toggle( 'disabled', isDisabled );
+		setHidden( groupOptions, ! isDisabled );
+		setHidden( assetTable, isDisabled );
+
+		group.querySelectorAll( '[data-perform-asset-row]' ).forEach( function ( row ) {
+			row.dataset.performAssetStatus = isDisabled ? 'disabled' : row.dataset.performOwnStatus || 'enabled';
 		} );
-	} );
 
-	Array.prototype.forEach.call( allStatusDropdownWrap, function( element ) {
-		element.querySelector( '.perform-status-select' ).addEventListener( 'change', function( e ) {
-			const disablePages = element.querySelector( '.perform-assets-manager-disable-single-asset' );
-			if ( this.classList.contains( 'disabled' ) ) {
-				disablePages.style.display = 'block';
-			} else {
-				disablePages.style.display = 'none';
+		document.dispatchEvent( new Event( 'performAssetsManagerFilterRefresh' ) );
+	}
+
+	function syncExceptions( inputElement ) {
+		const options = inputElement.closest( '.perform-assets-manager-disable-assets' );
+		const exceptions = options ? options.querySelector( '.perform-assets-manager--exceptions' ) : null;
+
+		setHidden( exceptions, 'everywhere' !== inputElement.value || ! inputElement.checked );
+	}
+
+	function setupScannerFilters() {
+		const manager = document.getElementById( 'perform-assets-manager' );
+
+		if ( ! manager ) {
+			return;
+		}
+
+		const searchInput = manager.querySelector( '#perform-assets-manager-search' );
+		const filterButtons = manager.querySelectorAll( '[data-perform-filter]' );
+		const noResults = manager.querySelector( '.perform-assets-manager--no-results' );
+		const state = {
+			filter: 'all',
+			query: '',
+		};
+
+		function rowMatchesFilter( row ) {
+			if ( 'all' === state.filter ) {
+				return true;
 			}
-		} );
-	} );
 
-	Array.prototype.forEach.call( allDisableAssetsWrap, function( mainElement ) {
-		Array.prototype.forEach.call( mainElement.querySelectorAll( '.perform-disable-assets' ), function( inputElement ) {
-			inputElement.addEventListener( 'change', function() {
-				const showExceptions = mainElement.querySelector( '.perform-assets-manager--exceptions' );
+			if ( 'disabled' === state.filter ) {
+				return 'disabled' === row.dataset.performAssetStatus;
+			}
 
-				if ( 'everywhere' === this.value ) {
-					showExceptions.style.display = 'block';
-				} else {
-					showExceptions.style.display = 'none';
+			return state.filter === row.dataset.performAssetType || state.filter === row.dataset.performAssetSource;
+		}
+
+		function rowMatchesSearch( row ) {
+			if ( '' === state.query ) {
+				return true;
+			}
+
+			return row.textContent.toLowerCase().indexOf( state.query ) !== -1;
+		}
+
+		function applyFilters() {
+			let visibleRows = 0;
+
+			manager.querySelectorAll( '[data-perform-asset-row]' ).forEach( function ( row ) {
+				const isVisible = rowMatchesFilter( row ) && rowMatchesSearch( row );
+				setHidden( row, ! isVisible );
+
+				if ( isVisible ) {
+					visibleRows++;
 				}
 			} );
-		} );
-	} );
 
-	Array.prototype.forEach.call( allAssetsGroup, function( mainElement ) {
-		const titleElement = mainElement.querySelector( '.perform-assets-manager-group--title' );
+			manager.querySelectorAll( '[data-perform-group]' ).forEach( function ( group ) {
+				const visibleGroupRows = group.querySelectorAll( '[data-perform-asset-row]:not([hidden])' ).length;
+				setHidden( group, 0 === visibleGroupRows );
+			} );
 
-		if ( null !== titleElement ) {
-			const selectElement = titleElement.querySelector( '.perform-assets-manager-group--status' ).querySelector( '.perform-status-select' );
-			const assetOptionsElement = mainElement.querySelector( '.perform-assets-manager-disable-group-assets' );
-			const assetTableElement = mainElement.querySelector( 'table' );
+			manager.querySelectorAll( '[data-perform-section]' ).forEach( function ( section ) {
+				const visibleGroups = section.querySelectorAll( '[data-perform-group]:not([hidden])' ).length;
+				setHidden( section, 0 === visibleGroups );
+			} );
 
-			if ( 'disabled' === selectElement.value ) {
-				assetOptionsElement.style.display = 'block';
-				assetTableElement.style.display = 'none';
-			}
+			setHidden( noResults, visibleRows > 0 );
+		}
 
-			selectElement.addEventListener( 'change', function() {
-				if ( 'enabled' === this.value ) {
-					assetOptionsElement.style.display = 'none';
-					assetTableElement.style.display = 'table';
-				} else {
-					assetOptionsElement.style.display = 'block';
-					assetTableElement.style.display = 'none';
-				}
+		if ( searchInput ) {
+			searchInput.addEventListener( 'input', function () {
+				state.query = searchInput.value.trim().toLowerCase();
+				applyFilters();
 			} );
 		}
+
+		filterButtons.forEach( function ( button ) {
+			button.addEventListener( 'click', function () {
+				state.filter = button.dataset.performFilter;
+
+				filterButtons.forEach( function ( filterButton ) {
+					const isActive = filterButton === button;
+					filterButton.classList.toggle( 'is-active', isActive );
+					filterButton.setAttribute( 'aria-pressed', isActive ? 'true' : 'false' );
+				} );
+
+				applyFilters();
+			} );
+		} );
+
+		document.addEventListener( 'performAssetsManagerFilterRefresh', applyFilters );
+		applyFilters();
+	}
+
+	document.addEventListener( 'DOMContentLoaded', function () {
+		document.querySelectorAll( '[data-perform-asset-row]' ).forEach( function ( row ) {
+			row.dataset.performOwnStatus = row.dataset.performAssetStatus || 'enabled';
+		} );
+
+		document.querySelectorAll( '.perform-status-select' ).forEach( function ( selectElement ) {
+			const isGroupSelect = Boolean( selectElement.closest( '.perform-assets-manager-group--status' ) );
+
+			if ( isGroupSelect ) {
+				syncGroupStatus( selectElement );
+			} else {
+				syncAssetStatus( selectElement );
+			}
+
+			selectElement.addEventListener( 'change', function () {
+				if ( isGroupSelect ) {
+					syncGroupStatus( selectElement );
+				} else {
+					syncAssetStatus( selectElement );
+				}
+			} );
+		} );
+
+		document.querySelectorAll( '.perform-disable-assets' ).forEach( function ( inputElement ) {
+			if ( inputElement.checked ) {
+				syncExceptions( inputElement );
+			}
+
+			inputElement.addEventListener( 'change', function () {
+				syncExceptions( inputElement );
+			} );
+		} );
+
+		setupScannerFilters();
 	} );
-} );
+} )();

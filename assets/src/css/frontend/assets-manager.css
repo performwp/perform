@@ -1,122 +1,525 @@
 #perform-assets-manager {
 	position: fixed;
-	z-index: 9999;
+	z-index: 999999;
 	top: 32px;
+	right: 0;
 	bottom: 0;
 	left: 0;
-	right: 0;
-	background-color: var(--primary-color);
-	overflow-y: auto;
+	overflow: auto;
+	background: #f0f0f1;
+	color: #1e1e1e;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	font-size: 13px;
+	line-height: 1.4;
+	isolation: isolate;
+}
+
+#perform-assets-manager,
+#perform-assets-manager * {
+	box-sizing: border-box;
+}
+
+#perform-assets-manager [hidden] {
+	display: none !important;
+}
+
+#perform-assets-manager a,
+#perform-assets-manager button,
+#perform-assets-manager input,
+#perform-assets-manager select {
+	font: inherit;
+}
+
+#perform-assets-manager code {
+	display: inline-block;
+	max-width: 100%;
+	padding: 2px 6px;
+	overflow-wrap: anywhere;
+	border-radius: 2px;
+	background: #f6f7f7;
+	color: #50575e;
+	font-family: Consolas, Monaco, monospace;
+	font-size: 12px;
+}
+
+#perform-assets-manager .screen-reader-text {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
 }
 
 .perform-assets-manager #perform-assets-manager--form {
-	.perform-assets-manager--header {
-		background-color: #fff;
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: 0 15px 0 0;
+	min-height: 100%;
+}
 
-		.perform-assets-manager--logo {
-			img {
-				width: 180px;
-			}
-		}
+.perform-assets-manager--header {
+	position: sticky;
+	z-index: 10;
+	top: 0;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 12px 24px;
+	border-bottom: 1px solid #dcdcde;
+	background: #fff;
+	box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+}
 
-		.perform-assets-manager-header-actions {
-			input[type='submit'] {
-				background-color: var(--primary-color);
-				border: none;
-				padding: 8px 25px;
-				font-size: 13px;
-				color: #fff;
-				border-radius: 5px;
-				text-transform: uppercase;
-				font-weight: 700;
-				cursor: pointer;
-			}
-		}
-	}
+.perform-assets-manager--brand {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	min-width: 0;
+}
 
-	
+.perform-assets-manager--brand img {
+	width: 136px;
+	height: auto;
+	flex: 0 0 auto;
+}
+
+.perform-assets-manager--brand span {
+	display: block;
+	margin-bottom: 2px;
+	color: #646970;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: .04em;
+	text-transform: uppercase;
+}
+
+.perform-assets-manager--brand strong {
+	display: block;
+	color: #1e1e1e;
+	font-size: 15px;
+	font-weight: 600;
+}
+
+.perform-assets-manager-header-actions {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.perform-assets-manager-button,
+.perform-assets-manager-button:visited,
+.perform-assets-manager-header-actions input[type='submit'] {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 36px;
+	padding: 6px 14px;
+	border: 1px solid #2271b1;
+	border-radius: 3px;
+	box-shadow: none;
+	cursor: pointer;
+	text-decoration: none;
+	font-weight: 500;
+}
+
+.perform-assets-manager-button--primary,
+.perform-assets-manager-header-actions input[type='submit'] {
+	background: #2271b1;
+	color: #fff;
+}
+
+.perform-assets-manager-button--secondary {
+	background: #fff;
+	color: #2271b1;
+}
+
+.perform-assets-manager-button:focus,
+.perform-assets-manager-header-actions input[type='submit']:focus,
+.perform-assets-manager--filters button:focus,
+.perform-status-select:focus,
+#perform-assets-manager-search:focus {
+	outline: 2px solid #2271b1;
+	outline-offset: 2px;
 }
 
 #perform-assets-manager--main {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: center;
-	width: 100%;
+	width: min(1280px, calc(100% - 32px));
+	margin: 0 auto;
+	padding: 24px 0 40px;
 }
 
 .perform-assets-manager--title {
-	text-align: center;
-	width: 100%;
-	background-color: var(--primary-color);
-	color: #fff;
-	padding: 20px 0;
+	display: grid;
+	gap: 8px;
+	padding: 24px;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	background: #fff;
+}
 
-	p {
-		font-size: 16px;
-	}
+.perform-assets-manager--title h2,
+.perform-assets-manager--title p {
+	margin: 0;
+}
+
+.perform-assets-manager--title h2 {
+	font-size: 28px;
+	font-weight: 600;
+	line-height: 1.2;
+}
+
+.perform-assets-manager--title p:not(.perform-assets-manager--eyebrow) {
+	max-width: 760px;
+	color: #50575e;
+	font-size: 14px;
+}
+
+.perform-assets-manager--eyebrow {
+	color: #2271b1;
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: .04em;
+	text-transform: uppercase;
+}
+
+.perform-assets-manager--scanner {
+	display: grid;
+	gap: 16px;
+	margin: 16px 0;
+}
+
+.perform-assets-manager--summary-grid {
+	display: grid;
+	grid-template-columns: repeat(5, minmax(0, 1fr));
+	gap: 12px;
+}
+
+.perform-assets-manager--summary-card {
+	display: grid;
+	gap: 8px;
+	min-height: 96px;
+	padding: 16px;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	background: #fff;
+}
+
+.perform-assets-manager--summary-card span {
+	color: #646970;
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+}
+
+.perform-assets-manager--summary-card strong {
+	color: #1e1e1e;
+	font-size: 28px;
+	font-weight: 600;
+	line-height: 1;
+}
+
+.perform-assets-manager--toolbar {
+	display: grid;
+	grid-template-columns: minmax(220px, 360px) 1fr;
+	gap: 12px;
+	align-items: center;
+	padding: 16px;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	background: #fff;
+}
+
+#perform-assets-manager-search {
+	width: 100%;
+	min-height: 36px;
+	padding: 6px 10px;
+	border: 1px solid #8c8f94;
+	border-radius: 3px;
+	background: #fff;
+	color: #1e1e1e;
+}
+
+.perform-assets-manager--filters {
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.perform-assets-manager--filters button {
+	min-height: 32px;
+	padding: 4px 10px;
+	border: 1px solid #c3c4c7;
+	border-radius: 3px;
+	background: #fff;
+	color: #2c3338;
+	cursor: pointer;
+}
+
+.perform-assets-manager--filters button.is-active {
+	border-color: #2271b1;
+	background: #f0f6fc;
+	color: #0a4b78;
 }
 
 .perform-assets-manager--section {
-	width: 90%;
-	background-color: #fff;
-	margin: 15px 0;
+	margin: 16px 0 0;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	background: #fff;
+}
 
-	h3 {
-		color: var(--primary-color);
-		text-transform: uppercase;
-		font-size: 20px;
-		font-weight: 700;
-		padding: 10px;
+.perform-assets-manager--section > h3 {
+	margin: 0;
+	padding: 16px 20px;
+	border-bottom: 1px solid #dcdcde;
+	color: #1e1e1e;
+	font-size: 15px;
+	font-weight: 600;
+	text-transform: none;
+}
+
+.perform-assets-manager--group {
+	padding: 20px;
+	border-bottom: 1px solid #dcdcde;
+}
+
+.perform-assets-manager--group:last-child {
+	border-bottom: 0;
+}
+
+.perform-assets-manager-group--title {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+	margin-bottom: 16px;
+}
+
+.perform-assets-manager-group--title h4,
+.perform-assets-manager-group--title p {
+	margin: 0;
+}
+
+.perform-assets-manager-group--title h4 {
+	margin-top: 4px;
+	color: #1e1e1e;
+	font-size: 16px;
+	font-weight: 600;
+}
+
+.perform-assets-manager-group--title p {
+	margin-top: 4px;
+	color: #646970;
+}
+
+.perform-assets-manager--source-label,
+.perform-assets-manager--type-badge {
+	display: inline-flex;
+	align-items: center;
+	min-height: 22px;
+	padding: 2px 8px;
+	border-radius: 999px;
+	background: #f6f7f7;
+	color: #50575e;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+}
+
+.perform-assets-manager--type-badge-js {
+	background: #fff8e5;
+	color: #7a4b00;
+}
+
+.perform-assets-manager--type-badge-css {
+	background: #edfaef;
+	color: #075e26;
+}
+
+.perform-status-select {
+	min-width: 88px;
+	min-height: 34px;
+	padding: 4px 28px 4px 10px;
+	border: 1px solid #8c8f94;
+	border-radius: 3px;
+	background-color: #fff;
+	color: #1e1e1e;
+}
+
+.perform-status-select.disabled {
+	border-color: #b32d2e;
+	color: #8a2424;
+}
+
+.perform-assets-manager--assets-table {
+	width: 100%;
+	border: 1px solid #dcdcde;
+	border-collapse: collapse;
+	background: #fff;
+}
+
+.perform-assets-manager--assets-table th,
+.perform-assets-manager--assets-table td {
+	padding: 12px;
+	border-bottom: 1px solid #dcdcde;
+	text-align: left;
+	vertical-align: top;
+}
+
+.perform-assets-manager--assets-table th {
+	background: #f6f7f7;
+	color: #50575e;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+}
+
+.perform-assets-manager--assets-table tbody tr:last-child td {
+	border-bottom: 0;
+}
+
+.perform-assets-manager--handle strong {
+	display: block;
+	margin-bottom: 6px;
+	color: #1e1e1e;
+	font-weight: 600;
+}
+
+.perform-assets-manager--status {
+	min-width: 220px;
+}
+
+.perform-assets-manager--url a {
+	color: #2271b1;
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.perform-assets-manager--url a:hover {
+	color: #135e96;
+	text-decoration: underline;
+}
+
+.perform-assets-manager-disable-assets {
+	margin-top: 12px;
+	padding: 12px;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	background: #f6f7f7;
+}
+
+.perform-assets-manager-disable-asset-option-selection {
+	padding: 0;
+	margin: 0;
+	border: 0;
+}
+
+.perform-assets-manager-disable-asset-option-selection legend,
+.perform-assets-manager-exceptions--title {
+	margin-bottom: 8px;
+	color: #1e1e1e;
+	font-weight: 600;
+}
+
+.perform-assets-manager--radio-group,
+.perform-assets-manager-exception--options {
+	display: grid;
+	gap: 8px;
+}
+
+.perform-assets-manager--radio-group label,
+.perform-assets-manager-exception--options label {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: #2c3338;
+}
+
+.perform-assets-manager--exceptions {
+	margin-top: 12px;
+	padding-top: 12px;
+	border-top: 1px solid #dcdcde;
+}
+
+.perform-assets-manager--no-results {
+	margin: 16px 0 0;
+	padding: 20px;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	background: #fff;
+	color: #646970;
+	text-align: center;
+}
+
+@media (max-width: 960px) {
+	.perform-assets-manager--summary-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 
-	.perform-assets-manager--group {
-		padding: 20px;
-		border-bottom: 2px solid var(--primary-color);
+	.perform-assets-manager--toolbar {
+		grid-template-columns: 1fr;
+	}
 
-		.perform-assets-manager-group--title {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-		}
+	.perform-assets-manager--filters {
+		justify-content: flex-start;
+	}
+}
 
-		.perform-status-select {
-			padding: 3px 18px;
-			margin: 5px;
-			border-radius: 25px;
-			font-size: 1rem;
-			border: 2px solid;
-		}
+@media (max-width: 782px) {
+	#perform-assets-manager {
+		top: 46px;
+	}
 
-		table {
-			width: 100%;
-			border: none;
+	.perform-assets-manager--header,
+	.perform-assets-manager-group--title {
+		align-items: stretch;
+		flex-direction: column;
+	}
 
-			thead {
-				tr {
-					background-color: #fafafa;
+	.perform-assets-manager-header-actions {
+		justify-content: stretch;
+	}
 
-					th {
-						color: #71717a;
-						text-transform: uppercase;
-						font-size: 14px;
-					}
-				}
-			}
+	.perform-assets-manager-button,
+	.perform-assets-manager-header-actions input[type='submit'] {
+		width: 100%;
+	}
 
-			tbody {
-				tr {
-					border-bottom: 1px solid #e4e4e7;
+	.perform-assets-manager--summary-grid {
+		grid-template-columns: 1fr;
+	}
 
-					td {
-						padding: 0 10px;
-						font-size: 16px;
-					}
-				}
-			}
-		}
+	.perform-assets-manager--assets-table,
+	.perform-assets-manager--assets-table thead,
+	.perform-assets-manager--assets-table tbody,
+	.perform-assets-manager--assets-table tr,
+	.perform-assets-manager--assets-table th,
+	.perform-assets-manager--assets-table td {
+		display: block;
+	}
+
+	.perform-assets-manager--assets-table thead {
+		display: none;
+	}
+
+	.perform-assets-manager--assets-table tr {
+		border-bottom: 1px solid #dcdcde;
+	}
+
+	.perform-assets-manager--assets-table tr:last-child {
+		border-bottom: 0;
+	}
+
+	.perform-assets-manager--assets-table td {
+		border-bottom: 0;
+	}
+
+	.perform-assets-manager--status {
+		min-width: 0;
 	}
 }
