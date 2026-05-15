@@ -414,7 +414,7 @@ class PageCache implements ModuleInterface {
 
 		while ( $processed < $batch_size && ! empty( $queue ) ) {
 			$url = array_shift( $queue );
-			if ( ! is_string( $url ) || '' === $url ) {
+			if ( ! is_string( $url ) || '' === $url || ! $this->is_site_url( $url ) ) {
 				continue;
 			}
 
@@ -613,7 +613,7 @@ class PageCache implements ModuleInterface {
 		}
 
 		foreach ( $urls as $url ) {
-			if ( ! is_string( $url ) || '' === $url ) {
+			if ( ! is_string( $url ) || '' === $url || ! $this->is_site_url( $url ) ) {
 				continue;
 			}
 			$queue[] = esc_url_raw( $url );
@@ -656,7 +656,12 @@ class PageCache implements ModuleInterface {
 					continue;
 				}
 
-				$child_response = wp_remote_get( (string) $sitemap->loc, [ 'timeout' => 8 ] );
+				$child_sitemap_url = esc_url_raw( (string) $sitemap->loc );
+				if ( ! $this->is_site_url( $child_sitemap_url ) ) {
+					continue;
+				}
+
+				$child_response = wp_remote_get( $child_sitemap_url, [ 'timeout' => 8 ] );
 				if ( is_wp_error( $child_response ) ) {
 					continue;
 				}
@@ -673,7 +678,10 @@ class PageCache implements ModuleInterface {
 
 				foreach ( $child->url as $item ) {
 					if ( ! empty( $item->loc ) ) {
-						$urls[] = esc_url_raw( (string) $item->loc );
+						$item_url = esc_url_raw( (string) $item->loc );
+						if ( $this->is_site_url( $item_url ) ) {
+							$urls[] = $item_url;
+						}
 					}
 				}
 			}
@@ -762,7 +770,7 @@ class PageCache implements ModuleInterface {
 	 * @return void
 	 */
 	private function maybe_trigger_async_regeneration( $url ) {
-		if ( get_transient( $this->lock_key ) ) {
+		if ( get_transient( $this->lock_key ) || ! $this->is_site_url( $url ) ) {
 			return;
 		}
 
@@ -779,6 +787,45 @@ class PageCache implements ModuleInterface {
 				],
 			]
 		);
+	}
+
+	/**
+	 * Confirm a URL belongs to the current site before internal HTTP warmups.
+	 *
+	 * @param string $url URL to verify.
+	 *
+	 * @return bool
+	 */
+	private function is_site_url( $url ) {
+		if ( ! is_string( $url ) || '' === trim( $url ) ) {
+			return false;
+		}
+
+		$site_parts = wp_parse_url( home_url( '/' ) );
+		$url_parts  = wp_parse_url( $url );
+
+		if ( empty( $site_parts['host'] ) || false === $url_parts ) {
+			return false;
+		}
+
+		if ( empty( $url_parts['host'] ) ) {
+			$url_parts = wp_parse_url( home_url( $url ) );
+		}
+
+		if ( false === $url_parts || empty( $url_parts['host'] ) ) {
+			return false;
+		}
+
+		$scheme = isset( $url_parts['scheme'] ) ? strtolower( (string) $url_parts['scheme'] ) : '';
+		if ( ! in_array( $scheme, [ 'http', 'https' ], true ) ) {
+			return false;
+		}
+
+		$site_port = isset( $site_parts['port'] ) ? (int) $site_parts['port'] : null;
+		$url_port  = isset( $url_parts['port'] ) ? (int) $url_parts['port'] : null;
+
+		return strtolower( (string) $site_parts['host'] ) === strtolower( (string) $url_parts['host'] )
+			&& $site_port === $url_port;
 	}
 
 	/**

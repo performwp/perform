@@ -104,7 +104,7 @@ class AssetsManager implements ModuleInterface {
 				<?php wp_nonce_field( 'perform_assets_manager_save', 'perform_assets_manager_nonce' ); ?>
 				<div class="perform-assets-manager--header">
 					<div class="perform-assets-manager--logo">
-						<img src="<?php echo PERFORM_PLUGIN_URL . 'assets/dist/images/logo.png'; ?>" alt="<?php esc_html_e( 'Perform', 'perform' ); ?>" />
+						<img src="<?php echo esc_url( PERFORM_PLUGIN_URL . 'assets/dist/images/logo.png' ); ?>" alt="<?php esc_html_e( 'Perform', 'perform' ); ?>" />
 					</div>
 					<div class="perform-assets-manager-header-actions">
 						<input type="submit" name="perform_assets_manager" value="<?php esc_html_e( 'Save', 'perform' ); ?>" />
@@ -124,7 +124,7 @@ class AssetsManager implements ModuleInterface {
 							if ( ! empty( $groups ) ) {
 								?>
 								<div class="perform-assets-manager--section">
-									<h3><?php echo ucwords( $category ); ?></h3>
+									<h3><?php echo esc_html( ucwords( $category ) ); ?></h3>
 									<?php
 										if ( 'misc' !== $category ) {
 											foreach ( $groups as $group => $details ) {
@@ -370,7 +370,7 @@ class AssetsManager implements ModuleInterface {
 						<?php $this->disable_single_asset_html( $type, $handle ); ?>
 					</td>
 					<td class="perform-assets-manager--url">
-						<a href="<?php echo esc_url( $src ); ?>" target="_blank"><?php esc_html_e( 'View File', 'perform' ); ?></a>
+						<a href="<?php echo esc_url( $src ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'View File', 'perform' ); ?></a>
 							<input type="hidden" name="<?php echo esc_attr( "relations[{$type}][{$handle}][category]" ); ?>" value="<?php echo esc_attr( $category ); ?>" />
 							<input type="hidden" name="<?php echo esc_attr( "relations[{$type}][{$handle}][group]" ); ?>" value="<?php echo esc_attr( $group ); ?>" />
 					</td>
@@ -461,7 +461,7 @@ class AssetsManager implements ModuleInterface {
 					$is_checked = checked( $is_disabled_key, 1, false );
 				}
 				?>
-				<label for="<?php echo esc_html( "disabled-{$type}-{$handle}-{$key}" ); ?>">
+				<label for="<?php echo esc_attr( "disabled-{$type}-{$handle}-{$key}" ); ?>">
 							<input type="radio" name="disabled[<?php echo esc_attr( $type ); ?>][<?php echo esc_attr( $handle ); ?>]" id="<?php echo esc_attr( "disabled-{$type}-{$handle}-{$key}" ); ?>" class="perform-disable-assets" value="<?php echo esc_attr( $key ); ?>"<?php echo $is_checked; ?>/>
 							<?php echo esc_html( $value ); ?>
 				</label>
@@ -489,7 +489,7 @@ class AssetsManager implements ModuleInterface {
 		$is_selected        = ( $is_disabled_handle && is_array( $this->selected_options['disabled'][ $type ][ $handle ] ) ) ? 'selected="selected"' : '';
 		$disable_class      = ! empty( $is_selected ) ? 'disabled' : '';
 		?>
-		<select name="status[<?php echo esc_html( $type ); ?>][<?php echo esc_html( $handle ); ?>]" class="perform-status-select <?php echo esc_html( $disable_class ); ?>">
+		<select name="status[<?php echo esc_attr( $type ); ?>][<?php echo esc_attr( $handle ); ?>]" class="perform-status-select <?php echo esc_attr( $disable_class ); ?>">
 			<option value='enabled' class='perform-option-enabled'>
 				<?php echo esc_attr__( 'ON', 'perform' ); ?>
 			</option>
@@ -551,7 +551,7 @@ class AssetsManager implements ModuleInterface {
 					foreach ( $post_types as $key => $value ) {
 						$is_post_type_selected = ( is_array( $selected_post_types ) && in_array( $key, $selected_post_types, true ) ) ? ' checked="checked"' : '';
 						?>
-						<label for="<?php echo "{$type}-{$handle}-enable-{$key}"; ?>">
+						<label for="<?php echo esc_attr( "{$type}-{$handle}-enable-{$key}" ); ?>">
 								<input type="checkbox" name="enabled[<?php echo esc_attr( $type ); ?>][<?php echo esc_attr( $handle ); ?>][post_types][]" id="<?php echo esc_attr( "{$type}-{$handle}-enable-{$key}" ); ?>" value="<?php echo esc_attr( $key ); ?>" <?php echo $is_post_type_selected; ?> />
 								<?php echo esc_html( $value->label ); ?>
 						</label>
