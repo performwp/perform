@@ -586,6 +586,14 @@ class AssetsManager implements ModuleInterface {
  		$post_data = Helpers::clean( filter_input_array( INPUT_POST ) );
  		$get_data  = Helpers::clean( filter_input_array( INPUT_GET ) );
 
+		if ( ! is_array( $post_data ) ) {
+			$post_data = [];
+		}
+
+		if ( ! is_array( $get_data ) ) {
+			$get_data = [];
+		}
+
 		if (
 			isset( $get_data['perform'] ) &&
 			! empty( $post_data['perform_assets_manager'] )
@@ -596,6 +604,14 @@ class AssetsManager implements ModuleInterface {
 			$options    = get_option( 'perform_assets_manager_options' );
 			$settings   = get_option( 'perform_assets_manager_settings' );
 
+			if ( ! is_array( $options ) ) {
+				$options = [];
+			}
+
+			if ( ! is_array( $settings ) ) {
+				$settings = [];
+			}
+
 			foreach ( $filters as $type ) {
 
 				if ( isset( $post_data['disabled'][ $type ] ) ) {
@@ -603,13 +619,15 @@ class AssetsManager implements ModuleInterface {
 					foreach ( $post_data['disabled'][ $type ] as $handle => $value ) {
 
 						$group_disabled = false;
+						$status         = isset( $post_data['status'][ $type ][ $handle ] ) ? $post_data['status'][ $type ][ $handle ] : 'enabled';
 
 						if ( isset( $post_data['relations'][ $type ][ $handle ] ) ) {
 
 							$relation_info = $post_data['relations'][ $type ][ $handle ];
+							$group_status  = isset( $post_data['status'][ $relation_info['category'] ][ $relation_info['group'] ] ) ? $post_data['status'][ $relation_info['category'] ][ $relation_info['group'] ] : 'enabled';
 
 							if (
-								'disabled' === $post_data['status'][ $relation_info['category'] ][ $relation_info['group'] ] &&
+								'disabled' === $group_status &&
 								isset( $post_data['disabled'][ $relation_info['category'] ][ $relation_info['group'] ] )
 							) {
 								$group_disabled = true;
@@ -618,7 +636,7 @@ class AssetsManager implements ModuleInterface {
 
 						if (
 							! $group_disabled &&
-							'disabled' === $post_data['status'][ $type ][ $handle ] &&
+							'disabled' === $status &&
 							! empty( $value )
 						) {
 							if ( 'everywhere' === $value ) {
@@ -633,7 +651,7 @@ class AssetsManager implements ModuleInterface {
 									unset( $options['disabled'][ $type ][ $handle ]['everywhere'] );
 								}
 
-								if ( ! is_array( $options['disabled'][ $type ][ $handle ]['current'] ) ) {
+								if ( ! isset( $options['disabled'][ $type ][ $handle ]['current'] ) || ! is_array( $options['disabled'][ $type ][ $handle ]['current'] ) ) {
 									$options['disabled'][ $type ][ $handle ]['current'] = [];
 								}
 
@@ -677,32 +695,34 @@ class AssetsManager implements ModuleInterface {
 					foreach ( $post_data['enabled'][ $type ] as $handle => $value ) {
 
 						$group_disabled = false;
+						$status         = isset( $post_data['status'][ $type ][ $handle ] ) ? $post_data['status'][ $type ][ $handle ] : 'enabled';
 
 						if ( isset( $post_data['relations'][ $type ][ $handle ] ) ) {
 							$relation_info = $post_data['relations'][ $type ][ $handle ];
+							$group_status  = isset( $post_data['status'][ $relation_info['category'] ][ $relation_info['group'] ] ) ? $post_data['status'][ $relation_info['category'] ][ $relation_info['group'] ] : 'enabled';
 
 							if (
 								isset( $post_data['disabled'][ $relation_info['category'] ][ $relation_info['group'] ] ) &&
-								'disabled' === $post_data['status'][ $relation_info['category'] ][ $relation_info['group'] ]
+								'disabled' === $group_status
 							) {
 								$group_disabled = true;
 							}
 						}
 
+						$current_value         = is_array( $value ) && array_key_exists( 'current', $value ) ? $value['current'] : '';
+						$has_current_exception = '' !== (string) $current_value;
+
 						if (
 							! $group_disabled &&
-							'disabled' === $post_data['status'][ $type ][ $handle ] &&
-							(
-								! empty( $value['current'] ) ||
-								0 === $value['current']
-							)
+							'disabled' === $status &&
+							$has_current_exception
 						) {
-							if ( ! is_array( $options['enabled'][ $type ][ $handle ]['current'] ) ) {
+							if ( ! isset( $options['enabled'][ $type ][ $handle ]['current'] ) || ! is_array( $options['enabled'][ $type ][ $handle ]['current'] ) ) {
 								$options['enabled'][ $type ][ $handle ]['current'] = [];
 							}
 
-							if ( ! in_array( $value['current'], $options['enabled'][ $type ][ $handle ]['current'], true ) ) {
-								array_push( $options['enabled'][ $type ][ $handle ]['current'], $value['current'] );
+							if ( ! in_array( $current_value, $options['enabled'][ $type ][ $handle ]['current'], true ) ) {
+								array_push( $options['enabled'][ $type ][ $handle ]['current'], $current_value );
 							}
 						} else {
 							if ( isset( $options['enabled'][ $type ][ $handle ]['current'] ) ) {
@@ -720,8 +740,9 @@ class AssetsManager implements ModuleInterface {
 
 						if (
 							! $group_disabled &&
-							'disabled' === $post_data['status'][ $type ][ $handle ] &&
-							! empty( $value['post_types'] )
+							'disabled' === $status &&
+							! empty( $value['post_types'] ) &&
+							is_array( $value['post_types'] )
 						) {
 							$options['enabled'][ $type ][ $handle ]['post_types'] = [];
 
@@ -738,11 +759,11 @@ class AssetsManager implements ModuleInterface {
 
 						// Filter out empty child arrays.
 						if ( ! empty( $settings['separate_archives'] ) && $settings['separate_archives'] == '1' ) {
-							$value['archives'] = array_filter( $value['archives'] );
+							$value['archives'] = isset( $value['archives'] ) && is_array( $value['archives'] ) ? array_filter( $value['archives'] ) : [];
 
 							if (
 								! $group_disabled &&
-								'disabled' === $post_data['status'][ $type ][ $handle ] &&
+								'disabled' === $status &&
 								! empty( $value['archives'] )
 							) {
 								$archives = [ 'wp', 'taxonomies', 'post_types' ];
@@ -753,7 +774,7 @@ class AssetsManager implements ModuleInterface {
 
 										foreach ( $value['archives'][ $archive_type ] as $key => $archive ) {
 											if ( isset( $options['enabled'][ $type ][ $handle ]['archives'][ $archive_type ] ) ) {
-												if ( ! in_array( $post_type, $options['enabled'][ $type ][ $handle ]['archives'][ $archive_type ] ) ) {
+												if ( ! in_array( $archive, $options['enabled'][ $type ][ $handle ]['archives'][ $archive_type ], true ) ) {
 													array_push( $options['enabled'][ $type ][ $handle ]['archives'][ $archive_type ], $archive );
 												}
 											}
