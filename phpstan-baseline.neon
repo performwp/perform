@@ -1,0 +1,553 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Parameter \#3 \$deps of function wp_register_style expects array\<string\>, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Admin/Actions.php
+
+		-
+			message: '#^Method Perform\\Admin\\Filters\:\:add_plugin_action_links\(\) has parameter \$actions with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Admin/Filters.php
+
+		-
+			message: '#^Method Perform\\Admin\\Filters\:\:add_plugin_action_links\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Admin/Filters.php
+
+		-
+			message: '#^Method Perform\\Admin\\Filters\:\:add_row_actions\(\) has parameter \$actions with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Admin/Filters.php
+
+		-
+			message: '#^Method Perform\\Admin\\Filters\:\:add_row_actions\(\) has parameter \$post with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Admin/Filters.php
+
+		-
+			message: '#^Method Perform\\Admin\\Filters\:\:add_row_actions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Admin/Filters.php
+
+		-
+			message: '#^Method Perform\\Admin\\Settings\\Api\:\:render_checkbox_field\(\) has parameter \$field with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Admin/Settings/Api.php
+
+		-
+			message: '#^Method Perform\\Admin\\Settings\\Api\:\:render_field\(\) has parameter \$field with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Admin/Settings/Api.php
+
+		-
+			message: '#^Method Perform\\Admin\\Settings\\Api\:\:render_fields\(\) has parameter \$all_fields with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Admin/Settings/Api.php
+
+		-
+			message: '#^Method Perform\\Admin\\Settings\\Api\:\:render_select_field\(\) has parameter \$field with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Admin/Settings/Api.php
+
+		-
+			message: '#^Method Perform\\Admin\\Settings\\Api\:\:render_text_field\(\) has parameter \$field with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Admin/Settings/Api.php
+
+		-
+			message: '#^Method Perform\\Admin\\Settings\\Api\:\:render_textarea_field\(\) has parameter \$field with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Admin/Settings/Api.php
+
+		-
+			message: '#^Method Perform\\Admin\\Settings\\Api\:\:render_url_field\(\) has parameter \$field with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Admin/Settings/Api.php
+
+		-
+			message: '#^Parameter \#1 \$var of static method Perform\\Includes\\Helpers\:\:clean\(\) expects array\|string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Admin/Settings/Menu.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between ''0'' and mixed~\(0\|0\.0\|''''\|''0''\|array\{\}\|false\|null\) will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: src/Admin/Settings/Menu.php
+
+		-
+			message: '#^Parameter \#3 \$deps of function wp_enqueue_script expects array\<string\>, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Includes/Actions.php
+
+		-
+			message: '#^Call to new Perform\\Includes\\Filters\(\) on a separate line has no effect\.$#'
+			identifier: new.resultUnused
+			count: 1
+			path: src/Includes/Filters.php
+
+		-
+			message: '#^Method Perform\\Includes\\Helpers\:\:clean\(\) has parameter \$var with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Includes/Helpers.php
+
+		-
+			message: '#^Method Perform\\Includes\\Helpers\:\:clean\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Includes/Helpers.php
+
+		-
+			message: '#^Method Perform\\Includes\\Helpers\:\:find_field_by_id\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Includes/Helpers.php
+
+		-
+			message: '#^Method Perform\\Includes\\Helpers\:\:get_settings\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Includes/Helpers.php
+
+		-
+			message: '#^Method Perform\\Includes\\Helpers\:\:get_settings_fields\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Includes/Helpers.php
+
+		-
+			message: '#^Method Perform\\Includes\\Helpers\:\:get_settings_tabs\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Includes/Helpers.php
+
+		-
+			message: '#^Method Perform\\Modules\\AbstractModule\:\:__construct\(\) has parameter \$settings with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Modules/AbstractModule.php
+
+		-
+			message: '#^Property Perform\\Modules\\AbstractModule\:\:\$settings type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Modules/AbstractModule.php
+
+		-
+			message: '#^Action callback returns array but should not return anything\.$#'
+			identifier: return.void
+			count: 1
+			path: src/Modules/Assets/AssetsManager.php
+
+		-
+			message: '#^Action callback returns mixed but should not return anything\.$#'
+			identifier: return.void
+			count: 1
+			path: src/Modules/Assets/AssetsManager.php
+
+		-
+			message: '#^Method Perform\\Modules\\Assets\\AssetsManager\:\:prepare_assets_list\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Modules/Assets/AssetsManager.php
+
+		-
+			message: '#^Method Perform\\Modules\\Assets\\AssetsManager\:\:print_assets_manager_group\(\) has parameter \$asset_details with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Modules/Assets/AssetsManager.php
+
+		-
+			message: '#^Method Perform\\Modules\\Assets\\AssetsManager\:\:print_assets_manager_group\(\) has parameter \$category with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Modules/Assets/AssetsManager.php
+
+		-
+			message: '#^Method Perform\\Modules\\Assets\\AssetsManager\:\:print_assets_manager_group\(\) has parameter \$group with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Modules/Assets/AssetsManager.php
+
+		-
+			message: '#^Method Perform\\Modules\\Assets\\AssetsManager\:\:print_assets_manager_script\(\) has parameter \$category with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Modules/Assets/AssetsManager.php
+
+		-
+			message: '#^Method Perform\\Modules\\Assets\\AssetsManager\:\:print_assets_manager_script\(\) has parameter \$group with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Modules/Assets/AssetsManager.php
+
+		-
+			message: '#^Method Perform\\Modules\\Assets\\AssetsManager\:\:print_assets_manager_script\(\) has parameter \$script with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Modules/Assets/AssetsManager.php
+
+		-
+			message: '#^Method Perform\\Modules\\Assets\\AssetsManager\:\:print_assets_manager_script\(\) has parameter \$type with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Modules/Assets/AssetsManager.php
+
+		-
+			message: '#^Method Perform\\Modules\\Assets\\AssetsManager\:\:save_assets_manager_settings\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Modules/Assets/AssetsManager.php
+
+		-
+			message: '#^Method Perform\\Modules\\Assets\\AssetsManager\:\:save_assets_manager_settings\(\) should return array but empty return statement found\.$#'
+			identifier: return.empty
+			count: 2
+			path: src/Modules/Assets/AssetsManager.php
+
+		-
+			message: '#^Method Perform\\Modules\\Assets\\AssetsManager\:\:save_assets_manager_settings\(\) should return array but return statement is missing\.$#'
+			identifier: return.missing
+			count: 2
+			path: src/Modules/Assets/AssetsManager.php
+
+		-
+			message: '#^Parameter \#1 \$text of function esc_attr expects string, int\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Modules/Assets/AssetsManager.php
+
+		-
+			message: '#^Property Perform\\Modules\\Assets\\AssetsManager\:\:\$loaded_assets type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Modules/Assets/AssetsManager.php
+
+		-
+			message: '#^Property Perform\\Modules\\Assets\\AssetsManager\:\:\$selected_options type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Modules/Assets/AssetsManager.php
+
+		-
+			message: '#^Variable \$post_type might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/Modules/Assets/AssetsManager.php
+
+		-
+			message: '#^Method Perform\\Modules\\Basic\\DisableEmbeds\:\:disable_embeds\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Modules/Basic/DisableEmbeds.php
+
+		-
+			message: '#^Method Perform\\Modules\\Basic\\DisableEmbeds\:\:disable_embeds_from_rewrites\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Modules/Basic/DisableEmbeds.php
+
+		-
+			message: '#^Method Perform\\Modules\\Basic\\DisableEmbeds\:\:disable_embeds_from_rewrites\(\) has parameter \$rules with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Modules/Basic/DisableEmbeds.php
+
+		-
+			message: '#^Method Perform\\Modules\\Basic\\DisableEmbeds\:\:disable_embeds_from_tinymce\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Modules/Basic/DisableEmbeds.php
+
+		-
+			message: '#^Method Perform\\Modules\\Basic\\DisableEmbeds\:\:disable_embeds_from_tinymce\(\) has parameter \$plugins with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Modules/Basic/DisableEmbeds.php
+
+		-
+			message: '#^Method Perform\\Modules\\Basic\\DisableEmoji\:\:disable_emojis\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Modules/Basic/DisableEmoji.php
+
+		-
+			message: '#^Method Perform\\Modules\\Basic\\DisableEmoji\:\:disable_emojis_from_dns_prefetch\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Modules/Basic/DisableEmoji.php
+
+		-
+			message: '#^Method Perform\\Modules\\Basic\\DisableEmoji\:\:disable_emojis_from_dns_prefetch\(\) has parameter \$relationType with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Modules/Basic/DisableEmoji.php
+
+		-
+			message: '#^Method Perform\\Modules\\Basic\\DisableEmoji\:\:disable_emojis_from_dns_prefetch\(\) has parameter \$urls with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Modules/Basic/DisableEmoji.php
+
+		-
+			message: '#^Method Perform\\Modules\\Basic\\DisableEmoji\:\:disable_emojis_from_tinymce\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Modules/Basic/DisableEmoji.php
+
+		-
+			message: '#^Method Perform\\Modules\\Basic\\DisableEmoji\:\:disable_emojis_from_tinymce\(\) has parameter \$plugins with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Modules/Basic/DisableEmoji.php
+
+		-
+			message: '#^Method Perform\\Modules\\Basic\\DisableSelfPingbacks\:\:disable_self_pingbacks\(\) has parameter \$links with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Modules/Basic/DisableSelfPingbacks.php
+
+		-
+			message: '#^Method Perform\\Modules\\Basic\\DisableXmlrpc\:\:disable_all_xmlrpc_methods\(\) has parameter \$methods with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Modules/Basic/DisableXmlrpc.php
+
+		-
+			message: '#^Method Perform\\Modules\\Basic\\DisableXmlrpc\:\:disable_all_xmlrpc_methods\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Modules/Basic/DisableXmlrpc.php
+
+		-
+			message: '#^Method Perform\\Modules\\Basic\\Heartbeat\:\:heartbeat_frequency\(\) has parameter \$settings with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Modules/Basic/Heartbeat.php
+
+		-
+			message: '#^Method Perform\\Modules\\Basic\\Heartbeat\:\:heartbeat_frequency\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Modules/Basic/Heartbeat.php
+
+		-
+			message: '#^Access to property \$registered on an unknown class Perform\\Modules\\Basic\\WP_Scripts\.$#'
+			identifier: class.notFound
+			count: 2
+			path: src/Modules/Basic/RemoveJqueryMigrate.php
+
+		-
+			message: '#^Filter callback return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: src/Modules/Basic/RemoveJqueryMigrate.php
+
+		-
+			message: '#^Parameter \$scripts of method Perform\\Modules\\Basic\\RemoveJqueryMigrate\:\:remove_jquery_migrate\(\) has invalid type Perform\\Modules\\Basic\\WP_Scripts\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Modules/Basic/RemoveJqueryMigrate.php
+
+		-
+			message: '#^Method Perform\\Modules\\Basic\\RemoveQueryStrings\:\:process_query_string_removal\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Modules/Basic/RemoveQueryStrings.php
+
+		-
+			message: '#^Method Perform\\Modules\\Basic\\RemoveQueryStrings\:\:process_query_string_removal\(\) has parameter \$url with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Modules/Basic/RemoveQueryStrings.php
+
+		-
+			message: '#^Method Perform\\Modules\\CDN\\CDNManager\:\:rewrite_with_cdn\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Modules/CDN/CDNManager.php
+
+		-
+			message: '#^Parameter \#2 \$callback of function preg_replace_callback expects callable\(array\<string\>\)\: string, array\{\$this\(Perform\\Modules\\CDN\\CDNManager\), ''rewrited_cdn_url''\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Modules/CDN/CDNManager.php
+
+		-
+			message: '#^Method Perform\\Modules\\Cache\\PageCache\:\:purge_related_urls_for_object_terms\(\) has parameter \$old_tt_ids with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Modules/Cache/PageCache.php
+
+		-
+			message: '#^Method Perform\\Modules\\Cache\\PageCache\:\:purge_related_urls_for_object_terms\(\) has parameter \$terms with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Modules/Cache/PageCache.php
+
+		-
+			message: '#^Method Perform\\Modules\\Cache\\PageCache\:\:purge_related_urls_for_object_terms\(\) has parameter \$tt_ids with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Modules/Cache/PageCache.php
+
+		-
+			message: '#^Offset 0 on array\{float, float, float\} in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: src/Modules/Cache/PageCache.php
+
+		-
+			message: '#^Parameter \#1 \$text of function esc_html expects string, int given\.$#'
+			identifier: argument.type
+			count: 7
+			path: src/Modules/Cache/PageCache.php
+
+		-
+			message: '#^Method Perform\\Modules\\Loader\:\:__construct\(\) has parameter \$settings with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Modules/Loader.php
+
+		-
+			message: '#^Method Perform\\Modules\\Loader\:\:register_modules\(\) has parameter \$modules with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Modules/Loader.php
+
+		-
+			message: '#^Property Perform\\Modules\\Loader\:\:\$settings type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Modules/Loader.php
+
+		-
+			message: '#^Access to property \$menu on an unknown class Perform\\Modules\\MenuCache\\stdClass\.$#'
+			identifier: class.notFound
+			count: 7
+			path: src/Modules/MenuCache/MenuCache.php
+
+		-
+			message: '#^Access to property \$theme_location on an unknown class Perform\\Modules\\MenuCache\\stdClass\.$#'
+			identifier: class.notFound
+			count: 3
+			path: src/Modules/MenuCache/MenuCache.php
+
+		-
+			message: '#^Method Perform\\Modules\\MenuCache\\MenuCache\:\:update_nav_menu_cache\(\) has parameter \$menu_data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Modules/MenuCache/MenuCache.php
+
+		-
+			message: '#^PHPDoc tag @var has invalid value \(\$cached_menu_time\)\: Unexpected token "\$cached_menu_time", expected type at offset 80 on line 7$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: src/Modules/MenuCache/MenuCache.php
+
+		-
+			message: '#^PHPDoc tag @var has invalid value \(\$cached_total_time\)\: Unexpected token "\$cached_total_time", expected type at offset 81 on line 7$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: src/Modules/MenuCache/MenuCache.php
+
+		-
+			message: '#^PHPDoc tag @var has invalid value \(\$log_menu_end\)\: Unexpected token "\$log_menu_end", expected type at offset 76 on line 7$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: src/Modules/MenuCache/MenuCache.php
+
+		-
+			message: '#^PHPDoc tag @var has invalid value \(\$log_menu_start\)\: Unexpected token "\$log_menu_start", expected type at offset 78 on line 7$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: src/Modules/MenuCache/MenuCache.php
+
+		-
+			message: '#^PHPDoc tag @var has invalid value \(\$uncached_menu_time\)\: Unexpected token "\$uncached_menu_time", expected type at offset 82 on line 7$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: src/Modules/MenuCache/MenuCache.php
+
+		-
+			message: '#^PHPDoc tag @var has invalid value \(\$uncached_total_time\)\: Unexpected token "\$uncached_total_time", expected type at offset 83 on line 7$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: src/Modules/MenuCache/MenuCache.php
+
+		-
+			message: '#^Parameter \$args of method Perform\\Modules\\MenuCache\\MenuCache\:\:cache_nav_menu\(\) has invalid type Perform\\Modules\\MenuCache\\stdClass\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Modules/MenuCache/MenuCache.php
+
+		-
+			message: '#^Parameter \$args of method Perform\\Modules\\MenuCache\\MenuCache\:\:cache_nav_menu_output\(\) has invalid type Perform\\Modules\\MenuCache\\stdClass\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Modules/MenuCache/MenuCache.php
+
+		-
+			message: '#^Property Perform\\Modules\\MenuCache\\MenuCache\:\:\$cached_menu_time has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/Modules/MenuCache/MenuCache.php
+
+		-
+			message: '#^Property Perform\\Modules\\MenuCache\\MenuCache\:\:\$cached_total_time has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/Modules/MenuCache/MenuCache.php
+
+		-
+			message: '#^Property Perform\\Modules\\MenuCache\\MenuCache\:\:\$log_menu_end has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/Modules/MenuCache/MenuCache.php
+
+		-
+			message: '#^Property Perform\\Modules\\MenuCache\\MenuCache\:\:\$log_menu_start has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/Modules/MenuCache/MenuCache.php
+
+		-
+			message: '#^Property Perform\\Modules\\MenuCache\\MenuCache\:\:\$uncached_menu_time has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/Modules/MenuCache/MenuCache.php
+
+		-
+			message: '#^Property Perform\\Modules\\MenuCache\\MenuCache\:\:\$uncached_total_time has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/Modules/MenuCache/MenuCache.php
+
+		-
+			message: '#^Call to new Perform\\Includes\\Filters\(\) on a separate line has no effect\.$#'
+			identifier: new.resultUnused
+			count: 1
+			path: src/Plugin.php
+
+		-
+			message: '#^Function perform_handle_plugin_uninstall\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: uninstall.php

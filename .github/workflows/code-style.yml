@@ -71,7 +71,7 @@ jobs:
 
       - name: Show PHPCS results in PR
         if: ${{ always() && steps.phpcs.outcome == 'failure' }}
-        uses: staabm/annotate-pull-request-from-checkstyle@v2
+        uses: staabm/annotate-pull-request-from-checkstyle@1.8.7
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           checkstyle_report: ./phpcs-report.xml

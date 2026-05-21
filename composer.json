@@ -17,25 +17,27 @@
 		"wp-coding-standards/wpcs": "3.3",
 		"phpstan/phpstan": "^2.0",
 		"phpstan/extension-installer": "^1.4",
-		"szepeviktor/phpstan-wordpress": "^2.0"
+		"szepeviktor/phpstan-wordpress": "^2.0",
+		"php-parallel-lint/php-parallel-lint": "^1.4",
+		"phpunit/phpunit": "^9.6"
 	},
 	"scripts": {
 		"check-cs": [
-			"@php ./vendor/bin/phpcs -s"
+			"@php ./vendor/bin/phpcs -s ."
 		],
 		"fix-cs": [
 			"PHP_CS_FIXER_IGNORE_ENV=1",
-			"@php ./vendor/bin/phpcbf",
+			"@php ./vendor/bin/phpcbf .",
 			"@php ./vendor/bin/php-cs-fixer fix . --allow-risky=yes"
 		],
 		"lint": [
-			"@php ./vendor/php-parallel-lint/php-parallel-lint/parallel-lint . -e php --show-deprecated --exclude vendor --exclude node_modules --exclude .git"
+			"@php ./vendor/bin/parallel-lint . -e php --show-deprecated --exclude vendor --exclude node_modules --exclude .git"
 		],
 		"lint-blueprint": [
 			"@php -r \"exit( intval( is_null( json_decode( file_get_contents( './.wordpress-org/blueprints/blueprint.json' ) ) ) ) );\""
 		],
 		"test": [
-			"@php ./vendor/phpunit/phpunit/phpunit --dont-report-useless-tests"
+			"@php ./vendor/bin/phpunit --dont-report-useless-tests"
 		],
 		"phpstan": [
 			"@php ./vendor/bin/phpstan analyse --memory-limit=2048M"
