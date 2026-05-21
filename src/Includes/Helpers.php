@@ -469,7 +469,7 @@ class Helpers {
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
-									'https://performwp.com/docs/remove-rest-api-links'
+									'https://performwp.com/docs/disable-wordpress-rest-api/'
 								)
 							),
 						],
