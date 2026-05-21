@@ -91,12 +91,6 @@ parameters:
 			path: src/Admin/Settings/Menu.php
 
 		-
-			message: '#^Parameter \#3 \$deps of function wp_enqueue_script expects array\<string\>, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Includes/Actions.php
-
-		-
 			message: '#^Call to new Perform\\Includes\\Filters\(\) on a separate line has no effect\.$#'
 			identifier: new.resultUnused
 			count: 1
@@ -159,6 +153,18 @@ parameters:
 		-
 			message: '#^Action callback returns mixed but should not return anything\.$#'
 			identifier: return.void
+			count: 1
+			path: src/Modules/Assets/AssetsManager.php
+
+		-
+			message: '#^Method Perform\\Modules\\Assets\\AssetsManager\:\:get_assets_summary\(\) has parameter \$assets_list with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Modules/Assets/AssetsManager.php
+
+		-
+			message: '#^Method Perform\\Modules\\Assets\\AssetsManager\:\:get_assets_summary\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
 			count: 1
 			path: src/Modules/Assets/AssetsManager.php
 
