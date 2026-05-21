@@ -19,6 +19,11 @@ const config = {
 		perform: [ './assets/src/js/frontend/main.js', './assets/src/css/frontend/main.css'],
 		admin: [ './assets/src/css/admin/admin.css', './assets/src/js/admin/main.js'],
 	},
+	externals: {
+		...( defaultConfig.externals || {} ),
+		'@wordpress/components': 'wp.components',
+		'@wordpress/element': 'wp.element',
+	},
 	output: {
 		...defaultConfig.output,
 		path: path.join(__dirname, 'assets/dist/'),

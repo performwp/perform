@@ -97,33 +97,90 @@ class AssetsManager implements ModuleInterface {
 	 * @return mixed
 	 */
 	public function assets_manager_html() {
-		$assets_list = $this->prepare_assets_list();
+		$assets_list              = $this->prepare_assets_list();
+		$summary                  = $this->get_assets_summary( $assets_list );
+		$scanner_controls_labels  = [
+			'search'            => __( 'Search detected assets', 'perform' ),
+			'searchPlaceholder' => __( 'Search by handle, source, or file URL', 'perform' ),
+			'filters'           => __( 'Filter detected assets', 'perform' ),
+			'all'               => __( 'All', 'perform' ),
+			'plugins'           => __( 'Plugins', 'perform' ),
+			'themes'            => __( 'Themes', 'perform' ),
+			'misc'              => __( 'Other', 'perform' ),
+			'js'                => __( 'JS', 'perform' ),
+			'css'               => __( 'CSS', 'perform' ),
+			'disabled'          => __( 'Disabled', 'perform' ),
+		];
+		$current_url              = get_permalink();
+		if ( empty( $current_url ) ) {
+			$current_url = home_url( add_query_arg( [] ) );
+		}
 		?>
-		<div id="perform-assets-manager" class="perform-assets-manager">
+		<div id="perform-assets-manager" class="perform-assets-manager" role="dialog" aria-modal="true" aria-labelledby="perform-assets-manager-title">
 			<form id="perform-assets-manager--form" method="POST">
 				<?php wp_nonce_field( 'perform_assets_manager_save', 'perform_assets_manager_nonce' ); ?>
 				<div class="perform-assets-manager--header">
-					<div class="perform-assets-manager--logo">
-						<img src="<?php echo esc_url( PERFORM_PLUGIN_URL . 'assets/dist/images/logo.png' ); ?>" alt="<?php esc_html_e( 'Perform', 'perform' ); ?>" />
+					<div class="perform-assets-manager--brand">
+						<img src="<?php echo esc_url( PERFORM_PLUGIN_URL . 'assets/dist/images/logo.png' ); ?>" alt="<?php esc_attr_e( 'Perform', 'perform' ); ?>" />
+						<div>
+							<span><?php esc_html_e( 'Page asset scanner', 'perform' ); ?></span>
+							<strong><?php esc_html_e( 'Perform Assets Manager', 'perform' ); ?></strong>
+						</div>
 					</div>
 					<div class="perform-assets-manager-header-actions">
-						<input type="submit" name="perform_assets_manager" value="<?php esc_html_e( 'Save', 'perform' ); ?>" />
+						<a class="perform-assets-manager-button perform-assets-manager-button--secondary" href="<?php echo esc_url( remove_query_arg( 'perform' ) ); ?>"><?php esc_html_e( 'Close', 'perform' ); ?></a>
+						<input class="perform-assets-manager-button perform-assets-manager-button--primary" type="submit" name="perform_assets_manager" value="<?php esc_attr_e( 'Save changes', 'perform' ); ?>" />
 					</div>
 				</div>
 				<div id="perform-assets-manager--main">
 					<div class='perform-assets-manager--title'>
-						<h3>
-							<?php esc_html_e( 'Assets Manager', 'perform' ); ?>
-						</h3>
-						<p>
-							<?php esc_html_e( 'Offload unnecessary assets (JS and CSS) from this page.', 'perform' ); ?>
+						<p class="perform-assets-manager--eyebrow">
+							<?php esc_html_e( 'Current page', 'perform' ); ?>
 						</p>
+						<h2 id="perform-assets-manager-title">
+							<?php esc_html_e( 'Assets Manager', 'perform' ); ?>
+						</h2>
+						<p>
+							<?php esc_html_e( 'Review scripts and styles detected on this page, then disable only the assets you have verified are not needed.', 'perform' ); ?>
+						</p>
+						<code><?php echo esc_html( $current_url ); ?></code>
+					</div>
+					<div class="perform-assets-manager--scanner" aria-label="<?php esc_attr_e( 'Asset scan summary', 'perform' ); ?>">
+						<div class="perform-assets-manager--summary-grid">
+							<div class="perform-assets-manager--summary-card">
+								<span><?php esc_html_e( 'Detected assets', 'perform' ); ?></span>
+								<strong><?php echo esc_html( (string) $summary['total'] ); ?></strong>
+							</div>
+							<div class="perform-assets-manager--summary-card">
+								<span><?php esc_html_e( 'JavaScript', 'perform' ); ?></span>
+								<strong><?php echo esc_html( (string) $summary['js'] ); ?></strong>
+							</div>
+							<div class="perform-assets-manager--summary-card">
+								<span><?php esc_html_e( 'CSS', 'perform' ); ?></span>
+								<strong><?php echo esc_html( (string) $summary['css'] ); ?></strong>
+							</div>
+							<div class="perform-assets-manager--summary-card">
+								<span><?php esc_html_e( 'Disabled rules', 'perform' ); ?></span>
+								<strong><?php echo esc_html( (string) $summary['disabled'] ); ?></strong>
+							</div>
+							<div class="perform-assets-manager--summary-card">
+								<span><?php esc_html_e( 'Known file size', 'perform' ); ?></span>
+								<strong><?php echo esc_html( $this->format_asset_size( $summary['size'] ) ); ?></strong>
+							</div>
+						</div>
+						<div class="perform-assets-manager--toolbar">
+							<div
+								id="perform-assets-manager-controls-root"
+								class="perform-assets-manager--controls-root"
+								data-labels="<?php echo esc_attr( wp_json_encode( $scanner_controls_labels ) ); ?>"
+							></div>
+						</div>
 					</div>
 						<?php
 						foreach ( $assets_list as $category => $groups ) {
 							if ( ! empty( $groups ) ) {
 								?>
-								<div class="perform-assets-manager--section">
+								<div class="perform-assets-manager--section" data-perform-section="<?php echo esc_attr( $category ); ?>">
 									<h3><?php echo esc_html( ucwords( $category ) ); ?></h3>
 									<?php
 										if ( 'misc' !== $category ) {
@@ -144,6 +201,7 @@ class AssetsManager implements ModuleInterface {
 							}
 						}
 						?>
+						<p class="perform-assets-manager--no-results" hidden><?php esc_html_e( 'No assets match the current scan filter.', 'perform' ); ?></p>
 				</div>
 				<div id="perform-assets-manager--footer">
 				</div>
@@ -267,6 +325,130 @@ class AssetsManager implements ModuleInterface {
 	}
 
 	/**
+	 * Build scan summary data for the current page.
+	 *
+	 * @param array $assets_list Grouped assets list.
+	 *
+	 * @return array
+	 */
+	private function get_assets_summary( $assets_list ) {
+		$summary = [
+			'total'    => 0,
+			'js'       => 0,
+			'css'      => 0,
+			'disabled' => 0,
+			'size'     => 0,
+		];
+
+		foreach ( $assets_list as $category => $groups ) {
+			$groups = 'misc' === $category ? [ 'misc' => [ 'assets' => $groups ] ] : $groups;
+
+			foreach ( $groups as $group => $details ) {
+				if ( empty( $details['assets'] ) || ! is_array( $details['assets'] ) ) {
+					continue;
+				}
+
+				foreach ( $details['assets'] as $asset ) {
+					if ( empty( $asset['type'] ) || empty( $asset['handle'] ) ) {
+						continue;
+					}
+
+					$type   = $asset['type'];
+					$handle = $asset['handle'];
+					$src    = $this->get_asset_src( $type, $handle );
+
+					if ( empty( $src ) ) {
+						continue;
+					}
+
+					$summary['total']++;
+					if ( isset( $summary[ $type ] ) ) {
+						$summary[ $type ]++;
+					}
+
+					if ( $this->is_rule_disabled( $type, $handle ) || ( 'misc' !== $category && $this->is_rule_disabled( $category, $group ) ) ) {
+						$summary['disabled']++;
+					}
+
+					$summary['size'] += $this->get_asset_size( $src );
+				}
+			}
+		}
+
+		return $summary;
+	}
+
+	/**
+	 * Format bytes for scanner display.
+	 *
+	 * @param int $bytes File size in bytes.
+	 *
+	 * @return string
+	 */
+	private function format_asset_size( $bytes ) {
+		$bytes = (int) $bytes;
+		if ( $bytes <= 0 ) {
+			return '0 KB';
+		}
+
+		if ( $bytes >= 1048576 ) {
+			return round( $bytes / 1048576, 1 ) . ' MB';
+		}
+
+		return round( $bytes / 1024, 1 ) . ' KB';
+	}
+
+	/**
+	 * Get registered asset URL.
+	 *
+	 * @param string $type   Asset type.
+	 * @param string $handle Asset handle.
+	 *
+	 * @return string
+	 */
+	private function get_asset_src( $type, $handle ) {
+		if ( empty( $this->loaded_assets[ $type ]['scripts']->registered[ $handle ]->src ) ) {
+			return '';
+		}
+
+		return (string) $this->loaded_assets[ $type ]['scripts']->registered[ $handle ]->src;
+	}
+
+	/**
+	 * Get local file size for a registered asset when it can be resolved.
+	 *
+	 * @param string $src Asset source URL.
+	 *
+	 * @return int
+	 */
+	private function get_asset_size( $src ) {
+		$site_url = site_url( '/' );
+		if ( 0 !== strpos( $src, $site_url ) ) {
+			return 0;
+		}
+
+		$asset_path = ABSPATH . ltrim( str_replace( $site_url, '', $src ), '/' );
+		if ( ! file_exists( $asset_path ) ) {
+			return 0;
+		}
+
+		return (int) filesize( $asset_path );
+	}
+
+	/**
+	 * Check whether an asset or group has a disabled rule.
+	 *
+	 * @param string $type   Asset type or source category.
+	 * @param string $handle Asset handle or source group.
+	 *
+	 * @return bool
+	 */
+	private function is_rule_disabled( $type, $handle ) {
+		return ! empty( $this->selected_options['disabled'][ $type ][ $handle ] )
+			&& is_array( $this->selected_options['disabled'][ $type ][ $handle ] );
+	}
+
+	/**
 	 * This function is used to print section for assets manager.
 	 *
 	 * @param $category
@@ -279,21 +461,52 @@ class AssetsManager implements ModuleInterface {
 	 * @return mixed
 	 */
 	public function print_assets_manager_group( $category, $group, $asset_details ) {
+		$asset_count = ! empty( $asset_details['assets'] ) && is_array( $asset_details['assets'] ) ? count( $asset_details['assets'] ) : 0;
 		?>
-		<div class="perform-assets-manager--group">
+		<div class="perform-assets-manager--group" data-perform-group data-perform-source="<?php echo esc_attr( $category ); ?>">
 			<?php
 			if ( 'misc' !== $category ) {
 				?>
 				<div class="perform-assets-manager-group--title">
-					<h4><?php echo esc_html( $asset_details['name'] ); ?></h4>
+					<div>
+						<span class="perform-assets-manager--source-label"><?php echo esc_html( ucwords( $category ) ); ?></span>
+						<h4><?php echo esc_html( $asset_details['name'] ); ?></h4>
+						<p>
+							<?php
+							printf(
+								/* translators: %d: number of assets. */
+								esc_html( _n( '%d detected asset', '%d detected assets', $asset_count, 'perform' ) ),
+								(int) $asset_count
+							);
+							?>
+						</p>
+					</div>
 					<div class='perform-assets-manager-group--status'>
 						<?php $this->print_assets_manager_status( $category, $group ); ?>
 					</div>
 				</div>
 				<?php
+			} else {
+				?>
+				<div class="perform-assets-manager-group--title perform-assets-manager-group--title-misc">
+					<div>
+						<span class="perform-assets-manager--source-label"><?php esc_html_e( 'Other', 'perform' ); ?></span>
+						<h4><?php esc_html_e( 'WordPress core, CDN, and uncategorized assets', 'perform' ); ?></h4>
+						<p>
+							<?php
+							printf(
+								/* translators: %d: number of assets. */
+								esc_html( _n( '%d detected asset', '%d detected assets', $asset_count, 'perform' ) ),
+								(int) $asset_count
+							);
+							?>
+						</p>
+					</div>
+				</div>
+				<?php
 			}
 			?>
-			<table cellspacing="0" cellpadding="0">
+			<table cellspacing="0" cellpadding="0" class="perform-assets-manager--assets-table">
 				<thead>
 					<tr>
 						<th>
@@ -342,27 +555,32 @@ class AssetsManager implements ModuleInterface {
 	public function print_assets_manager_script( $category, $group, $script, $type ) {
 			$data   = $this->loaded_assets[ $type ];
 			$handle = $data['scripts']->registered[ $script ]->handle;
-			$src    = $data['scripts']->registered[ $script ]->src;
+			$src    = $this->get_asset_src( $type, $script );
 
 		if ( ! empty( $src ) ) {
+			$asset_size   = $this->get_asset_size( $src );
+			$is_disabled  = $this->is_rule_disabled( $type, $handle ) || ( 'misc' !== $category && $this->is_rule_disabled( $category, $group ) );
+			$asset_status = $is_disabled ? 'disabled' : 'enabled';
 			?>
-				<tr>
+				<tr data-perform-asset-row data-perform-asset-type="<?php echo esc_attr( $type ); ?>" data-perform-asset-source="<?php echo esc_attr( $category ); ?>" data-perform-asset-status="<?php echo esc_attr( $asset_status ); ?>" data-perform-asset-handle="<?php echo esc_attr( $handle ); ?>">
 					<td class="perform-assets-manager--handle">
-					<?php echo esc_html( $handle ); ?>
+						<strong><?php echo esc_html( $handle ); ?></strong>
+						<code><?php echo esc_html( $src ); ?></code>
 					</td>
 					<td class="perform-assets-manager--type">
 					<?php
 					if ( ! empty( $type ) ) {
-						echo esc_html( $type );
+						printf(
+							'<span class="perform-assets-manager--type-badge perform-assets-manager--type-badge-%1$s">%2$s</span>',
+							esc_attr( $type ),
+							esc_html( strtoupper( $type ) )
+						);
 					}
 					?>
 					</td>
 					<td class='perform-assets-manager--size'>
 					<?php
-					$asset_path = ABSPATH . str_replace( site_url( '/' ), '', $data['scripts']->registered[ $script ]->src );
-					if ( file_exists( $asset_path ) ) {
-						echo esc_html( round( filesize( $asset_path ) / 1024, 1 ) . ' KB' );
-					}
+					echo $asset_size > 0 ? esc_html( $this->format_asset_size( $asset_size ) ) : esc_html__( 'External', 'perform' );
 					?>
 					</td>
 					<td class='perform-assets-manager--status'>
@@ -394,9 +612,8 @@ class AssetsManager implements ModuleInterface {
 		$is_disabled_type   = isset( $this->selected_options['disabled'][ $type ] );
 		$is_disabled_handle = $is_disabled_type && isset( $this->selected_options['disabled'][ $type ][ $handle ] );
 		$is_selected        = $is_disabled_handle && is_array( $this->selected_options['disabled'][ $type ][ $handle ] ) ? 'selected="selected"' : '';
-		$show_options       = $is_selected ? 'display: block;' : 'display: none;';
 		?>
-		<div class="perform-assets-manager-disable-single-asset perform-assets-manager-disable-assets" style="<?php echo esc_html( $show_options ); ?>">
+		<div class="perform-assets-manager-disable-single-asset perform-assets-manager-disable-assets" <?php echo empty( $is_selected ) ? 'hidden' : ''; ?>>
 			<?php $this->disable_assets_html( $type, $handle ); ?>
 		</div>
 		<?php
@@ -415,10 +632,10 @@ class AssetsManager implements ModuleInterface {
 	 */
 	public function disable_group_assets_html( $type, $handle ) {
 		?>
-		<div class="perform-assets-manager-disable-group-assets perform-assets-manager-disable-assets" style="display: none;">
+		<div class="perform-assets-manager-disable-group-assets perform-assets-manager-disable-assets" hidden>
 			<?php $this->disable_assets_html( $type, $handle ); ?>
 			<p>
-				<?php esc_html_e( 'All assets in this group have been disabled. Please enable the group to individually manager assets.', 'perform' ); ?>
+				<?php esc_html_e( 'All assets in this group have been disabled. Enable the group again to manage individual assets.', 'perform' ); ?>
 			</p>
 		</div>
 		<?php
@@ -443,10 +660,11 @@ class AssetsManager implements ModuleInterface {
 			'everywhere' => esc_html__( 'Everywhere', 'perform' ),
 		];
 		?>
-		<div class="perform-assets-manager-disable-asset-option-selection">
-			<strong>
+		<fieldset class="perform-assets-manager-disable-asset-option-selection">
+			<legend>
 				<?php esc_html_e( 'Disable on', 'perform' ); ?>
-			</strong>
+			</legend>
+			<div class="perform-assets-manager--radio-group">
 			<?php
 			foreach ( $radio_inputs as $key => $value ) {
 				$is_disabled_key = isset( $this->selected_options['disabled'][ $type ][ $handle ][ $key ] ) ? $this->selected_options['disabled'][ $type ][ $handle ][ $key ] : false;
@@ -468,8 +686,9 @@ class AssetsManager implements ModuleInterface {
 				<?php
 			}
 			?>
+			</div>
 			<?php $this->print_assets_manager_exceptions( $type, $handle ); ?>
-		</div>
+		</fieldset>
 		<?php
 	}
 
@@ -489,7 +708,7 @@ class AssetsManager implements ModuleInterface {
 		$is_selected        = ( $is_disabled_handle && is_array( $this->selected_options['disabled'][ $type ][ $handle ] ) ) ? 'selected="selected"' : '';
 		$disable_class      = ! empty( $is_selected ) ? 'disabled' : '';
 		?>
-		<select name="status[<?php echo esc_attr( $type ); ?>][<?php echo esc_attr( $handle ); ?>]" class="perform-status-select <?php echo esc_attr( $disable_class ); ?>">
+		<select name="status[<?php echo esc_attr( $type ); ?>][<?php echo esc_attr( $handle ); ?>]" class="perform-status-select <?php echo esc_attr( $disable_class ); ?>" aria-label="<?php esc_attr_e( 'Asset loading status', 'perform' ); ?>">
 			<option value='enabled' class='perform-option-enabled'>
 				<?php echo esc_attr__( 'ON', 'perform' ); ?>
 			</option>
@@ -515,11 +734,10 @@ class AssetsManager implements ModuleInterface {
 		$current_id          = get_the_ID();
 		$selected_post_types = isset( $this->selected_options['enabled'][ $type ][ $handle ]['post_types'] ) ? $this->selected_options['enabled'][ $type ][ $handle ]['post_types'] : false;
 		$is_selected         = isset( $this->selected_options['disabled'][ $type ][ $handle ]['everywhere'] ) ? selected( $this->selected_options['disabled'][ $type ][ $handle ]['everywhere'], 1, false ) : '';
-		$show_options        = $is_selected ? 'display: block;' : 'display: none;';
 		$current_exception   = isset( $this->selected_options['enabled'][ $type ][ $handle ]['current'] ) ? $this->selected_options['enabled'][ $type ][ $handle ]['current'] : false;
 		$is_current_checked  = ( is_array( $current_exception ) && in_array( $current_id, $current_exception, true ) ) ? ' checked="checked"' : '';
 		?>
-		<div class="perform-assets-manager--exceptions" style="<?php echo esc_html( $show_options ); ?>">
+		<div class="perform-assets-manager--exceptions" <?php echo empty( $is_selected ) ? 'hidden' : ''; ?>>
 			<div class="perform-assets-manager-exceptions--title">
 				<?php esc_html_e( 'Exceptions', 'perform' ); ?>
 			</div>
