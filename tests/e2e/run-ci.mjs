@@ -28,6 +28,7 @@ let exitCode = 0;
 try {
 	if ( manageWpEnv ) {
 		await run( 'npm', [ 'run', 'wp-env', '--', 'start' ] );
+		await run( 'npm', [ 'run', 'wp-env', '--', 'run', 'cli', 'wp', 'plugin', 'activate', 'perform' ] );
 	}
 
 	await run( 'npx', [ 'playwright', 'test', '--reporter=line' ] );
