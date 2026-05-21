@@ -63,13 +63,39 @@ jobs:
           # Use a reproducible, unique suffix from the run id to avoid shell evaluation problems.
           custom-cache-suffix: ${{ github.run_id }}
 
+      - name: Collect changed PHP files
+        id: changed_php
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            base="${{ github.event.pull_request.base.sha }}"
+            git fetch --no-tags --depth=1 origin "$base"
+          else
+            base="${{ github.event.before }}"
+            if [ "$base" = "0000000000000000000000000000000000000000" ]; then
+              base="HEAD^"
+            else
+              git fetch --no-tags --depth=1 origin "$base" || true
+            fi
+          fi
+
+          files="$(git diff --name-only --diff-filter=ACMRT "$base" HEAD -- '*.php' | tr '\n' ' ')"
+          echo "files=$files" >> "$GITHUB_OUTPUT"
+
+          if [ -z "$files" ]; then
+            echo "No changed PHP files to scan."
+          else
+            echo "Changed PHP files: $files"
+          fi
+
       # Check the codestyle of the files.
       # The results of the CS check will be shown inline in the PR via the CS2PR tool.
       # @link https://github.com/staabm/annotate-pull-request-from-checkstyle/
       - name: Check PHP code style
         id: phpcs
-        run: composer check-cs -- --no-cache --report-full --report-checkstyle=./phpcs-report.xml
+        if: ${{ steps.changed_php.outputs.files != '' }}
+        run: ./vendor/bin/phpcs -s --no-cache --report-full --report-checkstyle=./phpcs-report.xml ${{ steps.changed_php.outputs.files }}
 
       - name: Show PHPCS results in PR
-        if: ${{ always() && steps.phpcs.outcome == 'failure' }}
+        if: ${{ always() && steps.changed_php.outputs.files != '' && steps.phpcs.outcome == 'failure' }}
         run: cs2pr ./phpcs-report.xml
