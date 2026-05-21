@@ -39,6 +39,7 @@ jobs:
         with:
           php-version: 8.1
           coverage: none
+          tools: cs2pr
 
       # The lint stage doesn't use code style, so no need for WPCS or phpcompatibility.
       - name: 'Composer: adjust dependencies - remove PHPCompatibility'
@@ -66,10 +67,7 @@ jobs:
 
       - name: Show lint results in PR
         if: ${{ always() }}
-        uses: staabm/annotate-pull-request-from-checkstyle@1.8.7
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          checkstyle_report: ./lint-report.xml
+        run: cs2pr ./lint-report.xml
 
       - name: Lint blueprint file
         run: composer lint-blueprint
