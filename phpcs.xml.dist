@@ -21,6 +21,7 @@
 		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
 		<exclude name="WordPress.WP.I18n.MissingTranslatorsComment" />
 		<exclude name="Generic.Arrays.DisallowShortArraySyntax" />
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax" />
 	</rule>
 
 	<rule ref="Generic.Arrays.DisallowLongArraySyntax.Found">
@@ -29,7 +30,9 @@
 
 	<rule ref="WordPress.WP.I18n">
 		<properties>
-			<property name="text_domain" type="array" value="perform"/>
+			<property name="text_domain" type="array">
+				<element value="perform"/>
+			</property>
 		</properties>
 	</rule>
 </ruleset>

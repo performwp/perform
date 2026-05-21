@@ -89,6 +89,60 @@ class AssetsManager implements ModuleInterface {
 	}
 
 	/**
+	 * Get the current queried object ID as a stable integer.
+	 *
+	 * @return int
+	 */
+	private function get_current_object_id() {
+		$current_id = (int) get_queried_object_id();
+
+		if ( 0 >= $current_id ) {
+			$current_id = (int) get_the_ID();
+		}
+
+		return max( 0, $current_id );
+	}
+
+	/**
+	 * Normalize stored object IDs while preserving the existing array contract.
+	 *
+	 * @param mixed $ids Stored IDs.
+	 *
+	 * @return array<int, int>
+	 */
+	private function normalize_object_id_list( $ids ) {
+		if ( ! is_array( $ids ) ) {
+			return array();
+		}
+
+		$normalized = array();
+		foreach ( $ids as $id ) {
+			if ( ! is_scalar( $id ) || ! is_numeric( $id ) ) {
+				continue;
+			}
+
+			$id = (int) $id;
+			if ( 0 < $id ) {
+				$normalized[] = $id;
+			}
+		}
+
+		return array_values( array_unique( $normalized ) );
+	}
+
+	/**
+	 * Check whether a stored ID list contains the current object ID.
+	 *
+	 * @param int   $current_id Current queried object ID.
+	 * @param mixed $ids        Stored IDs.
+	 *
+	 * @return bool
+	 */
+	private function has_current_object_id( $current_id, $ids ) {
+		return 0 < $current_id && in_array( (int) $current_id, $this->normalize_object_id_list( $ids ), true );
+	}
+
+	/**
 	 * This function is used to load HTML of Assets Manager module.
 	 *
 	 * @since  1.0.0
@@ -654,7 +708,7 @@ class AssetsManager implements ModuleInterface {
 	 */
 	public function disable_assets_html( $type, $handle ) {
 		$is_checked   = '';
-		$current_id   = get_the_ID();
+		$current_id   = $this->get_current_object_id();
 		$radio_inputs = [
 			'current'    => esc_html__( 'Current URL', 'perform' ),
 			'everywhere' => esc_html__( 'Everywhere', 'perform' ),
@@ -671,8 +725,7 @@ class AssetsManager implements ModuleInterface {
 
 				if (
 					empty( $is_checked ) &&
-					is_array( $is_disabled_key ) &&
-					in_array( $current_id, $is_disabled_key, true )
+					$this->has_current_object_id( $current_id, $is_disabled_key )
 				) {
 					$is_checked = " checked='checked'";
 				} else {
@@ -731,11 +784,11 @@ class AssetsManager implements ModuleInterface {
 	 * @return void
 	 */
 	public function print_assets_manager_exceptions( $type, $handle ) {
-		$current_id          = get_the_ID();
+		$current_id          = $this->get_current_object_id();
 		$selected_post_types = isset( $this->selected_options['enabled'][ $type ][ $handle ]['post_types'] ) ? $this->selected_options['enabled'][ $type ][ $handle ]['post_types'] : false;
 		$is_selected         = isset( $this->selected_options['disabled'][ $type ][ $handle ]['everywhere'] ) ? selected( $this->selected_options['disabled'][ $type ][ $handle ]['everywhere'], 1, false ) : '';
 		$current_exception   = isset( $this->selected_options['enabled'][ $type ][ $handle ]['current'] ) ? $this->selected_options['enabled'][ $type ][ $handle ]['current'] : false;
-		$is_current_checked  = ( is_array( $current_exception ) && in_array( $current_id, $current_exception, true ) ) ? ' checked="checked"' : '';
+		$is_current_checked  = $this->has_current_object_id( $current_id, $current_exception ) ? ' checked="checked"' : '';
 		?>
 		<div class="perform-assets-manager--exceptions" <?php echo empty( $is_selected ) ? 'hidden' : ''; ?>>
 			<div class="perform-assets-manager-exceptions--title">
@@ -745,7 +798,7 @@ class AssetsManager implements ModuleInterface {
 			<div class="perform-assets-manager-exception--options">
 							<input type="hidden" name="enabled[<?php echo esc_attr( $type ); ?>][<?php echo esc_attr( $handle ); ?>][current]" value="" />
 							<label for="<?php echo esc_attr( "{$type}-{$handle}-enable-current" ); ?>">
-								<input type="checkbox" name="enabled[<?php echo esc_attr( $type ); ?>][<?php echo esc_attr( $handle ); ?>][current]" id="<?php echo esc_attr( "{$type}-{$handle}-enable-current" ); ?>" value="<?php echo esc_attr( $current_id ); ?>" <?php echo $is_current_checked; ?>/>
+								<input type="checkbox" name="enabled[<?php echo esc_attr( $type ); ?>][<?php echo esc_attr( $handle ); ?>][current]" id="<?php echo esc_attr( "{$type}-{$handle}-enable-current" ); ?>" value="<?php echo esc_attr( (string) $current_id ); ?>" <?php echo $is_current_checked; ?>/>
 					<?php esc_html_e( 'Current URL', 'perform' ); ?>
 				</label>
 
@@ -817,7 +870,7 @@ class AssetsManager implements ModuleInterface {
 			! empty( $post_data['perform_assets_manager'] )
 		) {
 
-			$current_id = get_queried_object_id();
+			$current_id = $this->get_current_object_id();
 			$filters    = [ 'js', 'css', 'plugins', 'themes' ];
 			$options    = get_option( 'perform_assets_manager_options' );
 			$settings   = get_option( 'perform_assets_manager_settings' );
@@ -857,35 +910,35 @@ class AssetsManager implements ModuleInterface {
 							'disabled' === $status &&
 							! empty( $value )
 						) {
-							if ( 'everywhere' === $value ) {
-								$options['disabled'][ $type ][ $handle ]['everywhere'] = 1;
+								if ( 'everywhere' === $value ) {
+									$options['disabled'][ $type ][ $handle ]['everywhere'] = 1;
 
-								if ( ! empty( $options['disabled'][ $type ][ $handle ]['current'] ) ) {
-									unset( $options['disabled'][ $type ][ $handle ]['current'] );
-								}
-							} elseif ( 'current' === $value ) {
+									if ( ! empty( $options['disabled'][ $type ][ $handle ]['current'] ) ) {
+										unset( $options['disabled'][ $type ][ $handle ]['current'] );
+									}
+								} elseif ( 'current' === $value ) {
 
-								if ( isset( $options['disabled'][ $type ][ $handle ]['everywhere'] ) ) {
-									unset( $options['disabled'][ $type ][ $handle ]['everywhere'] );
-								}
+									if ( isset( $options['disabled'][ $type ][ $handle ]['everywhere'] ) ) {
+										unset( $options['disabled'][ $type ][ $handle ]['everywhere'] );
+									}
 
-								if ( ! isset( $options['disabled'][ $type ][ $handle ]['current'] ) || ! is_array( $options['disabled'][ $type ][ $handle ]['current'] ) ) {
-									$options['disabled'][ $type ][ $handle ]['current'] = [];
-								}
+									$options['disabled'][ $type ][ $handle ]['current'] = $this->normalize_object_id_list( $options['disabled'][ $type ][ $handle ]['current'] ?? array() );
 
-								if ( ! in_array( $current_id, $options['disabled'][ $type ][ $handle ]['current'], true ) ) {
-									array_push( $options['disabled'][ $type ][ $handle ]['current'], $current_id );
+									if ( 0 < $current_id && ! in_array( $current_id, $options['disabled'][ $type ][ $handle ]['current'], true ) ) {
+										array_push( $options['disabled'][ $type ][ $handle ]['current'], $current_id );
+									}
 								}
-							}
 						} else {
 							unset( $options['disabled'][ $type ][ $handle ]['everywhere'] );
 
 							if ( isset( $options['disabled'][ $type ][ $handle ]['current'] ) ) {
 
+								$options['disabled'][ $type ][ $handle ]['current'] = $this->normalize_object_id_list( $options['disabled'][ $type ][ $handle ]['current'] );
 								$current_key = array_search( $current_id, $options['disabled'][ $type ][ $handle ]['current'], true );
 
 								if ( false !== $current_key ) {
 									unset( $options['disabled'][ $type ][ $handle ]['current'][ $current_key ] );
+									$options['disabled'][ $type ][ $handle ]['current'] = array_values( $options['disabled'][ $type ][ $handle ]['current'] );
 
 									if ( empty( $options['disabled'][ $type ][ $handle ]['current'] ) ) {
 										unset( $options['disabled'][ $type ][ $handle ]['current'] );
@@ -928,26 +981,27 @@ class AssetsManager implements ModuleInterface {
 						}
 
 						$current_value         = is_array( $value ) && array_key_exists( 'current', $value ) ? $value['current'] : '';
-						$has_current_exception = '' !== (string) $current_value;
+						$current_value         = is_scalar( $current_value ) && is_numeric( $current_value ) ? (int) $current_value : 0;
+						$has_current_exception = 0 < $current_value;
 
 						if (
 							! $group_disabled &&
 							'disabled' === $status &&
 							$has_current_exception
 						) {
-							if ( ! isset( $options['enabled'][ $type ][ $handle ]['current'] ) || ! is_array( $options['enabled'][ $type ][ $handle ]['current'] ) ) {
-								$options['enabled'][ $type ][ $handle ]['current'] = [];
-							}
+							$options['enabled'][ $type ][ $handle ]['current'] = $this->normalize_object_id_list( $options['enabled'][ $type ][ $handle ]['current'] ?? array() );
 
 							if ( ! in_array( $current_value, $options['enabled'][ $type ][ $handle ]['current'], true ) ) {
 								array_push( $options['enabled'][ $type ][ $handle ]['current'], $current_value );
 							}
 						} else {
 							if ( isset( $options['enabled'][ $type ][ $handle ]['current'] ) ) {
+								$options['enabled'][ $type ][ $handle ]['current'] = $this->normalize_object_id_list( $options['enabled'][ $type ][ $handle ]['current'] );
 								$current_key = array_search( $current_id, $options['enabled'][ $type ][ $handle ]['current'], true );
 
 								if ( false !== $current_key ) {
 									unset( $options['enabled'][ $type ][ $handle ]['current'][ $current_key ] );
+									$options['enabled'][ $type ][ $handle ]['current'] = array_values( $options['enabled'][ $type ][ $handle ]['current'] );
 
 									if ( empty( $options['enabled'][ $type ][ $handle ]['current'] ) ) {
 										unset( $options['enabled'][ $type ][ $handle ]['current'] );
@@ -1050,7 +1104,7 @@ class AssetsManager implements ModuleInterface {
 
 		// Load Assets Manager settings.
 		$options         = get_option( 'perform_assets_manager_options' );
-		$current_id      = get_queried_object_id();
+		$current_id      = $this->get_current_object_id();
 		$content_dirname = Helpers::get_content_dir_name();
 
 		// Get category + group from src.
@@ -1076,11 +1130,11 @@ class AssetsManager implements ModuleInterface {
 			) ||
 			(
 				! empty( $options['disabled'][ $type ][ $handle ]['current'] ) &&
-				in_array( $current_id, $options['disabled'][ $type ][ $handle ]['current'], true )
+				$this->has_current_object_id( $current_id, $options['disabled'][ $type ][ $handle ]['current'] )
 			)
 		) {
 
-			if ( ! empty( $options['enabled'][ $type ][ $handle ]['current'] ) && in_array( $current_id, $options['enabled'][ $type ][ $handle ]['current'], true ) ) {
+			if ( ! empty( $options['enabled'][ $type ][ $handle ]['current'] ) && $this->has_current_object_id( $current_id, $options['enabled'][ $type ][ $handle ]['current'] ) ) {
 				return $src;
 			}
 
