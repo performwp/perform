@@ -18,12 +18,17 @@ test( 'settings save, Assets Manager, and page cache smoke paths work', async ( 
 
 	await page.getByRole( 'tab', { name: 'Assets' } ).click();
 	await page.getByRole( 'checkbox', { name: 'Enable Assets Manager' } ).check();
+	await page
+		.getByRole( 'textbox', { name: 'Preconnect' } )
+		.fill( `//ci-${ Date.now() }.example.com` );
 
 	await page.getByRole( 'tab', { name: 'Cache' } ).click();
 	await page.getByRole( 'checkbox', { name: 'Enable Full-Page Cache' } ).check();
 
-	await page.getByRole( 'button', { name: 'Save Settings' } ).click();
-	await expect( page.getByText( 'Settings saved.' ) ).toBeVisible();
+	const saveButton = page.getByRole( 'button', { name: 'Save Settings' } );
+	await expect( saveButton ).toBeEnabled();
+	await saveButton.click();
+	await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
 
 	await page.goto( '/?perform' );
 	await expect( page.locator( '#perform-assets-manager' ) ).toBeVisible();
