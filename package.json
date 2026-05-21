@@ -1,6 +1,6 @@
 {
   "name": "perform",
-	"version": "1.6.0",
+  "version": "1.6.0",
   "description": "Web Performance Optimization Plugin for WordPress",
   "homepage": "https://github.com/performwp/perform#readme",
   "license": "GPL-3.0-or-later",
@@ -21,14 +21,26 @@
     "start": "wp-scripts start --mode development",
     "build": "wp-scripts build --mode production",
     "format": "wp-scripts format",
-    "lint:css": "wp-scripts lint-style",
-    "lint:js": "wp-scripts lint-js",
-    "plugin-zip": "wp-scripts plugin-zip"
+    "lint": "npm run lint:js && npm run lint:css",
+    "lint:css": "wp-scripts lint-style \"assets/src/**/*.css\"",
+    "lint:js": "wp-scripts lint-js \"assets/src/**/*.js\" \"assets/src/**/*.jsx\" postcss.config.js webpack.config.js",
+    "plugin-zip": "rm -rf build/perform perform.zip && mkdir -p build/perform && rsync -rc --exclude-from=.distignore ./ build/perform/ --delete --delete-excluded && cd build && zip -qr ../perform.zip perform",
+    "test:e2e": "playwright test",
+    "test:e2e:ci": "node tests/e2e/run-ci.mjs",
+    "wp-env": "wp-env"
+  },
+  "engines": {
+    "node": ">=24.0.0 <25.0.0",
+    "npm": ">=10.0.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "@wordpress/components": "^29.12.0",
     "@wordpress/element": "^6.26.0",
+    "@wordpress/env": "^10.39.0",
     "@wordpress/scripts": "^31.1.0",
+    "@wordpress/stylelint-config": "^23.38.0",
+    "autoprefixer": "^10.5.0",
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^12.0.2",
     "file-loader": "^6.2.0",

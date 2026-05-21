@@ -71,16 +71,24 @@ Guidance for AI coding agents working on the Perform WordPress plugin.
 - Avoid custom UI primitives when equivalent WP Design System components exist.
 
 ## Build, Lint, and Analysis Commands
+- Node runtime:
+  - Use Node.js 24.x (`.nvmrc` and `.node-version` are authoritative for this release line)
 - JS/CSS dev build:
   - `npm run start`
 - JS/CSS prod build:
   - `npm run build`
+- JS/CSS lint:
+  - `npm run lint`
 - PHP code style:
   - `composer check-cs`
 - PHP lint:
   - `composer lint`
 - PHPStan:
   - `composer phpstan`
+- PHPUnit:
+  - `composer test`
+- Playwright smoke tests:
+  - `npm run test:e2e:ci`
 
 ## Testing and Validation Before Commit
 - Minimum for PHP changes:
@@ -92,6 +100,10 @@ Guidance for AI coding agents working on the Perform WordPress plugin.
 - For admin UI/settings changes:
   - verify save flow still works via `perform_save_settings` ajax
   - verify the settings page script path matches built artifact names
+- For tooling/CI changes:
+  - preserve the Node 24 Active LTS policy unless the release plan changes
+  - keep GitHub Actions on maintained action versions
+  - run or document any unrun Composer, npm, PHPUnit, and Playwright validation gates
 
 ## CI Notes
 - GitHub workflows include:

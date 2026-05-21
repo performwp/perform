@@ -253,12 +253,6 @@ parameters:
 			path: src/Modules/Assets/AssetsManager.php
 
 		-
-			message: '#^Variable \$post_type might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: src/Modules/Assets/AssetsManager.php
-
-		-
 			message: '#^Method Perform\\Modules\\Basic\\DisableEmbeds\:\:disable_embeds\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1

@@ -1,6 +1,7 @@
 # Unit tests
 /tmp
 /tests/bin/tmp
+.phpunit.result.cache
 
 # Numerous always-ignore extensions
 .diff
@@ -45,7 +46,12 @@ cache
 !src/Modules/Cache/
 !src/Modules/Cache/**
 node_modules
+build/
+perform.zip
 assets/dist/
+playwright-report/
+test-results/
+.wp-env.override.json
 
 # Composer
 vendor

@@ -8,7 +8,7 @@
 	justify-content: space-between;
 	margin-bottom: 24px;
 	background-color: var(--white-color);
-	padding: 0px 20px;
+	padding: 0 20px;
 	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
@@ -60,11 +60,13 @@
 	color: var(--primary-color);
 	font-weight: 500;
 }
+
 .perform-help-link:hover,
 .perform-help-link:focus {
 	text-decoration: underline; /* show underline on hover for affordance */
 	color: var(--primary-color) !important;
 }
+
 .perform-help-icon {
 	margin-left: 0;
 }

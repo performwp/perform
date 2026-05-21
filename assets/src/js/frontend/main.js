@@ -1,5 +1,5 @@
-import {Button, SearchControl} from '@wordpress/components';
-import {render, useEffect, useMemo, useState} from '@wordpress/element';
+import { Button, SearchControl } from '@wordpress/components';
+import { render, useEffect, useMemo, useState } from '@wordpress/element';
 
 const DEFAULT_CONTROL_LABELS = {
 	search: 'Search detected assets',
@@ -15,13 +15,13 @@ const DEFAULT_CONTROL_LABELS = {
 };
 
 const SCANNER_FILTERS = [
-	{value: 'all', labelKey: 'all'},
-	{value: 'plugins', labelKey: 'plugins'},
-	{value: 'themes', labelKey: 'themes'},
-	{value: 'misc', labelKey: 'misc'},
-	{value: 'js', labelKey: 'js'},
-	{value: 'css', labelKey: 'css'},
-	{value: 'disabled', labelKey: 'disabled'},
+	{ value: 'all', labelKey: 'all' },
+	{ value: 'plugins', labelKey: 'plugins' },
+	{ value: 'themes', labelKey: 'themes' },
+	{ value: 'misc', labelKey: 'misc' },
+	{ value: 'js', labelKey: 'js' },
+	{ value: 'css', labelKey: 'css' },
+	{ value: 'disabled', labelKey: 'disabled' },
 ];
 
 function setHidden( element, hidden ) {
@@ -94,7 +94,7 @@ function applyScannerFilters( manager, filter, query ) {
 	setHidden( noResults, visibleRows > 0 );
 }
 
-function AssetsManagerControls( {manager, labels} ) {
+function AssetsManagerControls( { manager, labels } ) {
 	const [ filter, setFilter ] = useState( 'all' );
 	const [ query, setQuery ] = useState( '' );
 	const filters = useMemo(
@@ -128,7 +128,7 @@ function AssetsManagerControls( {manager, labels} ) {
 				value={ query }
 			/>
 			<div className="perform-assets-manager--filters" aria-label={ labels.filters }>
-				{ filters.map( ( {value, label} ) => {
+				{ filters.map( ( { value, label } ) => {
 					const isActive = value === filter;
 
 					return (

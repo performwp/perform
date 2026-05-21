@@ -14,7 +14,7 @@ on:
       - 'composer.lock'
       - '.phpcs.xml.dist'
       - 'phpcs.xml.dist'
-      - '.github/workflows/cs.yml'
+      - '.github/workflows/code-style.yml'
   pull_request:
     paths:
       - '**.php'
@@ -22,7 +22,7 @@ on:
       - 'composer.lock'
       - '.phpcs.xml.dist'
       - 'phpcs.xml.dist'
-      - '.github/workflows/cs.yml'
+      - '.github/workflows/code-style.yml'
   # Allow manually triggering the workflow.
   workflow_dispatch:
 
@@ -39,7 +39,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install PHP
         uses: shivammathur/setup-php@v2
@@ -63,7 +63,7 @@ jobs:
       # Install dependencies and handle caching in one go.
       # @link https://github.com/marketplace/actions/install-composer-dependencies
       - name: Install Composer dependencies
-        uses: ramsey/composer-install@v2
+        uses: ramsey/composer-install@v3
         with:
           # Use a reproducible, unique suffix from the run id to avoid shell evaluation problems.
           custom-cache-suffix: ${{ github.run_id }}
