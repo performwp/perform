@@ -1,8 +1,13 @@
 name: CodeStyle
 
 on:
-  # Run on all relevant pushes (except to main) and on all relevant pull requests.
+  # Run on long-lived branch pushes and on all relevant pull requests.
   push:
+    branches:
+      - main
+      - develop
+      - 'release/[0-9]+.[0-9]+*'
+      - 'hotfix/[0-9]+.[0-9]+*'
     paths:
       - '**.php'
       - 'composer.json'
@@ -41,6 +46,7 @@ jobs:
         with:
           php-version: '8.2'
           coverage: none
+          tools: cs2pr
 
       # Validate the composer.json file.
       # @link https://getcomposer.org/doc/03-cli.md#validate
@@ -62,16 +68,39 @@ jobs:
           # Use a reproducible, unique suffix from the run id to avoid shell evaluation problems.
           custom-cache-suffix: ${{ github.run_id }}
 
+      - name: Collect changed PHP files
+        id: changed_php
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            base="${{ github.event.pull_request.base.sha }}"
+            git fetch --no-tags --depth=1 origin "$base"
+          else
+            base="${{ github.event.before }}"
+            if [ "$base" = "0000000000000000000000000000000000000000" ]; then
+              base="HEAD^"
+            else
+              git fetch --no-tags --depth=1 origin "$base" || true
+            fi
+          fi
+
+          files="$(git diff --name-only --diff-filter=ACMRT "$base" HEAD -- '*.php' | tr '\n' ' ')"
+          echo "files=$files" >> "$GITHUB_OUTPUT"
+
+          if [ -z "$files" ]; then
+            echo "No changed PHP files to scan."
+          else
+            echo "Changed PHP files: $files"
+          fi
+
       # Check the codestyle of the files.
       # The results of the CS check will be shown inline in the PR via the CS2PR tool.
       # @link https://github.com/staabm/annotate-pull-request-from-checkstyle/
       - name: Check PHP code style
         id: phpcs
-        run: composer check-cs -- --no-cache --report-full --report-checkstyle=./phpcs-report.xml
+        if: ${{ steps.changed_php.outputs.files != '' }}
+        run: ./vendor/bin/phpcs -s --no-cache --report-full --report-checkstyle=./phpcs-report.xml ${{ steps.changed_php.outputs.files }}
 
       - name: Show PHPCS results in PR
-        if: ${{ always() && steps.phpcs.outcome == 'failure' }}
-        uses: staabm/annotate-pull-request-from-checkstyle@v2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          checkstyle_report: ./phpcs-report.xml
+        if: ${{ always() && steps.changed_php.outputs.files != '' && steps.phpcs.outcome == 'failure' }}
+        run: cs2pr ./phpcs-report.xml

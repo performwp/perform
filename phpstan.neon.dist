@@ -1,8 +1,12 @@
+includes:
+  - phpstan-baseline.neon
+
 parameters:
   level: 6
+  bootstrapFiles:
+    - phpstan-bootstrap.php
   paths:
-    - .
-  excludePaths:
-    - vendor
-    - tests (?)
+    - perform.php
+    - uninstall.php
+    - src
   treatPhpDocTypesAsCertain: false
