@@ -29,6 +29,16 @@ try {
 	if ( manageWpEnv ) {
 		await run( 'npm', [ 'run', 'wp-env', '--', 'start' ] );
 		await run( 'npm', [ 'run', 'wp-env', '--', 'run', 'cli', 'wp', 'plugin', 'activate', 'perform' ] );
+		await run( 'npm', [
+			'run',
+			'wp-env',
+			'--',
+			'run',
+			'cli',
+			'wp',
+			'eval',
+			'if ( class_exists( "Freemius" ) ) { $perform_fs = Freemius::get_instance_by_id( 18658 ); if ( $perform_fs ) { $perform_fs->skip_connection(); } }',
+		] );
 	}
 
 	await run( 'npx', [ 'playwright', 'test', '--reporter=line' ] );
