@@ -18,7 +18,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
  */
 function perform_handle_plugin_uninstall() {
 
-	$setting_types = array(
+	$option_keys = array(
 		'perform_settings',
 		'perform_common',
 		'perform_ssl',
@@ -27,6 +27,9 @@ function perform_handle_plugin_uninstall() {
 		'perform_advanced',
 		'perform_import_export',
 		'perform_support',
+		'perform_assets_manager_options',
+		'perform_cache_preload_queue',
+		'perform_cache_stats',
 	);
 
 	$remove_data_on_uninstall = false;
@@ -45,18 +48,15 @@ function perform_handle_plugin_uninstall() {
 
 			if ( ! empty( $sites ) ) {
 				foreach ( $sites as $site ) {
-					foreach ( $setting_types as $option ) {
+					foreach ( $option_keys as $option ) {
 						delete_blog_option( (int) $site->blog_id, $option );
 					}
-					}
 				}
+			}
 		} else {
-			foreach ( $setting_types as $option ) {
+			foreach ( $option_keys as $option ) {
 				delete_option( $option );
 			}
-			delete_option( 'perform_assets_manager_options' );
-			delete_option( 'perform_cache_preload_queue' );
-			delete_option( 'perform_cache_stats' );
 		}
 	}
 }

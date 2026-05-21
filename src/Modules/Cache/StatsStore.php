@@ -36,6 +36,18 @@ final class StatsStore {
 	private $dirty = false;
 
 	/**
+	 * High-traffic counters that should be sampled instead of persisted per request.
+	 *
+	 * @var array<string, bool>
+	 */
+	private $sampled_counter_keys = [
+		'hits'       => true,
+		'stale_hits' => true,
+		'bypasses'   => true,
+		'lock_waits' => true,
+	];
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
@@ -51,8 +63,35 @@ final class StatsStore {
 	 * @return void
 	 */
 	public function increment( $key ) {
-		$this->stats[ $key ] = isset( $this->stats[ $key ] ) ? ( (int) $this->stats[ $key ] + 1 ) : 1;
+		$increment = $this->get_increment_sample_size( $key );
+		if ( 0 === $increment ) {
+			return;
+		}
+
+		$this->stats[ $key ] = isset( $this->stats[ $key ] ) ? ( (int) $this->stats[ $key ] + $increment ) : $increment;
 		$this->dirty = true;
+	}
+
+	/**
+	 * Get sampled increment size for hot cache counters.
+	 *
+	 * @param string $key Stat key.
+	 *
+	 * @return int
+	 */
+	private function get_increment_sample_size( $key ) {
+		if ( empty( $this->sampled_counter_keys[ $key ] ) ) {
+			return 1;
+		}
+
+		$sample_rate = (int) apply_filters( 'perform_cache_stats_sample_rate', 20, $key );
+		$sample_rate = max( 1, $sample_rate );
+
+		if ( 1 === $sample_rate ) {
+			return 1;
+		}
+
+		return 1 === wp_rand( 1, $sample_rate ) ? $sample_rate : 0;
 	}
 
 	/**

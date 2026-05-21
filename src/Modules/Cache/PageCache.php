@@ -249,15 +249,8 @@ class PageCache implements ModuleInterface {
 				return $html;
 			}
 
-			if ( http_response_code() >= 400 ) {
+			if ( ! $this->is_cacheable_response( $html ) ) {
 				return $html;
-			}
-
-			// Don't cache responses setting cookies.
-			foreach ( headers_list() as $header_line ) {
-				if ( 0 === stripos( $header_line, 'Set-Cookie:' ) ) {
-					return $html;
-				}
 			}
 
 			$ttl_seconds  = (int) Helpers::get_option( 'page_cache_ttl', 'perform_settings', 3600 );
@@ -270,8 +263,13 @@ class PageCache implements ModuleInterface {
 				'swr_expires' => $created + max( 120, $ttl_seconds + $swr_seconds ),
 			];
 
-			$this->write_cache_meta( $this->current_cache_key, $meta_payload );
-			$this->write_cache_body( $this->current_cache_key, $html );
+			if ( ! $this->write_cache_body( $this->current_cache_key, $html ) ) {
+				return $html;
+			}
+
+			if ( ! $this->write_cache_meta( $this->current_cache_key, $meta_payload ) ) {
+				wp_delete_file( $this->get_body_file_path( $this->current_cache_key ) );
+			}
 		} finally {
 			$this->release_lock();
 		}
@@ -892,6 +890,62 @@ class PageCache implements ModuleInterface {
 	}
 
 	/**
+	 * Whether the rendered response is safe to persist as a page-cache entry.
+	 *
+	 * @param string $html Rendered response body.
+	 *
+	 * @return bool
+	 */
+	private function is_cacheable_response( $html ) {
+		$current_status = http_response_code();
+		$status_code    = false === $current_status ? 200 : (int) $current_status;
+		if ( 200 !== $status_code ) {
+			return false;
+		}
+
+		$has_content_type = false;
+
+		foreach ( headers_list() as $header_line ) {
+			if ( 0 === stripos( $header_line, 'Set-Cookie:' ) ) {
+				return false;
+			}
+
+			if ( 0 === stripos( $header_line, 'Location:' ) ) {
+				return false;
+			}
+
+			if ( 0 === stripos( $header_line, 'Content-Type:' ) ) {
+				$has_content_type = true;
+
+				if ( false === stripos( $header_line, 'text/html' ) ) {
+					return false;
+				}
+			}
+		}
+
+		if ( ! $has_content_type && ! $this->looks_like_html_response( $html ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Lightweight fallback for hosts that have not sent Content-Type yet.
+	 *
+	 * @param string $html Rendered response body.
+	 *
+	 * @return bool
+	 */
+	private function looks_like_html_response( $html ) {
+		$body_start = ltrim( substr( $html, 0, 1024 ) );
+
+		return 0 === stripos( $body_start, '<!doctype html' )
+			|| 0 === stripos( $body_start, '<html' )
+			|| false !== stripos( $body_start, '<html' );
+	}
+
+	/**
 	 * Normalize current request URL.
 	 *
 	 * @return string
@@ -1040,11 +1094,17 @@ class PageCache implements ModuleInterface {
 	 * @param string                     $key Cache key.
 	 * @param array<string, int|string> $meta Metadata.
 	 *
-	 * @return void
+	 * @return bool
 	 */
 	private function write_cache_meta( $key, $meta ) {
-		$path = $this->get_meta_file_path( $key );
-		file_put_contents( $path, wp_json_encode( $meta ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+		$path     = $this->get_meta_file_path( $key );
+		$contents = wp_json_encode( $meta );
+
+		if ( ! is_string( $contents ) ) {
+			return false;
+		}
+
+		return $this->write_file_atomically( $path, $contents );
 	}
 
 	/**
@@ -1053,11 +1113,41 @@ class PageCache implements ModuleInterface {
 	 * @param string $key Cache key.
 	 * @param string $body Body.
 	 *
-	 * @return void
+	 * @return bool
 	 */
 	private function write_cache_body( $key, $body ) {
 		$path = $this->get_body_file_path( $key );
-		file_put_contents( $path, $body ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+		return $this->write_file_atomically( $path, $body );
+	}
+
+	/**
+	 * Write cache file through a same-directory temp file and atomic rename.
+	 *
+	 * @param string $path Target file path.
+	 * @param string $contents File contents.
+	 *
+	 * @return bool
+	 */
+	private function write_file_atomically( $path, $contents ) {
+		$directory = dirname( $path );
+		if ( ! is_dir( $directory ) || ! is_writable( $directory ) ) {
+			return false;
+		}
+
+		$tmp_path = $path . '.' . uniqid( 'tmp-', true );
+		$written  = file_put_contents( $tmp_path, $contents, LOCK_EX ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+
+		if ( false === $written ) {
+			wp_delete_file( $tmp_path );
+			return false;
+		}
+
+		if ( ! rename( $tmp_path, $path ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename
+			wp_delete_file( $tmp_path );
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
