@@ -7,7 +7,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language-Team: PerformWP <hello@performwp.com>\n"
-"POT-Creation-Date: 2026-05-15 15:29+0000\n"
+"POT-Creation-Date: 2026-05-21 10:19+0000\n"
 "Report-Msgid-Bugs-To: https://github.com/performwp/perform/issues/new\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
@@ -743,66 +743,66 @@ msgstr ""
 msgid "Every 5 minutes (Perform Cache)"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:449, src/Modules/Cache/PageCache.php:478
+#: src/Modules/Cache/PageCache.php:447, src/Modules/Cache/PageCache.php:476
 msgid "Perform Cache Observability"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:450
+#: src/Modules/Cache/PageCache.php:448
 msgid "Perform Cache Stats"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:479
+#: src/Modules/Cache/PageCache.php:477
 msgid "Live cache effectiveness and warmup health metrics."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:483
+#: src/Modules/Cache/PageCache.php:481
 msgid "Cache Hit Ratio"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:484
+#: src/Modules/Cache/PageCache.php:482
 msgid "Hits"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:485
+#: src/Modules/Cache/PageCache.php:483
 msgid "Stale Hits"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:486, src/Modules/Cache/PageCache.php:495
+#: src/Modules/Cache/PageCache.php:484, src/Modules/Cache/PageCache.php:493
 msgid "Misses"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:487
+#: src/Modules/Cache/PageCache.php:485
 msgid "Bypasses"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:488
+#: src/Modules/Cache/PageCache.php:486
 msgid "Lock Waits"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:489
+#: src/Modules/Cache/PageCache.php:487
 msgid "Preload Queue Size"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:490
+#: src/Modules/Cache/PageCache.php:488
 msgid "Preload Requests"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:494
+#: src/Modules/Cache/PageCache.php:492
 msgid "Top Missed URLs"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:497
+#: src/Modules/Cache/PageCache.php:495
 msgid "Slow Uncached URLs (ms)"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:498
+#: src/Modules/Cache/PageCache.php:496
 msgid "Render Time (ms)"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:513
+#: src/Modules/Cache/PageCache.php:511
 msgid "No data yet."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:520
+#: src/Modules/Cache/PageCache.php:518
 msgid "URL"
 msgstr ""

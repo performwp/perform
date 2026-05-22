@@ -1,189 +1,238 @@
-import { TabPanel, Card, CardHeader, CardBody, ToggleControl, TextControl, SelectControl, TextareaControl } from '@wordpress/components';
+import {
+	TabPanel,
+	Card,
+	CardHeader,
+	CardBody,
+	ToggleControl,
+	TextControl,
+	SelectControl,
+	TextareaControl,
+} from '@wordpress/components';
 import { useState, useMemo } from '@wordpress/element';
 
 const FIELD_COMPONENTS = {
-  toggle: ToggleControl,
-  text: TextControl,
-  textarea: TextareaControl,
-  select: SelectControl,
+	toggle: ToggleControl,
+	text: TextControl,
+	textarea: TextareaControl,
+	select: SelectControl,
 };
 
-const normalizeOptions = (options) => {
-  if (!options) return [];
-  if (Array.isArray(options)) {
-    if (options.length === 0) return [];
-    if (typeof options[0] === 'object' && (options[0].label !== undefined || options[0].value !== undefined)) {
-      return options.map((opt) => ({ label: opt.label ?? String(opt.value), value: opt.value ?? opt.label }));
-    }
-    return options.map((opt) => ({ label: String(opt), value: opt }));
-  }
-  if (typeof options === 'object') {
-    return Object.keys(options).map((key) => ({ label: options[key], value: key }));
-  }
-  return [];
+const normalizeOptions = ( options ) => {
+	if ( ! options ) {
+		return [];
+	}
+	if ( Array.isArray( options ) ) {
+		if ( options.length === 0 ) {
+			return [];
+		}
+		if (
+			typeof options[ 0 ] === 'object' &&
+			( options[ 0 ].label !== undefined || options[ 0 ].value !== undefined )
+		) {
+			return options.map( ( opt ) => ( {
+				label: opt.label ?? String( opt.value ),
+				value: opt.value ?? opt.label,
+			} ) );
+		}
+		return options.map( ( opt ) => ( { label: String( opt ), value: opt } ) );
+	}
+	if ( typeof options === 'object' ) {
+		return Object.keys( options ).map( ( key ) => ( { label: options[ key ], value: key } ) );
+	}
+	return [];
 };
 
 const SENSITIVE_KEYS = window.performwpSettings?.sensitiveKeys || [];
 const MASKED_SECRET_VALUE = window.performwpSettings?.maskedSecretValue || '__PERFORM_MASKED_SECRET__';
+const SETTINGS = window.performwpSettings || {};
 
-const isSensitiveField = (fieldId) => SENSITIVE_KEYS.includes(fieldId);
+const isSensitiveField = ( fieldId ) => SENSITIVE_KEYS.includes( fieldId );
 
-const renderField = (field, value, onChange) => {
-  const { type = 'text', id, name, desc, help_link, options, placeholder, style: fieldStyle, className: fieldClass, ...rest } = field;
-  const Component = FIELD_COMPONENTS[type] || null;
-  if (!Component) return <div key={id}>Unsupported field type: {type}</div>;
+const renderField = ( field, value, onChange ) => {
+	const {
+		type = 'text',
+		id,
+		name,
+		desc,
+		help_link: helpLink,
+		options,
+		placeholder,
+		style: fieldStyle,
+		className: fieldClass,
+		...rest
+	} = field;
+	const Component = FIELD_COMPONENTS[ type ] || null;
+	if ( ! Component ) {
+		return <div key={ id }>Unsupported field type: { type }</div>;
+	}
 
-  const common = {
-    // key moved to wrapper
-    label: name,
-    // Render description with optional "Learn more" link when provided
-    help: (
-      <span>
-        {desc}
-        {help_link && (
-          <>
-            {' '}
-            <a href={help_link} target="_blank" rel="noopener noreferrer" className="perform-help-link">
-              Learn more <span className="perform-help-icon">→</span>
-            </a>
-          </>
-        )}
-      </span>
-    ),
-    ...rest,
-  };
+	const common = {
+		// key moved to wrapper
+		label: name,
+		// Render description with optional "Learn more" link when provided
+		help: (
+			<span>
+				{ desc }
+				{ helpLink && (
+					<>
+						{ ' ' }
+						<a href={ helpLink } target="_blank" rel="noopener noreferrer" className="perform-help-link">
+							Learn more <span className="perform-help-icon">→</span>
+						</a>
+					</>
+				) }
+			</span>
+		),
+		...rest,
+	};
 
-  if (type === 'toggle') {
-    return (
-      <ToggleControl
-        {...common}
-        checked={!!value}
-        onChange={(checked) => onChange(id, checked)}
-      />
-    );
-  }
+	if ( type === 'toggle' ) {
+		return <ToggleControl { ...common } checked={ !! value } onChange={ ( checked ) => onChange( id, checked ) } />;
+	}
 
-  if (type === 'text') {
-    const sensitive = isSensitiveField(id);
-    const shownValue = sensitive && value === MASKED_SECRET_VALUE ? '' : (value ?? '');
-    const enhancedHelp = sensitive
-      ? (
-          <span>
-            {desc}
-            {' '}
-            <em>{value === MASKED_SECRET_VALUE ? 'Existing secret is saved. Enter a new value only if you want to replace it.' : ''}</em>
-            {help_link && (
-              <>
-                {' '}
-                <a href={help_link} target="_blank" rel="noopener noreferrer" className="perform-help-link">
-                  Learn more <span className="perform-help-icon">→</span>
-                </a>
-              </>
-            )}
-          </span>
-        )
-      : common.help;
+	if ( type === 'text' ) {
+		const sensitive = isSensitiveField( id );
+		const shownValue = sensitive && value === MASKED_SECRET_VALUE ? '' : value ?? '';
+		const enhancedHelp = sensitive ? (
+			<span>
+				{ desc }{ ' ' }
+				<em>
+					{ value === MASKED_SECRET_VALUE
+						? 'Existing secret is saved. Enter a new value only if you want to replace it.'
+						: '' }
+				</em>
+				{ helpLink && (
+					<>
+						{ ' ' }
+						<a href={ helpLink } target="_blank" rel="noopener noreferrer" className="perform-help-link">
+							Learn more <span className="perform-help-icon">→</span>
+						</a>
+					</>
+				) }
+			</span>
+		) : (
+			common.help
+		);
 
-    return (
-      <TextControl
-        {...common}
-        type={sensitive ? 'password' : 'text'}
-        autoComplete={sensitive ? 'new-password' : undefined}
-        help={enhancedHelp}
-        value={shownValue}
-        placeholder={placeholder}
-        onChange={(val) => onChange(id, val)}
-      />
-    );
-  }
+		return (
+			<TextControl
+				{ ...common }
+				type={ sensitive ? 'password' : 'text' }
+				autoComplete={ sensitive ? 'new-password' : undefined }
+				help={ enhancedHelp }
+				value={ shownValue }
+				placeholder={ placeholder }
+				onChange={ ( val ) => onChange( id, val ) }
+			/>
+		);
+	}
 
-  if (type === 'textarea') {
-    // allow optional rows property on the field definition
-    const rows = field.rows ?? 5;
-    return (
-      <TextareaControl
-        {...common}
-        value={value ?? ''}
-        placeholder={placeholder}
-        rows={rows}
-        onChange={(val) => onChange(id, val)}
-      />
-    );
-  }
+	if ( type === 'textarea' ) {
+		// allow optional rows property on the field definition
+		const rows = field.rows ?? 5;
+		return (
+			<TextareaControl
+				{ ...common }
+				value={ value ?? '' }
+				placeholder={ placeholder }
+				rows={ rows }
+				onChange={ ( val ) => onChange( id, val ) }
+			/>
+		);
+	}
 
-  if (type === 'select') {
-    const opts = normalizeOptions(options);
-    return (
-      <SelectControl
-        {...common}
-        className={fieldClass ?? 'perform-select-control'}
-        value={value ?? (opts[0] ? opts[0].value : '')}
-        options={opts}
-        onChange={(val) => onChange(id, val)}
-      />
-    );
-  }
+	if ( type === 'select' ) {
+		const opts = normalizeOptions( options );
+		return (
+			<SelectControl
+				{ ...common }
+				className={ fieldClass ?? 'perform-select-control' }
+				value={ value ?? ( opts[ 0 ] ? opts[ 0 ].value : '' ) }
+				options={ opts }
+				onChange={ ( val ) => onChange( id, val ) }
+			/>
+		);
+	}
 
-  return <Component {...common} value={value} onChange={(val) => onChange(id, val)} />;
+	return <Component { ...common } value={ value } onChange={ ( val ) => onChange( id, val ) } />;
 };
 
-const SettingsNav = ({ tabs: propTabs, fields: propFields, activeTab: propActiveTab, onTabChange: propOnTabChange, fieldValues: propFieldValues, onFieldChange: propOnFieldChange }) => {
-  const tabs = propTabs || window.performwpSettings?.tabs || {};
-  const fields = propFields || window.performwpSettings?.fields || {};
-  const tabKeys = Object.keys(tabs);
+const SettingsNav = ( {
+	tabs: propTabs,
+	fields: propFields,
+	activeTab: propActiveTab,
+	onTabChange: propOnTabChange,
+	fieldValues: propFieldValues,
+	onFieldChange: propOnFieldChange,
+} ) => {
+	const tabs = useMemo( () => propTabs || SETTINGS.tabs || {}, [ propTabs ] );
+	const fields = useMemo( () => propFields || SETTINGS.fields || {}, [ propFields ] );
+	const tabKeys = useMemo( () => Object.keys( tabs ), [ tabs ] );
 
-  const [internalActiveTab, setInternalActiveTab] = useState(tabKeys[0] || '');
-  const activeTab = propActiveTab ?? internalActiveTab;
-  const onTabChange = propOnTabChange ?? setInternalActiveTab;
+	const [ internalActiveTab, setInternalActiveTab ] = useState( tabKeys[ 0 ] || '' );
+	const activeTab = propActiveTab ?? internalActiveTab;
+	const onTabChange = propOnTabChange ?? setInternalActiveTab;
 
-  const [internalFieldValues, setInternalFieldValues] = useState({});
-  const fieldValues = propFieldValues ?? internalFieldValues;
-  const onFieldChange = propOnFieldChange ?? ((id, val) => setInternalFieldValues((p) => ({ ...p, [id]: val })));
+	const [ internalFieldValues, setInternalFieldValues ] = useState( {} );
+	const fieldValues = propFieldValues ?? internalFieldValues;
+	const onFieldChange =
+		propOnFieldChange ?? ( ( id, val ) => setInternalFieldValues( ( p ) => ( { ...p, [ id ]: val } ) ) );
 
-  if (!tabKeys.length) return null;
+	const tabPanelTabs = useMemo(
+		() =>
+			tabKeys.map( ( slug ) => ( {
+				name: slug,
+				title: tabs[ slug ],
+			} ) ),
+		[ tabKeys, tabs ]
+	);
 
-  const tabPanelTabs = tabKeys.map((slug) => ({
-    name: slug,
-    title: tabs[slug],
-  }));
+	const cards = useMemo( () => fields[ activeTab ] || [], [ fields, activeTab ] );
 
-  const cards = useMemo(() => fields[activeTab] || [], [fields, activeTab]);
+	if ( ! tabKeys.length ) {
+		return null;
+	}
 
-  return (
-    <>
-      <div className="perform-settings-content">
-        <TabPanel
-          className="perform-settings-tab-panel"
-          tabs={tabPanelTabs}
-          initialTabName={activeTab}
-          onSelect={onTabChange}
-        >
-          {() => null}
-        </TabPanel>
-        <div className="perform-settings-cards">
-          {cards.map((card, idx) => (
-            <Card key={idx} style={{ marginBottom: '24px', boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)', borderRadius: 0 }}>
-              <CardHeader style={{ alignItems: 'flex-start', flexDirection: 'column' }}>
-                <h3 className='perform-card-title'>{card.title}</h3>
-                {card.description && (
-                  <p className='perform-card-description'>{card.description}</p>
-                )}
-              </CardHeader>
-              {card.fields && card.fields.length > 0 && (
-                <CardBody>
-                  {card.fields.map((field) => (
-                    <div key={field.id} className="perform-field" style={{ marginBottom: 16 }}>
-                      {renderField(field, fieldValues[field.id], onFieldChange)}
-                    </div>
-                  ))}
-                </CardBody>
-              )}
-            </Card>
-          ))}
-        </div>
-      </div>
-    </>
-  );
+	return (
+		<>
+			<div className="perform-settings-content">
+				<TabPanel
+					className="perform-settings-tab-panel"
+					tabs={ tabPanelTabs }
+					initialTabName={ activeTab }
+					onSelect={ onTabChange }
+				>
+					{ () => null }
+				</TabPanel>
+				<div className="perform-settings-cards">
+					{ cards.map( ( card, idx ) => (
+						<Card
+							key={ idx }
+							style={ {
+								marginBottom: '24px',
+								boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
+								borderRadius: 0,
+							} }
+						>
+							<CardHeader style={ { alignItems: 'flex-start', flexDirection: 'column' } }>
+								<h3 className="perform-card-title">{ card.title }</h3>
+								{ card.description && <p className="perform-card-description">{ card.description }</p> }
+							</CardHeader>
+							{ card.fields && card.fields.length > 0 && (
+								<CardBody>
+									{ card.fields.map( ( field ) => (
+										<div key={ field.id } className="perform-field" style={ { marginBottom: 16 } }>
+											{ renderField( field, fieldValues[ field.id ], onFieldChange ) }
+										</div>
+									) ) }
+								</CardBody>
+							) }
+						</Card>
+					) ) }
+				</div>
+			</div>
+		</>
+	);
 };
 
 export default SettingsNav;

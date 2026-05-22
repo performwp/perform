@@ -1,0 +1,38 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    groups:
+      wordpress-packages:
+        patterns:
+          - "@wordpress/*"
+      frontend-build-tooling:
+        patterns:
+          - "webpack*"
+          - "postcss*"
+          - "stylelint*"
+          - "eslint*"
+          - "playwright*"
+
+  - package-ecosystem: composer
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      php-quality-tooling:
+        patterns:
+          - "phpstan/*"
+          - "phpunit/*"
+          - "wp-coding-standards/*"
+          - "phpcompatibility/*"
+          - "php-parallel-lint/*"
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5

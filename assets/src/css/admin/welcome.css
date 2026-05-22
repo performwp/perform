@@ -51,7 +51,7 @@
 	padding: 40px 10px;
 	height: auto;
 	width: 150px;
-	color: #222222;
+	color: #222;
 	font-weight: bold;
 	font-size: 14px;
 	text-align: center;
@@ -163,7 +163,7 @@
 				padding: 0;
 				line-height: 40px;
 				text-align: center;
-				color: #777777;
+				color: #777;
 				box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
 				border-radius: 50%;
 				display: inline-block;

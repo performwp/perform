@@ -5,9 +5,13 @@
 /.idea
 /.github
 /.storybook
+/.wordpress-org
 
 /tests
 /node_modules
+/build
+/playwright-report
+/test-results
 /assets/src
 /vendor/bin
 /vendor/composer/installers
@@ -29,7 +33,11 @@
 .lintstagedrc.json
 .distignore
 .stylelintignore
+.nvmrc
+.node-version
+.wp-env.json
 
+AGENTS.md
 sample-data/wordpress.sql
 sample-data/sample-data.numbers
 bower.json
@@ -37,6 +45,11 @@ composer.json
 composer.lock
 package.json
 package-lock.json
+perform.zip
+playwright.config.js
+phpstan-baseline.neon
+phpstan-bootstrap.php
+phpstan.neon.dist
 phpunit.xml
 phpunit.xml.dist
 CHANGELOG.md

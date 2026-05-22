@@ -44,13 +44,17 @@ To get started developing on the Perform WordPress Plugin you will need to perfo
 
 2. `cd` into your local plugins directory: `/path/to/wp-content/plugins/`
 
-3. Clone this repository from GitHub into your plugins directory: `https://github.com/impress-org/perform.git`
+3. Clone this repository from GitHub into your plugins directory: `https://github.com/performwp/perform.git`
 
-4. Run composer to set up dependancies: `composer install`
+4. Use Node.js 24.x for project tooling. The repository includes `.nvmrc` and `.node-version` so local version managers can select the supported Active LTS line.
 
-5. Run npm install to get the necessary npm packages: `npm install`
+5. Run Composer to set up dependencies: `composer install`
 
-6. Activate the plugin in WordPress
+6. Run npm to install the locked frontend dependencies: `npm ci`
+
+7. Build the plugin assets: `npm run build`
+
+8. Activate the plugin in WordPress
 
 That's it. You're now ready to start development.
 
@@ -58,9 +62,26 @@ That's it. You're now ready to start development.
 
 Perform relies on several npm commands to get you started:
 
-* `npm run watch` - Live reloads JS and SASS files. Typically you'll run this command before you start development. It's necessary to build the JS/CSS however if you're working strictly within PHP it may not be necessary to run. 
-* `npm run dev` - Runs a one time build for development. No production files are created.
-* `npm run production` - Builds the minified production files for release.
+* `npm run start` - Watches JS and CSS source files and rebuilds development assets.
+* `npm run build` - Builds minified production assets for release.
+* `npm run lint:js` - Lints JavaScript source and build configuration files.
+* `npm run lint:css` - Lints CSS source files.
+* `npm run plugin-zip` - Builds a plugin zip using the project distribution ignore rules.
+* `npm run test:e2e` - Runs the Playwright smoke test suite against a running WordPress site.
+* `npm run test:e2e:ci` - Starts `wp-env`, runs the Playwright smoke suite, and stops `wp-env`.
+
+### Validation Commands
+
+Use these commands before opening a pull request:
+
+* `composer validate --no-check-publish`
+* `composer lint`
+* `composer check-cs`
+* `composer phpstan`
+* `composer test`
+* `npm run lint`
+* `npm run build`
+* `npm run test:e2e:ci`
 
 ### Development Notes
 

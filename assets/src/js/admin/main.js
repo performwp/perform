@@ -1,25 +1,22 @@
 import { render } from '@wordpress/element';
 import SettingsApp from './SettingsApp';
 
-document.addEventListener('DOMContentLoaded', () => {
-  const el = document.getElementById('perform-settings-page');
-  if (el) {
-    render(
-      <SettingsApp />,
-      el
-    );
-  }
-});
-
+document.addEventListener( 'DOMContentLoaded', () => {
+	const el = document.getElementById( 'perform-settings-page' );
+	if ( el ) {
+		render( <SettingsApp />, el );
+	}
+} );
 
 document.addEventListener( 'DOMContentLoaded', () => {
 	const saveBtn = document.getElementById( 'perform-save-settings' );
-	const formElement = document.getElementById( 'perform-admin-settings-form' );
 
 	// Bailout, if `Save Settings` btn doesn't exists.
 	if ( ! saveBtn ) {
 		return;
 	}
+
+	const formElement = document.getElementById( 'perform-admin-settings-form' );
 
 	saveBtn.addEventListener( 'click', ( event ) => {
 		event.preventDefault();
@@ -33,23 +30,22 @@ document.addEventListener( 'DOMContentLoaded', () => {
 		const formData = new FormData( formElement );
 		formData.append( 'action', 'perform_save_settings' );
 
-		fetch(
-			ajaxurl,
-			{
-				method: 'POST',
-				body: formData,
-			}
-		).then( response => {
-			if ( 200 === response.status ) {
-				return response.json();
-			}
+		fetch( window.ajaxurl, {
+			method: 'POST',
+			body: formData,
+		} )
+			.then( ( response ) => {
+				if ( 200 === response.status ) {
+					return response.json();
+				}
 
-			return false;
-		} ).then( () => {
-			setTimeout( () => {
-				saveBtn.removeAttribute( 'disabled' );
-				saveBtn.value = saveBtn.getAttribute( 'data-default-text' );
-			}, 1000 );
-		} );
+				return false;
+			} )
+			.then( () => {
+				setTimeout( () => {
+					saveBtn.removeAttribute( 'disabled' );
+					saveBtn.value = saveBtn.getAttribute( 'data-default-text' );
+				}, 1000 );
+			} );
 	} );
 } );

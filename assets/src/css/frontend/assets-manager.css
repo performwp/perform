@@ -1,11 +1,11 @@
 #perform-assets-manager {
 	--perform-am-primary: var(--primary-color, #0046d1);
 	--perform-am-secondary: var(--secondary-color, #c8d8ff);
-	--perform-am-surface: var(--bg-color, #ffffff);
+	--perform-am-surface: var(--bg-color, #fff);
 	--perform-am-muted-surface: var(--menu-color, #f0f0f1);
 	--perform-am-hover-surface: var(--menu-hover-color, #f5f5f5);
-	--perform-am-text: var(--text-color, #333333);
-	--perform-am-white: var(--white-color, #ffffff);
+	--perform-am-text: var(--text-color, #333);
+	--perform-am-white: var(--white-color, #fff);
 	--perform-am-border: #d8e2ff;
 	--perform-am-muted-text: #5a5f68;
 	--perform-am-danger: #b32d2e;
@@ -518,6 +518,7 @@
 }
 
 @media (max-width: 960px) {
+
 	.perform-assets-manager--summary-grid {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
@@ -536,6 +537,7 @@
 }
 
 @media (max-width: 782px) {
+
 	#perform-assets-manager {
 		top: 46px;
 	}

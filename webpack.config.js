@@ -1,14 +1,12 @@
-const path = require('path');
+const path = require( 'path' );
 const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 const ImageminPlugin = require( 'imagemin-webpack-plugin' ).default;
 const { CleanWebpackPlugin } = require( 'clean-webpack-plugin' );
 const MiniCSSExtractPlugin = require( 'mini-css-extract-plugin' );
-const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
 const wpPot = require( 'wp-pot' );
 
-
-const inProduction = ( 'production' === process.env.NODE_ENV );
+const inProduction = 'production' === process.env.NODE_ENV;
 const mode = inProduction ? 'production' : 'development';
 
 const config = {
@@ -16,8 +14,8 @@ const config = {
 	mode,
 	entry: {
 		...defaultConfig.entry,
-		perform: [ './assets/src/js/frontend/main.js', './assets/src/css/frontend/main.css'],
-		admin: [ './assets/src/css/admin/admin.css', './assets/src/js/admin/main.js'],
+		perform: [ './assets/src/js/frontend/main.js', './assets/src/css/frontend/main.css' ],
+		admin: [ './assets/src/css/admin/admin.css', './assets/src/js/admin/main.js' ],
 	},
 	externals: {
 		...( defaultConfig.externals || {} ),
@@ -26,14 +24,14 @@ const config = {
 	},
 	output: {
 		...defaultConfig.output,
-		path: path.join(__dirname, 'assets/dist/'),
+		path: path.join( __dirname, 'assets/dist/' ),
 		filename: 'js/[name].min.js',
 	},
 	plugins: [
 		// Removes the "dist" folder before building.
-		new CleanWebpackPlugin({
-			cleanOnceBeforeBuildPatterns: [ 'assets/dist' ]
-		}),
+		new CleanWebpackPlugin( {
+			cleanOnceBeforeBuildPatterns: [ 'assets/dist' ],
+		} ),
 
 		new MiniCSSExtractPlugin( {
 			filename: 'css/[name].css',
@@ -61,7 +59,14 @@ if ( inProduction ) {
 		domain: 'perform',
 		destFile: 'languages/perform.pot',
 		relativeTo: './',
-		src: [ './**/*.php', '!./includes/libraries/**/*', '!./vendor/**/*' ],
+		src: [
+			'./**/*.php',
+			'!./build/**/*',
+			'!./includes/libraries/**/*',
+			'!./node_modules/**/*',
+			'!./tests/**/*',
+			'!./vendor/**/*',
+		],
 		bugReport: 'https://github.com/performwp/perform/issues/new',
 		team: 'PerformWP <hello@performwp.com>',
 	} );

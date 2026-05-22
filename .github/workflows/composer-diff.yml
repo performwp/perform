@@ -7,9 +7,12 @@ jobs:
   composer-diff:
     name: Composer Diff
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - name: Checkout
-        uses: actions/checkout
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Required to make it possible to compare with PR base branch
 

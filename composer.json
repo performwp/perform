@@ -1,6 +1,7 @@
 {
 	"name": "mehulgohil/perform",
 	"description": "Web Performance Optimization plugin for WordPress",
+	"license": "GPL-3.0-or-later",
 	"authors": [
 		{
 			"name": "Mehul Gohil",
@@ -8,7 +9,7 @@
 		}
 	],
 	"require": {
-		"composer/installers": "*",
+		"composer/installers": "^2.3",
 		"freemius/wordpress-sdk": "^2.13"
 	},
 	"require-dev": {

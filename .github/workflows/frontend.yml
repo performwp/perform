@@ -1,0 +1,78 @@
+name: Frontend
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - 'release/[0-9]+.[0-9]+*'
+      - 'hotfix/[0-9]+.[0-9]+*'
+    paths:
+      - 'assets/src/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'postcss.config.js'
+      - 'webpack.config.js'
+      - '.nvmrc'
+      - '.node-version'
+      - '.github/workflows/frontend.yml'
+  pull_request:
+    paths:
+      - 'assets/src/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'postcss.config.js'
+      - 'webpack.config.js'
+      - '.nvmrc'
+      - '.node-version'
+      - '.github/workflows/frontend.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    name: Lint and build frontend assets
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          coverage: none
+          tools: composer
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+
+      - name: Install production Composer dependencies
+        uses: ramsey/composer-install@v3
+        with:
+          composer-options: '--no-dev --prefer-dist --optimize-autoloader'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Lint JavaScript
+        run: npm run lint:js
+
+      - name: Lint CSS
+        run: npm run lint:css
+
+      - name: Build production assets
+        run: npm run build
+
+      - name: Validate plugin zip generation
+        run: npm run plugin-zip
