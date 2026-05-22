@@ -37,11 +37,6 @@ Other Plugins
 - [WP Theme Switcher](https://wpthemeswitcher.com): Use multiple themes on your WordPress site at once. Useful for theme migration projects.
 - [WordPress Development Services](https://mehulgohil.com): Want to build something amazing in WordPress space. I'm here to help. Let's discuss!
 
-== Screenshots ==
-
-1. Settings overview: global optimization toggles.
-2. Assets Manager: disable CSS/JS per page.
-
 == Installation ==
 
 1. Upload the `perform` folder to the `/wp-content/plugins/` directory, or install via the WordPress plugin directory if available.
