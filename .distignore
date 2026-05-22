@@ -8,6 +8,7 @@
 /.wordpress-org
 
 /tests
+.phpunit.result.cache
 /node_modules
 /build
 /playwright-report

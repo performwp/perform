@@ -185,6 +185,9 @@ class Menu {
 		$new_settings['preconnect']   = $this->normalize_multiline_setting( $new_settings['preconnect'] ?? '' );
 
 		$is_saved = update_option( 'perform_settings', $new_settings, false );
+		if ( ! $is_saved && get_option( 'perform_settings' ) === $new_settings ) {
+			$is_saved = true;
+		}
 
 		if ( $is_saved ) {
 			wp_send_json_success(

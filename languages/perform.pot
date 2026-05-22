@@ -7,7 +7,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language-Team: PerformWP <hello@performwp.com>\n"
-"POT-Creation-Date: 2026-05-21 10:19+0000\n"
+"POT-Creation-Date: 2026-05-22 07:31+0000\n"
 "Report-Msgid-Bugs-To: https://github.com/performwp/perform/issues/new\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
@@ -16,19 +16,19 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/Admin/Actions.php:104
+#: src/Admin/Actions.php:96
 msgid "Close Assets Manager"
 msgstr ""
 
-#: src/Admin/Actions.php:102, src/Modules/Assets/AssetsManager.php:141
+#: src/Admin/Actions.php:93, src/Modules/Assets/AssetsManager.php:195
 msgid "Assets Manager"
 msgstr ""
 
-#: src/Admin/Actions.php:111, src/Admin/Settings/Menu.php:40, src/Admin/Settings/Menu.php:41, src/Modules/Assets/AssetsManager.php:124
+#: src/Admin/Actions.php:103, src/Admin/Settings/Menu.php:40, src/Admin/Settings/Menu.php:41, src/Modules/Assets/AssetsManager.php:178
 msgid "Perform"
 msgstr ""
 
-#: src/Admin/Actions.php:131
+#: src/Admin/Actions.php:123
 msgid "Support Forum"
 msgstr ""
 
@@ -568,170 +568,170 @@ msgstr ""
 msgid "Security check failed."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:194
+#: src/Admin/Settings/Menu.php:203
 msgid "Unable to save the settings. Please try again."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:189
+#: src/Admin/Settings/Menu.php:196
 msgid "Settings saved successfully."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:103
+#: src/Modules/Assets/AssetsManager.php:157
 msgid "Search detected assets"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:104
+#: src/Modules/Assets/AssetsManager.php:158
 msgid "Search by handle, source, or file URL"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:105
+#: src/Modules/Assets/AssetsManager.php:159
 msgid "Filter detected assets"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:106
+#: src/Modules/Assets/AssetsManager.php:160
 msgid "All"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:107
+#: src/Modules/Assets/AssetsManager.php:161
 msgid "Plugins"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:108
+#: src/Modules/Assets/AssetsManager.php:162
 msgid "Themes"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:109, src/Modules/Assets/AssetsManager.php:493
+#: src/Modules/Assets/AssetsManager.php:163, src/Modules/Assets/AssetsManager.php:547
 msgid "Other"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:110
+#: src/Modules/Assets/AssetsManager.php:164
 msgid "JS"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:111, src/Modules/Assets/AssetsManager.php:159
+#: src/Modules/Assets/AssetsManager.php:165, src/Modules/Assets/AssetsManager.php:213
 msgid "CSS"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:112
+#: src/Modules/Assets/AssetsManager.php:166
 msgid "Disabled"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:126
+#: src/Modules/Assets/AssetsManager.php:180
 msgid "Page asset scanner"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:127
+#: src/Modules/Assets/AssetsManager.php:181
 msgid "Perform Assets Manager"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:131
+#: src/Modules/Assets/AssetsManager.php:185
 msgid "Close"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:132
+#: src/Modules/Assets/AssetsManager.php:186
 msgid "Save changes"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:138
+#: src/Modules/Assets/AssetsManager.php:192
 msgid "Current page"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:144
+#: src/Modules/Assets/AssetsManager.php:198
 msgid "Review scripts and styles detected on this page, then disable only the assets you have verified are not needed."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:148
+#: src/Modules/Assets/AssetsManager.php:202
 msgid "Asset scan summary"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:151
+#: src/Modules/Assets/AssetsManager.php:205
 msgid "Detected assets"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:155
+#: src/Modules/Assets/AssetsManager.php:209
 msgid "JavaScript"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:163
+#: src/Modules/Assets/AssetsManager.php:217
 msgid "Disabled rules"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:167
+#: src/Modules/Assets/AssetsManager.php:221
 msgid "Known file size"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:204
+#: src/Modules/Assets/AssetsManager.php:258
 msgid "No assets match the current scan filter."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:494
+#: src/Modules/Assets/AssetsManager.php:548
 msgid "WordPress core, CDN, and uncategorized assets"
 msgstr ""
 
 #. translators: %d: number of assets.
-#: src/Modules/Assets/AssetsManager.php:499, src/Modules/Assets/AssetsManager.php:478
+#: src/Modules/Assets/AssetsManager.php:553, src/Modules/Assets/AssetsManager.php:532
 msgid "%d detected asset"
 msgid_plural "%d detected assets"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Modules/Assets/AssetsManager.php:513
+#: src/Modules/Assets/AssetsManager.php:567
 msgid "Handle"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:516
+#: src/Modules/Assets/AssetsManager.php:570
 msgid "Type"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:519
+#: src/Modules/Assets/AssetsManager.php:573
 msgid "Size"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:522
+#: src/Modules/Assets/AssetsManager.php:576
 msgid "Status"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:525
+#: src/Modules/Assets/AssetsManager.php:579
 msgid "Actions"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:583
+#: src/Modules/Assets/AssetsManager.php:637
 msgid "External"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:591
+#: src/Modules/Assets/AssetsManager.php:645
 msgid "View File"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:638
+#: src/Modules/Assets/AssetsManager.php:692
 msgid "All assets in this group have been disabled. Enable the group again to manage individual assets."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:659, src/Modules/Assets/AssetsManager.php:749
+#: src/Modules/Assets/AssetsManager.php:713, src/Modules/Assets/AssetsManager.php:802
 msgid "Current URL"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:660
+#: src/Modules/Assets/AssetsManager.php:714
 msgid "Everywhere"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:665
+#: src/Modules/Assets/AssetsManager.php:719
 msgid "Disable on"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:711
+#: src/Modules/Assets/AssetsManager.php:764
 msgid "Asset loading status"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:713
+#: src/Modules/Assets/AssetsManager.php:766
 msgid "ON"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:716
+#: src/Modules/Assets/AssetsManager.php:769
 msgid "OFF"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:742
+#: src/Modules/Assets/AssetsManager.php:795
 msgid "Exceptions"
 msgstr ""
 
@@ -743,66 +743,66 @@ msgstr ""
 msgid "Every 5 minutes (Perform Cache)"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:447, src/Modules/Cache/PageCache.php:476
+#: src/Modules/Cache/PageCache.php:456, src/Modules/Cache/PageCache.php:485
 msgid "Perform Cache Observability"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:448
+#: src/Modules/Cache/PageCache.php:457
 msgid "Perform Cache Stats"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:477
+#: src/Modules/Cache/PageCache.php:486
 msgid "Live cache effectiveness and warmup health metrics."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:481
+#: src/Modules/Cache/PageCache.php:490
 msgid "Cache Hit Ratio"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:482
+#: src/Modules/Cache/PageCache.php:491
 msgid "Hits"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:483
+#: src/Modules/Cache/PageCache.php:492
 msgid "Stale Hits"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:484, src/Modules/Cache/PageCache.php:493
+#: src/Modules/Cache/PageCache.php:493, src/Modules/Cache/PageCache.php:502
 msgid "Misses"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:485
+#: src/Modules/Cache/PageCache.php:494
 msgid "Bypasses"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:486
+#: src/Modules/Cache/PageCache.php:495
 msgid "Lock Waits"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:487
+#: src/Modules/Cache/PageCache.php:496
 msgid "Preload Queue Size"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:488
+#: src/Modules/Cache/PageCache.php:497
 msgid "Preload Requests"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:492
+#: src/Modules/Cache/PageCache.php:501
 msgid "Top Missed URLs"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:495
+#: src/Modules/Cache/PageCache.php:504
 msgid "Slow Uncached URLs (ms)"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:496
+#: src/Modules/Cache/PageCache.php:505
 msgid "Render Time (ms)"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:511
+#: src/Modules/Cache/PageCache.php:520
 msgid "No data yet."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:518
+#: src/Modules/Cache/PageCache.php:527
 msgid "URL"
 msgstr ""

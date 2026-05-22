@@ -19,7 +19,37 @@ if ( ! function_exists( 'update_option' ) ) {
 		if ( ! isset( $GLOBALS['perform_test_options'] ) || ! is_array( $GLOBALS['perform_test_options'] ) ) {
 			$GLOBALS['perform_test_options'] = [];
 		}
+
+		if ( array_key_exists( $name, $GLOBALS['perform_test_options'] ) && $GLOBALS['perform_test_options'][ $name ] === $value ) {
+			return false;
+		}
+
 		$GLOBALS['perform_test_options'][ $name ] = $value;
+		return true;
+	}
+}
+
+if ( ! function_exists( 'get_transient' ) ) {
+	function get_transient( $transient ) {
+		$store = isset( $GLOBALS['perform_test_transients'] ) && is_array( $GLOBALS['perform_test_transients'] ) ? $GLOBALS['perform_test_transients'] : [];
+		return array_key_exists( $transient, $store ) ? $store[ $transient ] : false;
+	}
+}
+
+if ( ! function_exists( 'set_transient' ) ) {
+	function set_transient( $transient, $value, $expiration = 0 ) {
+		if ( ! isset( $GLOBALS['perform_test_transients'] ) || ! is_array( $GLOBALS['perform_test_transients'] ) ) {
+			$GLOBALS['perform_test_transients'] = [];
+		}
+
+		$GLOBALS['perform_test_transients'][ $transient ] = $value;
+		return true;
+	}
+}
+
+if ( ! function_exists( 'delete_transient' ) ) {
+	function delete_transient( $transient ) {
+		unset( $GLOBALS['perform_test_transients'][ $transient ] );
 		return true;
 	}
 }
@@ -39,6 +69,78 @@ if ( ! function_exists( 'wp_enqueue_style' ) ) {
 if ( ! function_exists( 'wp_enqueue_script' ) ) {
 	function wp_enqueue_script( $handle, $src = '', $deps = [], $ver = false, $in_footer = false ) {
 		$GLOBALS['perform_test_enqueued_scripts'][] = $handle;
+	}
+}
+
+if ( ! function_exists( 'add_query_arg' ) ) {
+	function add_query_arg( $key, $value = null, $url = null ) {
+		$url  = null === $url ? ( $GLOBALS['perform_test_current_url'] ?? 'https://example.com/' ) : $url;
+		$args = is_array( $key ) ? $key : [ $key => $value ];
+
+		$parts = wp_parse_url( $url );
+		$query = [];
+		if ( ! empty( $parts['query'] ) ) {
+			parse_str( $parts['query'], $query );
+		}
+
+		foreach ( $args as $arg_key => $arg_value ) {
+			$query[ $arg_key ] = $arg_value;
+		}
+
+		$scheme = isset( $parts['scheme'] ) ? $parts['scheme'] . '://' : '';
+		$host   = $parts['host'] ?? '';
+		$path   = $parts['path'] ?? '';
+		$result = $scheme . $host . $path;
+		$query  = array_filter(
+			$query,
+			static function ( $arg_value ) {
+				return null !== $arg_value && false !== $arg_value;
+			}
+		);
+
+		return empty( $query ) ? $result : $result . '?' . http_build_query( $query );
+	}
+}
+
+if ( ! function_exists( 'remove_query_arg' ) ) {
+	function remove_query_arg( $key, $url = null ) {
+		$url  = null === $url ? ( $GLOBALS['perform_test_current_url'] ?? 'https://example.com/' ) : $url;
+		$keys = (array) $key;
+
+		$parts = wp_parse_url( $url );
+		$query = [];
+		if ( ! empty( $parts['query'] ) ) {
+			parse_str( $parts['query'], $query );
+		}
+
+		foreach ( $keys as $arg_key ) {
+			unset( $query[ $arg_key ] );
+		}
+
+		$scheme = isset( $parts['scheme'] ) ? $parts['scheme'] . '://' : '';
+		$host   = $parts['host'] ?? '';
+		$path   = $parts['path'] ?? '';
+		$result = $scheme . $host . $path;
+
+		return empty( $query ) ? $result : $result . '?' . http_build_query( $query );
+	}
+}
+
+if ( ! function_exists( 'admin_url' ) ) {
+	function admin_url( $path = '' ) {
+		return 'https://example.com/wp-admin/' . ltrim( $path, '/' );
+	}
+}
+
+if ( ! function_exists( 'esc_url' ) ) {
+	function esc_url( $url ) {
+		return (string) $url;
+	}
+}
+
+if ( ! function_exists( 'esc_html__' ) ) {
+	function esc_html__( $text, $domain = 'default' ) {
+		return (string) $text;
 	}
 }
 

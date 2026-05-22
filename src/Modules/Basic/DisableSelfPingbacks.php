@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 2.0.0
  */
 class DisableSelfPingbacks extends AbstractModule {
-    protected static $option_key = 'disable_self_pingbacks';
+	protected static $option_key = 'disable_self_pingbacks';
 
 	/**
 	 * Register hooks and filters for this module.
@@ -44,7 +44,7 @@ class DisableSelfPingbacks extends AbstractModule {
 	 *
 	 * @return void
 	 */
-	public function disable_self_pingbacks( $links ) {
+	public function disable_self_pingbacks( &$links ) {
 		$home = get_option( 'home' );
 
 		foreach ( $links as $key => $link ) {
