@@ -38,7 +38,7 @@ class Actions {
 	public function enqueue_styles() {
 
 		// Bailout, if can't display assets manager.
-		if ( ! Helpers::can_display_assets_manager() ) {
+		if ( ! current_user_can( 'manage_options' ) || ! Helpers::can_display_assets_manager() ) {
 			return;
 		}
 
@@ -57,7 +57,7 @@ class Actions {
 	public function enqueue_scripts() {
 
 		// Bailout, if can't display assets manager.
-		if ( ! Helpers::can_display_assets_manager() ) {
+		if ( ! current_user_can( 'manage_options' ) || ! Helpers::can_display_assets_manager() ) {
 			return;
 		}
 

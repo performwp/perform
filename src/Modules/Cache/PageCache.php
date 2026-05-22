@@ -89,8 +89,8 @@ class PageCache implements ModuleInterface {
 	 * @return void
 	 */
 	public function register(): void {
-		$this->cache_dir = trailingslashit( WP_CONTENT_DIR ) . 'cache/perform/';
-		$this->stats_store = new StatsStore();
+		$this->cache_dir      = trailingslashit( WP_CONTENT_DIR ) . 'cache/perform/';
+		$this->stats_store    = new StatsStore();
 		$this->url_normalizer = new UrlNormalizer();
 
 		add_filter( 'cron_schedules', [ $this, 'register_cron_schedule' ] );
@@ -182,22 +182,22 @@ class PageCache implements ModuleInterface {
 
 		if ( $meta && is_string( $html ) && ! $is_regen_request ) {
 			$now = time();
-				if ( ! empty( $meta['expires'] ) && $now <= (int) $meta['expires'] ) {
-					$this->increment_stat( 'hits' );
-					$this->send_cache_headers( 'HIT' );
-					$this->flush_stats();
-					echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-					exit;
-				}
+			if ( ! empty( $meta['expires'] ) && $now <= (int) $meta['expires'] ) {
+				$this->increment_stat( 'hits' );
+				$this->send_cache_headers( 'HIT' );
+				$this->flush_stats();
+				echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				exit;
+			}
 
-				if ( ! empty( $meta['swr_expires'] ) && $now <= (int) $meta['swr_expires'] ) {
-					$this->increment_stat( 'stale_hits' );
-					$this->send_cache_headers( 'STALE' );
-					$this->maybe_trigger_async_regeneration( $this->current_url );
-					$this->flush_stats();
-					echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-					exit;
-				}
+			if ( ! empty( $meta['swr_expires'] ) && $now <= (int) $meta['swr_expires'] ) {
+				$this->increment_stat( 'stale_hits' );
+				$this->send_cache_headers( 'STALE' );
+				$this->maybe_trigger_async_regeneration( $this->current_url );
+				$this->flush_stats();
+				echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				exit;
+			}
 		}
 
 		// Miss path: acquire lock to avoid stampede.
@@ -205,22 +205,26 @@ class PageCache implements ModuleInterface {
 			$this->increment_stat( 'lock_waits' );
 
 			// If lock is held and stale exists, prefer stale over full uncached render.
-				if ( $meta && is_string( $html ) ) {
-					$this->increment_stat( 'stale_hits' );
-					$this->send_cache_headers( 'STALE-LOCK' );
-					$this->flush_stats();
-					echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-					exit;
-				}
+			if ( $meta && is_string( $html ) ) {
+				$this->increment_stat( 'stale_hits' );
+				$this->send_cache_headers( 'STALE-LOCK' );
+				$this->flush_stats();
+				echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				exit;
+			}
 
-			$this->increment_stat( 'misses' );
-			$this->record_top_miss( $this->current_url );
+			$miss_increment = $this->increment_stat( 'misses' );
+			if ( 0 < $miss_increment ) {
+				$this->record_top_miss( $this->current_url, $miss_increment );
+			}
 			return;
 		}
 
 		$this->should_write_cache = true;
-		$this->increment_stat( 'misses' );
-		$this->record_top_miss( $this->current_url );
+		$miss_increment           = $this->increment_stat( 'misses' );
+		if ( 0 < $miss_increment ) {
+			$this->record_top_miss( $this->current_url, $miss_increment );
+		}
 	}
 
 	/**
@@ -295,8 +299,8 @@ class PageCache implements ModuleInterface {
 			return;
 		}
 
-		$url  = '' !== $this->current_url ? $this->current_url : $this->get_normalized_request_url();
-		$slow = $this->get_stat_map( 'slow_uncached' );
+		$url          = '' !== $this->current_url ? $this->current_url : $this->get_normalized_request_url();
+		$slow         = $this->get_stat_map( 'slow_uncached' );
 		$slow[ $url ] = round( $duration_ms );
 		arsort( $slow );
 		$slow = array_slice( $slow, 0, 30, true );
@@ -428,7 +432,7 @@ class PageCache implements ModuleInterface {
 				]
 			);
 
-			$processed++;
+			++$processed;
 			$this->increment_stat( 'preload_requests' );
 		}
 
@@ -851,7 +855,7 @@ class PageCache implements ModuleInterface {
 
 		$path = isset( $_SERVER['REQUEST_URI'] ) ? wp_parse_url( wp_unslash( $_SERVER['REQUEST_URI'] ), PHP_URL_PATH ) : '';
 		if ( is_string( $path ) ) {
-			$path = untrailingslashit( strtolower( $path ) );
+			$path          = untrailingslashit( strtolower( $path ) );
 			$blocked_paths = [
 				'/cart',
 				'/checkout',
@@ -869,7 +873,7 @@ class PageCache implements ModuleInterface {
 			return false;
 		}
 
-		$cookies = $_COOKIE; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$cookies        = $_COOKIE; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$bypass_cookies = [
 			'woocommerce_items_in_cart',
 			'woocommerce_cart_hash',
@@ -1155,11 +1159,11 @@ class PageCache implements ModuleInterface {
 	 *
 	 * @param string $key Stat key.
 	 *
-	 * @return void
+	 * @return int Increment size applied to the counter.
 	 */
 	private function increment_stat( $key ) {
 		$store = $this->get_stats_store();
-		$store->increment( $key );
+		return $store->increment( $key );
 	}
 
 	/**
@@ -1179,15 +1183,16 @@ class PageCache implements ModuleInterface {
 	 * Record top miss URLs.
 	 *
 	 * @param string $url URL.
+	 * @param int    $increment Count increment.
 	 *
 	 * @return void
 	 */
-	private function record_top_miss( $url ) {
+	private function record_top_miss( $url, $increment = 1 ) {
 		$map = $this->get_stat_map( 'top_misses' );
 		if ( ! isset( $map[ $url ] ) ) {
 			$map[ $url ] = 0;
 		}
-		$map[ $url ]++;
+		$map[ $url ] += max( 1, (int) $increment );
 		arsort( $map );
 		$map = array_slice( $map, 0, 50, true );
 		$this->set_stat_map( 'top_misses', $map );

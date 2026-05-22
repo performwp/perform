@@ -92,7 +92,11 @@ class MenuCache implements ModuleInterface {
 	 */
 	public function should_load(): bool {
 		$settings = Helpers::get_settings();
-		return isset( $settings['enable_navigation_menu_cache'] ) && ! empty( $settings['enable_navigation_menu_cache'] );
+		if ( empty( $settings['enable_navigation_menu_cache'] ) ) {
+			return false;
+		}
+
+		return $this->supports_current_theme();
 	}
 
 	/**
@@ -104,6 +108,32 @@ class MenuCache implements ModuleInterface {
 		add_filter( 'pre_wp_nav_menu', [ $this, 'cache_nav_menu_output' ], 10, 2 );
 		add_filter( 'wp_nav_menu', [ $this, 'cache_nav_menu' ], 10, 2 );
 		add_action( 'wp_update_nav_menu', [ $this, 'update_nav_menu_cache' ], 10, 2 );
+	}
+
+	/**
+	 * Determine whether menu caching is appropriate for the active theme.
+	 *
+	 * Block themes render navigation through block output, so wp_nav_menu()
+	 * caching is only enabled by default for classic/non-block themes.
+	 *
+	 * @return bool
+	 */
+	private function supports_current_theme(): bool {
+		$is_block_theme = function_exists( 'wp_is_block_theme' ) && wp_is_block_theme();
+		$supported      = ! $is_block_theme;
+
+		return (bool) apply_filters( 'perform_menu_cache_supports_current_theme', $supported, $is_block_theme );
+	}
+
+	/**
+	 * Determine whether the current request can safely use shared menu output.
+	 *
+	 * @return bool
+	 */
+	private function is_cacheable_request(): bool {
+		$cacheable = ! is_admin() && ! is_user_logged_in();
+
+		return (bool) apply_filters( 'perform_menu_cache_is_cacheable_request', $cacheable );
 	}
 
 	/**
@@ -119,8 +149,8 @@ class MenuCache implements ModuleInterface {
 	 */
 	public function cache_nav_menu_output( $output, $args ) {
 
-			// Validate input arguments.
-		if ( empty( $args ) || ! is_object( $args ) ) {
+		// Validate input arguments.
+		if ( ! $this->is_cacheable_request() || empty( $args ) || ! is_object( $args ) ) {
 			return $output;
 		}
 
@@ -182,7 +212,7 @@ class MenuCache implements ModuleInterface {
 	public function cache_nav_menu( $nav_menu, $args ) {
 
 		// Validate input arguments.
-		if ( empty( $args ) || ! is_object( $args ) || empty( $args->menu->term_id ) ) {
+		if ( ! $this->is_cacheable_request() || empty( $args ) || ! is_object( $args ) || empty( $args->menu->term_id ) ) {
 			return $nav_menu;
 		}
 

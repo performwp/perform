@@ -79,12 +79,6 @@ parameters:
 			path: src/Admin/Settings/Api.php
 
 		-
-			message: '#^Parameter \#1 \$var of static method Perform\\Includes\\Helpers\:\:clean\(\) expects array\|string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Admin/Settings/Menu.php
-
-		-
 			message: '#^Strict comparison using \!\=\= between ''0'' and mixed~\(0\|0\.0\|''''\|''0''\|array\{\}\|false\|null\) will always evaluate to true\.$#'
 			identifier: notIdentical.alwaysTrue
 			count: 1
@@ -235,12 +229,6 @@ parameters:
 			path: src/Modules/Assets/AssetsManager.php
 
 		-
-			message: '#^Parameter \#1 \$text of function esc_attr expects string, int\|false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Modules/Assets/AssetsManager.php
-
-		-
 			message: '#^Property Perform\\Modules\\Assets\\AssetsManager\:\:\$loaded_assets type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -249,12 +237,6 @@ parameters:
 		-
 			message: '#^Property Perform\\Modules\\Assets\\AssetsManager\:\:\$selected_options type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: src/Modules/Assets/AssetsManager.php
-
-		-
-			message: '#^Variable \$post_type might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: src/Modules/Assets/AssetsManager.php
 
