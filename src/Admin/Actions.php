@@ -39,6 +39,7 @@ class Actions {
 	 *
 	 * @return void
 	 */
+	// phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid -- Preserve existing public method name for release compatibility.
 	public function registerAssets() {
 		$screen = get_current_screen();
 		if ( empty( $screen ) || 'settings_page_perform_settings' !== $screen->id ) {
@@ -58,15 +59,15 @@ class Actions {
 				'perform-admin',
 				'performwpSettings',
 				[
-					'version' => defined('PERFORM_VERSION') ? PERFORM_VERSION : '',
-					'docsUrl' => defined('PERFORM_PLUGIN_DOCS_URL') ? PERFORM_PLUGIN_DOCS_URL : 'https://performwp.com/docs/',
-					'logoUrl' => plugins_url( 'assets/dist/images/logo.png', PERFORM_PLUGIN_FILE ),
-					'nonce'   => wp_create_nonce( 'perform_save_settings' ),
-					'saved'   => ClientPayload::sanitize_for_client( (array) \Perform\Includes\Helpers::get_settings() ),
-					'sensitiveKeys' => ClientPayload::get_sensitive_keys(),
+					'version'           => defined( 'PERFORM_VERSION' ) ? PERFORM_VERSION : '',
+					'docsUrl'           => defined( 'PERFORM_PLUGIN_DOCS_URL' ) ? PERFORM_PLUGIN_DOCS_URL : 'https://performwp.com/docs/',
+					'logoUrl'           => plugins_url( 'assets/dist/images/logo.png', PERFORM_PLUGIN_FILE ),
+					'nonce'             => wp_create_nonce( 'perform_save_settings' ),
+					'saved'             => ClientPayload::sanitize_for_client( (array) \Perform\Includes\Helpers::get_settings() ),
+					'sensitiveKeys'     => ClientPayload::get_sensitive_keys(),
 					'maskedSecretValue' => ClientPayload::MASKED_SECRET,
-					'tabs'    => \Perform\Includes\Helpers::get_settings_tabs(),
-					'fields'  => \Perform\Includes\Helpers::get_settings_fields(), // Expose fields to JS
+					'tabs'              => \Perform\Includes\Helpers::get_settings_tabs(),
+					'fields'            => \Perform\Includes\Helpers::get_settings_fields(), // Expose fields to JS
 				]
 			);
 	}
@@ -87,20 +88,11 @@ class Actions {
 			return;
 		}
 
-		global $wp;
-
-		$server_data = Helpers::clean( filter_input_array( INPUT_SERVER ) );
-
-		$href = add_query_arg(
-			str_replace( [ '&perform', 'perform' ], '', $server_data['QUERY_STRING'] ),
-			'',
-			home_url( $wp->request )
-		);
-
 		if ( ! isset( $_GET['perform'] ) ) {
-			$href     .= ! empty( $server_data['QUERY_STRING'] ) ? '&perform' : '?perform';
+			$href      = add_query_arg( 'perform', '1' );
 			$menu_text = esc_html__( 'Assets Manager', 'perform' );
 		} else {
+			$href      = remove_query_arg( 'perform' );
 			$menu_text = esc_html__( 'Close Assets Manager', 'perform' );
 		}
 

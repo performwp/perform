@@ -5,7 +5,7 @@ Donate link: https://www.buymeacoffee.com/mehulgohil
 Requires at least: 4.8
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.5.1
+Stable tag: 1.6.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -53,8 +53,8 @@ Other Plugins
 = Will Perform break my theme or plugins? =
 Perform is conservative by default: it only disables assets when you explicitly choose them in the Assets Manager. If you disable something and see issues, re-enable the asset. Changes are reversible.
 
-= Is this compatible with caching plugins like WP Rocket? =
-Yes. Perform works alongside caching plugins and most server-level caching solutions. Clear cache after making asset changes.
+= Is this compatible with other caching plugins? =
+Yes. Perform works alongside many caching plugins and most server-level caching solutions. Clear cache after making asset changes.
 
 = Which page builders are supported? =
 Full compatibility with majority of all the page builders.
@@ -65,6 +65,16 @@ For help and troubleshooting, use our WordPress.org support forum: https://wordp
 Contributions and bug reports welcome on GitHub: https://github.com/performwp/perform
 
 == Changelog ==
+
+= 1.6.0 - 2026-05-22 =
+- Redesigned Assets Manager with a more resilient scanner interface and WordPress-native admin controls.
+- Added full-page cache controls with safer cache writes, response validation, stale regeneration, preload scheduling, and observability stats.
+- Improved settings storage compatibility by preserving existing option keys while migrating legacy settings into the consolidated settings shape.
+- Improved release validation with PHPUnit, PHPStan, JavaScript/CSS linting, production build checks, Playwright smoke coverage, and Node 24 tooling.
+- Changed Menu Cache to run on classic themes by default, with a developer filter for hybrid themes that still render classic menus.
+- Fixed Assets Manager save handling for current-page exceptions, missing option indexes, and admin-only frontend overlay assets.
+- Fixed public feed compatibility when hiding the WordPress version.
+- Fixed uninstall cleanup so multisite removals include Perform runtime cache and Assets Manager options.
 
 = 1.5.1 - 2025-12-06 =
 - Added compatibility to WordPress 6.9
@@ -102,6 +112,9 @@ Contributions and bug reports welcome on GitHub: https://github.com/performwp/pe
 
 == Upgrade Notice ==
 
+= 1.6.0 =
+Review your Assets Manager and cache settings after updating. Perform 1.6.0 adds the redesigned scanner, page cache controls, and safer release validation.
+
 Always backup your database before updating. Follow the changelog for breaking changes.
 
 == Screenshots ==
@@ -114,5 +127,3 @@ Always backup your database before updating. Follow the changelog for breaking c
 == Contributors ==
 
 performwp, mehul0810, ankur0812
-
-

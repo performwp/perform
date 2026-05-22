@@ -200,6 +200,11 @@ class PageCache implements ModuleInterface {
 			}
 		}
 
+		if ( $is_regen_request ) {
+			$this->should_write_cache = true;
+			return;
+		}
+
 		// Miss path: acquire lock to avoid stampede.
 		if ( ! $this->acquire_lock() ) {
 			$this->increment_stat( 'lock_waits' );
@@ -776,7 +781,10 @@ class PageCache implements ModuleInterface {
 			return;
 		}
 
-		set_transient( $this->lock_key, 1, 30 );
+		$regen_token = $this->create_regen_token( $url );
+		if ( ! set_transient( $this->lock_key, $regen_token, 30 ) ) {
+			return;
+		}
 
 		wp_remote_post(
 			esc_url_raw( $url ),
@@ -785,10 +793,21 @@ class PageCache implements ModuleInterface {
 				'blocking'  => false,
 				'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
 				'headers'   => [
-					'X-Perform-Cache-Regen' => '1',
+					'X-Perform-Cache-Regen' => $regen_token,
 				],
 			]
 		);
+	}
+
+	/**
+	 * Create an opaque token for an internal cache regeneration request.
+	 *
+	 * @param string $url URL being regenerated.
+	 *
+	 * @return string
+	 */
+	private function create_regen_token( $url ) {
+		return md5( $url . '|' . microtime( true ) . '|' . wp_rand( 1, PHP_INT_MAX ) );
 	}
 
 	/**
@@ -989,7 +1008,18 @@ class PageCache implements ModuleInterface {
 	 * @return bool
 	 */
 	private function is_internal_regen_request() {
-		return isset( $_SERVER['HTTP_X_PERFORM_CACHE_REGEN'] ) && '1' === sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_PERFORM_CACHE_REGEN'] ) );
+		if ( '' === $this->lock_key || empty( $_SERVER['HTTP_X_PERFORM_CACHE_REGEN'] ) ) {
+			return false;
+		}
+
+		$expected_token = get_transient( $this->lock_key );
+		if ( ! is_string( $expected_token ) || '' === $expected_token ) {
+			return false;
+		}
+
+		$provided_token = sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_PERFORM_CACHE_REGEN'] ) );
+
+		return hash_equals( $expected_token, $provided_token );
 	}
 
 	/**
@@ -1017,7 +1047,7 @@ class PageCache implements ModuleInterface {
 			return false;
 		}
 
-		return set_transient( $this->lock_key, 1, 30 );
+		return set_transient( $this->lock_key, $this->create_regen_token( $this->current_url ), 30 );
 	}
 
 	/**
