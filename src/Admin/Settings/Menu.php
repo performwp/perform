@@ -85,7 +85,8 @@ class Menu {
 		}
 
 		// Verify nonce for the AJAX request.
-		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['nonce'] ), 'perform_save_settings' ) ) {
+		$nonce = isset( $_POST['nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['nonce'] ) ) : '';
+		if ( ! wp_verify_nonce( $nonce, 'perform_save_settings' ) ) {
 			wp_send_json_error(
 				[
 					'type'    => 'error',
@@ -97,16 +98,16 @@ class Menu {
 		// If the JS sent a JSON payload in `data`, decode it. Otherwise fall back to regular POST fields.
 		$posted_data = [];
 		if ( isset( $_POST['data'] ) ) {
-			$raw     = wp_unslash( $_POST['data'] );
+			$raw     = sanitize_textarea_field( wp_unslash( $_POST['data'] ) );
 			$decoded = json_decode( $raw, true );
 			if ( is_array( $decoded ) ) {
 				$posted_data = $decoded;
 			} else {
 				// Fallback: clean the entire $_POST array.
-				$posted_data = Helpers::clean( $_POST );
+				$posted_data = Helpers::clean( wp_unslash( $_POST ) );
 			}
 		} else {
-			$posted_data = Helpers::clean( $_POST );
+			$posted_data = Helpers::clean( wp_unslash( $_POST ) );
 		}
 		$settings = Helpers::get_settings();
 

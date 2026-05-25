@@ -80,14 +80,14 @@ class SSLManager implements ModuleInterface {
 	 */
 	public function wp_redirect_to_ssl() {
 		// Prefer the configured site URL host instead of trusting HTTP_HOST.
-		$host = parse_url( home_url(), PHP_URL_HOST );
+		$host = wp_parse_url( home_url(), PHP_URL_HOST );
 
 		// Fallback to server host if site URL parsing fails.
 		if ( empty( $host ) && ! empty( $_SERVER['HTTP_HOST'] ) ) {
 			$host = sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) );
 		}
 
-		$uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '/';
+		$uri = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '/';
 
 		$redirect_url = set_url_scheme( 'https://' . $host . $uri, 'https' );
 		$redirect_url = apply_filters( 'perform_wp_redirect_url_to_ssl', $redirect_url );

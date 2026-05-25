@@ -66,6 +66,7 @@ class Helpers {
 	 *
 	 * @return mixed
 	 */
+	// phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.defaultFound -- Preserve public parameter name for named-argument compatibility.
 	public static function get_option( $option, $section, $default = '' ) {
 		$options = get_option( $section );
 
@@ -149,6 +150,7 @@ class Helpers {
 	 *
 	 * @return string|array
 	 */
+	// phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.varFound -- Preserve public parameter name for named-argument compatibility.
 	public static function clean( $var ) {
 		if ( is_array( $var ) ) {
 			// Recursively clean array values by calling this same method.
@@ -179,7 +181,7 @@ class Helpers {
 	 * @return bool
 	 */
 	public static function can_display_assets_manager() {
-		if ( isset( $_GET['perform'] ) ) {
+		if ( isset( $_GET['perform'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only display toggle.
 			return true;
 		}
 
@@ -198,7 +200,7 @@ class Helpers {
 	 */
 	public static function get_current_tab() {
 		$screen      = get_current_screen();
-		$current_tab = ! empty( $_GET['tab'] ) ? $_GET['tab'] : '';
+		$current_tab = ! empty( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only settings tab selection.
 
 		if ( 'settings_page_perform_settings' === $screen->id ) {
 			$current_tab = ! empty( $current_tab ) ? $current_tab : 'general';
@@ -266,15 +268,19 @@ class Helpers {
 			$tabs['woocommerce'] = 'WooCommerce';
 		}
 
-        /**
-         * ✅ Safe translation wrapper
-         * Translate only after init, otherwise return plain labels.
-         */
-        if ( did_action( 'init' ) ) {
-            foreach ( $tabs as $key => $label ) {
-                $tabs[ $key ] = esc_html__( $label, 'perform' );
-            }
-        }
+		// Translate only after init to avoid early just-in-time translation loading.
+		if ( did_action( 'init' ) ) {
+			$tabs['general']  = esc_html__( 'General', 'perform' );
+			$tabs['bloat']    = esc_html__( 'Bloat', 'perform' );
+			$tabs['assets']   = esc_html__( 'Assets', 'perform' );
+			$tabs['cdn']      = esc_html__( 'CDN', 'perform' );
+			$tabs['cache']    = esc_html__( 'Cache', 'perform' );
+			$tabs['advanced'] = esc_html__( 'Advanced', 'perform' );
+
+			if ( isset( $tabs['woocommerce'] ) ) {
+				$tabs['woocommerce'] = esc_html__( 'WooCommerce', 'perform' );
+			}
+		}
 
 		//return $tabs;
 		return apply_filters( 'perform_settings_tabs', $tabs );
@@ -298,10 +304,10 @@ class Helpers {
 
 		// Settings Fields.
 		return [
-			'general' => [
+			'general'     => [
 				[
-					'title'       => esc_html__('General Settings', 'perform'),
-					'description' => esc_html__('Configure general performance settings for your WordPress site.', 'perform'),
+					'title'       => esc_html__( 'General Settings', 'perform' ),
+					'description' => esc_html__( 'Configure general performance settings for your WordPress site.', 'perform' ),
 					'fields'      => [
 						[
 							'id'        => 'enable_ssl',
@@ -328,12 +334,12 @@ class Helpers {
 							),
 						],
 					],
-				]
+				],
 			],
-			'bloat' => [
+			'bloat'       => [
 				[
-					'title'       => esc_html__('Frontend Optimization', 'perform'),
-					'description' => esc_html__('Remove unnecessary frontend scripts and tags that add extra requests or bytes to every page. These optimizations reduce file requests, improve cacheability, and clean up redundant page elements.', 'perform'),
+					'title'       => esc_html__( 'Frontend Optimization', 'perform' ),
+					'description' => esc_html__( 'Remove unnecessary frontend scripts and tags that add extra requests or bytes to every page. These optimizations reduce file requests, improve cacheability, and clean up redundant page elements.', 'perform' ),
 					'fields'      => [
 						[
 							'id'        => 'disable_emojis',
@@ -446,8 +452,8 @@ class Helpers {
 					],
 				],
 				[
-					'title'       => esc_html__('Network Requests and Endpoints', 'perform'),
-					'description' => esc_html__('Disable unused services that generate background or external HTTP requests. Ideal for sites that don\'t rely on remote publishing or REST-based integrations.', 'perform'),
+					'title'       => esc_html__( 'Network Requests and Endpoints', 'perform' ),
+					'description' => esc_html__( 'Disable unused services that generate background or external HTTP requests. Ideal for sites that don\'t rely on remote publishing or REST-based integrations.', 'perform' ),
 					'fields'      => [
 						[
 							'id'        => 'disable_xmlrpc',
@@ -476,8 +482,8 @@ class Helpers {
 					],
 				],
 				[
-					'title'       => esc_html__('Feed and Discovery Optimization', 'perform'),
-					'description' => esc_html__('Stop generating feed files and related discovery tags that most modern sites don\'t need. Helps reduce crawl requests and prevents unnecessary feed generation.', 'perform'),
+					'title'       => esc_html__( 'Feed and Discovery Optimization', 'perform' ),
+					'description' => esc_html__( 'Stop generating feed files and related discovery tags that most modern sites don\'t need. Helps reduce crawl requests and prevents unnecessary feed generation.', 'perform' ),
 					'fields'      => [
 						[
 							'id'        => 'disable_rss_feeds',
@@ -506,8 +512,8 @@ class Helpers {
 					],
 				],
 				[
-					'title'       => esc_html__('Editor and Backend Performance', 'perform'),
-					'description' => esc_html__('Limit WordPress background activity during content editing to reduce CPU and database usage. These controls keep your admin fast, reduce CPU cycles, and optimize database performance.', 'perform'),
+					'title'       => esc_html__( 'Editor and Backend Performance', 'perform' ),
+					'description' => esc_html__( 'Limit WordPress background activity during content editing to reduce CPU and database usage. These controls keep your admin fast, reduce CPU cycles, and optimize database performance.', 'perform' ),
 					'fields'      => [
 						[
 							'id'        => 'disable_self_pingbacks',
@@ -555,10 +561,10 @@ class Helpers {
 							'type'      => 'select',
 							'name'      => esc_html__( 'Heartbeat Frequency', 'perform' ),
 							'options'   => [
-								''   => sprintf( esc_html__( '%s Seconds', 'perform' ), '15' ) . ' (' . esc_html__( 'Default', 'perform' ) . ')',
-								'30' => sprintf( esc_html__( '%s Seconds', 'perform' ), '30' ),
-								'45' => sprintf( esc_html__( '%s Seconds', 'perform' ), '45' ),
-								'60' => sprintf( esc_html__( '%s Seconds', 'perform' ), '60' ),
+								''   => esc_html__( '15 Seconds', 'perform' ) . ' (' . esc_html__( 'Default', 'perform' ) . ')',
+								'30' => esc_html__( '30 Seconds', 'perform' ),
+								'45' => esc_html__( '45 Seconds', 'perform' ),
+								'60' => esc_html__( '60 Seconds', 'perform' ),
 							],
 							'desc'      => esc_html__( 'Adjusts how often the Heartbeat API runs (lower frequency = fewer background requests).', 'perform' ),
 							'help_link' => esc_url(
@@ -600,10 +606,10 @@ class Helpers {
 							'name'      => esc_html__( 'Autosave Interval', 'perform' ),
 							'options'   => [
 								''    => esc_html__( '1 Minute', 'perform' ) . ' (' . esc_html__( 'Default', 'perform' ) . ')',
-								'120' => sprintf( esc_html__( '%s Minutes', 'perform' ), '2' ),
-								'180' => sprintf( esc_html__( '%s Minutes', 'perform' ), '3' ),
-								'240' => sprintf( esc_html__( '%s Minutes', 'perform' ), '4' ),
-								'300' => sprintf( esc_html__( '%s Minutes', 'perform' ), '5' ),
+								'120' => esc_html__( '2 Minutes', 'perform' ),
+								'180' => esc_html__( '3 Minutes', 'perform' ),
+								'240' => esc_html__( '4 Minutes', 'perform' ),
+								'300' => esc_html__( '5 Minutes', 'perform' ),
 							],
 							'desc'      => esc_html__( 'Controls how often posts are autosaved while editing, reducing unnecessary database writes.', 'perform' ),
 							'help_link' => esc_url(
@@ -616,10 +622,10 @@ class Helpers {
 					],
 				],
 			],
-			'assets' => [
+			'assets'      => [
 				[
-					'title'       => esc_html__('Assets Optimization', 'perform'),
-					'description' => esc_html__('Settings to manage asset loading and optimization.', 'perform'),
+					'title'       => esc_html__( 'Assets Optimization', 'perform' ),
+					'description' => esc_html__( 'Settings to manage asset loading and optimization.', 'perform' ),
 					'fields'      => [
 						[
 							'id'        => 'enable_assets_manager',
@@ -657,13 +663,13 @@ class Helpers {
 								)
 							),
 						],
-					]
-				]
+					],
+				],
 			],
-				'cdn' => [
+			'cdn'         => [
 				[
-					'title'       => esc_html__('CDN Settings', 'perform'),
-					'description' => esc_html__('Settings to manage CDN configurations.', 'perform'),
+					'title'       => esc_html__( 'CDN Settings', 'perform' ),
+					'description' => esc_html__( 'Settings to manage CDN configurations.', 'perform' ),
 					'fields'      => [
 						[
 							'id'        => 'enable_cdn',
@@ -713,163 +719,163 @@ class Helpers {
 								)
 							),
 						],
-					]
-				]
-				],
-				'cache' => [
-					[
-						'title'       => esc_html__( 'Full-Page Cache', 'perform' ),
-						'description' => esc_html__( 'Enable full-page caching with stale-while-revalidate and stampede protection.', 'perform' ),
-						'fields'      => [
-							[
-								'id'        => 'enable_page_cache',
-								'type'      => 'toggle',
-								'name'      => esc_html__( 'Enable Full-Page Cache', 'perform' ),
-								'desc'      => esc_html__( 'Caches full HTML responses for anonymous visitors.', 'perform' ),
-								'help_link' => esc_url(
-									add_query_arg(
-										$utm_args,
-										'https://performwp.com/docs/page-cache'
-									)
-								),
-							],
-							[
-								'id'        => 'page_cache_ttl',
-								'type'      => 'select',
-								'name'      => esc_html__( 'Cache TTL', 'perform' ),
-								'options'   => [
-									'300'   => esc_html__( '5 Minutes', 'perform' ),
-									'900'   => esc_html__( '15 Minutes', 'perform' ),
-									'1800'  => esc_html__( '30 Minutes', 'perform' ),
-									'3600'  => esc_html__( '1 Hour', 'perform' ),
-									'21600' => esc_html__( '6 Hours', 'perform' ),
-									'86400' => esc_html__( '24 Hours', 'perform' ),
-								],
-								'desc'      => esc_html__( 'How long a page remains fresh before becoming stale.', 'perform' ),
-								'help_link' => esc_url(
-									add_query_arg(
-										$utm_args,
-										'https://performwp.com/docs/page-cache'
-									)
-								),
-							],
-							[
-								'id'        => 'page_cache_swr_ttl',
-								'type'      => 'select',
-								'name'      => esc_html__( 'Stale Revalidate Window', 'perform' ),
-								'options'   => [
-									'900'   => esc_html__( '15 Minutes', 'perform' ),
-									'1800'  => esc_html__( '30 Minutes', 'perform' ),
-									'3600'  => esc_html__( '1 Hour', 'perform' ),
-									'21600' => esc_html__( '6 Hours', 'perform' ),
-									'43200' => esc_html__( '12 Hours', 'perform' ),
-									'86400' => esc_html__( '24 Hours', 'perform' ),
-								],
-								'desc'      => esc_html__( 'Serve stale pages while refreshing them in the background.', 'perform' ),
-								'help_link' => esc_url(
-									add_query_arg(
-										$utm_args,
-										'https://performwp.com/docs/page-cache'
-									)
-								),
-							],
-							[
-								'id'        => 'cache_separate_query_params',
-								'type'      => 'text',
-								'name'      => esc_html__( 'Separate Query Params', 'perform' ),
-								'desc'      => esc_html__( 'Comma-separated query keys that should generate separate cache entries. Tracking params are ignored automatically.', 'perform' ),
-								'help_link' => esc_url(
-									add_query_arg(
-										$utm_args,
-										'https://performwp.com/docs/page-cache-query-params'
-									)
-								),
-							],
-						],
-					],
-					[
-						'title'       => esc_html__( 'Preload and Observability', 'perform' ),
-						'description' => esc_html__( 'Warm cache from sitemaps and monitor cache effectiveness.', 'perform' ),
-						'fields'      => [
-							[
-								'id'        => 'enable_cache_preload',
-								'type'      => 'toggle',
-								'name'      => esc_html__( 'Enable Adaptive Preloader', 'perform' ),
-								'desc'      => esc_html__( 'Preloads cache from sitemap and high-miss URLs using adaptive request rate.', 'perform' ),
-								'help_link' => esc_url(
-									add_query_arg(
-										$utm_args,
-										'https://performwp.com/docs/page-cache-preload'
-									)
-								),
-							],
-							[
-								'id'        => 'cache_slow_request_threshold_ms',
-								'type'      => 'select',
-								'name'      => esc_html__( 'Slow Request Threshold', 'perform' ),
-								'options'   => [
-									'500'  => esc_html__( '500ms', 'perform' ),
-									'800'  => esc_html__( '800ms', 'perform' ),
-									'1200' => esc_html__( '1200ms', 'perform' ),
-									'2000' => esc_html__( '2000ms', 'perform' ),
-								],
-								'desc'      => esc_html__( 'Tracks uncached requests slower than this value in observability stats.', 'perform' ),
-								'help_link' => esc_url(
-									add_query_arg(
-										$utm_args,
-										'https://performwp.com/docs/page-cache-observability'
-									)
-								),
-							],
-						],
-					],
-					[
-						'title'       => esc_html__( 'Cloudflare', 'perform' ),
-						'description' => esc_html__( 'Sync local cache purge events to Cloudflare (free-tier friendly).', 'perform' ),
-						'fields'      => [
-							[
-								'id'        => 'enable_cloudflare_cache_sync',
-								'type'      => 'toggle',
-								'name'      => esc_html__( 'Enable Cloudflare Cache Sync', 'perform' ),
-								'desc'      => esc_html__( 'Purge Cloudflare URLs when Perform purges local cache.', 'perform' ),
-								'help_link' => esc_url(
-									add_query_arg(
-										$utm_args,
-										'https://performwp.com/docs/cloudflare-cache-sync'
-									)
-								),
-							],
-							[
-								'id'        => 'cloudflare_zone_id',
-								'type'      => 'text',
-								'name'      => esc_html__( 'Cloudflare Zone ID', 'perform' ),
-								'desc'      => esc_html__( 'Your Cloudflare Zone ID.', 'perform' ),
-								'help_link' => esc_url(
-									add_query_arg(
-										$utm_args,
-										'https://performwp.com/docs/cloudflare-cache-sync'
-									)
-								),
-							],
-							[
-								'id'        => 'cloudflare_api_token',
-								'type'      => 'text',
-								'name'      => esc_html__( 'Cloudflare API Token', 'perform' ),
-								'desc'      => esc_html__( 'API token with Zone:Cache Purge permission.', 'perform' ),
-								'help_link' => esc_url(
-									add_query_arg(
-										$utm_args,
-										'https://performwp.com/docs/cloudflare-cache-sync'
-									)
-								),
-							],
-						],
 					],
 				],
-				'advanced' => [
+			],
+			'cache'       => [
 				[
-					'title'       => esc_html__('Advanced Settings', 'perform'),
-					'description' => esc_html__('Settings for advanced configurations.', 'perform'),
+					'title'       => esc_html__( 'Full-Page Cache', 'perform' ),
+					'description' => esc_html__( 'Enable full-page caching with stale-while-revalidate and stampede protection.', 'perform' ),
+					'fields'      => [
+						[
+							'id'        => 'enable_page_cache',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Enable Full-Page Cache', 'perform' ),
+							'desc'      => esc_html__( 'Caches full HTML responses for anonymous visitors.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/page-cache'
+								)
+							),
+						],
+						[
+							'id'        => 'page_cache_ttl',
+							'type'      => 'select',
+							'name'      => esc_html__( 'Cache TTL', 'perform' ),
+							'options'   => [
+								'300'   => esc_html__( '5 Minutes', 'perform' ),
+								'900'   => esc_html__( '15 Minutes', 'perform' ),
+								'1800'  => esc_html__( '30 Minutes', 'perform' ),
+								'3600'  => esc_html__( '1 Hour', 'perform' ),
+								'21600' => esc_html__( '6 Hours', 'perform' ),
+								'86400' => esc_html__( '24 Hours', 'perform' ),
+							],
+							'desc'      => esc_html__( 'How long a page remains fresh before becoming stale.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/page-cache'
+								)
+							),
+						],
+						[
+							'id'        => 'page_cache_swr_ttl',
+							'type'      => 'select',
+							'name'      => esc_html__( 'Stale Revalidate Window', 'perform' ),
+							'options'   => [
+								'900'   => esc_html__( '15 Minutes', 'perform' ),
+								'1800'  => esc_html__( '30 Minutes', 'perform' ),
+								'3600'  => esc_html__( '1 Hour', 'perform' ),
+								'21600' => esc_html__( '6 Hours', 'perform' ),
+								'43200' => esc_html__( '12 Hours', 'perform' ),
+								'86400' => esc_html__( '24 Hours', 'perform' ),
+							],
+							'desc'      => esc_html__( 'Serve stale pages while refreshing them in the background.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/page-cache'
+								)
+							),
+						],
+						[
+							'id'        => 'cache_separate_query_params',
+							'type'      => 'text',
+							'name'      => esc_html__( 'Separate Query Params', 'perform' ),
+							'desc'      => esc_html__( 'Comma-separated query keys that should generate separate cache entries. Tracking params are ignored automatically.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/page-cache-query-params'
+								)
+							),
+						],
+					],
+				],
+				[
+					'title'       => esc_html__( 'Preload and Observability', 'perform' ),
+					'description' => esc_html__( 'Warm cache from sitemaps and monitor cache effectiveness.', 'perform' ),
+					'fields'      => [
+						[
+							'id'        => 'enable_cache_preload',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Enable Adaptive Preloader', 'perform' ),
+							'desc'      => esc_html__( 'Preloads cache from sitemap and high-miss URLs using adaptive request rate.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/page-cache-preload'
+								)
+							),
+						],
+						[
+							'id'        => 'cache_slow_request_threshold_ms',
+							'type'      => 'select',
+							'name'      => esc_html__( 'Slow Request Threshold', 'perform' ),
+							'options'   => [
+								'500'  => esc_html__( '500ms', 'perform' ),
+								'800'  => esc_html__( '800ms', 'perform' ),
+								'1200' => esc_html__( '1200ms', 'perform' ),
+								'2000' => esc_html__( '2000ms', 'perform' ),
+							],
+							'desc'      => esc_html__( 'Tracks uncached requests slower than this value in observability stats.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/page-cache-observability'
+								)
+							),
+						],
+					],
+				],
+				[
+					'title'       => esc_html__( 'Cloudflare', 'perform' ),
+					'description' => esc_html__( 'Sync local cache purge events to Cloudflare (free-tier friendly).', 'perform' ),
+					'fields'      => [
+						[
+							'id'        => 'enable_cloudflare_cache_sync',
+							'type'      => 'toggle',
+							'name'      => esc_html__( 'Enable Cloudflare Cache Sync', 'perform' ),
+							'desc'      => esc_html__( 'Purge Cloudflare URLs when Perform purges local cache.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/cloudflare-cache-sync'
+								)
+							),
+						],
+						[
+							'id'        => 'cloudflare_zone_id',
+							'type'      => 'text',
+							'name'      => esc_html__( 'Cloudflare Zone ID', 'perform' ),
+							'desc'      => esc_html__( 'Your Cloudflare Zone ID.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/cloudflare-cache-sync'
+								)
+							),
+						],
+						[
+							'id'        => 'cloudflare_api_token',
+							'type'      => 'text',
+							'name'      => esc_html__( 'Cloudflare API Token', 'perform' ),
+							'desc'      => esc_html__( 'API token with Zone:Cache Purge permission.', 'perform' ),
+							'help_link' => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/cloudflare-cache-sync'
+								)
+							),
+						],
+					],
+				],
+			],
+			'advanced'    => [
+				[
+					'title'       => esc_html__( 'Advanced Settings', 'perform' ),
+					'description' => esc_html__( 'Settings for advanced configurations.', 'perform' ),
 					'fields'      => [
 						[
 							'id'        => 'remove_data_on_uninstall',
@@ -883,13 +889,13 @@ class Helpers {
 								)
 							),
 						],
-					]
-				]
+					],
+				],
 			],
 			'woocommerce' => [
 				[
-					'title'       => esc_html__('WooCommerce Settings', 'perform'),
-					'description' => esc_html__('Settings specific to WooCommerce.', 'perform'),
+					'title'       => esc_html__( 'WooCommerce Settings', 'perform' ),
+					'description' => esc_html__( 'Settings specific to WooCommerce.', 'perform' ),
 					'fields'      => [
 						[
 							'id'        => 'enable_woocommerce_manager',
@@ -915,8 +921,8 @@ class Helpers {
 								)
 							),
 						],
-					]
-				]
+					],
+				],
 			],
 		];
 	}

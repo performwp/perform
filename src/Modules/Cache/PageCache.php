@@ -872,7 +872,8 @@ class PageCache implements ModuleInterface {
 			return false;
 		}
 
-		$path = isset( $_SERVER['REQUEST_URI'] ) ? wp_parse_url( wp_unslash( $_SERVER['REQUEST_URI'] ), PHP_URL_PATH ) : '';
+		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+		$path        = '' !== $request_uri ? wp_parse_url( $request_uri, PHP_URL_PATH ) : '';
 		if ( is_string( $path ) ) {
 			$path          = untrailingslashit( strtolower( $path ) );
 			$blocked_paths = [
@@ -888,7 +889,7 @@ class PageCache implements ModuleInterface {
 			}
 		}
 
-		if ( isset( $_GET['add-to-cart'] ) ) {
+		if ( isset( $_GET['add-to-cart'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only cache bypass signal.
 			return false;
 		}
 
@@ -1164,7 +1165,7 @@ class PageCache implements ModuleInterface {
 	 */
 	private function write_file_atomically( $path, $contents ) {
 		$directory = dirname( $path );
-		if ( ! is_dir( $directory ) || ! is_writable( $directory ) ) {
+		if ( ! is_dir( $directory ) || ! wp_is_writable( $directory ) ) {
 			return false;
 		}
 

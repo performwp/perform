@@ -52,7 +52,7 @@ class Actions {
 		wp_register_style( 'perform-admin', PERFORM_PLUGIN_URL . 'assets/dist/css/admin.css', '', PERFORM_VERSION );
 		wp_enqueue_style( 'perform-admin' );
 
-		wp_register_script( 'perform-admin', PERFORM_PLUGIN_URL . 'assets/dist/js/admin.min.js', [ 'wp-element', 'wp-components', 'wp-i18n' ], PERFORM_VERSION );
+		wp_register_script( 'perform-admin', PERFORM_PLUGIN_URL . 'assets/dist/js/admin.min.js', [ 'wp-element', 'wp-components', 'wp-i18n' ], PERFORM_VERSION, true );
 		wp_enqueue_script( 'perform-admin' );
 
 			wp_localize_script(
@@ -88,7 +88,9 @@ class Actions {
 			return;
 		}
 
-		if ( ! isset( $_GET['perform'] ) ) {
+		$is_assets_manager_open = isset( $_GET['perform'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only display toggle.
+
+		if ( ! $is_assets_manager_open ) {
 			$href      = add_query_arg( 'perform', '1' );
 			$menu_text = esc_html__( 'Assets Manager', 'perform' );
 		} else {
