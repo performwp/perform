@@ -32,10 +32,16 @@ class WooManager implements ModuleInterface {
 	 * @return bool
 	 */
 	public function should_load(): bool {
-		return Helpers::get_option( 'disable_woocommerce_assets', 'perform_settings' ) ||
-			   Helpers::get_option( 'disable_woocommerce_cart_fragmentation', 'perform_settings' ) ||
-			   Helpers::get_option( 'disable_woocommerce_status', 'perform_settings' ) ||
-			   Helpers::get_option( 'disable_woocommerce_widgets', 'perform_settings' );
+		if ( ! Helpers::is_woocommerce_active() ) {
+			return false;
+		}
+
+		return (
+			Helpers::get_option( 'disable_woocommerce_assets', 'perform_settings' ) ||
+			Helpers::get_option( 'disable_woocommerce_cart_fragmentation', 'perform_settings' ) ||
+			Helpers::get_option( 'disable_woocommerce_status', 'perform_settings' ) ||
+			Helpers::get_option( 'disable_woocommerce_widgets', 'perform_settings' )
+		);
 	}
 
 	/**
@@ -94,6 +100,10 @@ class WooManager implements ModuleInterface {
 	 * @return void
 	 */
 	public function disable_assets() {
+		if ( ! $this->has_woocommerce_conditionals() ) {
+			return;
+		}
+
 		if (
 			! is_woocommerce() &&
 			! is_cart() &&
@@ -140,6 +150,10 @@ class WooManager implements ModuleInterface {
 	 * @return void
 	 */
 	public function disable_cart_fragmentation() {
+		if ( ! function_exists( 'is_cart' ) || ! function_exists( 'is_checkout' ) ) {
+			return;
+		}
+
 		if ( ! is_cart() && ! is_checkout() ) {
 			wp_dequeue_script( 'wc-cart-fragments' );
 		}
@@ -166,17 +180,46 @@ class WooManager implements ModuleInterface {
 	 * @return void
 	 */
 	public function disable_widgets() {
-		unregister_widget( 'WC_Widget_Products' );
-		unregister_widget( 'WC_Widget_Product_Categories' );
-		unregister_widget( 'WC_Widget_Product_Tag_Cloud' );
-		unregister_widget( 'WC_Widget_Cart' );
-		unregister_widget( 'WC_Widget_Layered_Nav' );
-		unregister_widget( 'WC_Widget_Layered_Nav_Filters' );
-		unregister_widget( 'WC_Widget_Price_Filter' );
-		unregister_widget( 'WC_Widget_Product_Search' );
-		unregister_widget( 'WC_Widget_Recently_Viewed' );
-		unregister_widget( 'WC_Widget_Rating_Filter' );
-		unregister_widget( 'WC_Widget_Top_Rated_Products' );
-		unregister_widget( 'WC_Widget_Recent_Reviews' );
+		$widgets = [
+			'WC_Widget_Products',
+			'WC_Widget_Product_Categories',
+			'WC_Widget_Product_Tag_Cloud',
+			'WC_Widget_Cart',
+			'WC_Widget_Layered_Nav',
+			'WC_Widget_Layered_Nav_Filters',
+			'WC_Widget_Price_Filter',
+			'WC_Widget_Product_Search',
+			'WC_Widget_Recently_Viewed',
+			'WC_Widget_Rating_Filter',
+			'WC_Widget_Top_Rated_Products',
+			'WC_Widget_Recent_Reviews',
+		];
+
+		foreach ( $widgets as $widget ) {
+			if ( class_exists( $widget ) ) {
+				unregister_widget( $widget );
+			}
+		}
+	}
+
+	/**
+	 * Determine whether WooCommerce conditional helpers are available.
+	 *
+	 * @return bool
+	 */
+	private function has_woocommerce_conditionals(): bool {
+		$conditionals = [
+			'is_woocommerce',
+			'is_cart',
+			'is_checkout',
+			'is_account_page',
+			'is_product',
+			'is_product_category',
+			'is_shop',
+		];
+
+		$available_conditionals = array_filter( $conditionals, 'function_exists' );
+
+		return count( $conditionals ) === count( $available_conditionals );
 	}
 }
