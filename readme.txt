@@ -1,9 +1,9 @@
-=== Perform – Performance Optimization for WordPress ===
+=== Perform - Optimize Performance ===
 Contributors: performwp, mehul0810, ankur0812
 Tags: performance, caching, cdn, assets, optimize
 Donate link: https://www.buymeacoffee.com/mehulgohil
 Requires at least: 4.8
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 7.4
 Stable tag: 1.6.0
 License: GPLv3

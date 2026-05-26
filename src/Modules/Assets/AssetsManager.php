@@ -83,7 +83,7 @@ class AssetsManager implements ModuleInterface {
 		add_filter( 'style_loader_src', [ $this, 'dequeue_assets' ], 1000, 2 );
 
 		// Only add HTML if accessed by admin with perform param.
-		if ( isset( $_GET['perform'] ) && current_user_can( 'manage_options' ) ) {
+		if ( isset( $_GET['perform'] ) && current_user_can( 'manage_options' ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only display toggle.
 			add_action( 'wp_footer', [ $this, 'assets_manager_html' ], 1000 );
 		}
 	}
@@ -707,7 +707,7 @@ class AssetsManager implements ModuleInterface {
 	 * @return void
 	 */
 	public function disable_assets_html( $type, $handle ) {
-		$is_checked   = '';
+		$has_checked  = false;
 		$current_id   = $this->get_current_object_id();
 		$radio_inputs = [
 			'current'    => esc_html__( 'Current URL', 'perform' ),
@@ -722,19 +722,24 @@ class AssetsManager implements ModuleInterface {
 			<?php
 			foreach ( $radio_inputs as $key => $value ) {
 				$is_disabled_key = isset( $this->selected_options['disabled'][ $type ][ $handle ][ $key ] ) ? $this->selected_options['disabled'][ $type ][ $handle ][ $key ] : false;
+				$is_checked      = false;
 
 				if (
-					empty( $is_checked ) &&
+					! $has_checked &&
 					$this->has_current_object_id( $current_id, $is_disabled_key )
 				) {
-					$is_checked = " checked='checked'";
+					$is_checked = true;
 				} else {
-					$is_checked = checked( $is_disabled_key, 1, false );
+					$is_checked = ! is_array( $is_disabled_key ) && (string) $is_disabled_key === '1';
+				}
+
+				if ( $is_checked ) {
+					$has_checked = true;
 				}
 				?>
 				<label for="<?php echo esc_attr( "disabled-{$type}-{$handle}-{$key}" ); ?>">
-							<input type="radio" name="disabled[<?php echo esc_attr( $type ); ?>][<?php echo esc_attr( $handle ); ?>]" id="<?php echo esc_attr( "disabled-{$type}-{$handle}-{$key}" ); ?>" class="perform-disable-assets" value="<?php echo esc_attr( $key ); ?>"<?php echo $is_checked; ?>/>
-							<?php echo esc_html( $value ); ?>
+					<input type="radio" name="disabled[<?php echo esc_attr( $type ); ?>][<?php echo esc_attr( $handle ); ?>]" id="<?php echo esc_attr( "disabled-{$type}-{$handle}-{$key}" ); ?>" class="perform-disable-assets" value="<?php echo esc_attr( $key ); ?>" <?php checked( $is_checked ); ?>/>
+					<?php echo esc_html( $value ); ?>
 				</label>
 				<?php
 			}
@@ -758,14 +763,14 @@ class AssetsManager implements ModuleInterface {
 	public function print_assets_manager_status( $type, $handle ) {
 		$is_disabled_type   = isset( $this->selected_options['disabled'][ $type ] );
 		$is_disabled_handle = $is_disabled_type && isset( $this->selected_options['disabled'][ $type ][ $handle ] );
-		$is_selected        = ( $is_disabled_handle && is_array( $this->selected_options['disabled'][ $type ][ $handle ] ) ) ? 'selected="selected"' : '';
-		$disable_class      = ! empty( $is_selected ) ? 'disabled' : '';
+		$is_selected        = $is_disabled_handle && is_array( $this->selected_options['disabled'][ $type ][ $handle ] );
+		$disable_class      = $is_selected ? 'disabled' : '';
 		?>
 		<select name="status[<?php echo esc_attr( $type ); ?>][<?php echo esc_attr( $handle ); ?>]" class="perform-status-select <?php echo esc_attr( $disable_class ); ?>" aria-label="<?php esc_attr_e( 'Asset loading status', 'perform' ); ?>">
 			<option value='enabled' class='perform-option-enabled'>
 				<?php echo esc_attr__( 'ON', 'perform' ); ?>
 			</option>
-			<option value='disabled' class='perform-option-everywhere' <?php echo $is_selected; ?>>
+			<option value='disabled' class='perform-option-everywhere' <?php selected( $is_selected ); ?>>
 				<?php echo esc_attr__( 'OFF', 'perform' ); ?>
 			</option>
 		</select>
@@ -786,19 +791,19 @@ class AssetsManager implements ModuleInterface {
 	public function print_assets_manager_exceptions( $type, $handle ) {
 		$current_id          = $this->get_current_object_id();
 		$selected_post_types = isset( $this->selected_options['enabled'][ $type ][ $handle ]['post_types'] ) ? $this->selected_options['enabled'][ $type ][ $handle ]['post_types'] : false;
-		$is_selected         = isset( $this->selected_options['disabled'][ $type ][ $handle ]['everywhere'] ) ? selected( $this->selected_options['disabled'][ $type ][ $handle ]['everywhere'], 1, false ) : '';
+		$is_selected         = isset( $this->selected_options['disabled'][ $type ][ $handle ]['everywhere'] ) && (string) $this->selected_options['disabled'][ $type ][ $handle ]['everywhere'] === '1';
 		$current_exception   = isset( $this->selected_options['enabled'][ $type ][ $handle ]['current'] ) ? $this->selected_options['enabled'][ $type ][ $handle ]['current'] : false;
-		$is_current_checked  = $this->has_current_object_id( $current_id, $current_exception ) ? ' checked="checked"' : '';
+		$is_current_checked  = $this->has_current_object_id( $current_id, $current_exception );
 		?>
-		<div class="perform-assets-manager--exceptions" <?php echo empty( $is_selected ) ? 'hidden' : ''; ?>>
+		<div class="perform-assets-manager--exceptions" <?php echo $is_selected ? '' : 'hidden'; ?>>
 			<div class="perform-assets-manager-exceptions--title">
 				<?php esc_html_e( 'Exceptions', 'perform' ); ?>
 			</div>
 
 			<div class="perform-assets-manager-exception--options">
-							<input type="hidden" name="enabled[<?php echo esc_attr( $type ); ?>][<?php echo esc_attr( $handle ); ?>][current]" value="" />
-							<label for="<?php echo esc_attr( "{$type}-{$handle}-enable-current" ); ?>">
-								<input type="checkbox" name="enabled[<?php echo esc_attr( $type ); ?>][<?php echo esc_attr( $handle ); ?>][current]" id="<?php echo esc_attr( "{$type}-{$handle}-enable-current" ); ?>" value="<?php echo esc_attr( (string) $current_id ); ?>" <?php echo $is_current_checked; ?>/>
+				<input type="hidden" name="enabled[<?php echo esc_attr( $type ); ?>][<?php echo esc_attr( $handle ); ?>][current]" value="" />
+				<label for="<?php echo esc_attr( "{$type}-{$handle}-enable-current" ); ?>">
+					<input type="checkbox" name="enabled[<?php echo esc_attr( $type ); ?>][<?php echo esc_attr( $handle ); ?>][current]" id="<?php echo esc_attr( "{$type}-{$handle}-enable-current" ); ?>" value="<?php echo esc_attr( (string) $current_id ); ?>" <?php checked( $is_current_checked ); ?>/>
 					<?php esc_html_e( 'Current URL', 'perform' ); ?>
 				</label>
 
@@ -810,24 +815,24 @@ class AssetsManager implements ModuleInterface {
 					],
 					'objects',
 					'and'
-				);
-				if ( ! empty( $post_types ) ) {
-					if ( isset( $post_types['attachment'] ) ) {
-						unset( $post_types['attachment'] );
-					}
-					?>
-							<input type="hidden" name="enabled[<?php echo esc_attr( $type ); ?>][<?php echo esc_attr( $handle ); ?>][post_types]" value="" />
-					<?php
-
-					foreach ( $post_types as $key => $value ) {
-						$is_post_type_selected = ( is_array( $selected_post_types ) && in_array( $key, $selected_post_types, true ) ) ? ' checked="checked"' : '';
+					);
+					if ( ! empty( $post_types ) ) {
+						if ( isset( $post_types['attachment'] ) ) {
+							unset( $post_types['attachment'] );
+						}
 						?>
-						<label for="<?php echo esc_attr( "{$type}-{$handle}-enable-{$key}" ); ?>">
-								<input type="checkbox" name="enabled[<?php echo esc_attr( $type ); ?>][<?php echo esc_attr( $handle ); ?>][post_types][]" id="<?php echo esc_attr( "{$type}-{$handle}-enable-{$key}" ); ?>" value="<?php echo esc_attr( $key ); ?>" <?php echo $is_post_type_selected; ?> />
-								<?php echo esc_html( $value->label ); ?>
-						</label>
+						<input type="hidden" name="enabled[<?php echo esc_attr( $type ); ?>][<?php echo esc_attr( $handle ); ?>][post_types]" value="" />
 						<?php
-					}
+
+						foreach ( $post_types as $key => $value ) {
+							$is_post_type_selected = is_array( $selected_post_types ) && in_array( $key, $selected_post_types, true );
+							?>
+							<label for="<?php echo esc_attr( "{$type}-{$handle}-enable-{$key}" ); ?>">
+								<input type="checkbox" name="enabled[<?php echo esc_attr( $type ); ?>][<?php echo esc_attr( $handle ); ?>][post_types][]" id="<?php echo esc_attr( "{$type}-{$handle}-enable-{$key}" ); ?>" value="<?php echo esc_attr( $key ); ?>" <?php checked( $is_post_type_selected ); ?> />
+								<?php echo esc_html( $value->label ); ?>
+							</label>
+							<?php
+						}
 				}
 				?>
 			</div>
@@ -844,18 +849,19 @@ class AssetsManager implements ModuleInterface {
 	 * @return array
 	 */
 	public function save_assets_manager_settings() {
- 		// Capability check.
- 		if ( ! current_user_can( 'manage_options' ) ) {
- 			return;
- 		}
+		// Capability check.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
 
- 		// Require the expected nonce and verify it to protect against CSRF.
- 		if ( ! isset( $_POST['perform_assets_manager_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['perform_assets_manager_nonce'] ), 'perform_assets_manager_save' ) ) {
- 			return;
- 		}
+		// Require the expected nonce and verify it to protect against CSRF.
+		$assets_manager_nonce = isset( $_POST['perform_assets_manager_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['perform_assets_manager_nonce'] ) ) : '';
+		if ( ! wp_verify_nonce( $assets_manager_nonce, 'perform_assets_manager_save' ) ) {
+			return;
+		}
 
- 		$post_data = Helpers::clean( filter_input_array( INPUT_POST ) );
- 		$get_data  = Helpers::clean( filter_input_array( INPUT_GET ) );
+		$post_data = Helpers::clean( filter_input_array( INPUT_POST ) );
+		$get_data  = Helpers::clean( filter_input_array( INPUT_GET ) );
 
 		if ( ! is_array( $post_data ) ) {
 			$post_data = [];

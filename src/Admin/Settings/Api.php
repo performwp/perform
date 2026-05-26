@@ -54,6 +54,7 @@ class Api {
 			</div>
 		</div>
 		<?php
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static action markup is escaped before buffering.
 		echo ob_get_clean();
 	}
 
@@ -81,17 +82,23 @@ class Api {
 		<form id="perform-admin-settings-form" method="POST">
 			<table class="form-table" role="presentation">
 				<tbody>
-					<?php foreach ( $fields as $field ) : ?>
-						<tr>
-							<th scope="row">
-								<?php echo esc_html( $field['name'] ); ?>
-								<?php echo $this->render_help_link( $field['help_link'] ); ?>
-							</th>
-							<td>
-								<?php echo $this->render_field( $field ); ?>
-							</td>
-						</tr>
-					<?php endforeach; ?>
+				<?php foreach ( $fields as $field ) : ?>
+					<tr>
+						<th scope="row">
+							<?php echo esc_html( $field['name'] ); ?>
+							<?php
+							// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- render_help_link() escapes URL and title attributes before returning markup.
+							echo $this->render_help_link( $field['help_link'] );
+							?>
+						</th>
+						<td>
+							<?php
+							// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Field renderers escape every dynamic attribute and text value before returning markup.
+							echo $this->render_field( $field );
+							?>
+						</td>
+					</tr>
+				<?php endforeach; ?>
 				</tbody>
 			</table>
 			<?php $this->render_action(); ?>
@@ -107,7 +114,7 @@ class Api {
 	 * @return string
 	 */
 	private function render_field( $field ) {
-		$type = $field['type'] ?? 'text';
+		$type   = $field['type'] ?? 'text';
 		$method = "render_{$type}_field";
 
 		if ( method_exists( $this, $method ) ) {

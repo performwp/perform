@@ -12,6 +12,11 @@ namespace Perform\Includes;
 
 use Perform\Includes\Helpers;
 
+// Bailout, if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Actions {
 
 	/**

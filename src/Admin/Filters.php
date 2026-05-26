@@ -10,6 +10,11 @@
 
 namespace Perform\Admin;
 
+// Bailout, if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Filters {
 
 	/**
@@ -48,8 +53,8 @@ class Filters {
 			'%1$s <strong>%2$s</strong> <a href="%4$s" target="_blank" rel="noopener noreferrer" class="perform-rating-link">%3$s</a> %5$s',
 			esc_html__( 'If you love using', 'perform' ),
 			esc_html__( 'Perform WordPress Plugin', 'perform' ),
-			esc_html__( 'please leave us a rating', 'perform' ),
-			esc_url( 'https://wordpress.org/support/plugin/perform/reviews/?filter=5#postform' ),
+			esc_html__( 'please leave us a review', 'perform' ),
+			esc_url( 'https://wordpress.org/support/plugin/perform/reviews/' ),
 			esc_html__( '. It takes a minute and helps a lot. Thanks in advance!', 'perform' ),
 		);
 
