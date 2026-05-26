@@ -13,7 +13,7 @@
 		"freemius/wordpress-sdk": "^2.13"
 	},
 	"require-dev": {
-		"dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
+		"dealerdirect/phpcodesniffer-composer-installer": "^1.2.1",
 		"phpcompatibility/phpcompatibility-wp": "*",
 		"wp-coding-standards/wpcs": "3.3",
 		"phpstan/phpstan": "^2.0",
