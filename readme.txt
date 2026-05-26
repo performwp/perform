@@ -9,50 +9,55 @@ Stable tag: 1.6.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-Speed up your WordPress site by removing unused assets, optimize loading order, and much more; ideal for WooCommerce, page builders and busy sites.
+Optimize WordPress performance with asset controls, page caching, CDN rewriting, and cleanup tools.
 
 == Description ==
 
-Perform helps you speed up WordPress by removing unused CSS/JS, deferring or disabling scripts, and giving fine-grained control over asset loading per page.
+Perform helps site owners reduce unnecessary frontend work in WordPress. It combines asset controls, cache features, CDN rewriting, and small cleanup modules in one settings area.
 
-The plugin is designed to be lightweight, beginner-friendly and developer-extensible. It focuses on practical optimizations that improve front-end load times and Core Web Vitals without complicated setup.
+Version 1.6.0 focuses on safer controls for real sites: a redesigned Assets Manager, full-page cache settings, classic theme menu caching, compatibility-safe settings migration, and improved release validation.
 
-Key benefits (short):
+Key capabilities:
 
-- Reduce page size and HTTP requests by disabling unused assets per page.
-- Improve Largest Contentful Paint and Time to Interactive via script deferring and selective loading.
-- Reduce admin and server overhead, minimal CPU and memory footprint.
+- Inspect scripts and styles on the current page with the Assets Manager.
+- Disable selected CSS or JavaScript globally or keep it enabled for specific pages.
+- Enable full-page caching with cache validation, stale regeneration, preload scheduling, and cache stats.
+- Add DNS prefetch and preconnect hints for external resources.
+- Rewrite static asset URLs to a CDN when a CDN URL is configured.
+- Cache classic WordPress navigation menus on non-block themes.
+- Remove common frontend extras such as emojis, embeds, query strings, feed links, REST links, shortlinks, and jQuery Migrate.
+- Adjust Heartbeat, autosave, post revision, and self-pingback behavior.
+- Apply WooCommerce-specific asset and cart fragment controls when WooCommerce is active.
 
-Features
+How Perform works:
 
-- Assets Manager: selectively disable CSS and JS per page, post type or template.
-- Remove jQuery Migrate, emojis, embeds and other unnecessary features.
-- WooCommerce optimizations: control cart fragments, scripts and styles to speed up stores.
-- CDN & preconnect: add DNS-prefetch, preconnect, and native CDN integration hooks.
-- Menu caching and lightweight transient caching for faster navigation.
-- Developer-friendly hooks and filters for custom integrations.
-
-Other Plugins
-- [OneCaptcha](https://onecaptcha.com): Connect popular captcha providers with WordPress forms for SPAM prevention
-- [ThemeRouter](https://themerouter.com): Use multiple themes on your WordPress site at once. Useful for theme migration projects.
-- [WordPress Development Services](https://mehulgohil.com): Want to build something amazing in WordPress space. I'm here to help. Let's discuss!
+- Most modules are disabled until you turn them on.
+- Asset changes are reversible from the Assets Manager.
+- Existing settings from older Perform versions are preserved during migration.
+- Developers can customize selected behavior through Perform filters.
 
 == Installation ==
 
-1. Upload the `perform` folder to the `/wp-content/plugins/` directory, or install via the WordPress plugin directory if available.
+1. Upload the `perform` folder to the `/wp-content/plugins/` directory, or install Perform from the WordPress plugin directory.
 2. Activate the plugin through the 'Plugins' screen in WordPress.
-3. Go to Perform → Settings to review defaults (the plugin works well out-of-the-box).
+3. Go to Settings > Perform to review and enable the modules you want to use.
 
 == FAQ ==
 
 = Will Perform break my theme or plugins? =
-Perform is conservative by default: it only disables assets when you explicitly choose them in the Assets Manager. If you disable something and see issues, re-enable the asset. Changes are reversible.
+Perform is conservative by default. Asset unloading, page cache, CDN rewriting, and integration-specific controls only run when you enable them. If an asset change causes a layout or behavior issue, re-enable that asset from the Assets Manager.
 
 = Is this compatible with other caching plugins? =
-Yes. Perform works alongside many caching plugins and most server-level caching solutions. Clear cache after making asset changes.
+Perform can run alongside many host-level and plugin-level caching setups, but avoid enabling two full-page caches for the same page response unless you understand the cache order. Clear all caches after changing cache, CDN, or asset settings.
 
-= Which page builders are supported? =
-Full compatibility with majority of all the page builders.
+= Does Menu Cache work with block themes? =
+Menu Cache is designed for classic themes that render menus through `wp_nav_menu()`. Block themes generally do not need this module because navigation is rendered through block theme paths.
+
+= Does Assets Manager scan the whole site? =
+Assets Manager scans the current frontend page while you are logged in as an administrator. Use it page by page for safer asset decisions, then test important templates before applying broad changes.
+
+= Are settings preserved when updating to 1.6.0? =
+Yes. Perform 1.6.0 preserves existing public option keys and migrates legacy settings into the current settings shape where needed.
 
 == Support ==
 
@@ -110,7 +115,7 @@ Contributions and bug reports welcome on GitHub: https://github.com/performwp/pe
 = 1.6.0 =
 Review your Assets Manager and cache settings after updating. Perform 1.6.0 adds the redesigned scanner, page cache controls, and safer release validation.
 
-Always backup your database before updating. Follow the changelog for breaking changes.
+Back up your site before changing performance settings on production, then test important pages after enabling cache or asset controls.
 
 == Screenshots ==
 
