@@ -44,6 +44,6 @@ jobs:
           zip -r "${GITHUB_WORKSPACE}/perform.zip" .
 
       - name: Upload release asset
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: ${{ github.workspace }}/perform.zip
