@@ -16,8 +16,8 @@
  *
  * Plugin Name: Perform - Optimize Performance
  * Plugin URI: https://performwp.com/
- * Description: This plugin adds toolset for performance and speed improvements to your WordPress sites.
- * Version: 1.6.0
+ * Description: Make your WordPress site faster with simple controls for caching, assets, CDN, and cleanup.
+ * Version: 1.6.1
  * Author: Mehul Gohil
  * Author URI: https://mehulgohil.com/
  * License: GPLv3 or later
