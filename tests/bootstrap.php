@@ -56,6 +56,17 @@ if ( ! function_exists( 'delete_transient' ) ) {
 
 if ( ! function_exists( 'add_action' ) ) {
 	function add_action( $hook_name, $callback, $priority = 10, $accepted_args = 1 ) {
+		if ( ! isset( $GLOBALS['perform_test_actions'] ) || ! is_array( $GLOBALS['perform_test_actions'] ) ) {
+			$GLOBALS['perform_test_actions'] = [];
+		}
+
+		$GLOBALS['perform_test_actions'][] = [
+			'hook'          => $hook_name,
+			'callback'      => $callback,
+			'priority'      => $priority,
+			'accepted_args' => $accepted_args,
+		];
+
 		return true;
 	}
 }
@@ -160,6 +171,12 @@ if ( ! function_exists( 'is_admin' ) ) {
 if ( ! function_exists( 'is_user_logged_in' ) ) {
 	function is_user_logged_in() {
 		return ! empty( $GLOBALS['perform_test_is_user_logged_in'] );
+	}
+}
+
+if ( ! function_exists( 'is_admin_bar_showing' ) ) {
+	function is_admin_bar_showing() {
+		return ! empty( $GLOBALS['perform_test_is_admin_bar_showing'] );
 	}
 }
 
