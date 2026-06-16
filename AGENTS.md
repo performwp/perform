@@ -14,6 +14,9 @@ Guidance for AI coding agents working on the Perform WordPress plugin.
 - Release-scoped work uses `release/<milestone>` branches. Verify the live branch list each run instead of hardcoding a single active release branch here.
 - If an issue or milestone maps to an existing `release/<milestone>` branch, create the work branch from that release branch and set the PR base explicitly.
 - Verify the current public version and release line from live repo metadata such as `readme.txt`, GitHub releases, and WordPress.org signals rather than relying on a static value in this file.
+- Release-readiness checks are project-specific: evaluate minor releases on a 30-day cadence and patch releases on a 7-day cadence within the same minor line.
+- Treat `x.9.x` as the pre-major rollover boundary: if that line is exhausted, the next planned release target should become `(x+1).0.0`.
+- At cadence checkpoints, verify the active milestone due date and latest public release live, then flag owner approval when a patch or minor candidate is justified by security, regression, compatibility, packaging, or high-impact stability/performance needs.
 
 ## Non-Negotiable Compatibility Rules
 - Do not rename existing option/meta keys used by released versions.
