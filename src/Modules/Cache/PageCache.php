@@ -75,6 +75,20 @@ class PageCache implements ModuleInterface {
 	private $url_normalizer = null;
 
 	/**
+	 * Maximum number of child sitemap documents to fetch per seed run.
+	 *
+	 * @var int
+	 */
+	private $preload_sitemap_child_limit = 20;
+
+	/**
+	 * Maximum number of unique sitemap URLs to collect per seed run.
+	 *
+	 * @var int
+	 */
+	private $preload_sitemap_url_cap = 500;
+
+	/**
 	 * Determine whether this module should be loaded.
 	 *
 	 * @return bool
@@ -656,9 +670,17 @@ class PageCache implements ModuleInterface {
 			return [];
 		}
 
-		$urls = [];
+		$urls                   = [];
+		$url_cap                = max( 1, (int) $this->preload_sitemap_url_cap );
+		$child_sitemap_limit    = max( 1, (int) $this->preload_sitemap_child_limit );
+		$child_sitemaps_fetched = 0;
+
 		if ( isset( $index->sitemap ) ) {
 			foreach ( $index->sitemap as $sitemap ) {
+				if ( count( $urls ) >= $url_cap || $child_sitemaps_fetched >= $child_sitemap_limit ) {
+					break;
+				}
+
 				if ( empty( $sitemap->loc ) ) {
 					continue;
 				}
@@ -668,6 +690,7 @@ class PageCache implements ModuleInterface {
 					continue;
 				}
 
+				++$child_sitemaps_fetched;
 				$child_response = wp_remote_get( $child_sitemap_url, [ 'timeout' => 8 ] );
 				if ( is_wp_error( $child_response ) ) {
 					continue;
@@ -684,17 +707,21 @@ class PageCache implements ModuleInterface {
 				}
 
 				foreach ( $child->url as $item ) {
+					if ( count( $urls ) >= $url_cap ) {
+						break;
+					}
+
 					if ( ! empty( $item->loc ) ) {
 						$item_url = esc_url_raw( (string) $item->loc );
 						if ( $this->is_site_url( $item_url ) ) {
-							$urls[] = $item_url;
+							$urls[ $item_url ] = true;
 						}
 					}
 				}
 			}
 		}
 
-		return array_slice( array_values( array_unique( array_filter( $urls ) ) ), 0, 500 );
+		return array_keys( $urls );
 	}
 
 	/**

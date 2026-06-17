@@ -143,6 +143,22 @@ if ( ! function_exists( 'admin_url' ) ) {
 	}
 }
 
+if ( ! function_exists( 'home_url' ) ) {
+	function home_url( $path = '' ) {
+		$base = isset( $GLOBALS['perform_test_home_url'] ) ? (string) $GLOBALS['perform_test_home_url'] : 'https://example.com';
+
+		if ( '' === $path ) {
+			return $base;
+		}
+
+		if ( 0 === strpos( (string) $path, 'http://' ) || 0 === strpos( (string) $path, 'https://' ) ) {
+			return (string) $path;
+		}
+
+		return rtrim( $base, '/' ) . '/' . ltrim( (string) $path, '/' );
+	}
+}
+
 if ( ! function_exists( 'esc_url' ) ) {
 	function esc_url( $url ) {
 		return (string) $url;
@@ -220,6 +236,71 @@ if ( ! function_exists( 'wp_parse_url' ) ) {
 if ( ! function_exists( 'esc_url_raw' ) ) {
 	function esc_url_raw( $url ) {
 		return (string) $url;
+	}
+}
+
+if ( ! class_exists( 'WP_Error' ) ) {
+	class WP_Error {
+		/**
+		 * Error code.
+		 *
+		 * @var string
+		 */
+		public $code = '';
+
+		/**
+		 * Error message.
+		 *
+		 * @var string
+		 */
+		public $message = '';
+
+		/**
+		 * Constructor.
+		 *
+		 * @param string $code Error code.
+		 * @param string $message Error message.
+		 */
+		public function __construct( $code = '', $message = '' ) {
+			$this->code    = (string) $code;
+			$this->message = (string) $message;
+		}
+	}
+}
+
+if ( ! function_exists( 'is_wp_error' ) ) {
+	function is_wp_error( $thing ) {
+		return $thing instanceof WP_Error;
+	}
+}
+
+if ( ! function_exists( 'wp_remote_get' ) ) {
+	function wp_remote_get( $url, $args = [] ) {
+		if ( ! isset( $GLOBALS['perform_test_remote_get_calls'] ) || ! is_array( $GLOBALS['perform_test_remote_get_calls'] ) ) {
+			$GLOBALS['perform_test_remote_get_calls'] = [];
+		}
+
+		$GLOBALS['perform_test_remote_get_calls'][] = [
+			'url'  => $url,
+			'args' => $args,
+		];
+
+		$responses = isset( $GLOBALS['perform_test_remote_get_map'] ) && is_array( $GLOBALS['perform_test_remote_get_map'] ) ? $GLOBALS['perform_test_remote_get_map'] : [];
+		if ( array_key_exists( $url, $responses ) ) {
+			return $responses[ $url ];
+		}
+
+		return new WP_Error( 'missing_mock', 'No mocked response registered.' );
+	}
+}
+
+if ( ! function_exists( 'wp_remote_retrieve_body' ) ) {
+	function wp_remote_retrieve_body( $response ) {
+		if ( is_array( $response ) && isset( $response['body'] ) ) {
+			return (string) $response['body'];
+		}
+
+		return '';
 	}
 }
 
