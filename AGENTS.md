@@ -4,12 +4,19 @@ Guidance for AI coding agents working on the Perform WordPress plugin.
 
 ## Project Snapshot
 - Plugin: `Perform`
-- Current public line: `1.5.1`
-- Active release branch in this workspace: `release/1.6.0`
 - Stack:
   - PHP (WordPress plugin, PSR-4 autoload `Perform\\` -> `src/`)
   - JS/CSS via `@wordpress/scripts` + webpack output in `assets/dist`
   - Freemius SDK via Composer
+
+## Branch And Release Workflow
+- `develop` is the default integration branch for workflow-policy and documentation changes unless current release evidence proves a different base.
+- Release-scoped work uses `release/<milestone>` branches. Verify the live branch list each run instead of hardcoding a single active release branch here.
+- If an issue or milestone maps to an existing `release/<milestone>` branch, create the work branch from that release branch and set the PR base explicitly.
+- Verify the current public version and release line from live repo metadata such as `readme.txt`, GitHub releases, and WordPress.org signals rather than relying on a static value in this file.
+- Release-readiness checks are project-specific: evaluate minor releases on a 30-day cadence and patch releases on a 7-day cadence within the same minor line.
+- Treat `x.9.x` as the pre-major rollover boundary: if that line is exhausted, the next planned release target should become `(x+1).0.0`.
+- At cadence checkpoints, verify the active milestone due date and latest public release live, then flag owner approval when a patch or minor candidate is justified by security, regression, compatibility, packaging, or high-impact stability/performance needs.
 
 ## Non-Negotiable Compatibility Rules
 - Do not rename existing option/meta keys used by released versions.
