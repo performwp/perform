@@ -61,6 +61,7 @@ Yes. Perform 1.6.0 preserves existing public option keys and migrates legacy set
 
 == Support ==
 
+Project site and release updates: https://performwp.com/
 For help and troubleshooting, use our WordPress.org support forum: https://wordpress.org/support/plugin/perform
 Contributions and bug reports welcome on GitHub: https://github.com/performwp/perform
 
@@ -120,9 +121,9 @@ Back up your site before changing performance settings on production, then test 
 == Screenshots ==
 
 1. General Settings Screen
-2. Bloat Settings Screen
-3. Assets Settings Screen
-4. CDN Settings Screen
+2. Frontend cleanup and performance toggle settings
+3. Assets Manager scanner and per-page asset controls
+4. CDN and resource hint settings
 
 == Contributors ==
 

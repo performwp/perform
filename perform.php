@@ -21,12 +21,12 @@
  * Author: Mehul Gohil
  * Author URI: https://mehulgohil.com/
  * License: GPLv3 or later
- * License URI: http://www.gnu.org/licenses/gpl-2.0.html
+ * License URI: https://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain: perform
  * Domain Path: /languages
  */
 
- namespace Perform;
+namespace Perform;
 
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
