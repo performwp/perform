@@ -26,7 +26,7 @@
  * Domain Path: /languages
  */
 
- namespace Perform;
+namespace Perform;
 
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
