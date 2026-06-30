@@ -183,6 +183,7 @@ class AssetsManager implements ModuleInterface {
 					</div>
 					<div class="perform-assets-manager-header-actions">
 						<a class="perform-assets-manager-button perform-assets-manager-button--secondary" href="<?php echo esc_url( remove_query_arg( 'perform' ) ); ?>"><?php esc_html_e( 'Close', 'perform' ); ?></a>
+						<button type="submit" name="perform_assets_manager_reset" class="perform-assets-manager-button perform-assets-manager-button--reset" onclick="return confirm('<?php esc_attr_e( 'This will clear all assets manager settings for this site. Continue?', 'perform' ); ?>')"><?php esc_html_e( 'Reset', 'perform' ); ?></button>
 						<input class="perform-assets-manager-button perform-assets-manager-button--primary" type="submit" name="perform_assets_manager" value="<?php esc_attr_e( 'Save changes', 'perform' ); ?>" />
 					</div>
 				</div>
@@ -869,6 +870,12 @@ class AssetsManager implements ModuleInterface {
 
 		if ( ! is_array( $get_data ) ) {
 			$get_data = [];
+		}
+
+		if ( isset( $post_data['perform_assets_manager_reset'] ) ) {
+			delete_option( 'perform_assets_manager_options' );
+			wp_safe_redirect( esc_url_raw( add_query_arg( 'perform_reset', '1', remove_query_arg( 'perform', wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) ) ) ) );
+			exit;
 		}
 
 		if (
