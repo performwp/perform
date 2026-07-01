@@ -13,6 +13,10 @@ final class Tests_Page_Cache extends TestCase {
 		$GLOBALS['perform_test_home_url']         = 'https://example.com';
 		$GLOBALS['perform_test_remote_get_map']   = [];
 		$GLOBALS['perform_test_remote_get_calls'] = [];
+		$_COOKIE                                  = [];
+		$_GET                                     = [];
+		$_SERVER['REQUEST_METHOD']                = 'GET';
+		$_SERVER['REQUEST_URI']                   = '/';
 		unset( $_SERVER['HTTP_X_PERFORM_CACHE_REGEN'] );
 	}
 
@@ -24,8 +28,12 @@ final class Tests_Page_Cache extends TestCase {
 			$GLOBALS['perform_test_remote_get_calls'],
 			$GLOBALS['perform_test_remote_get_map'],
 			$GLOBALS['perform_test_transients'],
+			$_SERVER['REQUEST_METHOD'],
+			$_SERVER['REQUEST_URI'],
 			$_SERVER['HTTP_X_PERFORM_CACHE_REGEN']
 		);
+		$_COOKIE = [];
+		$_GET    = [];
 	}
 
 	public function test_internal_regeneration_requires_matching_lock_token() {
@@ -145,10 +153,122 @@ final class Tests_Page_Cache extends TestCase {
 		);
 	}
 
+	public function test_configured_exact_path_bypasses_cache_without_writes() {
+		$GLOBALS['perform_test_options'] = [
+			'perform_settings' => [
+				'cache_bypass_exact_paths' => [ '/members/dashboard' ],
+			],
+		];
+		$_SERVER['REQUEST_URI']          = '/members/dashboard?lang=en';
+
+		$page_cache = new PageCache();
+
+		$this->assertFalse( $this->invoke_is_cacheable_request( $page_cache ) );
+		$this->assertSame( 'path_exact', $this->get_private_property( $page_cache, 'current_bypass_reason' ) );
+	}
+
+	public function test_configured_path_prefix_bypasses_cache_without_changing_exact_behavior() {
+		$GLOBALS['perform_test_options'] = [
+			'perform_settings' => [
+				'cache_bypass_path_prefixes' => [ '/private' ],
+			],
+		];
+		$_SERVER['REQUEST_URI']          = '/private/report';
+
+		$page_cache = new PageCache();
+
+		$this->assertFalse( $this->invoke_is_cacheable_request( $page_cache ) );
+		$this->assertSame( 'path_prefix', $this->get_private_property( $page_cache, 'current_bypass_reason' ) );
+
+		$_SERVER['REQUEST_URI'] = '/public/report';
+		$this->assertTrue( $this->invoke_is_cacheable_request( $page_cache ) );
+	}
+
+	public function test_configured_query_bypass_is_distinct_from_query_variation() {
+		$GLOBALS['perform_test_options'] = [
+			'perform_settings' => [
+				'cache_separate_query_params' => 'lang',
+				'cache_bypass_query_params'   => [ 'preview_token' ],
+			],
+		];
+		$_GET                            = [
+			'lang' => 'en',
+		];
+
+		$page_cache = new PageCache();
+		$this->assertTrue( $this->invoke_is_cacheable_request( $page_cache ) );
+
+		$_GET['preview_token'] = 'abc123';
+		$this->assertFalse( $this->invoke_is_cacheable_request( $page_cache ) );
+		$this->assertSame( 'query_key', $this->get_private_property( $page_cache, 'current_bypass_reason' ) );
+	}
+
+	public function test_configured_cookie_name_and_prefix_bypass_cache() {
+		$GLOBALS['perform_test_options'] = [
+			'perform_settings' => [
+				'cache_bypass_cookie_names'    => [ 'membership_session' ],
+				'cache_bypass_cookie_prefixes' => [ 'experiment_' ],
+			],
+		];
+
+		$page_cache = new PageCache();
+
+		$_COOKIE = [ 'membership_session' => 'secret-value' ];
+		$this->assertFalse( $this->invoke_is_cacheable_request( $page_cache ) );
+		$this->assertSame( 'cookie_name', $this->get_private_property( $page_cache, 'current_bypass_reason' ) );
+
+		$_COOKIE = [ 'experiment_variant' => 'b' ];
+		$this->assertFalse( $this->invoke_is_cacheable_request( $page_cache ) );
+		$this->assertSame( 'cookie_prefix', $this->get_private_property( $page_cache, 'current_bypass_reason' ) );
+	}
+
+	public function test_custom_filter_can_bypass_cache_with_named_reason() {
+		$GLOBALS['perform_test_filters']['perform_page_cache_bypass_reason'] = static function ( $reason, $context ) {
+			return '/dynamic' === $context['path'] ? 'partner area' : $reason;
+		};
+		$_SERVER['REQUEST_URI'] = '/dynamic';
+
+		$page_cache = new PageCache();
+
+		$this->assertFalse( $this->invoke_is_cacheable_request( $page_cache ) );
+		$this->assertSame( 'partner_area', $this->get_private_property( $page_cache, 'current_bypass_reason' ) );
+	}
+
+	public function test_bypass_reasons_are_aggregated_in_stats() {
+		$GLOBALS['perform_test_options']                                    = [
+			'perform_settings' => [
+				'cache_bypass_query_params' => [ 'preview_token' ],
+			],
+		];
+		$GLOBALS['perform_test_filters']['perform_cache_stats_sample_rate'] = 1;
+		$_GET['preview_token'] = 'abc123';
+
+		$page_cache = new PageCache();
+		$page_cache->maybe_serve_cache();
+		$page_cache->flush_stats();
+
+		$this->assertSame( 1, $GLOBALS['perform_test_options']['perform_cache_stats']['bypasses'] );
+		$this->assertSame( 1, $GLOBALS['perform_test_options']['perform_cache_stats']['bypass_reasons']['query_key'] );
+	}
+
 	private function set_private_property( PageCache $page_cache, string $property_name, int $value ): void {
 		$property = new ReflectionProperty( $page_cache, $property_name );
 		$property->setAccessible( true );
 		$property->setValue( $page_cache, $value );
+	}
+
+	private function get_private_property( PageCache $page_cache, string $property_name ) {
+		$property = new ReflectionProperty( $page_cache, $property_name );
+		$property->setAccessible( true );
+
+		return $property->getValue( $page_cache );
+	}
+
+	private function invoke_is_cacheable_request( PageCache $page_cache ): bool {
+		$method = new ReflectionMethod( $page_cache, 'is_cacheable_request' );
+		$method->setAccessible( true );
+
+		return $method->invoke( $page_cache );
 	}
 
 	private function build_sitemap_index_xml( int $child_count ): string {

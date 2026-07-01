@@ -82,7 +82,8 @@ final class StatsStore {
 	 * @var array<string, bool>
 	 */
 	private $additive_map_keys = [
-		'top_misses' => true,
+		'bypass_reasons' => true,
+		'top_misses'     => true,
 	];
 
 	/**
@@ -91,8 +92,9 @@ final class StatsStore {
 	 * @var array<string, int>
 	 */
 	private $map_limits = [
-		'top_misses'    => 50,
-		'slow_uncached' => 30,
+		'bypass_reasons' => 20,
+		'top_misses'     => 50,
+		'slow_uncached'  => 30,
 	];
 
 	/**

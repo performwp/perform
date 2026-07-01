@@ -31,4 +31,19 @@ final class Tests_Settings_Menu extends TestCase {
 			$method->invoke( $menu, [ 'https://fonts.example.com', '', 'https://cdn.example.com' ] )
 		);
 	}
+
+	public function test_cache_bypass_rule_lists_are_sanitized_and_deduplicated() {
+		$menu   = new Menu();
+		$method = new ReflectionMethod( $menu, 'normalize_rule_list_setting' );
+		$method->setAccessible( true );
+
+		$this->assertSame(
+			[
+				'/private',
+				'/members',
+				'preview_token',
+			],
+			$method->invoke( $menu, " /private \n/members,preview_token\n/private" )
+		);
+	}
 }
