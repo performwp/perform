@@ -33,6 +33,7 @@ test( 'settings save, Assets Manager, and page cache smoke paths work', async ( 
 	await page.goto( '/?perform' );
 	await expect( page.locator( '#perform-assets-manager' ) ).toBeVisible();
 	await expect( page.getByRole( 'heading', { name: 'Assets Manager' } ) ).toBeVisible();
+	await expect( page.getByRole( 'button', { name: 'Reset' } ) ).toBeVisible();
 
 	const anonymous = await request.newContext( { baseURL } );
 	await anonymous.get( '/' );

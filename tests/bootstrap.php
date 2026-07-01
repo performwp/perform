@@ -29,6 +29,19 @@ if ( ! function_exists( 'update_option' ) ) {
 	}
 }
 
+if ( ! function_exists( 'delete_option' ) ) {
+	function delete_option( $name ) {
+		if ( ! isset( $GLOBALS['perform_test_options'] ) || ! is_array( $GLOBALS['perform_test_options'] ) ) {
+			$GLOBALS['perform_test_options'] = [];
+		}
+
+		$exists = array_key_exists( $name, $GLOBALS['perform_test_options'] );
+		unset( $GLOBALS['perform_test_options'][ $name ] );
+
+		return $exists;
+	}
+}
+
 if ( ! function_exists( 'get_transient' ) ) {
 	function get_transient( $transient ) {
 		$store = isset( $GLOBALS['perform_test_transients'] ) && is_array( $GLOBALS['perform_test_transients'] ) ? $GLOBALS['perform_test_transients'] : [];
