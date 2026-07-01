@@ -183,6 +183,9 @@ class AssetsManager implements ModuleInterface {
 					</div>
 					<div class="perform-assets-manager-header-actions">
 						<a class="perform-assets-manager-button perform-assets-manager-button--secondary" href="<?php echo esc_url( remove_query_arg( 'perform' ) ); ?>"><?php esc_html_e( 'Close', 'perform' ); ?></a>
+						<button class="perform-assets-manager-button perform-assets-manager-button--reset" type="submit" name="perform_assets_manager_reset" value="1" onclick="return window.confirm('<?php esc_attr_e( 'This will reset all Assets Manager settings for this site. Continue?', 'perform' ); ?>');">
+							<?php esc_html_e( 'Reset', 'perform' ); ?>
+						</button>
 						<input class="perform-assets-manager-button perform-assets-manager-button--primary" type="submit" name="perform_assets_manager" value="<?php esc_attr_e( 'Save changes', 'perform' ); ?>" />
 					</div>
 				</div>
@@ -873,6 +876,14 @@ class AssetsManager implements ModuleInterface {
 
 		if (
 			isset( $get_data['perform'] ) &&
+			! empty( $post_data['perform_assets_manager_reset'] )
+		) {
+			wp_safe_redirect( $this->reset_assets_manager_settings() );
+			exit;
+		}
+
+		if (
+			isset( $get_data['perform'] ) &&
 			! empty( $post_data['perform_assets_manager'] )
 		) {
 
@@ -1084,6 +1095,28 @@ class AssetsManager implements ModuleInterface {
 			// Save assets manager settings to DB.
 			update_option( 'perform_assets_manager_options', $options, false );
 		}
+	}
+
+	/**
+	 * Reset saved Assets Manager options and return the scanner close URL.
+	 *
+	 * @return string Redirect URL.
+	 */
+	private function reset_assets_manager_settings(): string {
+		delete_option( 'perform_assets_manager_options' );
+
+		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? (string) wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+		if ( '' === $request_uri ) {
+			$request_uri = home_url( add_query_arg( [] ) );
+		}
+
+		return esc_url_raw(
+			add_query_arg(
+				'perform_reset',
+				'1',
+				remove_query_arg( 'perform', $request_uri )
+			)
+		);
 	}
 
 	/**
