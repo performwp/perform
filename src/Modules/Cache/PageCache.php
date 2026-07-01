@@ -47,6 +47,13 @@ class PageCache implements ModuleInterface {
 	private $should_write_cache = false;
 
 	/**
+	 * Current cache bypass reason for the request.
+	 *
+	 * @var string
+	 */
+	private $current_bypass_reason = '';
+
+	/**
 	 * Request start time.
 	 *
 	 * @var float
@@ -179,7 +186,10 @@ class PageCache implements ModuleInterface {
 		$this->request_start = microtime( true );
 
 		if ( ! $this->is_cacheable_request() ) {
-			$this->increment_stat( 'bypasses' );
+			$bypass_increment = $this->increment_stat( 'bypasses' );
+			if ( 0 < $bypass_increment ) {
+				$this->record_bypass_reason( $this->current_bypass_reason, $bypass_increment );
+			}
 			return;
 		}
 
@@ -492,8 +502,9 @@ class PageCache implements ModuleInterface {
 		$total      = max( 1, ( $hits + $stale_hits + $misses ) );
 		$hit_ratio  = round( ( ( $hits + $stale_hits ) / $total ) * 100, 2 );
 
-		$top_misses    = $stats['top_misses'] ?? [];
-		$slow_uncached = $stats['slow_uncached'] ?? [];
+		$top_misses     = $stats['top_misses'] ?? [];
+		$bypass_reasons = $stats['bypass_reasons'] ?? [];
+		$slow_uncached  = $stats['slow_uncached'] ?? [];
 		?>
 		<div class="wrap">
 			<h1><?php esc_html_e( 'Perform Cache Observability', 'perform' ); ?></h1>
@@ -515,6 +526,9 @@ class PageCache implements ModuleInterface {
 			<h2><?php esc_html_e( 'Top Missed URLs', 'perform' ); ?></h2>
 			<?php $this->render_stat_map_table( $top_misses, esc_html__( 'Misses', 'perform' ) ); ?>
 
+			<h2><?php esc_html_e( 'Bypass Reasons', 'perform' ); ?></h2>
+			<?php $this->render_stat_map_table( $bypass_reasons, esc_html__( 'Bypasses', 'perform' ), esc_html__( 'Reason', 'perform' ) ); ?>
+
 			<h2><?php esc_html_e( 'Slow Uncached URLs (ms)', 'perform' ); ?></h2>
 			<?php $this->render_stat_map_table( $slow_uncached, esc_html__( 'Render Time (ms)', 'perform' ) ); ?>
 		</div>
@@ -526,19 +540,24 @@ class PageCache implements ModuleInterface {
 	 *
 	 * @param array<string, int|float> $map Stat map.
 	 * @param string                    $value_header Value header label.
+	 * @param string                    $key_header Key header label.
 	 *
 	 * @return void
 	 */
-	private function render_stat_map_table( $map, $value_header ) {
+	private function render_stat_map_table( $map, $value_header, $key_header = '' ) {
 		if ( ! is_array( $map ) || empty( $map ) ) {
 			echo '<p>' . esc_html__( 'No data yet.', 'perform' ) . '</p>';
 			return;
+		}
+
+		if ( '' === $key_header ) {
+			$key_header = esc_html__( 'URL', 'perform' );
 		}
 		?>
 		<table class="widefat striped" style="max-width:1200px;">
 			<thead>
 				<tr>
-					<th><?php esc_html_e( 'URL', 'perform' ); ?></th>
+					<th><?php echo esc_html( $key_header ); ?></th>
 					<th><?php echo esc_html( $value_header ); ?></th>
 				</tr>
 			</thead>
@@ -882,27 +901,38 @@ class PageCache implements ModuleInterface {
 	 * @return bool
 	 */
 	private function is_cacheable_request() {
+		$this->current_bypass_reason = $this->get_cache_bypass_reason();
+
+		return '' === $this->current_bypass_reason;
+	}
+
+	/**
+	 * Get the reason the current request should bypass page cache.
+	 *
+	 * @return string Empty string when cacheable.
+	 */
+	private function get_cache_bypass_reason() {
 		if ( is_admin() || wp_doing_ajax() || wp_doing_cron() ) {
-			return false;
+			return 'runtime_context';
 		}
 
 		if ( ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || ( defined( 'WP_CLI' ) && WP_CLI ) ) {
-			return false;
+			return 'runtime_context';
 		}
 
 		if ( is_user_logged_in() || is_preview() || is_feed() || is_trackback() || is_robots() || is_search() ) {
-			return false;
+			return 'wordpress_context';
 		}
 
 		$method = isset( $_SERVER['REQUEST_METHOD'] ) ? strtoupper( sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) ) : 'GET';
 		if ( ! in_array( $method, [ 'GET', 'HEAD' ], true ) ) {
-			return false;
+			return 'http_method';
 		}
 
 		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
 		$path        = '' !== $request_uri ? wp_parse_url( $request_uri, PHP_URL_PATH ) : '';
 		if ( is_string( $path ) ) {
-			$path          = untrailingslashit( strtolower( $path ) );
+			$path          = $this->normalize_request_path( $path );
 			$blocked_paths = [
 				'/cart',
 				'/checkout',
@@ -911,13 +941,25 @@ class PageCache implements ModuleInterface {
 			];
 			foreach ( $blocked_paths as $blocked_path ) {
 				if ( 0 === strpos( $path, $blocked_path ) ) {
-					return false;
+					return 'default_path';
 				}
+			}
+
+			if ( $this->path_matches_exact_bypass_rule( $path ) ) {
+				return 'path_exact';
+			}
+
+			if ( $this->path_matches_prefix_bypass_rule( $path ) ) {
+				return 'path_prefix';
 			}
 		}
 
 		if ( isset( $_GET['add-to-cart'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only cache bypass signal.
-			return false;
+			return 'default_query';
+		}
+
+		if ( $this->request_has_bypass_query_key() ) {
+			return 'query_key';
 		}
 
 		$cookies        = $_COOKIE; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
@@ -932,12 +974,262 @@ class PageCache implements ModuleInterface {
 		foreach ( $cookies as $cookie_name => $cookie_value ) {
 			foreach ( $bypass_cookies as $prefix ) {
 				if ( 0 === strpos( (string) $cookie_name, $prefix ) ) {
-					return false;
+					return 'default_cookie';
 				}
 			}
 		}
 
-		return true;
+		if ( $this->request_has_bypass_cookie_name() ) {
+			return 'cookie_name';
+		}
+
+		if ( $this->request_has_bypass_cookie_prefix() ) {
+			return 'cookie_prefix';
+		}
+
+		$custom_reason = $this->get_custom_bypass_reason(
+			[
+				'method'       => $method,
+				'path'         => is_string( $path ) ? $path : '',
+				'query_keys'   => $this->get_request_query_keys(),
+				'cookie_names' => $this->get_request_cookie_names(),
+				'request_uri'  => $request_uri,
+			]
+		);
+
+		return $custom_reason;
+	}
+
+	/**
+	 * Normalize a request path for case-insensitive matching.
+	 *
+	 * @param string $path Request path.
+	 *
+	 * @return string
+	 */
+	private function normalize_request_path( $path ) {
+		$path = '/' . ltrim( strtolower( rawurldecode( (string) $path ) ), '/' );
+		$path = rtrim( $path, '/' );
+
+		return '' === $path ? '/' : $path;
+	}
+
+	/**
+	 * Determine if the request path matches an exact exclusion rule.
+	 *
+	 * @param string $path Normalized request path.
+	 *
+	 * @return bool
+	 */
+	private function path_matches_exact_bypass_rule( $path ) {
+		$rules = $this->get_cache_bypass_rules( 'cache_bypass_exact_paths' );
+		foreach ( $rules as $rule ) {
+			if ( $path === $this->normalize_request_path( $rule ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Determine if the request path matches a prefix exclusion rule.
+	 *
+	 * @param string $path Normalized request path.
+	 *
+	 * @return bool
+	 */
+	private function path_matches_prefix_bypass_rule( $path ) {
+		$rules = $this->get_cache_bypass_rules( 'cache_bypass_path_prefixes' );
+		foreach ( $rules as $rule ) {
+			$prefix = $this->normalize_request_path( $rule );
+			if ( '/' === $prefix || 0 === strpos( $path, $prefix ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Determine if any configured query key should bypass cache.
+	 *
+	 * @return bool
+	 */
+	private function request_has_bypass_query_key() {
+		$bypass_keys = $this->get_cache_bypass_rules( 'cache_bypass_query_params' );
+		if ( empty( $bypass_keys ) ) {
+			return false;
+		}
+
+		$bypass_keys = array_fill_keys( array_map( [ $this, 'normalize_rule_token' ], $bypass_keys ), true );
+		foreach ( $this->get_request_query_keys() as $query_key ) {
+			if ( isset( $bypass_keys[ $this->normalize_rule_token( $query_key ) ] ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Determine if any configured cookie name should bypass cache.
+	 *
+	 * @return bool
+	 */
+	private function request_has_bypass_cookie_name() {
+		$bypass_names = $this->get_cache_bypass_rules( 'cache_bypass_cookie_names' );
+		if ( empty( $bypass_names ) ) {
+			return false;
+		}
+
+		$bypass_names = array_fill_keys( array_map( [ $this, 'normalize_rule_token' ], $bypass_names ), true );
+		foreach ( $this->get_request_cookie_names() as $cookie_name ) {
+			if ( isset( $bypass_names[ $this->normalize_rule_token( $cookie_name ) ] ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Determine if any configured cookie prefix should bypass cache.
+	 *
+	 * @return bool
+	 */
+	private function request_has_bypass_cookie_prefix() {
+		$prefixes = $this->get_cache_bypass_rules( 'cache_bypass_cookie_prefixes' );
+		if ( empty( $prefixes ) ) {
+			return false;
+		}
+
+		$prefixes = array_map( [ $this, 'normalize_rule_token' ], $prefixes );
+		foreach ( $this->get_request_cookie_names() as $cookie_name ) {
+			$cookie_name = $this->normalize_rule_token( $cookie_name );
+			foreach ( $prefixes as $prefix ) {
+				if ( '' !== $prefix && 0 === strpos( $cookie_name, $prefix ) ) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get normalized configured bypass rules from settings.
+	 *
+	 * @param string $option Settings key.
+	 *
+	 * @return array<int, string>
+	 */
+	private function get_cache_bypass_rules( $option ) {
+		$value = Helpers::get_option( $option, 'perform_settings', [] );
+		if ( is_string( $value ) ) {
+			$value = preg_split( '/[\r\n,]+/', $value );
+		}
+
+		if ( ! is_array( $value ) ) {
+			return [];
+		}
+
+		$rules = [];
+		foreach ( $value as $rule ) {
+			if ( ! is_scalar( $rule ) ) {
+				continue;
+			}
+
+			$rule = trim( (string) $rule );
+			if ( '' === $rule ) {
+				continue;
+			}
+
+			$rules[] = $rule;
+		}
+
+		return array_values( array_unique( $rules ) );
+	}
+
+	/**
+	 * Get request query keys without query values.
+	 *
+	 * @return array<int, string>
+	 */
+	private function get_request_query_keys() {
+		return array_map( 'strval', array_keys( $_GET ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only cache bypass signal.
+	}
+
+	/**
+	 * Get request cookie names without cookie values.
+	 *
+	 * @return array<int, string>
+	 */
+	private function get_request_cookie_names() {
+		return array_map( 'strval', array_keys( $_COOKIE ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Names only.
+	}
+
+	/**
+	 * Normalize a query or cookie rule token for case-insensitive matching.
+	 *
+	 * @param string $token Rule token.
+	 *
+	 * @return string
+	 */
+	private function normalize_rule_token( $token ) {
+		return strtolower( trim( rawurldecode( (string) $token ) ) );
+	}
+
+	/**
+	 * Get optional custom bypass reason from advanced filter logic.
+	 *
+	 * @param array<string, mixed> $context Request context without raw query or cookie values.
+	 *
+	 * @return string Empty string when cacheable.
+	 */
+	private function get_custom_bypass_reason( array $context ) {
+		$reason = apply_filters( 'perform_page_cache_bypass_reason', '', $context );
+
+		if ( true === $reason ) {
+			return 'custom_filter';
+		}
+
+		if ( is_scalar( $reason ) && '' !== trim( (string) $reason ) ) {
+			return $this->normalize_stat_key( (string) $reason );
+		}
+
+		return '';
+	}
+
+	/**
+	 * Record aggregate bypass reason stats.
+	 *
+	 * @param string $reason Bypass reason.
+	 * @param int    $increment Increment amount.
+	 *
+	 * @return void
+	 */
+	private function record_bypass_reason( $reason, $increment ) {
+		$reason = '' !== $reason ? $reason : 'unknown';
+		$reason = $this->normalize_stat_key( $reason );
+
+		$reasons            = $this->get_stat_map( 'bypass_reasons' );
+		$reasons[ $reason ] = ( $reasons[ $reason ] ?? 0 ) + $increment;
+		$this->set_stat_map( 'bypass_reasons', $reasons );
+	}
+
+	/**
+	 * Normalize a string for use as a stats-map key.
+	 *
+	 * @param string $key Stats key.
+	 *
+	 * @return string
+	 */
+	private function normalize_stat_key( $key ) {
+		$key = strtolower( sanitize_text_field( $key ) );
+		$key = preg_replace( '/[^a-z0-9_\-]+/', '_', $key );
+
+		return is_string( $key ) && '' !== trim( $key, '_' ) ? trim( $key, '_' ) : 'custom_filter';
 	}
 
 	/**

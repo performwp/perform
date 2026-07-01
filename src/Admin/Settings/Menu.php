@@ -185,6 +185,10 @@ class Menu {
 		$new_settings['dns_prefetch'] = $this->normalize_multiline_setting( $new_settings['dns_prefetch'] ?? '' );
 		$new_settings['preconnect']   = $this->normalize_multiline_setting( $new_settings['preconnect'] ?? '' );
 
+		foreach ( $this->get_cache_bypass_list_setting_keys() as $setting_key ) {
+			$new_settings[ $setting_key ] = $this->normalize_rule_list_setting( $new_settings[ $setting_key ] ?? '' );
+		}
+
 		$is_saved = update_option( 'perform_settings', $new_settings, false );
 		if ( ! $is_saved && get_option( 'perform_settings' ) === $new_settings ) {
 			$is_saved = true;
@@ -236,5 +240,58 @@ class Menu {
 		);
 
 		return array_values( $lines );
+	}
+
+	/**
+	 * Normalize a cache exclusion list setting to clean unique tokens.
+	 *
+	 * @param mixed $value List value.
+	 *
+	 * @return array<int, string>
+	 */
+	private function normalize_rule_list_setting( $value ) {
+		if ( is_array( $value ) ) {
+			$items = $value;
+		} elseif ( is_scalar( $value ) && '' !== (string) $value ) {
+			$items = preg_split( '/[\r\n,]+/', (string) $value );
+		} else {
+			return [];
+		}
+
+		$items = array_filter(
+			array_map(
+				static function ( $item ) {
+					return is_scalar( $item ) ? sanitize_text_field( wp_unslash( $item ) ) : '';
+				},
+				$items
+			),
+			static function ( $item ) {
+				return '' !== trim( (string) $item );
+			}
+		);
+
+		$items = array_map(
+			static function ( $item ) {
+				return trim( (string) $item );
+			},
+			$items
+		);
+
+		return array_values( array_unique( $items ) );
+	}
+
+	/**
+	 * Get cache bypass setting keys that store newline/comma lists.
+	 *
+	 * @return array<int, string>
+	 */
+	private function get_cache_bypass_list_setting_keys() {
+		return [
+			'cache_bypass_exact_paths',
+			'cache_bypass_path_prefixes',
+			'cache_bypass_query_params',
+			'cache_bypass_cookie_names',
+			'cache_bypass_cookie_prefixes',
+		];
 	}
 }

@@ -791,6 +791,76 @@ class Helpers {
 								)
 							),
 						],
+						[
+							'id'          => 'cache_bypass_exact_paths',
+							'type'        => 'textarea',
+							'name'        => esc_html__( 'Bypass Exact Paths', 'perform' ),
+							'desc'        => esc_html__( 'One URL path per line that should bypass full-page cache exactly, such as /account/dashboard.', 'perform' ),
+							'placeholder' => "/account/dashboard\n/members-only",
+							'rows'        => 4,
+							'help_link'   => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/page-cache-exclusions'
+								)
+							),
+						],
+						[
+							'id'          => 'cache_bypass_path_prefixes',
+							'type'        => 'textarea',
+							'name'        => esc_html__( 'Bypass Path Prefixes', 'perform' ),
+							'desc'        => esc_html__( 'One URL path prefix per line that should bypass full-page cache, such as /checkout or /private.', 'perform' ),
+							'placeholder' => "/checkout\n/private",
+							'rows'        => 4,
+							'help_link'   => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/page-cache-exclusions'
+								)
+							),
+						],
+						[
+							'id'          => 'cache_bypass_query_params',
+							'type'        => 'textarea',
+							'name'        => esc_html__( 'Bypass Query Keys', 'perform' ),
+							'desc'        => esc_html__( 'Query keys that should bypass cache reads and writes entirely. This is separate from query keys that create separate cache entries.', 'perform' ),
+							'placeholder' => "preview_token\nab_variant",
+							'rows'        => 4,
+							'help_link'   => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/page-cache-exclusions'
+								)
+							),
+						],
+						[
+							'id'          => 'cache_bypass_cookie_names',
+							'type'        => 'textarea',
+							'name'        => esc_html__( 'Bypass Cookie Names', 'perform' ),
+							'desc'        => esc_html__( 'Cookie names that should bypass cache reads and writes. Cookie values are never needed for matching.', 'perform' ),
+							'placeholder' => "membership_session\nexperiment_override",
+							'rows'        => 4,
+							'help_link'   => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/page-cache-exclusions'
+								)
+							),
+						],
+						[
+							'id'          => 'cache_bypass_cookie_prefixes',
+							'type'        => 'textarea',
+							'name'        => esc_html__( 'Bypass Cookie Prefixes', 'perform' ),
+							'desc'        => esc_html__( 'Cookie name prefixes that should bypass cache reads and writes, such as wp-postpass_ or custom_session_.', 'perform' ),
+							'placeholder' => "wp-postpass_\ncustom_session_",
+							'rows'        => 4,
+							'help_link'   => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/page-cache-exclusions'
+								)
+							),
+						],
 					],
 				],
 				[
