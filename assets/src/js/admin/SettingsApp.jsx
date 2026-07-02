@@ -9,6 +9,7 @@ const SETTINGS_TABS = SETTINGS.tabs || {};
 const SETTINGS_FIELDS = SETTINGS.fields || {};
 const SAVED_SETTINGS = SETTINGS.saved || {};
 const INITIAL_DIAGNOSTICS = SETTINGS.diagnostics || {};
+const DASHBOARD = SETTINGS.dashboard || {};
 
 const SettingsApp = () => {
 	const tabs = SETTINGS_TABS;
@@ -38,7 +39,7 @@ const SettingsApp = () => {
 	const [ saving, setSaving ] = useState( false );
 	const [ message, setMessage ] = useState( null );
 	const [ diagnostics, setDiagnostics ] = useState( INITIAL_DIAGNOSTICS );
-	const [ activeTab, setActiveTab ] = useState( Object.keys( tabs )[ 0 ] || '' );
+	const [ activeTab, setActiveTab ] = useState( 'dashboard' );
 	const messageTimerRef = useRef( null );
 
 	// dirty detection
@@ -145,12 +146,14 @@ const SettingsApp = () => {
 			<SettingsNav
 				fields={ fields }
 				tabs={ tabs }
+				dashboard={ DASHBOARD }
+				diagnostics={ diagnostics }
 				activeTab={ activeTab }
 				onTabChange={ setActiveTab }
 				fieldValues={ fieldValues }
 				onFieldChange={ handleFieldChange }
 			/>
-			<DiagnosticsPanel diagnostics={ diagnostics } />
+			{ 'dashboard' !== activeTab && <DiagnosticsPanel diagnostics={ diagnostics } /> }
 			<Footer dirty={ isDirty } saving={ saving } message={ message } onSave={ handleSave } />
 		</>
 	);
