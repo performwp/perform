@@ -52,6 +52,27 @@ class AssetsManager implements ModuleInterface {
 	public $selected_options;
 
 	/**
+	 * Cleaned query data for the current request.
+	 *
+	 * @var array<string, mixed>|null
+	 */
+	private $request_query_data = null;
+
+	/**
+	 * Cached current object ID for this request.
+	 *
+	 * @var int|null
+	 */
+	private $current_object_id = null;
+
+	/**
+	 * Parsed source group cache keyed by asset source URL.
+	 *
+	 * @var array<string, array{category:string, group:string}>
+	 */
+	private $asset_source_groups = [];
+
+	/**
 	 * Constructor
 	 *
 	 * @since  1.1.0
@@ -75,7 +96,7 @@ class AssetsManager implements ModuleInterface {
 	 * @return void
 	 */
 	public function register(): void {
-		$this->selected_options = get_option( 'perform_assets_manager_options' );
+		$this->selected_options = $this->get_assets_manager_options();
 
 		add_action( 'template_redirect', [ $this, 'save_assets_manager_settings' ], 10, 2 );
 
@@ -94,13 +115,52 @@ class AssetsManager implements ModuleInterface {
 	 * @return int
 	 */
 	private function get_current_object_id() {
+		if ( null !== $this->current_object_id ) {
+			return $this->current_object_id;
+		}
+
 		$current_id = (int) get_queried_object_id();
 
 		if ( 0 >= $current_id ) {
 			$current_id = (int) get_the_ID();
 		}
 
-		return max( 0, $current_id );
+		$this->current_object_id = max( 0, $current_id );
+
+		return $this->current_object_id;
+	}
+
+	/**
+	 * Get selected Assets Manager options once per request.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function get_assets_manager_options() {
+		if ( is_array( $this->selected_options ) ) {
+			return $this->selected_options;
+		}
+
+		$options                = get_option( 'perform_assets_manager_options' );
+		$this->selected_options = is_array( $options ) ? $options : [];
+
+		return $this->selected_options;
+	}
+
+	/**
+	 * Get cleaned query data once per request.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function get_request_query_data() {
+		if ( null !== $this->request_query_data ) {
+			return $this->request_query_data;
+		}
+
+		$query_data               = filter_input_array( INPUT_GET );
+		$query_data               = is_array( $query_data ) ? Helpers::clean( $query_data ) : [];
+		$this->request_query_data = is_array( $query_data ) ? $query_data : [];
+
+		return $this->request_query_data;
 	}
 
 	/**
@@ -501,8 +561,39 @@ class AssetsManager implements ModuleInterface {
 	 * @return bool
 	 */
 	private function is_rule_disabled( $type, $handle ) {
-		return ! empty( $this->selected_options['disabled'][ $type ][ $handle ] )
-			&& is_array( $this->selected_options['disabled'][ $type ][ $handle ] );
+		$options = $this->get_assets_manager_options();
+
+		return ! empty( $options['disabled'][ $type ][ $handle ] )
+			&& is_array( $options['disabled'][ $type ][ $handle ] );
+	}
+
+	/**
+	 * Parse category and group from a registered asset source.
+	 *
+	 * @param string $src Asset source URL.
+	 *
+	 * @return array{category:string, group:string}
+	 */
+	private function get_asset_source_group( $src ) {
+		if ( isset( $this->asset_source_groups[ $src ] ) ) {
+			return $this->asset_source_groups[ $src ];
+		}
+
+		$source_group    = [
+			'category' => '',
+			'group'    => '',
+		];
+		$content_dirname = preg_quote( Helpers::get_content_dir_name(), '/' );
+
+		if ( preg_match( "/\/{$content_dirname}\/(.*?\/.*?)\//", (string) $src, $match ) && ! empty( $match[1] ) ) {
+			$parts                    = explode( '/', $match[1] );
+			$source_group['category'] = isset( $parts[0] ) ? (string) $parts[0] : '';
+			$source_group['group']    = isset( $parts[1] ) ? (string) $parts[1] : '';
+		}
+
+		$this->asset_source_groups[ $src ] = $source_group;
+
+		return $source_group;
 	}
 
 	/**
@@ -1136,24 +1227,17 @@ class AssetsManager implements ModuleInterface {
 			return $src;
 		}
 
-		$get_data = Helpers::clean( filter_input_array( INPUT_GET ) );
+		$get_data = $this->get_request_query_data();
 
 		// Get assets type.
 		$type = current_filter() === 'script_loader_src' ? 'js' : 'css';
 
 		// Load Assets Manager settings.
-		$options         = get_option( 'perform_assets_manager_options' );
+		$options         = $this->get_assets_manager_options();
 		$current_id      = $this->get_current_object_id();
-		$content_dirname = Helpers::get_content_dir_name();
-
-		// Get category + group from src.
-		preg_match( "/\/{$content_dirname}\/(.*?\/.*?)\//", $src, $match );
-
-		if ( ! empty( $match[1] ) ) {
-			$match    = explode( '/', $match[1] );
-			$category = $match[0];
-			$group    = $match[1];
-		}
+		$source_group    = $this->get_asset_source_group( (string) $src );
+		$category        = $source_group['category'];
+		$group           = $source_group['group'];
 
 		// Check for group disable settings and override.
 		if ( ! empty( $category ) && ! empty( $group ) && isset( $options['disabled'][ $category ][ $group ] ) ) {
