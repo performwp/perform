@@ -197,8 +197,9 @@ class Menu {
 		if ( $is_saved ) {
 			wp_send_json_success(
 				[
-					'type'    => 'success',
-					'message' => esc_html__( 'Settings saved successfully.', 'perform' ),
+					'type'        => 'success',
+					'message'     => esc_html__( 'Settings saved successfully.', 'perform' ),
+					'diagnostics' => RuntimeDiagnostics::get_results(),
 				]
 			);
 		} else {
