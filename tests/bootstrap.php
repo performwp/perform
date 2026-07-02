@@ -21,6 +21,12 @@ if ( ! defined( 'PHP_URL_HOST' ) ) {
 
 if ( ! function_exists( 'get_option' ) ) {
 	function get_option( $name, $default_value = false ) {
+		if ( ! isset( $GLOBALS['perform_test_get_option_counts'] ) || ! is_array( $GLOBALS['perform_test_get_option_counts'] ) ) {
+			$GLOBALS['perform_test_get_option_counts'] = [];
+		}
+
+		$GLOBALS['perform_test_get_option_counts'][ $name ] = isset( $GLOBALS['perform_test_get_option_counts'][ $name ] ) ? $GLOBALS['perform_test_get_option_counts'][ $name ] + 1 : 1;
+
 		$store = isset( $GLOBALS['perform_test_options'] ) && is_array( $GLOBALS['perform_test_options'] ) ? $GLOBALS['perform_test_options'] : [];
 		return array_key_exists( $name, $store ) ? $store[ $name ] : $default_value;
 	}
@@ -218,6 +224,43 @@ if ( ! function_exists( 'current_user_can' ) ) {
 if ( ! function_exists( 'is_admin' ) ) {
 	function is_admin() {
 		return ! empty( $GLOBALS['perform_test_is_admin'] );
+	}
+}
+
+if ( ! function_exists( 'current_filter' ) ) {
+	function current_filter() {
+		return isset( $GLOBALS['perform_test_current_filter'] ) ? (string) $GLOBALS['perform_test_current_filter'] : '';
+	}
+}
+
+if ( ! function_exists( 'get_queried_object_id' ) ) {
+	function get_queried_object_id() {
+		return isset( $GLOBALS['perform_test_queried_object_id'] ) ? (int) $GLOBALS['perform_test_queried_object_id'] : 0;
+	}
+}
+
+if ( ! function_exists( 'get_the_ID' ) ) {
+	// phpcs:ignore WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid -- WordPress core compatibility shim.
+	function get_the_ID() {
+		return isset( $GLOBALS['perform_test_the_id'] ) ? (int) $GLOBALS['perform_test_the_id'] : 0;
+	}
+}
+
+if ( ! function_exists( 'is_front_page' ) ) {
+	function is_front_page() {
+		return ! empty( $GLOBALS['perform_test_is_front_page'] );
+	}
+}
+
+if ( ! function_exists( 'is_home' ) ) {
+	function is_home() {
+		return ! empty( $GLOBALS['perform_test_is_home'] );
+	}
+}
+
+if ( ! function_exists( 'get_post_type' ) ) {
+	function get_post_type() {
+		return isset( $GLOBALS['perform_test_post_type'] ) ? (string) $GLOBALS['perform_test_post_type'] : 'post';
 	}
 }
 
