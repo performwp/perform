@@ -14,6 +14,11 @@ test( 'settings save, Assets Manager, and page cache smoke paths work', async ( 
 	await page.goto( '/wp-admin/options-general.php?page=perform_settings' );
 	await expect( page.locator( '#perform-settings-page' ) ).toBeVisible();
 	await expect( page.getByRole( 'button', { name: 'Save Settings' } ) ).toBeVisible();
+	await expect( page.getByRole( 'tab', { name: 'Dashboard' } ) ).toBeVisible();
+	await expect( page.getByRole( 'heading', { name: 'Perform overview' } ) ).toBeVisible();
+	await expect( page.getByText( 'Runtime diagnostics currently marked ready.' ) ).toBeVisible();
+
+	await page.getByRole( 'tab', { name: 'General' } ).click();
 	await expect( page.getByText( 'General Settings' ) ).toBeVisible();
 	await expect( page.getByText( 'Runtime Diagnostics' ) ).toBeVisible();
 

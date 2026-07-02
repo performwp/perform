@@ -7,7 +7,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language-Team: PerformWP <hello@performwp.com>\n"
-"POT-Creation-Date: 2026-05-25 11:35+0000\n"
+"POT-Creation-Date: 2026-07-02 10:16+0000\n"
 "Report-Msgid-Bugs-To: https://github.com/performwp/perform/issues/new\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
@@ -16,19 +16,19 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/Admin/Actions.php:98
+#: src/Admin/Actions.php:102
 msgid "Close Assets Manager"
 msgstr ""
 
-#: src/Admin/Actions.php:95, src/Modules/Assets/AssetsManager.php:195
+#: src/Admin/Actions.php:99, src/Modules/Assets/AssetsManager.php:258
 msgid "Assets Manager"
 msgstr ""
 
-#: src/Admin/Actions.php:105, src/Admin/Settings/Menu.php:40, src/Admin/Settings/Menu.php:41, src/Modules/Assets/AssetsManager.php:178
+#: src/Admin/Actions.php:109, src/Admin/Settings/Menu.php:40, src/Admin/Settings/Menu.php:41, src/Modules/Assets/AssetsManager.php:238
 msgid "Perform"
 msgstr ""
 
-#: src/Admin/Actions.php:125
+#: src/Admin/Actions.php:129
 msgid "Support Forum"
 msgstr ""
 
@@ -485,114 +485,154 @@ msgid "Comma-separated query keys that should generate separate cache entries. T
 msgstr ""
 
 #: src/Includes/Helpers.php:797
-msgid "Preload and Observability"
+msgid "Bypass Exact Paths"
 msgstr ""
 
 #: src/Includes/Helpers.php:798
-msgid "Warm cache from sitemaps and monitor cache effectiveness."
+msgid "One URL path per line that should bypass full-page cache exactly, such as /account/dashboard."
 msgstr ""
 
-#: src/Includes/Helpers.php:803
-msgid "Enable Adaptive Preloader"
+#: src/Includes/Helpers.php:811
+msgid "Bypass Path Prefixes"
 msgstr ""
 
-#: src/Includes/Helpers.php:804
-msgid "Preloads cache from sitemap and high-miss URLs using adaptive request rate."
+#: src/Includes/Helpers.php:812
+msgid "One URL path prefix per line that should bypass full-page cache, such as /checkout or /private."
 msgstr ""
 
-#: src/Includes/Helpers.php:815
-msgid "Slow Request Threshold"
+#: src/Includes/Helpers.php:825
+msgid "Bypass Query Keys"
 msgstr ""
 
-#: src/Includes/Helpers.php:817
-msgid "500ms"
-msgstr ""
-
-#: src/Includes/Helpers.php:818
-msgid "800ms"
-msgstr ""
-
-#: src/Includes/Helpers.php:819
-msgid "1200ms"
-msgstr ""
-
-#: src/Includes/Helpers.php:820
-msgid "2000ms"
-msgstr ""
-
-#: src/Includes/Helpers.php:822
-msgid "Tracks uncached requests slower than this value in observability stats."
-msgstr ""
-
-#: src/Includes/Helpers.php:833
-msgid "Cloudflare"
-msgstr ""
-
-#: src/Includes/Helpers.php:834
-msgid "Sync local cache purge events to Cloudflare (free-tier friendly)."
+#: src/Includes/Helpers.php:826
+msgid "Query keys that should bypass cache reads and writes entirely. This is separate from query keys that create separate cache entries."
 msgstr ""
 
 #: src/Includes/Helpers.php:839
-msgid "Enable Cloudflare Cache Sync"
+msgid "Bypass Cookie Names"
 msgstr ""
 
 #: src/Includes/Helpers.php:840
-msgid "Purge Cloudflare URLs when Perform purges local cache."
+msgid "Cookie names that should bypass cache reads and writes. Cookie values are never needed for matching."
 msgstr ""
 
-#: src/Includes/Helpers.php:851
-msgid "Cloudflare Zone ID"
+#: src/Includes/Helpers.php:853
+msgid "Bypass Cookie Prefixes"
 msgstr ""
 
-#: src/Includes/Helpers.php:852
-msgid "Your Cloudflare Zone ID."
+#: src/Includes/Helpers.php:854
+msgid "Cookie name prefixes that should bypass cache reads and writes, such as wp-postpass_ or custom_session_."
 msgstr ""
 
-#: src/Includes/Helpers.php:863
-msgid "Cloudflare API Token"
+#: src/Includes/Helpers.php:867
+msgid "Preload and Observability"
 msgstr ""
 
-#: src/Includes/Helpers.php:864
-msgid "API token with Zone:Cache Purge permission."
+#: src/Includes/Helpers.php:868
+msgid "Warm cache from sitemaps and monitor cache effectiveness."
 msgstr ""
 
-#: src/Includes/Helpers.php:877
-msgid "Advanced Settings"
+#: src/Includes/Helpers.php:873
+msgid "Enable Adaptive Preloader"
 msgstr ""
 
-#: src/Includes/Helpers.php:878
-msgid "Settings for advanced configurations."
+#: src/Includes/Helpers.php:874
+msgid "Preloads cache from sitemap and high-miss URLs using adaptive request rate."
 msgstr ""
 
-#: src/Includes/Helpers.php:883
-msgid "Remove Data on Uninstall"
+#: src/Includes/Helpers.php:885
+msgid "Slow Request Threshold"
 msgstr ""
 
-#: src/Includes/Helpers.php:884
-msgid "Enabling this will remove all plugin data upon uninstallation."
+#: src/Includes/Helpers.php:887
+msgid "500ms"
 msgstr ""
 
-#: src/Includes/Helpers.php:897
-msgid "WooCommerce Settings"
+#: src/Includes/Helpers.php:888
+msgid "800ms"
 msgstr ""
 
-#: src/Includes/Helpers.php:898
-msgid "Settings specific to WooCommerce."
+#: src/Includes/Helpers.php:889
+msgid "1200ms"
+msgstr ""
+
+#: src/Includes/Helpers.php:890
+msgid "2000ms"
+msgstr ""
+
+#: src/Includes/Helpers.php:892
+msgid "Tracks uncached requests slower than this value in observability stats."
 msgstr ""
 
 #: src/Includes/Helpers.php:903
-msgid "Enable WooCommerce Manager"
+msgid "Cloudflare"
 msgstr ""
 
 #: src/Includes/Helpers.php:904
+msgid "Sync local cache purge events to Cloudflare (free-tier friendly)."
+msgstr ""
+
+#: src/Includes/Helpers.php:909
+msgid "Enable Cloudflare Cache Sync"
+msgstr ""
+
+#: src/Includes/Helpers.php:910
+msgid "Purge Cloudflare URLs when Perform purges local cache."
+msgstr ""
+
+#: src/Includes/Helpers.php:921
+msgid "Cloudflare Zone ID"
+msgstr ""
+
+#: src/Includes/Helpers.php:922
+msgid "Your Cloudflare Zone ID."
+msgstr ""
+
+#: src/Includes/Helpers.php:933
+msgid "Cloudflare API Token"
+msgstr ""
+
+#: src/Includes/Helpers.php:934
+msgid "API token with Zone:Cache Purge permission."
+msgstr ""
+
+#: src/Includes/Helpers.php:947
+msgid "Advanced Settings"
+msgstr ""
+
+#: src/Includes/Helpers.php:948
+msgid "Settings for advanced configurations."
+msgstr ""
+
+#: src/Includes/Helpers.php:953
+msgid "Remove Data on Uninstall"
+msgstr ""
+
+#: src/Includes/Helpers.php:954
+msgid "Enabling this will remove all plugin data upon uninstallation."
+msgstr ""
+
+#: src/Includes/Helpers.php:967
+msgid "WooCommerce Settings"
+msgstr ""
+
+#: src/Includes/Helpers.php:968
+msgid "Settings specific to WooCommerce."
+msgstr ""
+
+#: src/Includes/Helpers.php:973
+msgid "Enable WooCommerce Manager"
+msgstr ""
+
+#: src/Includes/Helpers.php:974
 msgid "Enabling this will allow you to manage WooCommerce specific settings."
 msgstr ""
 
-#: src/Includes/Helpers.php:915
+#: src/Includes/Helpers.php:985
 msgid "Enable WooCommerce Cache"
 msgstr ""
 
-#: src/Includes/Helpers.php:916
+#: src/Includes/Helpers.php:986
 msgid "Enabling this will cache WooCommerce pages for better performance."
 msgstr ""
 
@@ -608,6 +648,18 @@ msgstr ""
 msgid "Learn more"
 msgstr ""
 
+#: src/Admin/Settings/DashboardPayload.php:105
+msgid "Dashboard, diagnostics, cache, and Assets Manager work in 1.7.0 remains release-candidate content until the owner approves publication."
+msgstr ""
+
+#: src/Admin/Settings/DashboardPayload.php:106
+msgid "Runtime diagnostics summarize cache, CDN, menu cache, and dynamic request prerequisites without writing new tracking data."
+msgstr ""
+
+#: src/Admin/Settings/DashboardPayload.php:107
+msgid "Assets Manager summary reports configured rule coverage, not historical byte savings."
+msgstr ""
+
 #: src/Admin/Settings/Menu.php:82
 msgid "Insufficient permissions."
 msgstr ""
@@ -616,170 +668,326 @@ msgstr ""
 msgid "Security check failed."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:204
+#: src/Admin/Settings/Menu.php:209
 msgid "Unable to save the settings. Please try again."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:197
+#: src/Admin/Settings/Menu.php:201
 msgid "Settings saved successfully."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:157
-msgid "Search detected assets"
+#: src/Admin/Settings/RuntimeDiagnostics.php:69, src/Admin/Settings/RuntimeDiagnostics.php:82
+msgid "Page cache storage"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:158
-msgid "Search by handle, source, or file URL"
+#: src/Admin/Settings/RuntimeDiagnostics.php:70
+msgid "Page cache is disabled, so no cache storage is required yet."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:159
-msgid "Filter detected assets"
+#: src/Admin/Settings/RuntimeDiagnostics.php:71
+msgid "Enable full-page cache when you are ready to test storage prerequisites."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:160
-msgid "All"
+#: src/Admin/Settings/RuntimeDiagnostics.php:84
+msgid "Perform can use the cache storage location for generated HTML files."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:161
-msgid "Plugins"
+#: src/Admin/Settings/RuntimeDiagnostics.php:85
+msgid "Perform cannot confirm writable cache storage for generated HTML files."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:162
-msgid "Themes"
+#: src/Admin/Settings/RuntimeDiagnostics.php:87, src/Admin/Settings/RuntimeDiagnostics.php:108, src/Admin/Settings/RuntimeDiagnostics.php:138, src/Admin/Settings/RuntimeDiagnostics.php:205
+msgid "No action needed."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:163, src/Modules/Assets/AssetsManager.php:547
-msgid "Other"
+#: src/Admin/Settings/RuntimeDiagnostics.php:88
+msgid "Ask your host to allow WordPress to write to its cache directory before relying on full-page cache."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:164
-msgid "JS"
+#: src/Admin/Settings/RuntimeDiagnostics.php:102
+msgid "Page cache drop-in"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:165, src/Modules/Assets/AssetsManager.php:213
-msgid "CSS"
+#: src/Admin/Settings/RuntimeDiagnostics.php:104
+msgid "A page-cache drop-in is present, so another cache layer may already be active."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:166
-msgid "Disabled"
+#: src/Admin/Settings/RuntimeDiagnostics.php:105
+msgid "No page-cache drop-in was detected."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:180
-msgid "Page asset scanner"
+#: src/Admin/Settings/RuntimeDiagnostics.php:107
+msgid "Review host or plugin-level page caching before enabling overlapping cache behavior."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:181
-msgid "Perform Assets Manager"
+#: src/Admin/Settings/RuntimeDiagnostics.php:123, src/Admin/Settings/RuntimeDiagnostics.php:133
+msgid "Cache preload schedule"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:185
-msgid "Close"
+#: src/Admin/Settings/RuntimeDiagnostics.php:124
+msgid "Adaptive cache preload is disabled."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:186
-msgid "Save changes"
+#: src/Admin/Settings/RuntimeDiagnostics.php:125
+msgid "Enable preload only after page cache is working reliably."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:192
-msgid "Current page"
+#: src/Admin/Settings/RuntimeDiagnostics.php:135
+msgid "The cache preload event is scheduled."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:198
-msgid "Review scripts and styles detected on this page, then disable only the assets you have verified are not needed."
+#: src/Admin/Settings/RuntimeDiagnostics.php:136
+msgid "The cache preload event is not scheduled yet."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:202
-msgid "Asset scan summary"
+#: src/Admin/Settings/RuntimeDiagnostics.php:139
+msgid "Save settings again or confirm WordPress cron is running on this site."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:205
-msgid "Detected assets"
+#: src/Admin/Settings/RuntimeDiagnostics.php:154, src/Admin/Settings/RuntimeDiagnostics.php:168
+msgid "Dynamic request exclusions"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:209
-msgid "JavaScript"
+#: src/Admin/Settings/RuntimeDiagnostics.php:155
+msgid "Page cache is disabled, so dynamic request exclusions are not required yet."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:156
+msgid "Add exclusions before enabling page cache on sites with member areas, custom checkouts, or preview tokens."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:170
+msgid "Site-specific cache bypass rules are configured."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:171
+msgid "No site-specific cache bypass rules are configured."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:173
+msgid "Review bypass rules after adding new dynamic workflows."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:174
+msgid "Add path, query, or cookie exclusions for dynamic workflows before broad cache rollout."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:189, src/Admin/Settings/RuntimeDiagnostics.php:200
+msgid "Menu cache theme support"
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:190
+msgid "Menu cache is disabled."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:191
+msgid "Use menu cache primarily with classic themes that render menus through wp_nav_menu()."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:202
+msgid "The active theme is eligible for menu cache."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:203
+msgid "The active block theme is not expected to benefit from menu cache by default."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:206
+msgid "Leave menu cache disabled unless custom theme code opts in through the compatibility filter."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:221, src/Admin/Settings/RuntimeDiagnostics.php:234
+msgid "CDN configuration"
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:222
+msgid "CDN rewriting is disabled."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:223
+msgid "Enable CDN rewriting only after confirming the CDN origin URL and included directories."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:236
+msgid "CDN rewriting has a valid CDN URL."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:237
+msgid "CDN rewriting is enabled but the CDN URL is missing or invalid."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:239
+msgid "Confirm included directories and exclusions before broad rollout."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:240
+msgid "Enter a full CDN URL with http or https before enabling CDN rewriting."
 msgstr ""
 
 #: src/Modules/Assets/AssetsManager.php:217
-msgid "Disabled rules"
+msgid "Search detected assets"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:218
+msgid "Search by handle, source, or file URL"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:219
+msgid "Filter detected assets"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:220
+msgid "All"
 msgstr ""
 
 #: src/Modules/Assets/AssetsManager.php:221
+msgid "Plugins"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:222
+msgid "Themes"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:223, src/Modules/Assets/AssetsManager.php:641
+msgid "Other"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:224
+msgid "JS"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:225, src/Modules/Assets/AssetsManager.php:276
+msgid "CSS"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:226
+msgid "Disabled"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:240
+msgid "Page asset scanner"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:241
+msgid "Perform Assets Manager"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:245
+msgid "Close"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:246
+msgid "This will reset all Assets Manager settings for this site. Continue?"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:247
+msgid "Reset"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:249
+msgid "Save changes"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:255
+msgid "Current page"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:261
+msgid "Review scripts and styles detected on this page, then disable only the assets you have verified are not needed."
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:265
+msgid "Asset scan summary"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:268
+msgid "Detected assets"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:272
+msgid "JavaScript"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:280
+msgid "Disabled rules"
+msgstr ""
+
+#: src/Modules/Assets/AssetsManager.php:284
 msgid "Known file size"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:258
+#: src/Modules/Assets/AssetsManager.php:321
 msgid "No assets match the current scan filter."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:548
+#: src/Modules/Assets/AssetsManager.php:642
 msgid "WordPress core, CDN, and uncategorized assets"
 msgstr ""
 
 #. translators: %d: number of assets.
-#: src/Modules/Assets/AssetsManager.php:553, src/Modules/Assets/AssetsManager.php:532
+#: src/Modules/Assets/AssetsManager.php:647, src/Modules/Assets/AssetsManager.php:626
 msgid "%d detected asset"
 msgid_plural "%d detected assets"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Modules/Assets/AssetsManager.php:567
+#: src/Modules/Assets/AssetsManager.php:661
 msgid "Handle"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:570
+#: src/Modules/Assets/AssetsManager.php:664
 msgid "Type"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:573
+#: src/Modules/Assets/AssetsManager.php:667
 msgid "Size"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:576
+#: src/Modules/Assets/AssetsManager.php:670
 msgid "Status"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:579
+#: src/Modules/Assets/AssetsManager.php:673
 msgid "Actions"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:637
+#: src/Modules/Assets/AssetsManager.php:731
 msgid "External"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:645
+#: src/Modules/Assets/AssetsManager.php:739
 msgid "View File"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:692
+#: src/Modules/Assets/AssetsManager.php:786
 msgid "All assets in this group have been disabled. Enable the group again to manage individual assets."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:713, src/Modules/Assets/AssetsManager.php:807
+#: src/Modules/Assets/AssetsManager.php:807, src/Modules/Assets/AssetsManager.php:901
 msgid "Current URL"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:714
+#: src/Modules/Assets/AssetsManager.php:808
 msgid "Everywhere"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:719
+#: src/Modules/Assets/AssetsManager.php:813
 msgid "Disable on"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:769
+#: src/Modules/Assets/AssetsManager.php:863
 msgid "Asset loading status"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:771
+#: src/Modules/Assets/AssetsManager.php:865
 msgid "ON"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:774
+#: src/Modules/Assets/AssetsManager.php:868
 msgid "OFF"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:800
+#: src/Modules/Assets/AssetsManager.php:894
 msgid "Exceptions"
 msgstr ""
 
@@ -787,70 +995,78 @@ msgstr ""
 msgid "No feed available, please visit the homepage!"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:127
+#: src/Modules/Cache/PageCache.php:148
 msgid "Every 5 minutes (Perform Cache)"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:456, src/Modules/Cache/PageCache.php:485
+#: src/Modules/Cache/PageCache.php:480, src/Modules/Cache/PageCache.php:510
 msgid "Perform Cache Observability"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:457
+#: src/Modules/Cache/PageCache.php:481
 msgid "Perform Cache Stats"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:486
+#: src/Modules/Cache/PageCache.php:511
 msgid "Live cache effectiveness and warmup health metrics."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:490
+#: src/Modules/Cache/PageCache.php:515
 msgid "Cache Hit Ratio"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:491
+#: src/Modules/Cache/PageCache.php:516
 msgid "Hits"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:492
+#: src/Modules/Cache/PageCache.php:517
 msgid "Stale Hits"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:493, src/Modules/Cache/PageCache.php:502
+#: src/Modules/Cache/PageCache.php:518, src/Modules/Cache/PageCache.php:527
 msgid "Misses"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:494
+#: src/Modules/Cache/PageCache.php:519, src/Modules/Cache/PageCache.php:530
 msgid "Bypasses"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:495
+#: src/Modules/Cache/PageCache.php:520
 msgid "Lock Waits"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:496
+#: src/Modules/Cache/PageCache.php:521
 msgid "Preload Queue Size"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:497
+#: src/Modules/Cache/PageCache.php:522
 msgid "Preload Requests"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:501
+#: src/Modules/Cache/PageCache.php:526
 msgid "Top Missed URLs"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:504
+#: src/Modules/Cache/PageCache.php:529
+msgid "Bypass Reasons"
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:530
+msgid "Reason"
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:532
 msgid "Slow Uncached URLs (ms)"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:505
+#: src/Modules/Cache/PageCache.php:533
 msgid "Render Time (ms)"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:520
+#: src/Modules/Cache/PageCache.php:549
 msgid "No data yet."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:527
+#: src/Modules/Cache/PageCache.php:554
 msgid "URL"
 msgstr ""

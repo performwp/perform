@@ -9,6 +9,7 @@ import {
 	TextareaControl,
 } from '@wordpress/components';
 import { useState, useMemo } from '@wordpress/element';
+import DashboardPanel from './DashboardPanel';
 
 const FIELD_COMPONENTS = {
 	toggle: ToggleControl,
@@ -160,6 +161,8 @@ const renderField = ( field, value, onChange ) => {
 const SettingsNav = ( {
 	tabs: propTabs,
 	fields: propFields,
+	dashboard,
+	diagnostics,
 	activeTab: propActiveTab,
 	onTabChange: propOnTabChange,
 	fieldValues: propFieldValues,
@@ -167,7 +170,7 @@ const SettingsNav = ( {
 } ) => {
 	const tabs = useMemo( () => propTabs || SETTINGS.tabs || {}, [ propTabs ] );
 	const fields = useMemo( () => propFields || SETTINGS.fields || {}, [ propFields ] );
-	const tabKeys = useMemo( () => Object.keys( tabs ), [ tabs ] );
+	const tabKeys = useMemo( () => [ 'dashboard', ...Object.keys( tabs ) ], [ tabs ] );
 
 	const [ internalActiveTab, setInternalActiveTab ] = useState( tabKeys[ 0 ] || '' );
 	const activeTab = propActiveTab ?? internalActiveTab;
@@ -182,7 +185,7 @@ const SettingsNav = ( {
 		() =>
 			tabKeys.map( ( slug ) => ( {
 				name: slug,
-				title: tabs[ slug ],
+				title: 'dashboard' === slug ? 'Dashboard' : tabs[ slug ],
 			} ) ),
 		[ tabKeys, tabs ]
 	);
@@ -204,32 +207,42 @@ const SettingsNav = ( {
 				>
 					{ () => null }
 				</TabPanel>
-				<div className="perform-settings-cards">
-					{ cards.map( ( card, idx ) => (
-						<Card
-							key={ idx }
-							style={ {
-								marginBottom: '24px',
-								boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
-								borderRadius: 0,
-							} }
-						>
-							<CardHeader style={ { alignItems: 'flex-start', flexDirection: 'column' } }>
-								<h3 className="perform-card-title">{ card.title }</h3>
-								{ card.description && <p className="perform-card-description">{ card.description }</p> }
-							</CardHeader>
-							{ card.fields && card.fields.length > 0 && (
-								<CardBody>
-									{ card.fields.map( ( field ) => (
-										<div key={ field.id } className="perform-field" style={ { marginBottom: 16 } }>
-											{ renderField( field, fieldValues[ field.id ], onFieldChange ) }
-										</div>
-									) ) }
-								</CardBody>
-							) }
-						</Card>
-					) ) }
-				</div>
+				{ 'dashboard' === activeTab ? (
+					<DashboardPanel dashboard={ dashboard } diagnostics={ diagnostics } />
+				) : (
+					<div className="perform-settings-cards">
+						{ cards.map( ( card, idx ) => (
+							<Card
+								key={ idx }
+								style={ {
+									marginBottom: '24px',
+									boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
+									borderRadius: 0,
+								} }
+							>
+								<CardHeader style={ { alignItems: 'flex-start', flexDirection: 'column' } }>
+									<h3 className="perform-card-title">{ card.title }</h3>
+									{ card.description && (
+										<p className="perform-card-description">{ card.description }</p>
+									) }
+								</CardHeader>
+								{ card.fields && card.fields.length > 0 && (
+									<CardBody>
+										{ card.fields.map( ( field ) => (
+											<div
+												key={ field.id }
+												className="perform-field"
+												style={ { marginBottom: 16 } }
+											>
+												{ renderField( field, fieldValues[ field.id ], onFieldChange ) }
+											</div>
+										) ) }
+									</CardBody>
+								) }
+							</Card>
+						) ) }
+					</div>
+				) }
 			</div>
 		</>
 	);

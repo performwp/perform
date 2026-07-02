@@ -12,6 +12,7 @@ namespace Perform\Admin;
 
 use Perform\Includes\Helpers;
 use Perform\Admin\Settings\ClientPayload;
+use Perform\Admin\Settings\DashboardPayload;
 use Perform\Admin\Settings\RuntimeDiagnostics;
 
 // Bailout, if accessed directly.
@@ -65,6 +66,7 @@ class Actions {
 					'logoUrl'           => plugins_url( 'assets/dist/images/logo.png', PERFORM_PLUGIN_FILE ),
 					'nonce'             => wp_create_nonce( 'perform_save_settings' ),
 					'saved'             => ClientPayload::sanitize_for_client( (array) \Perform\Includes\Helpers::get_settings() ),
+					'dashboard'         => DashboardPayload::get_data(),
 					'diagnostics'       => RuntimeDiagnostics::get_results(),
 					'sensitiveKeys'     => ClientPayload::get_sensitive_keys(),
 					'maskedSecretValue' => ClientPayload::MASKED_SECRET,
