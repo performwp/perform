@@ -15,6 +15,7 @@ test( 'settings save, Assets Manager, and page cache smoke paths work', async ( 
 	await expect( page.locator( '#perform-settings-page' ) ).toBeVisible();
 	await expect( page.getByRole( 'button', { name: 'Save Settings' } ) ).toBeVisible();
 	await expect( page.getByText( 'General Settings' ) ).toBeVisible();
+	await expect( page.getByText( 'Runtime Diagnostics' ) ).toBeVisible();
 
 	await page.getByRole( 'tab', { name: 'Assets' } ).click();
 	await page.getByRole( 'checkbox', { name: 'Enable Assets Manager' } ).check();

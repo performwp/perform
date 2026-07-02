@@ -70,3 +70,61 @@
 .perform-help-icon {
 	margin-left: 0;
 }
+
+.perform-diagnostics-panel {
+	margin: 0 20px 24px;
+	border-radius: 0;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.perform-diagnostics-panel__header {
+	align-items: flex-start;
+	flex-direction: column;
+}
+
+.perform-diagnostics-list {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+	gap: 16px;
+}
+
+.perform-diagnostics-item {
+	border-left: 4px solid var(--primary-color);
+	background: #f6f7f7;
+	padding: 12px 14px;
+}
+
+.perform-diagnostics-item[data-status='warning'] {
+	border-left-color: #b26200;
+}
+
+.perform-diagnostics-item[data-status='needs-attention'] {
+	border-left-color: #b32d2e;
+}
+
+.perform-diagnostics-item__heading {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.perform-diagnostics-item p {
+	margin: 8px 0 0;
+}
+
+.perform-diagnostics-item__action {
+	color: #50575e;
+}
+
+.perform-diagnostics-badge {
+	display: inline-flex;
+	align-items: center;
+	min-height: 22px;
+	border-radius: 3px;
+	background: #fff;
+	padding: 2px 8px;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+}

@@ -7,6 +7,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	define( 'ABSPATH', __DIR__ . '/' );
 }
 
+if ( ! defined( 'WP_CONTENT_DIR' ) ) {
+	define( 'WP_CONTENT_DIR', sys_get_temp_dir() . '/perform-test-content' );
+}
+
+if ( ! defined( 'PHP_URL_SCHEME' ) ) {
+	define( 'PHP_URL_SCHEME', 0 );
+}
+
+if ( ! defined( 'PHP_URL_HOST' ) ) {
+	define( 'PHP_URL_HOST', 1 );
+}
+
 if ( ! function_exists( 'get_option' ) ) {
 	function get_option( $name, $default_value = false ) {
 		$store = isset( $GLOBALS['perform_test_options'] ) && is_array( $GLOBALS['perform_test_options'] ) ? $GLOBALS['perform_test_options'] : [];
@@ -64,6 +76,12 @@ if ( ! function_exists( 'delete_transient' ) ) {
 	function delete_transient( $transient ) {
 		unset( $GLOBALS['perform_test_transients'][ $transient ] );
 		return true;
+	}
+}
+
+if ( ! function_exists( 'trailingslashit' ) ) {
+	function trailingslashit( $value ) {
+		return rtrim( (string) $value, '/' ) . '/';
 	}
 }
 
@@ -285,6 +303,14 @@ if ( ! function_exists( 'wp_rand' ) ) {
 		}
 
 		return (int) $min;
+	}
+}
+
+if ( ! function_exists( 'wp_next_scheduled' ) ) {
+	function wp_next_scheduled( $hook ) {
+		$scheduled = isset( $GLOBALS['perform_test_scheduled_events'] ) && is_array( $GLOBALS['perform_test_scheduled_events'] ) ? $GLOBALS['perform_test_scheduled_events'] : [];
+
+		return $scheduled[ $hook ] ?? false;
 	}
 }
 
