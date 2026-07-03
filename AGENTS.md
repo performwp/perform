@@ -18,6 +18,20 @@ Guidance for AI coding agents working on the Perform WordPress plugin.
 - Treat `x.9.x` as the pre-major rollover boundary: if that line is exhausted, the next planned release target should become `(x+1).0.0`.
 - At cadence checkpoints, verify the active milestone due date and latest public release live, then flag owner approval when a patch or minor candidate is justified by security, regression, compatibility, packaging, or high-impact stability/performance needs.
 
+## Live Rehydration Checklist
+- Start every task with `git status --short --branch` and `git rev-parse --show-toplevel`; stop or switch context if the checkout is dirty, detached, or not the Perform repo.
+- Fetch the remote branch list before choosing a base branch, then verify whether the target milestone has an existing `release/<milestone>` branch.
+- Check `perform.php`, `readme.txt`, the latest GitHub release, open PRs, open issues, and the active milestone before editing or reporting release status.
+- Confirm local Git identity is `Mehul Gohil <hello@mehulgohil.com>` before creating commits.
+- Keep the final report tied to verified sources: branch/base, issue or PR URLs, validation run, and any intentionally skipped gates.
+
+## Contributor PR Compatibility
+- When a task references a contributor PR, issue, branch, or URL, inspect that exact item before broad queue scans or inferred replacement work.
+- Treat human contributor PRs separately from bot/dependency PRs; review their diff scope, base branch, conflicts, CI, and current-code relevance before deciding next action.
+- Prefer actionable review comments before closure: note what is useful, what blocks merge, what proof is missing, and what change would make the PR acceptable.
+- If maintainer replacement work is needed, create the replacement PR first, reference the contributor PR, preserve credit where appropriate, and close only with a clear reason and replacement link.
+- Do not merge dirty, failing, stale-base, or broad-churn contributor PRs without first reconciling conflicts, validation, and compatibility against the current codebase.
+
 ## Non-Negotiable Compatibility Rules
 - Do not rename existing option/meta keys used by released versions.
 - Preserve backward compatibility with legacy settings sections:
