@@ -1,0 +1,114 @@
+name: Feature request
+description: Suggest a focused improvement for Perform.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting an improvement. Keep the request focused on the user problem and avoid sharing secrets, private keys, license keys, access tokens, customer data, or sensitive site data.
+  - type: textarea
+    id: problem
+    attributes:
+      label: User problem
+      description: What problem should Perform solve, and who experiences it?
+      placeholder: "As a site owner, I need ... so that ..."
+    validations:
+      required: true
+  - type: dropdown
+    id: affected-area
+    attributes:
+      label: Affected Perform area
+      options:
+        - Settings or admin UI
+        - Assets Manager
+        - Cache or diagnostics
+        - Basic optimizations
+        - SSL or CDN behavior
+        - WooCommerce behavior
+        - Frontend output
+        - Build, CI, or documentation
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: workflow
+    attributes:
+      label: Affected workflow
+      description: Describe where the user starts, what they are trying to do, and where the current experience breaks down.
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-outcome
+    attributes:
+      label: Proposed outcome
+      description: Describe the desired product outcome without requiring a specific implementation unless it matters.
+    validations:
+      required: true
+  - type: textarea
+    id: non-goals
+    attributes:
+      label: Non-goals
+      description: What should stay out of scope so this remains PR-sized?
+      placeholder: "Example: This should not change pricing, licensing, public APIs, or existing option names."
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance criteria
+      description: List the conditions that must be true for this feature to be complete.
+      value: |
+        - [ ] 
+        - [ ] 
+        - [ ] 
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Expected validation
+      description: Check or list expected validation. Mark unrelated gates as "Not applicable - reason".
+      value: |
+        - [ ] PHPCS / code style:
+        - [ ] PHP lint:
+        - [ ] PHPStan:
+        - [ ] PHPUnit:
+        - [ ] Frontend lint/build:
+        - [ ] Playwright / browser proof:
+        - [ ] WordPress smoke:
+        - [ ] Manual testing:
+    validations:
+      required: true
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: Compatibility and risk
+      description: Note expected impact on settings/options, migrations, existing installs, multisite, PHP/WP support, public hooks, security, or privacy.
+    validations:
+      required: true
+  - type: textarea
+    id: proof
+    attributes:
+      label: Screenshots, mockups, or examples
+      description: Required for UI/workflow ideas. For non-UI ideas, explain why proof is not applicable.
+    validations:
+      required: true
+  - type: dropdown
+    id: docs-needed
+    attributes:
+      label: Documentation impact
+      options:
+        - Docs/readme/changelog update likely needed
+        - No docs update expected
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: related-context
+    attributes:
+      label: Related context
+      description: Link related issues, PRs, support reports, or public docs. Do not include private customer or site data.
+    validations:
+      required: false
