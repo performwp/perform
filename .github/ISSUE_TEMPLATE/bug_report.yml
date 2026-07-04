@@ -1,0 +1,165 @@
+name: Bug report
+description: Report reproducible behavior in Perform.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve Perform. Do not include secrets, private keys, license keys, access tokens, customer data, or sensitive site data.
+  - type: input
+    id: perform-version
+    attributes:
+      label: Perform version
+      description: The Perform plugin version where you see the issue.
+      placeholder: "Example: 1.6.0"
+    validations:
+      required: true
+  - type: input
+    id: wordpress-version
+    attributes:
+      label: WordPress version
+      placeholder: "Example: 6.6.2"
+    validations:
+      required: true
+  - type: input
+    id: php-version
+    attributes:
+      label: PHP version
+      placeholder: "Example: 8.2.20"
+    validations:
+      required: true
+  - type: dropdown
+    id: multisite
+    attributes:
+      label: Multisite status
+      options:
+        - Single site
+        - Multisite network
+        - Not sure
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      description: Required for admin UI or frontend behavior. Use "Not applicable" for server-only issues.
+      placeholder: "Example: Chrome 126, Safari 17, Firefox 128"
+    validations:
+      required: true
+  - type: input
+    id: active-theme
+    attributes:
+      label: Active theme
+      placeholder: "Example: Twenty Twenty-Four 1.2"
+    validations:
+      required: true
+  - type: textarea
+    id: relevant-plugins
+    attributes:
+      label: Relevant active plugins
+      description: List only plugins that may affect this behavior. Do not include license keys or private configuration values.
+      placeholder: "Example: WooCommerce 9.0.2, cache plugin name/version"
+    validations:
+      required: true
+  - type: dropdown
+    id: affected-area
+    attributes:
+      label: Affected Perform area
+      options:
+        - Settings or admin UI
+        - Assets Manager
+        - Cache or diagnostics
+        - Basic optimizations
+        - SSL or CDN behavior
+        - WooCommerce behavior
+        - Frontend output
+        - Build, CI, or documentation
+        - Not sure
+    validations:
+      required: true
+  - type: input
+    id: screen-path
+    attributes:
+      label: Screen, URL path, or workflow
+      description: Share the admin screen, frontend path, or workflow where the issue appears. Remove domains or private path segments if needed.
+      placeholder: "Example: wp-admin/admin.php?page=perform-settings, /shop/"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Provide exact steps from a clean starting point.
+      placeholder: |
+        1. Go to ...
+        2. Enable ...
+        3. Click ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include visible errors, browser console errors, PHP errors, or relevant log excerpts with secrets removed.
+    validations:
+      required: true
+  - type: textarea
+    id: proof
+    attributes:
+      label: Screenshot or video proof
+      description: Required for UI issues. For non-UI bugs, explain why proof is not applicable.
+    validations:
+      required: true
+  - type: dropdown
+    id: regression
+    attributes:
+      label: Regression status
+      options:
+        - Worked in an earlier version
+        - Never worked as expected
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: compatibility-risk
+    attributes:
+      label: Compatibility or data risk
+      description: Note any settings, options, migrations, public hooks, multisite behavior, or existing installs that may be affected.
+      placeholder: "Example: May affect perform_settings and existing Assets Manager rules."
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation already attempted
+      description: Check or list what you tried. Mark unrelated gates as "Not applicable - reason".
+      value: |
+        - [ ] Manual reproduction:
+        - [ ] PHPCS / code style:
+        - [ ] PHP lint:
+        - [ ] PHPStan:
+        - [ ] PHPUnit:
+        - [ ] Frontend lint/build:
+        - [ ] Playwright / browser proof:
+        - [ ] WordPress smoke:
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance criteria
+      description: Keep this PR-sized. What must be true for this bug to be considered fixed?
+      value: |
+        - [ ] The issue is reproducible before the fix.
+        - [ ] The behavior matches the expected result after the fix.
+        - [ ] Existing related behavior remains compatible.
+    validations:
+      required: true
