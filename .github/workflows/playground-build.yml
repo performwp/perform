@@ -1,0 +1,32 @@
+name: Playground Preview Build
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build Playground preview package
+    uses: WordPress/action-wp-playground-pr-preview/.github/workflows/preview-build.yml@v3
+    with:
+      php-version: '8.1'
+      node-version: '24'
+      artifacts: |
+        perform=perform.zip
+      blueprint-from-build: .wordpress-org/blueprints/pr-preview.json
+      build-command: |
+        set -euo pipefail
+        npm ci
+        npm run build
+        npm run plugin-zip
