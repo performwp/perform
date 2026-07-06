@@ -74,7 +74,7 @@ final class RuntimeDiagnostics {
 
 		$cache_dir      = self::get_cache_dir();
 		$cache_parent   = dirname( $cache_dir );
-		$storage_ready  = is_dir( $cache_dir ) ? is_writable( $cache_dir ) : ( is_dir( $cache_parent ) && is_writable( $cache_parent ) );
+		$storage_ready  = is_dir( $cache_dir ) ? wp_is_writable( $cache_dir ) : ( is_dir( $cache_parent ) && wp_is_writable( $cache_parent ) );
 		$storage_status = $storage_ready ? 'ready' : 'needs-attention';
 
 		return self::item(

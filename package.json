@@ -24,7 +24,7 @@
     "lint": "npm run lint:js && npm run lint:css",
     "lint:css": "wp-scripts lint-style \"assets/src/**/*.css\"",
     "lint:js": "wp-scripts lint-js \"assets/src/**/*.js\" \"assets/src/**/*.jsx\" postcss.config.js webpack.config.js",
-    "plugin-zip": "rm -rf build/perform perform.zip && mkdir -p build/perform && rsync -rc --exclude-from=.distignore ./ build/perform/ --delete --delete-excluded && cp composer.json composer.lock build/perform/ && composer install --working-dir=build/perform --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-progress --no-scripts && rm -f build/perform/composer.json build/perform/composer.lock && rm -rf build/perform/vendor/bin build/perform/vendor/composer/installers && cd build && zip -qr ../perform.zip perform && cd .. && rm -rf build/perform",
+    "plugin-zip": "rm -rf build/perform perform.zip && mkdir -p build/perform && rsync -rc --exclude-from=.distignore ./ build/perform/ --delete --delete-excluded && cp composer.json composer.lock build/perform/ && composer install --working-dir=build/perform --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-progress --no-scripts && rm -f build/perform/composer.lock && rm -rf build/perform/vendor/bin build/perform/vendor/composer/installers && cd build && zip -qr ../perform.zip perform && cd .. && rm -rf build/perform",
     "test:e2e": "playwright test",
     "test:e2e:ci": "node tests/e2e/run-ci.mjs",
     "wp-env": "wp-env"

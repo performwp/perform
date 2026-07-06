@@ -1196,7 +1196,7 @@ class AssetsManager implements ModuleInterface {
 	private function reset_assets_manager_settings(): string {
 		delete_option( 'perform_assets_manager_options' );
 
-		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? (string) wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
 		if ( '' === $request_uri ) {
 			$request_uri = home_url( add_query_arg( [] ) );
 		}
