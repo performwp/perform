@@ -42,7 +42,6 @@ AGENTS.md
 sample-data/wordpress.sql
 sample-data/sample-data.numbers
 bower.json
-composer.json
 composer.lock
 package.json
 package-lock.json

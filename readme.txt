@@ -122,7 +122,7 @@ Contributions and bug reports welcome on GitHub: https://github.com/performwp/pe
 == Upgrade Notice ==
 
 = 1.7.0 =
-Review your Assets Manager, cache exclusions, and diagnostics after updating. Perform 1.7.0 adds the dashboard overview, runtime diagnostics, page cache exclusions, and safer asset reset controls.
+Review Assets Manager, cache exclusions, and runtime diagnostics after updating.
 
 Back up your site before changing performance settings on production, then test important pages after enabling cache or asset controls.
 
