@@ -5,7 +5,7 @@ Donate link: https://www.buymeacoffee.com/mehulgohil
 Requires at least: 4.8
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.6.0
+Stable tag: 1.7.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -15,7 +15,7 @@ Optimize WordPress performance with asset controls, page caching, CDN rewriting,
 
 Perform helps site owners reduce unnecessary frontend work in WordPress. It combines asset controls, cache features, CDN rewriting, and small cleanup modules in one settings area.
 
-Version 1.6.0 focuses on safer controls for real sites: a redesigned Assets Manager, full-page cache settings, classic theme menu caching, compatibility-safe settings migration, and improved release validation.
+Version 1.7.0 focuses on safer controls for real sites: a dashboard overview, runtime diagnostics, page cache exclusion controls, an Assets Manager reset action, and refreshed release metadata.
 
 Key capabilities:
 
@@ -56,8 +56,8 @@ Menu Cache is designed for classic themes that render menus through `wp_nav_menu
 = Does Assets Manager scan the whole site? =
 Assets Manager scans the current frontend page while you are logged in as an administrator. Use it page by page for safer asset decisions, then test important templates before applying broad changes.
 
-= Are settings preserved when updating to 1.6.0? =
-Yes. Perform 1.6.0 preserves existing public option keys and migrates legacy settings into the current settings shape where needed.
+= Are settings preserved when updating to 1.7.0? =
+Yes. Perform 1.7.0 preserves existing public option keys and migrates legacy settings into the current settings shape where needed.
 
 == Support ==
 
@@ -66,6 +66,14 @@ For help and troubleshooting, use our WordPress.org support forum: https://wordp
 Contributions and bug reports welcome on GitHub: https://github.com/performwp/perform
 
 == Changelog ==
+
+= 1.7.0 - 2026-07-06 =
+- Added a dashboard overview for faster at-a-glance site status.
+- Added a runtime diagnostics panel for environment and plugin inspection.
+- Added page cache exclusion controls for URLs and content that should bypass cache.
+- Added an Assets Manager reset action for safer repeated scans.
+- Hardened sitemap preload traversal and CDN module load gating.
+- Aligned public metadata surfaces and refreshed WordPress.org readme wording.
 
 = 1.6.0 - 2026-05-22 =
 - Redesigned Assets Manager with a more resilient scanner interface and WordPress-native admin controls.
@@ -113,8 +121,8 @@ Contributions and bug reports welcome on GitHub: https://github.com/performwp/pe
 
 == Upgrade Notice ==
 
-= 1.6.0 =
-Review your Assets Manager and cache settings after updating. Perform 1.6.0 adds the redesigned scanner, page cache controls, and safer release validation.
+= 1.7.0 =
+Review your Assets Manager, cache exclusions, and diagnostics after updating. Perform 1.7.0 adds the dashboard overview, runtime diagnostics, page cache exclusions, and safer asset reset controls.
 
 Back up your site before changing performance settings on production, then test important pages after enabling cache or asset controls.
 
