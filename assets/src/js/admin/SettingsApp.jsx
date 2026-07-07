@@ -153,7 +153,7 @@ const SettingsApp = () => {
 				fieldValues={ fieldValues }
 				onFieldChange={ handleFieldChange }
 			/>
-			{ 'dashboard' !== activeTab && <DiagnosticsPanel diagnostics={ diagnostics } /> }
+			{ 'dashboard' === activeTab && <DiagnosticsPanel diagnostics={ diagnostics } /> }
 			<Footer dirty={ isDirty } saving={ saving } message={ message } onSave={ handleSave } />
 		</>
 	);

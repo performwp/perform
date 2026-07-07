@@ -17,10 +17,11 @@ test( 'settings save, Assets Manager, and page cache smoke paths work', async ( 
 	await expect( page.getByRole( 'tab', { name: 'Dashboard' } ) ).toBeVisible();
 	await expect( page.getByRole( 'heading', { name: 'Perform overview' } ) ).toBeVisible();
 	await expect( page.getByText( 'Runtime diagnostics currently marked ready.' ) ).toBeVisible();
+	await expect( page.getByText( 'Runtime Diagnostics' ) ).toBeVisible();
 
 	await page.getByRole( 'tab', { name: 'General' } ).click();
 	await expect( page.getByText( 'General Settings' ) ).toBeVisible();
-	await expect( page.getByText( 'Runtime Diagnostics' ) ).toBeVisible();
+	await expect( page.getByText( 'Runtime Diagnostics' ) ).toHaveCount( 0 );
 
 	await page.getByRole( 'tab', { name: 'Assets' } ).click();
 	await page.getByRole( 'checkbox', { name: 'Enable Assets Manager' } ).check();
