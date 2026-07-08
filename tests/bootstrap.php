@@ -19,6 +19,29 @@ if ( ! defined( 'PHP_URL_HOST' ) ) {
 	define( 'PHP_URL_HOST', 1 );
 }
 
+if ( ! function_exists( 'plugin_basename' ) ) {
+	function plugin_basename( $file ) {
+		$basename = basename( (string) $file );
+		$slug     = 'perform.php' === $basename ? 'perform' : basename( dirname( (string) $file ) );
+
+		return $slug . '/' . $basename;
+	}
+}
+
+if ( ! function_exists( 'plugin_dir_path' ) ) {
+	function plugin_dir_path( $file ) {
+		return rtrim( dirname( (string) $file ), '/\\' ) . '/';
+	}
+}
+
+if ( ! function_exists( 'plugin_dir_url' ) ) {
+	function plugin_dir_url( $file ) {
+		$slug = 'perform.php' === basename( (string) $file ) ? 'perform' : basename( dirname( (string) $file ) );
+
+		return 'https://example.com/wp-content/plugins/' . $slug . '/';
+	}
+}
+
 if ( ! function_exists( 'get_option' ) ) {
 	function get_option( $name, $default_value = false ) {
 		if ( ! isset( $GLOBALS['perform_test_get_option_counts'] ) || ! is_array( $GLOBALS['perform_test_get_option_counts'] ) ) {
@@ -451,5 +474,7 @@ if ( ! function_exists( 'wp_unslash' ) ) {
 		return $value;
 	}
 }
+
+require_once dirname( __DIR__ ) . '/config/constants.php';
 
 require_once dirname( __DIR__ ) . '/vendor/autoload.php';

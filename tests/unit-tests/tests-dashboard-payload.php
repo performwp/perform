@@ -86,6 +86,7 @@ final class Tests_Dashboard_Payload extends TestCase {
 	public function test_empty_dashboard_payload_has_safe_defaults() {
 		$payload = DashboardPayload::get_data();
 
+		$this->assertSame( '1.7.0', $payload['version'] );
 		$this->assertFalse( $payload['cache']['hasStats'] );
 		$this->assertSame( 0.0, $payload['cache']['hitRatio'] );
 		$this->assertSame( 0, $payload['assetsManager']['disabledJsHandles'] );
