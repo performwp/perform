@@ -1,37 +1,6 @@
 name: Playwright Smoke
 
 on:
-  push:
-    branches:
-      - main
-      - develop
-      - 'release/[0-9]+.[0-9]+*'
-      - 'hotfix/[0-9]+.[0-9]+*'
-    paths:
-      - 'assets/src/**'
-      - 'src/**'
-      - 'perform.php'
-      - 'composer.json'
-      - 'composer.lock'
-      - 'package.json'
-      - 'package-lock.json'
-      - '.wp-env.json'
-      - 'playwright.config.js'
-      - 'tests/e2e/**'
-      - '.github/workflows/e2e.yml'
-  pull_request:
-    paths:
-      - 'assets/src/**'
-      - 'src/**'
-      - 'perform.php'
-      - 'composer.json'
-      - 'composer.lock'
-      - 'package.json'
-      - 'package-lock.json'
-      - '.wp-env.json'
-      - 'playwright.config.js'
-      - 'tests/e2e/**'
-      - '.github/workflows/e2e.yml'
   workflow_dispatch:
 
 permissions:
