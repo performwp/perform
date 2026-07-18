@@ -60,9 +60,6 @@ class PageCache implements ModuleInterface {
 	 */
 	private $cloudflare_max_retries = 3;
 
-	/** @var int */
-	private $manifest_chunk_size = 100;
-
 	/** @var bool */
 	private $site_purge_requested = false;
 
@@ -200,6 +197,7 @@ class PageCache implements ModuleInterface {
 
 		add_action( 'admin_menu', [ $this, 'register_observability_page' ] );
 		add_action( 'admin_post_perform_purge_page_cache', [ $this, 'handle_manual_purge' ] );
+		add_action( 'admin_post_perform_acknowledge_cloudflare_residual', [ $this, 'handle_cloudflare_residual_acknowledgement' ] );
 	}
 
 	/**
@@ -388,8 +386,6 @@ class PageCache implements ModuleInterface {
 			} elseif ( $this->request_generation !== $this->get_cache_generation() ) {
 				wp_delete_file( $this->get_body_file_path( $this->current_cache_key ) );
 				wp_delete_file( $this->get_meta_file_path( $this->current_cache_key ) );
-			} else {
-				$this->track_cached_url( $this->current_url );
 			}
 		} finally {
 			$this->release_lock();
@@ -772,6 +768,8 @@ class PageCache implements ModuleInterface {
 		$top_misses     = $stats['top_misses'] ?? [];
 		$bypass_reasons = $stats['bypass_reasons'] ?? [];
 		$slow_uncached  = $stats['slow_uncached'] ?? [];
+		$cloudflare     = $this->get_cloudflare_queue_status();
+		$residual       = (int) get_option( 'perform_cache_cloudflare_credential_residual_' . $this->get_blog_id(), 0 );
 		?>
 		<div class="wrap">
 			<h1><?php esc_html_e( 'Perform Cache Observability', 'perform' ); ?></h1>
@@ -792,6 +790,17 @@ class PageCache implements ModuleInterface {
 				<?php wp_nonce_field( 'perform_purge_page_cache' ); ?>
 				<?php submit_button( esc_html__( 'Purge Site Page Cache', 'perform' ), 'secondary', 'submit', false ); ?>
 			</form>
+			<?php if ( $cloudflare['pending'] || $cloudflare['failed'] || $residual ) : ?>
+				<div class="notice notice-<?php echo $cloudflare['failed'] || $residual ? 'error' : 'warning'; ?>"><p><?php echo esc_html( sprintf( __( 'Cloudflare cleanup: %1$d pending, %2$d failed, %3$d old-credential residual.', 'perform' ), $cloudflare['pending'], $cloudflare['failed'], $residual ) ); ?></p></div>
+			<?php endif; ?>
+			<?php if ( $residual ) : ?>
+				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+					<input type="hidden" name="action" value="perform_acknowledge_cloudflare_residual" />
+					<?php wp_nonce_field( 'perform_acknowledge_cloudflare_residual' ); ?>
+					<p><?php esc_html_e( 'After purging the old Cloudflare zone externally, acknowledge the residual to retire the old token-free queue and allow local cache cleanup.', 'perform' ); ?></p>
+					<?php submit_button( esc_html__( 'Acknowledge External Cloudflare Purge', 'perform' ), 'secondary', 'submit', false ); ?>
+				</form>
+			<?php endif; ?>
 
 			<table class="widefat striped" style="max-width:900px;">
 				<tbody>
@@ -997,6 +1006,28 @@ class PageCache implements ModuleInterface {
 		exit;
 	}
 
+	/** Retire explicitly acknowledged old-credential Cloudflare work. */
+	public function handle_cloudflare_residual_acknowledgement(): void {
+		if ( ! current_user_can( 'manage_options' ) || ! check_admin_referer( 'perform_acknowledge_cloudflare_residual' ) ) {
+			wp_die( esc_html__( 'You are not allowed to acknowledge Cloudflare cleanup.', 'perform' ) );
+		}
+		$key     = 'perform_cache_cloudflare_queue_' . $this->get_blog_id();
+		$records = $this->get_cloudflare_queue_records( get_option( $key, [] ) );
+		$records = array_values(
+			array_filter(
+				$records,
+				static function ( $record ) {
+					return empty( $record['failed'] );
+				}
+			)
+		);
+		update_option( $key, $records, false );
+		delete_option( 'perform_cache_cloudflare_credential_residual_' . $this->get_blog_id() );
+		$this->schedule_cleanup();
+		wp_safe_redirect( admin_url( 'options-general.php?page=perform_cache_observability' ) );
+		exit;
+	}
+
 	/** Confirm the administrator capability and action nonce before purging. */
 	private function is_manual_purge_authorized(): bool {
 		return current_user_can( 'manage_options' ) && (bool) check_admin_referer( 'perform_purge_page_cache' );
@@ -1141,7 +1172,9 @@ class PageCache implements ModuleInterface {
 	 * @return void
 	 */
 	private function purge_cloudflare_url( $url ) {
-		$this->purge_cloudflare_urls( [ $url ] );
+		if ( ! $this->purge_cloudflare_urls( [ $url ] ) ) {
+			$this->queue_cloudflare_inline_urls( [ $url ] );
+		}
 	}
 
 	/**
@@ -1842,37 +1875,20 @@ class PageCache implements ModuleInterface {
 			$this->schedule_cleanup();
 			return;
 		}
-		$legacy_html = glob( $this->cache_dir . '*.html' );
-		$legacy_meta = glob( $this->cache_dir . '*.meta.json' );
-		$legacy      = array_merge( is_array( $legacy_html ) ? $legacy_html : [], is_array( $legacy_meta ) ? $legacy_meta : [] );
-		foreach ( $legacy as $file ) {
-			if ( $remaining <= 0 ) {
-				$has_more = true;
-				break;
-			}
-			wp_delete_file( $file );
-			--$remaining;
-		}
-
-		$current = $this->get_generation_dir( $this->get_cache_generation() );
-		$dirs    = is_dir( $site_dir ) ? glob( $site_dir . 'generation-*', GLOB_ONLYDIR ) : [];
-		foreach ( is_array( $dirs ) ? $dirs : [] as $dir ) {
-			if ( trailingslashit( $dir ) === $current ) {
-				continue;
-			}
-			$files = glob( trailingslashit( $dir ) . '*' );
-			foreach ( is_array( $files ) ? $files : [] as $file ) {
-				if ( $remaining <= 0 ) {
+		$has_more = $this->cleanup_directory_files( $this->cache_dir, $remaining, true );
+		$current  = $this->get_generation_dir( $this->get_cache_generation() );
+		if ( $remaining > 0 && is_dir( $site_dir ) ) {
+			foreach ( new \DirectoryIterator( $site_dir ) as $directory ) {
+				if ( $directory->isDot() || ! $directory->isDir() || 0 !== strpos( $directory->getFilename(), 'generation-' ) || trailingslashit( $directory->getPathname() ) === $current ) {
+					continue;
+				}
+				if ( $this->cleanup_directory_files( $directory->getPathname(), $remaining, false ) ) {
 					$has_more = true;
-					break 2;
+					break;
 				}
-				if ( is_file( $file ) ) {
-					wp_delete_file( $file );
-					--$remaining;
+				if ( ! $this->directory_has_files( $directory->getPathname() ) ) {
+					rmdir( $directory->getPathname() ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_rmdir
 				}
-			}
-			if ( is_dir( $dir ) && empty( glob( trailingslashit( $dir ) . '*' ) ) ) {
-				rmdir( $dir ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_rmdir
 			}
 		}
 
@@ -1881,39 +1897,40 @@ class PageCache implements ModuleInterface {
 		}
 	}
 
-	/** Store URLs that may need a bounded Cloudflare purge after a global rotation. */
-	private function track_cached_url( string $url ): void {
-		$generation = $this->get_cache_generation();
-		$state_key  = $this->get_manifest_state_option( $generation );
-		$state      = get_option(
-			$state_key,
-			[
-				'chunk' => 0,
-				'count' => 0,
-			]
-		);
-		$state      = is_array( $state ) ? $state : [
-			'chunk' => 0,
-			'count' => 0,
-		];
-		if ( (int) $state['count'] >= $this->get_manifest_chunk_size() ) {
-			++$state['chunk'];
-			$state['count'] = 0;
+	private function cleanup_directory_files( string $directory, int &$remaining, bool $legacy_root ): bool {
+		if ( ! is_dir( $directory ) ) {
+			return false;
 		}
-		$chunk_key = $this->get_manifest_chunk_option( $generation, (int) $state['chunk'] );
-		$urls      = get_option( $chunk_key, [] );
-		$urls      = is_array( $urls ) ? $urls : [];
-		$url       = esc_url_raw( $url );
-		if ( in_array( $url, $urls, true ) ) {
-			return;
+		foreach ( new \DirectoryIterator( $directory ) as $file ) {
+			if ( $file->isDot() || ! $file->isFile() ) {
+				continue;
+			}
+			$name = $file->getFilename();
+			if ( $legacy_root && ! preg_match( '/^[a-f0-9]{32}(?:\.html|\.meta\.json)$/', $name ) ) {
+				continue;
+			}
+			if ( $remaining <= 0 ) {
+				return true;
+			}
+			wp_delete_file( $file->getPathname() );
+			--$remaining;
 		}
-		$urls[] = $url;
-		update_option( $chunk_key, $urls, false );
-		++$state['count'];
-		update_option( $state_key, $state, false );
+		return $remaining <= 0 && $this->directory_has_files( $directory, $legacy_root );
 	}
 
-	/** Queue tracked URLs instead of using Cloudflare purge_everything. */
+	private function directory_has_files( string $directory, bool $legacy_root = false ): bool {
+		foreach ( new \DirectoryIterator( $directory ) as $file ) {
+			if ( $file->isDot() || ! $file->isFile() ) {
+				continue;
+			}
+			if ( ! $legacy_root || preg_match( '/^[a-f0-9]{32}(?:\.html|\.meta\.json)$/', $file->getFilename() ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/** Queue metadata inventory instead of using Cloudflare purge_everything. */
 	/** @param array<string,mixed>|null $settings */
 	private function queue_cloudflare_tracked_urls( $settings = null, ?int $generation = null ): void {
 		$settings = is_array( $settings ) ? $settings : Helpers::get_settings();
@@ -1924,54 +1941,13 @@ class PageCache implements ModuleInterface {
 		$generation = null === $generation ? $this->get_cache_generation() : $generation;
 		$key        = 'perform_cache_cloudflare_queue_' . $blog_id;
 		$records    = $this->get_cloudflare_queue_records( get_option( $key, [] ) );
-		$state      = get_option( $this->get_manifest_state_option( $generation ), [] );
-		$chunks     = is_array( $state ) && isset( $state['chunk'] ) ? range( 0, (int) $state['chunk'] ) : [];
-		foreach ( $chunks as $chunk ) {
-			if ( $this->has_cloudflare_source_record( $records, 'manifest', $generation, (int) $chunk ) ) {
-				continue;
-			}
-			$records[] = [
-				'source'      => 'manifest',
-				'generation'  => $generation,
-				'chunk'       => $chunk,
-				'offset'      => 0,
-				'zone_id'     => (string) $settings['cloudflare_zone_id'],
-				'fingerprint' => $this->cloudflare_settings_key( $settings ),
-				'attempts'    => 0,
-				'failed'      => false,
-			];
-		}
-		if ( empty( $chunks ) && ! $this->has_cloudflare_source_record( $records, 'metadata', $generation ) ) {
-			$records[] = [
-				'source'      => 'metadata',
-				'generation'  => $generation,
-				'cursor'      => 0,
-				'zone_id'     => (string) $settings['cloudflare_zone_id'],
-				'fingerprint' => $this->cloudflare_settings_key( $settings ),
-				'attempts'    => 0,
-				'failed'      => false,
-			];
-		}
-		if ( 1 === $generation && ! $this->has_cloudflare_source_record( $records, 'legacy_metadata' ) ) {
-			$records[] = [
-				'source'      => 'legacy_metadata',
-				'cursor'      => 0,
-				'zone_id'     => (string) $settings['cloudflare_zone_id'],
-				'fingerprint' => $this->cloudflare_settings_key( $settings ),
-				'attempts'    => 0,
-				'failed'      => false,
-			];
+		$records    = $this->queue_cloudflare_source( $records, 'metadata', $generation, $settings );
+		if ( $this->has_legacy_metadata_files() ) {
+			$records = $this->queue_cloudflare_source( $records, 'legacy_metadata', null, $settings );
 		}
 		$legacy = get_option( 'perform_cache_urls_' . $blog_id, [] );
-		if ( is_array( $legacy ) && ! empty( $legacy ) && ! $this->has_cloudflare_source_record( $records, 'legacy_option' ) ) {
-			$records[] = [
-				'source'      => 'legacy_option',
-				'offset'      => 0,
-				'zone_id'     => (string) $settings['cloudflare_zone_id'],
-				'fingerprint' => $this->cloudflare_settings_key( $settings ),
-				'attempts'    => 0,
-				'failed'      => false,
-			];
+		if ( is_array( $legacy ) && ! empty( $legacy ) ) {
+			$records = $this->queue_cloudflare_source( $records, 'legacy_option', null, $settings );
 		}
 		update_option( $key, $records, false );
 		if ( ! wp_next_scheduled( 'perform_cache_cloudflare_purge_event' ) ) {
@@ -1979,28 +1955,82 @@ class PageCache implements ModuleInterface {
 		}
 	}
 
-	private function get_manifest_state_option( int $generation ): string {
-		return 'perform_cache_manifest_state_' . $this->get_blog_id() . '_' . $generation; }
-	private function get_manifest_chunk_option( int $generation, int $chunk ): string {
-		return 'perform_cache_manifest_' . $this->get_blog_id() . '_' . $generation . '_' . $chunk; }
-	private function get_manifest_chunk_size(): int {
-		return max( 1, (int) apply_filters( 'perform_cache_manifest_chunk_size', $this->manifest_chunk_size ) ); }
-
-	/** @param array<int, array<string, mixed>> $records */
-	private function has_cloudflare_source_record( array $records, string $source, ?int $generation = null, ?int $chunk = null ): bool {
-		foreach ( $records as $record ) {
-			if ( ( $record['source'] ?? '' ) !== $source || ! empty( $record['done'] ) ) {
-				continue;
+	private function has_legacy_metadata_files(): bool {
+		if ( ! is_dir( $this->cache_dir ) ) {
+			return false;
+		}
+		foreach ( new \DirectoryIterator( $this->cache_dir ) as $file ) {
+			if ( ! $file->isDot() && $file->isFile() && preg_match( '/^[a-f0-9]{32}\.meta\.json$/', $file->getFilename() ) ) {
+				return true;
 			}
-			if ( null !== $generation && (int) ( $record['generation'] ?? 0 ) !== (int) $generation ) {
-				continue;
-			}
-			if ( null !== $chunk && (int) ( $record['chunk'] ?? -1 ) !== (int) $chunk ) {
-				continue;
-			}
-			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * @param array<int, array<string, mixed>> $records
+	 * @param array<string, mixed> $settings
+	 * @return array<int, array<string, mixed>>
+	 */
+	private function queue_cloudflare_source( array $records, string $source, ?int $generation, array $settings ): array {
+		$fingerprint = $this->cloudflare_settings_key( $settings );
+		foreach ( $records as &$record ) {
+			if ( ! in_array( $source, [ $record['source'] ?? '' ], true ) || ! in_array( (int) $generation, [ (int) ( $record['generation'] ?? 0 ) ], true ) ) {
+				continue;
+			}
+			if ( ( $record['fingerprint'] ?? '' ) === $fingerprint && ! empty( $record['failed'] ) ) {
+				$record['failed']   = false;
+				$record['attempts'] = 0;
+			}
+			unset( $record );
+			return $records;
+		}
+		unset( $record );
+		$records[] = [
+			'source'      => $source,
+			'generation'  => $generation,
+			'cursor'      => 0,
+			'zone_id'     => (string) $settings['cloudflare_zone_id'],
+			'fingerprint' => $fingerprint,
+			'attempts'    => 0,
+			'failed'      => false,
+		];
+		return $records;
+	}
+
+	/** @param array<int, string> $urls */
+	private function queue_cloudflare_inline_urls( array $urls ): void {
+		$settings = Helpers::get_settings();
+		if ( ! is_array( $settings ) || empty( $settings['enable_cloudflare_cache_sync'] ) ) {
+			return;
+		}
+		$urls = array_values( array_unique( array_filter( array_map( 'esc_url_raw', $urls ) ) ) );
+		if ( empty( $urls ) ) {
+			return;
+		}
+		$key     = 'perform_cache_cloudflare_queue_' . $this->get_blog_id();
+		$records = $this->get_cloudflare_queue_records( get_option( $key, [] ) );
+		foreach ( $records as &$record ) {
+			if ( empty( $record['source'] ) && $this->cloudflare_settings_key( $settings ) === ( $record['fingerprint'] ?? '' ) ) {
+				$record['urls']     = array_values( array_unique( array_merge( (array) ( $record['urls'] ?? [] ), $urls ) ) );
+				$record['failed']   = false;
+				$record['attempts'] = 0;
+				unset( $record );
+				update_option( $key, $records, false );
+				wp_schedule_single_event( time() + 10, 'perform_cache_cloudflare_purge_event' );
+				return;
+			}
+		}
+		unset( $record );
+		$records[] = [
+			'urls'        => $urls,
+			'zone_id'     => (string) $settings['cloudflare_zone_id'],
+			'fingerprint' => $this->cloudflare_settings_key( $settings ),
+			'attempts'    => 0,
+			'failed'      => false,
+		];
+		update_option( $key, $records, false );
+		wp_schedule_single_event( time() + 10, 'perform_cache_cloudflare_purge_event' );
 	}
 
 	/** Purge a bounded batch of tracked URLs from Cloudflare, with retries. */
@@ -2014,8 +2044,8 @@ class PageCache implements ModuleInterface {
 			if ( ! empty( $record['failed'] ) ) {
 				continue;
 			}
-			$urls  = $this->get_cloudflare_record_urls( $record );
-			$batch = array_slice( $urls, (int) ( $record['offset'] ?? 0 ), max( 1, (int) $this->cloudflare_batch_size ) );
+			$work  = $this->get_cloudflare_record_work( $record );
+			$batch = $work['urls'];
 			if ( empty( $batch ) ) {
 				$this->retire_cloudflare_record( $record );
 				$record['done'] = true;
@@ -2024,10 +2054,13 @@ class PageCache implements ModuleInterface {
 			$settings = Helpers::get_settings();
 			if ( ! is_array( $settings ) || $record['fingerprint'] !== $this->cloudflare_settings_key( $settings ) ) {
 				$record['failed'] = true;
-				update_option( 'perform_cache_cloudflare_credential_residual_' . $this->get_blog_id(), $this->get_cloudflare_residual_count( $record, $urls ), false );
+				update_option( 'perform_cache_cloudflare_credential_residual_' . $this->get_blog_id(), $this->get_cloudflare_residual_count( $record, $batch ), false );
 			} elseif ( $this->purge_cloudflare_urls( $batch, $settings ) ) {
-				if ( isset( $record['source'] ) && in_array( $record['source'], [ 'metadata', 'legacy_metadata' ], true ) ) {
-					// The inventory cursor advanced while building this batch.
+				if ( isset( $work['cursor'] ) ) {
+					$record['cursor'] = $work['cursor'];
+					if ( ! empty( $work['complete'] ) ) {
+						$record['inventory_complete'] = true;
+					}
 				} elseif ( isset( $record['source'] ) ) {
 					$record['offset'] = (int) ( $record['offset'] ?? 0 ) + count( $batch );
 				} else {
@@ -2062,32 +2095,32 @@ class PageCache implements ModuleInterface {
 
 	/**
 	 * @param array<string, mixed> $record Record.
-	 * @return array<int, string>
+	 * @return array{urls: array<int, string>, cursor?: int, complete?: bool}
 	 */
-	private function get_cloudflare_record_urls( array &$record ): array {
-		if ( isset( $record['source'] ) && 'manifest' === $record['source'] ) {
-			$urls = get_option( $this->get_manifest_chunk_option( (int) $record['generation'], (int) $record['chunk'] ), [] );
-			return is_array( $urls ) ? $urls : [];
-		}
+	private function get_cloudflare_record_work( array $record ): array {
 		if ( isset( $record['source'] ) && 'legacy_option' === $record['source'] ) {
 			$urls = get_option( 'perform_cache_urls_' . $this->get_blog_id(), [] );
-			return is_array( $urls ) ? $urls : [];
+			return [ 'urls' => is_array( $urls ) ? array_slice( $urls, (int) ( $record['offset'] ?? 0 ), max( 1, (int) $this->cloudflare_batch_size ) ) : [] ];
 		}
 		if ( isset( $record['source'] ) && in_array( $record['source'], [ 'metadata', 'legacy_metadata' ], true ) ) {
 			return $this->get_cloudflare_metadata_urls( $record );
 		}
-		return isset( $record['urls'] ) && is_array( $record['urls'] ) ? $record['urls'] : [];
+		$urls = isset( $record['urls'] ) && is_array( $record['urls'] ) ? $record['urls'] : [];
+		return [ 'urls' => array_slice( $urls, 0, max( 1, (int) $this->cloudflare_batch_size ) ) ];
 	}
 
 	/**
 	 * @param array<string, mixed> $record
-	 * @return array<int, string>
+	 * @return array{urls: array<int, string>, cursor: int, complete: bool}
 	 */
-	private function get_cloudflare_metadata_urls( array &$record ): array {
+	private function get_cloudflare_metadata_urls( array $record ): array {
 		$directory = 'metadata' === $record['source'] ? $this->get_generation_dir( (int) $record['generation'] ) : $this->cache_dir;
 		if ( ! is_dir( $directory ) ) {
-			$record['inventory_complete'] = true;
-			return [];
+			return [
+				'urls'     => [],
+				'cursor'   => (int) ( $record['cursor'] ?? 0 ),
+				'complete' => true,
+			];
 		}
 
 		$cursor = max( 0, (int) ( $record['cursor'] ?? 0 ) );
@@ -2109,14 +2142,19 @@ class PageCache implements ModuleInterface {
 			if ( '' !== $url && $this->is_site_url( $url ) ) {
 				$urls[] = $url;
 			}
-			$record['cursor'] = $index;
 			if ( count( $urls ) >= $limit ) {
-				return array_values( array_unique( $urls ) );
+				return [
+					'urls'     => array_values( array_unique( $urls ) ),
+					'cursor'   => $index,
+					'complete' => false,
+				];
 			}
 		}
-		$record['cursor']             = $index;
-		$record['inventory_complete'] = true;
-		return array_values( array_unique( $urls ) );
+		return [
+			'urls'     => array_values( array_unique( $urls ) ),
+			'cursor'   => $index,
+			'complete' => true,
+		];
 	}
 
 	/**
@@ -2132,13 +2170,7 @@ class PageCache implements ModuleInterface {
 
 	/** @param array<string,mixed> $record */
 	private function retire_cloudflare_record( array $record ): void {
-		if ( isset( $record['source'] ) && 'manifest' === $record['source'] ) {
-			delete_option( $this->get_manifest_chunk_option( (int) $record['generation'], (int) $record['chunk'] ) );
-			$state = get_option( $this->get_manifest_state_option( (int) $record['generation'] ), [] );
-			if ( is_array( $state ) && (int) $record['chunk'] >= (int) ( $state['chunk'] ?? 0 ) ) {
-				delete_option( $this->get_manifest_state_option( (int) $record['generation'] ) );
-			}
-		} elseif ( isset( $record['source'] ) && 'legacy_option' === $record['source'] ) {
+		if ( isset( $record['source'] ) && 'legacy_option' === $record['source'] ) {
 			delete_option( 'perform_cache_urls_' . $this->get_blog_id() );
 		}
 	}
