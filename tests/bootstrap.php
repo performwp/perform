@@ -131,6 +131,12 @@ if ( ! function_exists( 'add_action' ) ) {
 	}
 }
 
+if ( ! function_exists( 'add_filter' ) ) {
+	function add_filter( $hook_name, $callback, $priority = 10, $accepted_args = 1 ) {
+		return add_action( $hook_name, $callback, $priority, $accepted_args );
+	}
+}
+
 if ( ! function_exists( 'wp_enqueue_style' ) ) {
 	function wp_enqueue_style( $handle, $src = '', $deps = [], $ver = false, $media = 'all' ) {
 		$GLOBALS['perform_test_enqueued_styles'][] = $handle;
@@ -472,6 +478,171 @@ if ( ! function_exists( 'sanitize_textarea_field' ) ) {
 if ( ! function_exists( 'wp_unslash' ) ) {
 	function wp_unslash( $value ) {
 		return $value;
+	}
+}
+
+if ( ! function_exists( 'get_current_blog_id' ) ) {
+	function get_current_blog_id() {
+		return isset( $GLOBALS['perform_test_blog_id'] ) ? (int) $GLOBALS['perform_test_blog_id'] : 1;
+	}
+}
+
+if ( ! function_exists( 'wp_mkdir_p' ) ) {
+	function wp_mkdir_p( $target ) {
+		return is_dir( $target ) || mkdir( $target, 0777, true );
+	}
+}
+
+if ( ! function_exists( 'wp_is_writable' ) ) {
+	function wp_is_writable( $path ) {
+		return is_writable( $path );
+	}
+}
+
+if ( ! function_exists( 'wp_delete_file' ) ) {
+	function wp_delete_file( $file ) {
+		return is_file( $file ) ? unlink( $file ) : false;
+	}
+}
+
+if ( ! function_exists( 'wp_json_encode' ) ) {
+	function wp_json_encode( $value ) {
+		return json_encode( $value );
+	}
+}
+
+if ( ! function_exists( 'wp_remote_post' ) ) {
+	function wp_remote_post( $url, $args = [] ) {
+		$GLOBALS['perform_test_remote_post_calls'][] = [
+			'url'  => $url,
+			'args' => $args,
+		];
+		return $GLOBALS['perform_test_remote_post_response'] ?? [ 'response' => [ 'code' => 200 ] ];
+	}
+}
+
+if ( ! function_exists( 'wp_schedule_single_event' ) ) {
+	function wp_schedule_single_event( $timestamp, $hook, $args = [] ) {
+		if ( ! isset( $GLOBALS['perform_test_scheduled_events'] ) || ! is_array( $GLOBALS['perform_test_scheduled_events'] ) ) {
+			$GLOBALS['perform_test_scheduled_events'] = [];
+		}
+		$GLOBALS['perform_test_scheduled_events'][ $hook ] = $timestamp;
+		$GLOBALS['perform_test_scheduled_single_events'][] = [
+			'timestamp' => $timestamp,
+			'hook'      => $hook,
+			'args'      => $args,
+		];
+		return true;
+	}
+}
+
+if ( ! function_exists( 'get_permalink' ) ) {
+	function get_permalink( $post_id = 0 ) {
+		return $GLOBALS['perform_test_permalinks'][ (int) $post_id ] ?? 'https://example.com/post-' . (int) $post_id;
+	}
+}
+
+if ( ! function_exists( 'get_post_type_archive_link' ) ) {
+	function get_post_type_archive_link( $post_type ) {
+		return $GLOBALS['perform_test_post_type_archives'][ $post_type ] ?? 'https://example.com/' . $post_type . '/';
+	}
+}
+
+if ( ! function_exists( 'get_object_taxonomies' ) ) {
+	function get_object_taxonomies( $post_type, $output = 'names' ) {
+		return $GLOBALS['perform_test_taxonomies'][ $post_type ] ?? [];
+	}
+}
+
+if ( ! function_exists( 'get_the_terms' ) ) {
+	function get_the_terms( $post_id, $taxonomy ) {
+		return $GLOBALS['perform_test_post_terms'][ (int) $post_id ][ $taxonomy ] ?? [];
+	}
+}
+
+if ( ! function_exists( 'get_term_link' ) ) {
+	function get_term_link( $term, $taxonomy = '' ) {
+		if ( is_object( $term ) && isset( $term->link ) ) {
+			return $term->link;
+		}
+		return 'https://example.com/term-' . (int) $term . '/';
+	}
+}
+
+if ( ! function_exists( 'get_term' ) ) {
+	function get_term( $term_id, $taxonomy = '' ) {
+		return $GLOBALS['perform_test_terms'][ (int) $term_id ] ?? false;
+	}
+}
+
+if ( ! function_exists( 'get_term_by' ) ) {
+	function get_term_by( $field, $value, $taxonomy = '' ) {
+		return $GLOBALS['perform_test_terms_by_tt_id'][ (int) $value ] ?? false;
+	}
+}
+
+if ( ! function_exists( 'get_comment' ) ) {
+	function get_comment( $comment_id ) {
+		return $GLOBALS['perform_test_comments'][ (int) $comment_id ] ?? false;
+	}
+}
+
+if ( ! function_exists( 'get_objects_in_term' ) ) {
+	function get_objects_in_term( $term_ids, $taxonomies, $args = [] ) {
+		$term_id = (int) ( is_array( $term_ids ) ? reset( $term_ids ) : $term_ids );
+		$ids     = $GLOBALS['perform_test_term_object_ids'][ $term_id ] ?? [];
+		return array_slice( $ids, 0, isset( $args['number'] ) ? (int) $args['number'] : count( $ids ) );
+	}
+}
+
+if ( ! function_exists( 'get_posts' ) ) {
+	function get_posts( $args = [] ) {
+		$term_id = (int) ( $args['tax_query'][0]['terms'][0] ?? 0 );
+		$ids     = $GLOBALS['perform_test_term_object_ids'][ $term_id ] ?? [];
+		return array_slice( $ids, 0, (int) ( $args['posts_per_page'] ?? count( $ids ) ) );
+	}
+}
+
+if ( ! function_exists( 'wp_is_post_revision' ) ) {
+	function wp_is_post_revision( $post_id ) {
+		return false;
+	}
+}
+
+if ( ! function_exists( 'wp_is_post_autosave' ) ) {
+	function wp_is_post_autosave( $post_id ) {
+		return false;
+	}
+}
+
+if ( ! function_exists( 'wp_nonce_field' ) ) {
+	function wp_nonce_field( $action = -1, $name = '_wpnonce' ) {
+		return '<input type="hidden" name="' . $name . '" value="test-nonce" />';
+	}
+}
+
+if ( ! function_exists( 'check_admin_referer' ) ) {
+	function check_admin_referer( $action = -1, $query_arg = '_wpnonce' ) {
+		return ! empty( $GLOBALS['perform_test_nonce_valid'] );
+	}
+}
+
+if ( ! function_exists( 'wp_safe_redirect' ) ) {
+	function wp_safe_redirect( $location, $status = 302 ) {
+		$GLOBALS['perform_test_redirect'] = $location;
+		return true;
+	}
+}
+
+if ( ! function_exists( 'wp_die' ) ) {
+	function wp_die( $message = '' ) {
+		throw new RuntimeException( (string) $message );
+	}
+}
+
+if ( ! function_exists( 'submit_button' ) ) {
+	function submit_button( $text = null, $type = 'primary', $name = 'submit', $wrap = true ) {
+		return '';
 	}
 }
 
