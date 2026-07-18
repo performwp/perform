@@ -523,6 +523,10 @@ if ( ! function_exists( 'wp_remote_post' ) ) {
 
 if ( ! function_exists( 'wp_schedule_single_event' ) ) {
 	function wp_schedule_single_event( $timestamp, $hook, $args = [] ) {
+		if ( ! isset( $GLOBALS['perform_test_scheduled_events'] ) || ! is_array( $GLOBALS['perform_test_scheduled_events'] ) ) {
+			$GLOBALS['perform_test_scheduled_events'] = [];
+		}
+		$GLOBALS['perform_test_scheduled_events'][ $hook ] = $timestamp;
 		$GLOBALS['perform_test_scheduled_single_events'][] = [
 			'timestamp' => $timestamp,
 			'hook'      => $hook,

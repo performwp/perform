@@ -53,6 +53,9 @@ class PageCache implements ModuleInterface {
 	 */
 	private $cloudflare_batch_size = 30;
 
+	/** @var int */
+	private $cloudflare_metadata_scan_limit = 100;
+
 	/**
 	 * Maximum retry attempts for a failed Cloudflare URL batch.
 	 *
@@ -622,9 +625,8 @@ class PageCache implements ModuleInterface {
 		if ( ! is_array( $old_value ) || ! is_array( $value ) || ! $this->cloudflare_settings_changed( $old_value, $value ) ) {
 			return $value;
 		}
-		$urls = array_slice( (array) get_option( 'perform_cache_urls_' . $this->get_blog_id(), [] ), 0, $this->cloudflare_batch_size );
-		if ( ! empty( $urls ) && ! $this->purge_cloudflare_urls( $urls, $old_value ) ) {
-			update_option( 'perform_cache_cloudflare_credential_residual_' . $this->get_blog_id(), count( $urls ), false );
+		if ( ! empty( $old_value['enable_cloudflare_cache_sync'] ) ) {
+			$this->queue_cloudflare_tracked_urls( $old_value, $this->get_cache_generation() );
 		}
 		return $value;
 	}
@@ -1011,21 +1013,26 @@ class PageCache implements ModuleInterface {
 		if ( ! current_user_can( 'manage_options' ) || ! check_admin_referer( 'perform_acknowledge_cloudflare_residual' ) ) {
 			wp_die( esc_html__( 'You are not allowed to acknowledge Cloudflare cleanup.', 'perform' ) );
 		}
+		$this->acknowledge_cloudflare_credential_residuals();
+		$this->schedule_cleanup();
+		wp_safe_redirect( admin_url( 'options-general.php?page=perform_cache_observability' ) );
+		exit;
+	}
+
+	/** Retire only records that cannot use the current credentials. */
+	private function acknowledge_cloudflare_credential_residuals(): void {
 		$key     = 'perform_cache_cloudflare_queue_' . $this->get_blog_id();
 		$records = $this->get_cloudflare_queue_records( get_option( $key, [] ) );
 		$records = array_values(
 			array_filter(
 				$records,
 				static function ( $record ) {
-					return empty( $record['failed'] );
+					return empty( $record['credential_residual'] );
 				}
 			)
 		);
 		update_option( $key, $records, false );
 		delete_option( 'perform_cache_cloudflare_credential_residual_' . $this->get_blog_id() );
-		$this->schedule_cleanup();
-		wp_safe_redirect( admin_url( 'options-general.php?page=perform_cache_observability' ) );
-		exit;
 	}
 
 	/** Confirm the administrator capability and action nonce before purging. */
@@ -1892,7 +1899,7 @@ class PageCache implements ModuleInterface {
 			}
 		}
 
-		if ( $has_more ) {
+		if ( $has_more || $remaining <= 0 ) {
 			wp_schedule_single_event( time() + 30, 'perform_cache_cleanup_event' );
 		}
 	}
@@ -1992,6 +1999,7 @@ class PageCache implements ModuleInterface {
 			'cursor'      => 0,
 			'zone_id'     => (string) $settings['cloudflare_zone_id'],
 			'fingerprint' => $fingerprint,
+			'enabled'     => ! empty( $settings['enable_cloudflare_cache_sync'] ),
 			'attempts'    => 0,
 			'failed'      => false,
 		];
@@ -2008,29 +2016,36 @@ class PageCache implements ModuleInterface {
 		if ( empty( $urls ) ) {
 			return;
 		}
-		$key     = 'perform_cache_cloudflare_queue_' . $this->get_blog_id();
-		$records = $this->get_cloudflare_queue_records( get_option( $key, [] ) );
+		$key         = 'perform_cache_cloudflare_queue_' . $this->get_blog_id();
+		$records     = $this->get_cloudflare_queue_records( get_option( $key, [] ) );
+		$limit       = max( 1, (int) $this->cloudflare_batch_size );
+		$fingerprint = $this->cloudflare_settings_key( $settings );
 		foreach ( $records as &$record ) {
-			if ( empty( $record['source'] ) && $this->cloudflare_settings_key( $settings ) === ( $record['fingerprint'] ?? '' ) ) {
-				$record['urls']     = array_values( array_unique( array_merge( (array) ( $record['urls'] ?? [] ), $urls ) ) );
-				$record['failed']   = false;
-				$record['attempts'] = 0;
-				unset( $record );
-				update_option( $key, $records, false );
-				wp_schedule_single_event( time() + 10, 'perform_cache_cloudflare_purge_event' );
-				return;
+			if ( ! empty( $record['source'] ) || ! in_array( $fingerprint, [ $record['fingerprint'] ?? '' ], true ) || ! empty( $record['failed'] ) ) {
+				continue;
 			}
+			$current  = isset( $record['urls'] ) && is_array( $record['urls'] ) ? $record['urls'] : [];
+			$capacity = $limit - count( $current );
+			if ( $capacity <= 0 ) {
+				continue;
+			}
+			$record['urls'] = array_values( array_unique( array_merge( $current, array_splice( $urls, 0, $capacity ) ) ) );
 		}
 		unset( $record );
-		$records[] = [
-			'urls'        => $urls,
-			'zone_id'     => (string) $settings['cloudflare_zone_id'],
-			'fingerprint' => $this->cloudflare_settings_key( $settings ),
-			'attempts'    => 0,
-			'failed'      => false,
-		];
+		while ( ! empty( $urls ) ) {
+			$records[] = [
+				'urls'        => array_splice( $urls, 0, $limit ),
+				'zone_id'     => (string) $settings['cloudflare_zone_id'],
+				'fingerprint' => $fingerprint,
+				'enabled'     => true,
+				'attempts'    => 0,
+				'failed'      => false,
+			];
+		}
 		update_option( $key, $records, false );
-		wp_schedule_single_event( time() + 10, 'perform_cache_cloudflare_purge_event' );
+		if ( ! wp_next_scheduled( 'perform_cache_cloudflare_purge_event' ) ) {
+			wp_schedule_single_event( time() + 10, 'perform_cache_cloudflare_purge_event' );
+		}
 	}
 
 	/** Purge a bounded batch of tracked URLs from Cloudflare, with retries. */
@@ -2047,28 +2062,36 @@ class PageCache implements ModuleInterface {
 			$work  = $this->get_cloudflare_record_work( $record );
 			$batch = $work['urls'];
 			if ( empty( $batch ) ) {
+				if ( isset( $work['cursor'] ) && empty( $work['complete'] ) ) {
+					$record['cursor'] = $work['cursor'];
+					break;
+				}
 				$this->retire_cloudflare_record( $record );
 				$record['done'] = true;
 				continue;
 			}
 			$settings = Helpers::get_settings();
-			if ( ! is_array( $settings ) || $record['fingerprint'] !== $this->cloudflare_settings_key( $settings ) ) {
-				$record['failed'] = true;
+			if ( ! is_array( $settings ) || ( $record['fingerprint'] ?? '' ) !== $this->cloudflare_settings_key( $settings ) ) {
+				$record['failed']              = true;
+				$record['credential_residual'] = true;
 				update_option( 'perform_cache_cloudflare_credential_residual_' . $this->get_blog_id(), $this->get_cloudflare_residual_count( $record, $batch ), false );
-			} elseif ( $this->purge_cloudflare_urls( $batch, $settings ) ) {
-				if ( isset( $work['cursor'] ) ) {
-					$record['cursor'] = $work['cursor'];
-					if ( ! empty( $work['complete'] ) ) {
-						$record['inventory_complete'] = true;
-					}
-				} elseif ( isset( $record['source'] ) ) {
-					$record['offset'] = (int) ( $record['offset'] ?? 0 ) + count( $batch );
-				} else {
-					$record['urls'] = array_values( array_diff( $record['urls'], $batch ) );
-				}
 			} else {
-				++$record['attempts'];
-				$record['failed'] = $record['attempts'] >= max( 1, (int) $this->cloudflare_max_retries );
+				$settings['enable_cloudflare_cache_sync'] = array_key_exists( 'enabled', $record ) ? ! empty( $record['enabled'] ) : true;
+				if ( $this->purge_cloudflare_urls( $batch, $settings ) ) {
+					if ( isset( $work['cursor'] ) ) {
+						$record['cursor'] = $work['cursor'];
+						if ( ! empty( $work['complete'] ) ) {
+							$record['inventory_complete'] = true;
+						}
+					} elseif ( isset( $record['source'] ) ) {
+						$record['offset'] = (int) ( $record['offset'] ?? 0 ) + count( $batch );
+					} else {
+						$record['urls'] = array_values( array_diff( $record['urls'], $batch ) );
+					}
+				} else {
+					++$record['attempts'];
+					$record['failed'] = $record['attempts'] >= max( 1, (int) $this->cloudflare_max_retries );
+				}
 			}
 			break;
 		}
@@ -2123,17 +2146,29 @@ class PageCache implements ModuleInterface {
 			];
 		}
 
-		$cursor = max( 0, (int) ( $record['cursor'] ?? 0 ) );
-		$index  = 0;
-		$urls   = [];
-		$limit  = max( 1, (int) $this->cloudflare_batch_size );
-		$files  = new \DirectoryIterator( $directory );
+		$cursor  = max( 0, (int) ( $record['cursor'] ?? 0 ) );
+		$index   = 0;
+		$urls    = [];
+		$limit   = max( 1, (int) $this->cloudflare_batch_size );
+		$budget  = max( 1, (int) apply_filters( 'perform_cache_cloudflare_metadata_scan_limit', $this->cloudflare_metadata_scan_limit ) );
+		$scanned = 0;
+		$files   = new \DirectoryIterator( $directory );
 		foreach ( $files as $file ) {
-			if ( $file->isDot() || ! $file->isFile() || '.meta.json' !== substr( $file->getFilename(), -10 ) ) {
-				++$index;
+			if ( $file->isDot() ) {
 				continue;
 			}
 			if ( $index++ < $cursor ) {
+				continue;
+			}
+			++$scanned;
+			if ( ! $file->isFile() || '.meta.json' !== substr( $file->getFilename(), -10 ) ) {
+				if ( $scanned >= $budget ) {
+					return [
+						'urls'     => [],
+						'cursor'   => $index,
+						'complete' => false,
+					];
+				}
 				continue;
 			}
 			$raw  = file_get_contents( $file->getPathname() );
@@ -2142,7 +2177,7 @@ class PageCache implements ModuleInterface {
 			if ( '' !== $url && $this->is_site_url( $url ) ) {
 				$urls[] = $url;
 			}
-			if ( count( $urls ) >= $limit ) {
+			if ( count( $urls ) >= $limit || $scanned >= $budget ) {
 				return [
 					'urls'     => array_values( array_unique( $urls ) ),
 					'cursor'   => $index,
@@ -2211,7 +2246,7 @@ class PageCache implements ModuleInterface {
 
 	/** @param array<string,mixed> $settings */
 	private function cloudflare_settings_key( array $settings ): string {
-		return md5( $settings['cloudflare_zone_id'] . '|' . $settings['cloudflare_api_token'] ); }
+		return md5( (string) ( $settings['cloudflare_zone_id'] ?? '' ) . '|' . (string) ( $settings['cloudflare_api_token'] ?? '' ) ); }
 
 	/**
 	 * @param array<string, mixed> $old Previous settings.
