@@ -843,6 +843,31 @@ final class Tests_Page_Cache extends TestCase {
 		$this->assertCount( 1, $GLOBALS['perform_test_scheduled_single_events'] );
 	}
 
+	public function test_cloudflare_status_separates_retryable_failures_from_residuals() {
+		$page_cache                      = new PageCache();
+		$GLOBALS['perform_test_options'] = [
+			'perform_settings'                 => [
+				'cloudflare_zone_id'   => 'zone',
+				'cloudflare_api_token' => 'token',
+			],
+			'perform_cache_cloudflare_queue_1' => [
+				[
+					'fingerprint' => md5( 'zone|token' ),
+					'failed'      => true,
+				],
+				[
+					'fingerprint'         => md5( 'old|token' ),
+					'failed'              => true,
+					'credential_residual' => true,
+				],
+			],
+		];
+
+		$status = $this->invoke_private( $page_cache, 'get_cloudflare_queue_status' );
+		$this->assertSame( 1, $status['retryable_failed'] );
+		$this->assertSame( 1, $status['credential_residuals'] );
+	}
+
 	public function test_manual_purge_requires_manage_options() {
 		$page_cache = new PageCache();
 		$this->expectException( RuntimeException::class );

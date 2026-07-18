@@ -784,7 +784,7 @@ class PageCache implements ModuleInterface {
 					?>
 					<div class="notice notice-warning"><p><?php esc_html_e( 'Cloudflare URL cleanup is pending.', 'perform' ); ?></p></div><?php endif; ?>
 				<?php
-				if ( ! empty( $_GET['perform_cache_cloudflare_failed'] ) ) :
+				if ( ! empty( $_GET['perform_cache_cloudflare_retryable_failed'] ) ) :
 					?>
 					<div class="notice notice-error"><p><?php esc_html_e( 'Some Cloudflare URL cleanup batches need a manual retry.', 'perform' ); ?></p></div><?php endif; ?>
 			<?php endif; ?>
@@ -1008,7 +1008,7 @@ class PageCache implements ModuleInterface {
 				[
 					'perform_cache_purged'             => '1',
 					'perform_cache_cloudflare_pending' => $status['pending'],
-					'perform_cache_cloudflare_failed'  => $status['failed'],
+					'perform_cache_cloudflare_retryable_failed' => $status['retryable_failed'],
 				],
 				admin_url( 'options-general.php?page=perform_cache_observability' )
 			)
