@@ -790,6 +790,59 @@ final class Tests_Page_Cache extends TestCase {
 		$this->assertArrayNotHasKey( 'perform_cache_cloudflare_credential_residual_1', $GLOBALS['perform_test_options'] );
 	}
 
+	public function test_cloudflare_retry_requires_capability_and_nonce() {
+		$page_cache = new PageCache();
+		$this->assertFalse( $this->invoke_private( $page_cache, 'is_cloudflare_retry_authorized' ) );
+
+		$GLOBALS['perform_test_current_user_can'] = [ 'manage_options' => true ];
+		$GLOBALS['perform_test_nonce_valid']      = true;
+		$this->assertTrue( $this->invoke_private( $page_cache, 'is_cloudflare_retry_authorized' ) );
+	}
+
+	public function test_cloudflare_retry_selectively_resets_current_failures_and_preserves_residuals() {
+		$page_cache                      = new PageCache();
+		$GLOBALS['perform_test_options'] = [
+			'perform_settings'                 => [
+				'enable_cloudflare_cache_sync' => true,
+				'cloudflare_zone_id'           => 'zone',
+				'cloudflare_api_token'         => 'token',
+			],
+			'perform_cache_cloudflare_queue_1' => [
+				[
+					'urls'        => [ 'https://example.com/retry/' ],
+					'fingerprint' => md5( 'zone|token' ),
+					'attempts'    => 3,
+					'failed'      => true,
+				],
+				[
+					'urls'                => [ 'https://example.com/residual/' ],
+					'fingerprint'         => md5( 'old|token' ),
+					'attempts'            => 3,
+					'failed'              => true,
+					'credential_residual' => true,
+				],
+				[
+					'urls'        => [ 'https://example.com/other/' ],
+					'fingerprint' => md5( 'other|token' ),
+					'attempts'    => 3,
+					'failed'      => true,
+				],
+			],
+		];
+
+		$this->assertSame( 1, $this->invoke_private( $page_cache, 'retry_current_cloudflare_failures' ) );
+		$records = $GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'];
+		$this->assertFalse( $records[0]['failed'] );
+		$this->assertSame( 0, $records[0]['attempts'] );
+		$this->assertTrue( $records[1]['failed'] );
+		$this->assertTrue( $records[1]['credential_residual'] );
+		$this->assertTrue( $records[2]['failed'] );
+		$this->assertCount( 1, $GLOBALS['perform_test_scheduled_single_events'] );
+
+		$this->assertSame( 0, $this->invoke_private( $page_cache, 'retry_current_cloudflare_failures' ) );
+		$this->assertCount( 1, $GLOBALS['perform_test_scheduled_single_events'] );
+	}
+
 	public function test_manual_purge_requires_manage_options() {
 		$page_cache = new PageCache();
 		$this->expectException( RuntimeException::class );

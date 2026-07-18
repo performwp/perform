@@ -200,6 +200,7 @@ class PageCache implements ModuleInterface {
 
 		add_action( 'admin_menu', [ $this, 'register_observability_page' ] );
 		add_action( 'admin_post_perform_purge_page_cache', [ $this, 'handle_manual_purge' ] );
+		add_action( 'admin_post_perform_retry_cloudflare_cleanup', [ $this, 'handle_cloudflare_cleanup_retry' ] );
 		add_action( 'admin_post_perform_acknowledge_cloudflare_residual', [ $this, 'handle_cloudflare_residual_acknowledgement' ] );
 	}
 
@@ -792,8 +793,15 @@ class PageCache implements ModuleInterface {
 				<?php wp_nonce_field( 'perform_purge_page_cache' ); ?>
 				<?php submit_button( esc_html__( 'Purge Site Page Cache', 'perform' ), 'secondary', 'submit', false ); ?>
 			</form>
-			<?php if ( $cloudflare['pending'] || $cloudflare['failed'] || $residual ) : ?>
-				<div class="notice notice-<?php echo $cloudflare['failed'] || $residual ? 'error' : 'warning'; ?>"><p><?php echo esc_html( sprintf( __( 'Cloudflare cleanup: %1$d pending, %2$d failed, %3$d old-credential residual.', 'perform' ), $cloudflare['pending'], $cloudflare['failed'], $residual ) ); ?></p></div>
+			<?php if ( $cloudflare['pending'] || $cloudflare['retryable_failed'] || $cloudflare['credential_residuals'] || $residual ) : ?>
+				<div class="notice notice-<?php echo $cloudflare['retryable_failed'] || $cloudflare['credential_residuals'] || $residual ? 'error' : 'warning'; ?>"><p><?php echo esc_html( sprintf( __( 'Cloudflare cleanup: %1$d pending, %2$d retryable failures, %3$d old-credential residuals.', 'perform' ), $cloudflare['pending'], $cloudflare['retryable_failed'], max( $cloudflare['credential_residuals'], $residual ) ) ); ?></p></div>
+			<?php endif; ?>
+			<?php if ( $cloudflare['retryable_failed'] ) : ?>
+				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+					<input type="hidden" name="action" value="perform_retry_cloudflare_cleanup" />
+					<?php wp_nonce_field( 'perform_retry_cloudflare_cleanup' ); ?>
+					<?php submit_button( esc_html__( 'Retry Failed Cloudflare Cleanup', 'perform' ), 'secondary', 'submit', false ); ?>
+				</form>
 			<?php endif; ?>
 			<?php if ( $residual ) : ?>
 				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
@@ -1019,6 +1027,16 @@ class PageCache implements ModuleInterface {
 		exit;
 	}
 
+	/** Retry failed cleanup records that still match the current credentials. */
+	public function handle_cloudflare_cleanup_retry(): void {
+		if ( ! $this->is_cloudflare_retry_authorized() ) {
+			wp_die( esc_html__( 'You are not allowed to retry Cloudflare cleanup.', 'perform' ) );
+		}
+		$this->retry_current_cloudflare_failures();
+		wp_safe_redirect( admin_url( 'options-general.php?page=perform_cache_observability' ) );
+		exit;
+	}
+
 	/** Retire only records that cannot use the current credentials. */
 	private function acknowledge_cloudflare_credential_residuals(): void {
 		$key     = 'perform_cache_cloudflare_queue_' . $this->get_blog_id();
@@ -1033,6 +1051,39 @@ class PageCache implements ModuleInterface {
 		);
 		update_option( $key, $records, false );
 		delete_option( 'perform_cache_cloudflare_credential_residual_' . $this->get_blog_id() );
+	}
+
+	/** Reset only retryable failures that match the currently configured edge credentials. */
+	private function retry_current_cloudflare_failures(): int {
+		$settings = Helpers::get_settings();
+		if ( ! is_array( $settings ) ) {
+			return 0;
+		}
+		$key         = 'perform_cache_cloudflare_queue_' . $this->get_blog_id();
+		$records     = $this->get_cloudflare_queue_records( get_option( $key, [] ) );
+		$fingerprint = $this->cloudflare_settings_key( $settings );
+		$retries     = 0;
+		foreach ( $records as &$record ) {
+			if ( empty( $record['failed'] ) || ! empty( $record['credential_residual'] ) || ( $record['fingerprint'] ?? '' ) !== $fingerprint ) {
+				continue;
+			}
+			$record['failed']   = false;
+			$record['attempts'] = 0;
+			++$retries;
+		}
+		unset( $record );
+		if ( $retries ) {
+			update_option( $key, $records, false );
+			if ( ! wp_next_scheduled( 'perform_cache_cloudflare_purge_event' ) ) {
+				wp_schedule_single_event( time() + 10, 'perform_cache_cloudflare_purge_event' );
+			}
+		}
+		return $retries;
+	}
+
+	/** Confirm the administrator capability and nonce before retrying current Cloudflare cleanup. */
+	private function is_cloudflare_retry_authorized(): bool {
+		return current_user_can( 'manage_options' ) && (bool) check_admin_referer( 'perform_retry_cloudflare_cleanup' );
 	}
 
 	/** Confirm the administrator capability and action nonce before purging. */
@@ -2258,14 +2309,23 @@ class PageCache implements ModuleInterface {
 
 	/** @return array<string, int> */
 	private function get_cloudflare_queue_status() {
-		$records = $this->get_cloudflare_queue_records( get_option( 'perform_cache_cloudflare_queue_' . $this->get_blog_id(), [] ) );
-		$status  = [
-			'pending' => 0,
-			'failed'  => 0,
+		$records  = $this->get_cloudflare_queue_records( get_option( 'perform_cache_cloudflare_queue_' . $this->get_blog_id(), [] ) );
+		$settings = Helpers::get_settings();
+		$current  = is_array( $settings ) ? $this->cloudflare_settings_key( $settings ) : '';
+		$status   = [
+			'pending'              => 0,
+			'failed'               => 0,
+			'retryable_failed'     => 0,
+			'credential_residuals' => 0,
 		];
 		foreach ( $records as $record ) {
 			if ( ! empty( $record['failed'] ) ) {
 				++$status['failed'];
+				if ( ! empty( $record['credential_residual'] ) ) {
+					++$status['credential_residuals'];
+				} elseif ( ( $record['fingerprint'] ?? '' ) === $current ) {
+					++$status['retryable_failed'];
+				}
 			} else {
 				++$status['pending']; }
 		}
