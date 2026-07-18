@@ -450,6 +450,128 @@ final class Tests_Page_Cache extends TestCase {
 		$this->assertSame( [ 'https://example.com/c/' ], $GLOBALS['perform_test_options']['perform_cache_manifest_1_1_1'] );
 	}
 
+	public function test_metadata_inventory_drains_in_bounded_batches_without_tokens() {
+		$page_cache = new PageCache();
+		$cache_dir  = $this->temporary_cache_dir();
+		$this->set_private_property( $page_cache, 'cache_dir', $cache_dir );
+		$this->set_private_property( $page_cache, 'cloudflare_batch_size', 1 );
+		$GLOBALS['perform_test_options']['perform_settings'] = [
+			'enable_cloudflare_cache_sync' => true,
+			'cloudflare_zone_id'           => 'zone',
+			'cloudflare_api_token'         => 'token',
+		];
+		$directory = $cache_dir . 'site-1/generation-1/';
+		mkdir( $directory, 0777, true );
+		file_put_contents( $directory . 'bad.meta.json', '{not-json' );
+		foreach ( [ 'a', 'b', 'c' ] as $slug ) {
+			file_put_contents( $directory . $slug . '.meta.json', wp_json_encode( [ 'url' => 'https://example.com/' . $slug . '/' ] ) );
+		}
+		$GLOBALS['perform_test_remote_post_response'] = [
+			'response' => [ 'code' => 200 ],
+			'body'     => '{"success":true}',
+		];
+
+		$this->invoke_private_with_arguments( $page_cache, 'queue_cloudflare_tracked_urls', [ null, 1 ] );
+		$record = $GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'][0];
+		$this->assertSame( 'metadata', $record['source'] );
+		$this->assertArrayNotHasKey( 'cloudflare_api_token', $record );
+		$this->assertStringNotContainsString( 'token', wp_json_encode( $record ) );
+
+		for ( $run = 0; $run < 5; $run++ ) {
+			$page_cache->run_cloudflare_purge_batch();
+		}
+
+		$this->assertSame(
+			[ 'https://example.com/a/', 'https://example.com/b/', 'https://example.com/c/' ],
+			array_map(
+				static function ( $call ) {
+					return json_decode( $call['args']['body'], true )['files'][0];
+				},
+				$GLOBALS['perform_test_remote_post_calls']
+			)
+		);
+		$this->assertSame( [], $GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'] );
+	}
+
+	public function test_cleanup_waits_for_metadata_inventory_then_removes_retired_files() {
+		$page_cache = new PageCache();
+		$cache_dir  = $this->temporary_cache_dir();
+		$this->set_private_property( $page_cache, 'cache_dir', $cache_dir );
+		$GLOBALS['perform_test_options']['perform_cache_generation_1'] = 2;
+		mkdir( $cache_dir . 'site-1/generation-1/', 0777, true );
+		file_put_contents( $cache_dir . 'site-1/generation-1/retired.meta.json', '{}' );
+		$GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'] = [
+			[
+				'source'     => 'metadata',
+				'generation' => 1,
+				'cursor'     => 0,
+				'failed'     => false,
+			],
+		];
+
+		$page_cache->cleanup_obsolete_generations();
+		$this->assertFileExists( $cache_dir . 'site-1/generation-1/retired.meta.json' );
+		$this->assertSame( 'perform_cache_cleanup_event', $GLOBALS['perform_test_scheduled_single_events'][0]['hook'] );
+
+		$GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'] = [];
+		$page_cache->cleanup_obsolete_generations();
+		$this->assertFileDoesNotExist( $cache_dir . 'site-1/generation-1/retired.meta.json' );
+	}
+
+	public function test_empty_metadata_source_is_retired_without_rescheduling() {
+		$page_cache                      = new PageCache();
+		$GLOBALS['perform_test_options'] = [
+			'perform_settings'                 => [
+				'enable_cloudflare_cache_sync' => true,
+				'cloudflare_zone_id'           => 'zone',
+				'cloudflare_api_token'         => 'token',
+			],
+			'perform_cache_cloudflare_queue_1' => [
+				[
+					'source'      => 'metadata',
+					'generation'  => 99,
+					'cursor'      => 0,
+					'zone_id'     => 'zone',
+					'fingerprint' => md5( 'zone|token' ),
+					'attempts'    => 0,
+					'failed'      => false,
+				],
+			],
+		];
+
+		$page_cache->run_cloudflare_purge_batch();
+		$this->assertSame( [], $GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'] );
+		$this->assertSame( [], $GLOBALS['perform_test_scheduled_single_events'] );
+	}
+
+	public function test_source_credential_mismatch_is_visible_and_nonfatal() {
+		$page_cache                      = new PageCache();
+		$GLOBALS['perform_test_options'] = [
+			'perform_settings'                 => [
+				'enable_cloudflare_cache_sync' => true,
+				'cloudflare_zone_id'           => 'new-zone',
+				'cloudflare_api_token'         => 'new-token',
+			],
+			'perform_cache_cloudflare_queue_1' => [
+				[
+					'source'      => 'manifest',
+					'generation'  => 1,
+					'chunk'       => 0,
+					'offset'      => 0,
+					'zone_id'     => 'old-zone',
+					'fingerprint' => md5( 'old-zone|old-token' ),
+					'attempts'    => 0,
+					'failed'      => false,
+				],
+			],
+			'perform_cache_manifest_1_1_0'     => [ 'https://example.com/a/' ],
+		];
+
+		$page_cache->run_cloudflare_purge_batch();
+		$this->assertTrue( $GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'][0]['failed'] );
+		$this->assertSame( 1, $GLOBALS['perform_test_options']['perform_cache_cloudflare_credential_residual_1'] );
+	}
+
 	public function test_manual_purge_requires_manage_options() {
 		$page_cache = new PageCache();
 		$this->expectException( RuntimeException::class );
@@ -516,6 +638,12 @@ final class Tests_Page_Cache extends TestCase {
 		$reflection = new ReflectionMethod( $page_cache, $method );
 		$reflection->setAccessible( true );
 		return $reflection->invoke( $page_cache, $argument );
+	}
+
+	private function invoke_private_with_arguments( PageCache $page_cache, string $method, array $arguments ) {
+		$reflection = new ReflectionMethod( $page_cache, $method );
+		$reflection->setAccessible( true );
+		return $reflection->invokeArgs( $page_cache, $arguments );
 	}
 
 	private function build_sitemap_index_xml( int $child_count ): string {

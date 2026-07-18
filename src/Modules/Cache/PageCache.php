@@ -1835,9 +1835,13 @@ class PageCache implements ModuleInterface {
 
 	/** Delete a bounded number of files from retired generations. */
 	public function cleanup_obsolete_generations(): void {
-		$site_dir    = $this->cache_dir . 'site-' . $this->get_blog_id() . '/';
-		$remaining   = max( 1, (int) $this->cleanup_batch_size );
-		$has_more    = false;
+		$site_dir  = $this->cache_dir . 'site-' . $this->get_blog_id() . '/';
+		$remaining = max( 1, (int) $this->cleanup_batch_size );
+		$has_more  = false;
+		if ( $this->has_pending_metadata_inventory() ) {
+			$this->schedule_cleanup();
+			return;
+		}
 		$legacy_html = glob( $this->cache_dir . '*.html' );
 		$legacy_meta = glob( $this->cache_dir . '*.meta.json' );
 		$legacy      = array_merge( is_array( $legacy_html ) ? $legacy_html : [], is_array( $legacy_meta ) ? $legacy_meta : [] );
@@ -1899,7 +1903,11 @@ class PageCache implements ModuleInterface {
 		$chunk_key = $this->get_manifest_chunk_option( $generation, (int) $state['chunk'] );
 		$urls      = get_option( $chunk_key, [] );
 		$urls      = is_array( $urls ) ? $urls : [];
-		$urls[]    = esc_url_raw( $url );
+		$url       = esc_url_raw( $url );
+		if ( in_array( $url, $urls, true ) ) {
+			return;
+		}
+		$urls[] = $url;
 		update_option( $chunk_key, $urls, false );
 		++$state['count'];
 		update_option( $state_key, $state, false );
@@ -1917,8 +1925,11 @@ class PageCache implements ModuleInterface {
 		$key        = 'perform_cache_cloudflare_queue_' . $blog_id;
 		$records    = $this->get_cloudflare_queue_records( get_option( $key, [] ) );
 		$state      = get_option( $this->get_manifest_state_option( $generation ), [] );
-		$chunks     = is_array( $state ) ? range( 0, (int) $state['chunk'] ) : [];
+		$chunks     = is_array( $state ) && isset( $state['chunk'] ) ? range( 0, (int) $state['chunk'] ) : [];
 		foreach ( $chunks as $chunk ) {
+			if ( $this->has_cloudflare_source_record( $records, 'manifest', $generation, (int) $chunk ) ) {
+				continue;
+			}
 			$records[] = [
 				'source'      => 'manifest',
 				'generation'  => $generation,
@@ -1930,7 +1941,7 @@ class PageCache implements ModuleInterface {
 				'failed'      => false,
 			];
 		}
-		if ( empty( $chunks ) ) {
+		if ( empty( $chunks ) && ! $this->has_cloudflare_source_record( $records, 'metadata', $generation ) ) {
 			$records[] = [
 				'source'      => 'metadata',
 				'generation'  => $generation,
@@ -1941,7 +1952,7 @@ class PageCache implements ModuleInterface {
 				'failed'      => false,
 			];
 		}
-		if ( 1 === $generation ) {
+		if ( 1 === $generation && ! $this->has_cloudflare_source_record( $records, 'legacy_metadata' ) ) {
 			$records[] = [
 				'source'      => 'legacy_metadata',
 				'cursor'      => 0,
@@ -1952,7 +1963,7 @@ class PageCache implements ModuleInterface {
 			];
 		}
 		$legacy = get_option( 'perform_cache_urls_' . $blog_id, [] );
-		if ( is_array( $legacy ) && ! empty( $legacy ) ) {
+		if ( is_array( $legacy ) && ! empty( $legacy ) && ! $this->has_cloudflare_source_record( $records, 'legacy_option' ) ) {
 			$records[] = [
 				'source'      => 'legacy_option',
 				'offset'      => 0,
@@ -1975,6 +1986,23 @@ class PageCache implements ModuleInterface {
 	private function get_manifest_chunk_size(): int {
 		return max( 1, (int) apply_filters( 'perform_cache_manifest_chunk_size', $this->manifest_chunk_size ) ); }
 
+	/** @param array<int, array<string, mixed>> $records */
+	private function has_cloudflare_source_record( array $records, string $source, ?int $generation = null, ?int $chunk = null ): bool {
+		foreach ( $records as $record ) {
+			if ( ( $record['source'] ?? '' ) !== $source || ! empty( $record['done'] ) ) {
+				continue;
+			}
+			if ( null !== $generation && (int) ( $record['generation'] ?? 0 ) !== (int) $generation ) {
+				continue;
+			}
+			if ( null !== $chunk && (int) ( $record['chunk'] ?? -1 ) !== (int) $chunk ) {
+				continue;
+			}
+			return true;
+		}
+		return false;
+	}
+
 	/** Purge a bounded batch of tracked URLs from Cloudflare, with retries. */
 	public function run_cloudflare_purge_batch(): void {
 		$key     = 'perform_cache_cloudflare_queue_' . $this->get_blog_id();
@@ -1996,9 +2024,11 @@ class PageCache implements ModuleInterface {
 			$settings = Helpers::get_settings();
 			if ( ! is_array( $settings ) || $record['fingerprint'] !== $this->cloudflare_settings_key( $settings ) ) {
 				$record['failed'] = true;
-				update_option( 'perform_cache_cloudflare_credential_residual_' . $this->get_blog_id(), count( $record['urls'] ), false );
+				update_option( 'perform_cache_cloudflare_credential_residual_' . $this->get_blog_id(), $this->get_cloudflare_residual_count( $record, $urls ), false );
 			} elseif ( $this->purge_cloudflare_urls( $batch, $settings ) ) {
-				if ( isset( $record['source'] ) ) {
+				if ( isset( $record['source'] ) && in_array( $record['source'], [ 'metadata', 'legacy_metadata' ], true ) ) {
+					// The inventory cursor advanced while building this batch.
+				} elseif ( isset( $record['source'] ) ) {
 					$record['offset'] = (int) ( $record['offset'] ?? 0 ) + count( $batch );
 				} else {
 					$record['urls'] = array_values( array_diff( $record['urls'], $batch ) );
@@ -2034,7 +2064,7 @@ class PageCache implements ModuleInterface {
 	 * @param array<string, mixed> $record Record.
 	 * @return array<int, string>
 	 */
-	private function get_cloudflare_record_urls( array $record ): array {
+	private function get_cloudflare_record_urls( array &$record ): array {
 		if ( isset( $record['source'] ) && 'manifest' === $record['source'] ) {
 			$urls = get_option( $this->get_manifest_chunk_option( (int) $record['generation'], (int) $record['chunk'] ), [] );
 			return is_array( $urls ) ? $urls : [];
@@ -2043,16 +2073,85 @@ class PageCache implements ModuleInterface {
 			$urls = get_option( 'perform_cache_urls_' . $this->get_blog_id(), [] );
 			return is_array( $urls ) ? $urls : [];
 		}
+		if ( isset( $record['source'] ) && in_array( $record['source'], [ 'metadata', 'legacy_metadata' ], true ) ) {
+			return $this->get_cloudflare_metadata_urls( $record );
+		}
 		return isset( $record['urls'] ) && is_array( $record['urls'] ) ? $record['urls'] : [];
+	}
+
+	/**
+	 * @param array<string, mixed> $record
+	 * @return array<int, string>
+	 */
+	private function get_cloudflare_metadata_urls( array &$record ): array {
+		$directory = 'metadata' === $record['source'] ? $this->get_generation_dir( (int) $record['generation'] ) : $this->cache_dir;
+		if ( ! is_dir( $directory ) ) {
+			$record['inventory_complete'] = true;
+			return [];
+		}
+
+		$cursor = max( 0, (int) ( $record['cursor'] ?? 0 ) );
+		$index  = 0;
+		$urls   = [];
+		$limit  = max( 1, (int) $this->cloudflare_batch_size );
+		$files  = new \DirectoryIterator( $directory );
+		foreach ( $files as $file ) {
+			if ( $file->isDot() || ! $file->isFile() || '.meta.json' !== substr( $file->getFilename(), -10 ) ) {
+				++$index;
+				continue;
+			}
+			if ( $index++ < $cursor ) {
+				continue;
+			}
+			$raw  = file_get_contents( $file->getPathname() );
+			$data = false === $raw ? null : json_decode( $raw, true );
+			$url  = is_array( $data ) && isset( $data['url'] ) ? esc_url_raw( (string) $data['url'] ) : '';
+			if ( '' !== $url && $this->is_site_url( $url ) ) {
+				$urls[] = $url;
+			}
+			$record['cursor'] = $index;
+			if ( count( $urls ) >= $limit ) {
+				return array_values( array_unique( $urls ) );
+			}
+		}
+		$record['cursor']             = $index;
+		$record['inventory_complete'] = true;
+		return array_values( array_unique( $urls ) );
+	}
+
+	/**
+	 * @param array<string, mixed> $record
+	 * @param array<int, string> $urls
+	 */
+	private function get_cloudflare_residual_count( array $record, array $urls ): int {
+		if ( isset( $record['urls'] ) && is_array( $record['urls'] ) ) {
+			return max( 1, count( $record['urls'] ) - (int) ( $record['offset'] ?? 0 ) );
+		}
+		return max( 1, count( $urls ) );
 	}
 
 	/** @param array<string,mixed> $record */
 	private function retire_cloudflare_record( array $record ): void {
 		if ( isset( $record['source'] ) && 'manifest' === $record['source'] ) {
 			delete_option( $this->get_manifest_chunk_option( (int) $record['generation'], (int) $record['chunk'] ) );
+			$state = get_option( $this->get_manifest_state_option( (int) $record['generation'] ), [] );
+			if ( is_array( $state ) && (int) $record['chunk'] >= (int) ( $state['chunk'] ?? 0 ) ) {
+				delete_option( $this->get_manifest_state_option( (int) $record['generation'] ) );
+			}
 		} elseif ( isset( $record['source'] ) && 'legacy_option' === $record['source'] ) {
 			delete_option( 'perform_cache_urls_' . $this->get_blog_id() );
 		}
+	}
+
+	/** Keep local metadata until its bounded Cloudflare inventory is drained. */
+	private function has_pending_metadata_inventory(): bool {
+		$records = $this->get_cloudflare_queue_records( get_option( 'perform_cache_cloudflare_queue_' . $this->get_blog_id(), [] ) );
+		foreach ( $records as $record ) {
+			if ( in_array( $record['source'] ?? '', [ 'metadata', 'legacy_metadata' ], true ) && empty( $record['done'] ) ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
