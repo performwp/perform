@@ -535,7 +535,12 @@ class PageCache implements ModuleInterface {
 				$urls[] = $link;
 			}
 		}
-		$this->purge_urls( array_merge( $urls, $this->get_invalidation_urls_for_posts( $this->get_affected_object_ids_for_term( $term_id, $taxonomy ) ) ) );
+		$affected = $this->get_affected_object_ids_for_term( $term_id, $taxonomy );
+		if ( $affected['overflow'] ) {
+			$this->purge_site_cache();
+			return;
+		}
+		$this->purge_urls( array_merge( $urls, $this->get_invalidation_urls_for_posts( $affected['ids'] ) ) );
 	}
 
 	/**
@@ -545,7 +550,12 @@ class PageCache implements ModuleInterface {
 	 * @param array<int,int> $object_ids Object IDs.
 	 */
 	public function purge_related_urls_for_deleted_term( int $term_id, int $tt_id, string $taxonomy, $deleted_term, array $object_ids = [] ): void {
-		$urls = array_merge( [ home_url( '/' ) ], $this->get_invalidation_urls_for_posts( $object_ids ) );
+		$limit = $this->get_term_object_limit();
+		if ( count( $object_ids ) > $limit ) {
+			$this->purge_site_cache();
+			return;
+		}
+		$urls = array_merge( [ home_url( '/' ) ], $this->get_invalidation_urls_for_posts( array_slice( $object_ids, 0, $limit ) ) );
 		if ( $deleted_term instanceof \WP_Term ) {
 			$link = get_term_link( $deleted_term );
 			if ( ! is_wp_error( $link ) ) {
@@ -573,9 +583,9 @@ class PageCache implements ModuleInterface {
 		}
 		$this->site_purge_requested = true;
 		$current                    = $this->get_cache_generation();
+		$this->queue_cloudflare_tracked_urls( null, $current );
 		update_option( $this->get_generation_option_name(), $current + 1, false );
 		$this->schedule_cleanup();
-		$this->queue_cloudflare_tracked_urls();
 	}
 
 	/**
@@ -613,7 +623,10 @@ class PageCache implements ModuleInterface {
 		if ( ! is_array( $old_value ) || ! is_array( $value ) || ! $this->cloudflare_settings_changed( $old_value, $value ) ) {
 			return $value;
 		}
-		$this->queue_cloudflare_tracked_urls( $old_value );
+		$urls = array_slice( (array) get_option( 'perform_cache_urls_' . $this->get_blog_id(), [] ), 0, $this->cloudflare_batch_size );
+		if ( ! empty( $urls ) && ! $this->purge_cloudflare_urls( $urls, $old_value ) ) {
+			update_option( 'perform_cache_cloudflare_credential_residual_' . $this->get_blog_id(), count( $urls ), false );
+		}
 		return $value;
 	}
 
@@ -900,14 +913,36 @@ class PageCache implements ModuleInterface {
 	/**
 	 * Find a bounded set of posts related to a term.
 	 *
-	 * @return array<int, int>
+	 * @return array{ids: array<int, int>, overflow: bool}
 	 */
 	private function get_affected_object_ids_for_term( int $term_id, string $taxonomy ) {
-		if ( '' === $taxonomy || ! function_exists( 'get_objects_in_term' ) ) {
-			return [];
+		if ( '' === $taxonomy || ! function_exists( 'get_posts' ) ) {
+			return [
+				'ids'      => [],
+				'overflow' => false,
+			];
 		}
-		$object_ids = get_objects_in_term( (int) $term_id, $taxonomy, [ 'number' => $this->get_term_object_limit() ] );
-		return is_wp_error( $object_ids ) || ! is_array( $object_ids ) ? [] : array_map( 'intval', $object_ids );
+		$limit      = $this->get_term_object_limit();
+		$object_ids = get_posts(
+			[
+				'fields'         => 'ids',
+				'posts_per_page' => $limit + 1,
+				'post_status'    => 'any',
+				'no_found_rows'  => true,
+				'tax_query'      => [
+					[
+						'taxonomy' => $taxonomy,
+						'field'    => 'term_id',
+						'terms'    => [ $term_id ],
+					],
+				],
+			]
+		);
+		$object_ids = is_array( $object_ids ) ? array_map( 'intval', $object_ids ) : [];
+		return [
+			'ids'      => array_slice( $object_ids, 0, $limit ),
+			'overflow' => count( $object_ids ) > $limit,
+		];
 	}
 
 	/** @return int */
@@ -1862,7 +1897,7 @@ class PageCache implements ModuleInterface {
 
 	/** Queue tracked URLs instead of using Cloudflare purge_everything. */
 	/** @param array<string,mixed>|null $settings */
-	private function queue_cloudflare_tracked_urls( $settings = null ): void {
+	private function queue_cloudflare_tracked_urls( $settings = null, ?int $generation = null ): void {
 		$settings = is_array( $settings ) ? $settings : Helpers::get_settings();
 		if ( ! is_array( $settings ) || empty( $settings['enable_cloudflare_cache_sync'] ) ) {
 			return;
@@ -1870,7 +1905,7 @@ class PageCache implements ModuleInterface {
 		$blog_id = $this->get_blog_id();
 		$urls    = get_option( 'perform_cache_urls_' . $blog_id, [] );
 		$urls    = is_array( $urls ) ? $urls : [];
-		$urls    = array_values( array_unique( array_merge( $urls, $this->get_cached_urls_from_metadata() ) ) );
+		$urls    = array_values( array_unique( array_merge( $urls, $this->get_cached_urls_from_metadata( null === $generation ? $this->get_cache_generation() : (int) $generation ) ) ) );
 		if ( empty( $urls ) ) {
 			return;
 		}
@@ -1878,7 +1913,7 @@ class PageCache implements ModuleInterface {
 		$records = $this->get_cloudflare_queue_records( get_option( $key, [] ) );
 		$found   = false;
 		foreach ( $records as &$record ) {
-			if ( $this->cloudflare_settings_key( $record['settings'] ) === $this->cloudflare_settings_key( $settings ) ) {
+			if ( $record['fingerprint'] === $this->cloudflare_settings_key( $settings ) ) {
 				$record['urls']     = array_values( array_unique( array_merge( $record['urls'], $urls ) ) );
 				$record['failed']   = false;
 				$record['attempts'] = 0;
@@ -1889,10 +1924,11 @@ class PageCache implements ModuleInterface {
 		unset( $record );
 		if ( ! $found ) {
 			$records[] = [
-				'urls'     => array_values( array_unique( $urls ) ),
-				'settings' => $this->cloudflare_settings( $settings ),
-				'attempts' => 0,
-				'failed'   => false,
+				'urls'        => array_values( array_unique( $urls ) ),
+				'zone_id'     => (string) $settings['cloudflare_zone_id'],
+				'fingerprint' => $this->cloudflare_settings_key( $settings ),
+				'attempts'    => 0,
+				'failed'      => false,
 			];
 		}
 		update_option( $key, $records, false );
@@ -1906,10 +1942,10 @@ class PageCache implements ModuleInterface {
 	 *
 	 * @return array<int, string>
 	 */
-	private function get_cached_urls_from_metadata() {
+	private function get_cached_urls_from_metadata( int $generation ) {
 		$limit = max( 1, (int) apply_filters( 'perform_cache_tracked_url_limit', 500 ) );
 		$files = array_merge(
-			is_array( glob( $this->get_generation_dir( $this->get_cache_generation() ) . '*.meta.json' ) ) ? glob( $this->get_generation_dir( $this->get_cache_generation() ) . '*.meta.json' ) : [],
+			is_array( glob( $this->get_generation_dir( $generation ) . '*.meta.json' ) ) ? glob( $this->get_generation_dir( $generation ) . '*.meta.json' ) : [],
 			is_array( glob( $this->cache_dir . '*.meta.json' ) ) ? glob( $this->cache_dir . '*.meta.json' ) : []
 		);
 		$urls  = [];
@@ -1934,8 +1970,12 @@ class PageCache implements ModuleInterface {
 			if ( ! empty( $record['failed'] ) ) {
 				continue;
 			}
-			$batch = array_slice( $record['urls'], 0, max( 1, (int) $this->cloudflare_batch_size ) );
-			if ( $this->purge_cloudflare_urls( $batch, $record['settings'] ) ) {
+			$batch    = array_slice( $record['urls'], 0, max( 1, (int) $this->cloudflare_batch_size ) );
+			$settings = Helpers::get_settings();
+			if ( ! is_array( $settings ) || $record['fingerprint'] !== $this->cloudflare_settings_key( $settings ) ) {
+				$record['failed'] = true;
+				update_option( 'perform_cache_cloudflare_credential_residual_' . $this->get_blog_id(), count( $record['urls'] ), false );
+			} elseif ( $this->purge_cloudflare_urls( $batch, $settings ) ) {
 				$record['urls'] = array_values( array_diff( $record['urls'], $batch ) );
 				$this->retire_tracked_urls( $batch );
 			} else {
@@ -1979,34 +2019,25 @@ class PageCache implements ModuleInterface {
 
 	/**
 	 * @param mixed $records Queue records.
-	 * @return array<int, array{urls: array<int, string>, settings: array<string, mixed>, attempts: int, failed: bool}>
+	 * @return array<int, array{urls: array<int, string>, zone_id: string, fingerprint: string, attempts: int, failed: bool}>
 	 */
 	private function get_cloudflare_queue_records( $records ): array {
 		if ( ! is_array( $records ) || empty( $records ) ) {
 			return []; }
 		if ( isset( $records[0] ) && is_string( $records[0] ) ) {
+			$settings = Helpers::get_settings();
+			$settings = is_array( $settings ) ? $settings : [];
 			return [
 				[
-					'urls'     => array_values( array_unique( $records ) ),
-					'settings' => $this->cloudflare_settings( Helpers::get_settings() ),
-					'attempts' => 0,
-					'failed'   => false,
+					'urls'        => array_values( array_unique( $records ) ),
+					'zone_id'     => (string) ( $settings['cloudflare_zone_id'] ?? '' ),
+					'fingerprint' => $this->cloudflare_settings_key( $settings ),
+					'attempts'    => 0,
+					'failed'      => false,
 				],
 			];
 		}
 		return $records;
-	}
-
-	/**
-	 * @param array<string, mixed> $settings Settings.
-	 * @return array{enable_cloudflare_cache_sync: bool, cloudflare_zone_id: string, cloudflare_api_token: string}
-	 */
-	private function cloudflare_settings( array $settings ): array {
-		return [
-			'enable_cloudflare_cache_sync' => ! empty( $settings['enable_cloudflare_cache_sync'] ),
-			'cloudflare_zone_id'           => (string) ( $settings['cloudflare_zone_id'] ?? '' ),
-			'cloudflare_api_token'         => (string) ( $settings['cloudflare_api_token'] ?? '' ),
-		];
 	}
 
 	/** @param array<string,mixed> $settings */

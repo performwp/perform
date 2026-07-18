@@ -591,6 +591,14 @@ if ( ! function_exists( 'get_objects_in_term' ) ) {
 	}
 }
 
+if ( ! function_exists( 'get_posts' ) ) {
+	function get_posts( $args = [] ) {
+		$term_id = (int) ( $args['tax_query'][0]['terms'][0] ?? 0 );
+		$ids     = $GLOBALS['perform_test_term_object_ids'][ $term_id ] ?? [];
+		return array_slice( $ids, 0, (int) ( $args['posts_per_page'] ?? count( $ids ) ) );
+	}
+}
+
 if ( ! function_exists( 'wp_is_post_revision' ) ) {
 	function wp_is_post_revision( $post_id ) {
 		return false;
