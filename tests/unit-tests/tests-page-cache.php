@@ -439,6 +439,17 @@ final class Tests_Page_Cache extends TestCase {
 		$this->assertTrue( $GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'][0]['failed'] );
 	}
 
+	public function test_manifest_chunks_keep_urls_beyond_the_chunk_limit() {
+		$page_cache = new PageCache();
+		$this->set_private_property( $page_cache, 'manifest_chunk_size', 2 );
+		$this->invoke_private_with_argument( $page_cache, 'track_cached_url', 'https://example.com/a/' );
+		$this->invoke_private_with_argument( $page_cache, 'track_cached_url', 'https://example.com/b/' );
+		$this->invoke_private_with_argument( $page_cache, 'track_cached_url', 'https://example.com/c/' );
+
+		$this->assertSame( [ 'https://example.com/a/', 'https://example.com/b/' ], $GLOBALS['perform_test_options']['perform_cache_manifest_1_1_0'] );
+		$this->assertSame( [ 'https://example.com/c/' ], $GLOBALS['perform_test_options']['perform_cache_manifest_1_1_1'] );
+	}
+
 	public function test_manual_purge_requires_manage_options() {
 		$page_cache = new PageCache();
 		$this->expectException( RuntimeException::class );

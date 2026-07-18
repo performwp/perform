@@ -60,6 +60,9 @@ class PageCache implements ModuleInterface {
 	 */
 	private $cloudflare_max_retries = 3;
 
+	/** @var int */
+	private $manifest_chunk_size = 100;
+
 	/** @var bool */
 	private $site_purge_requested = false;
 
@@ -1876,23 +1879,30 @@ class PageCache implements ModuleInterface {
 
 	/** Store URLs that may need a bounded Cloudflare purge after a global rotation. */
 	private function track_cached_url( string $url ): void {
-		$key   = 'perform_cache_urls_' . $this->get_blog_id();
-		$url   = esc_url_raw( $url );
-		$urls  = get_option( $key, [] );
-		$urls  = is_array( $urls ) ? $urls : [];
-		$limit = max( 1, (int) apply_filters( 'perform_cache_tracked_url_limit', 500 ) );
-		if ( in_array( $url, $urls, true ) ) {
-			return;
+		$generation = $this->get_cache_generation();
+		$state_key  = $this->get_manifest_state_option( $generation );
+		$state      = get_option(
+			$state_key,
+			[
+				'chunk' => 0,
+				'count' => 0,
+			]
+		);
+		$state      = is_array( $state ) ? $state : [
+			'chunk' => 0,
+			'count' => 0,
+		];
+		if ( (int) $state['count'] >= $this->get_manifest_chunk_size() ) {
+			++$state['chunk'];
+			$state['count'] = 0;
 		}
-		if ( count( $urls ) >= $limit ) {
-			$overflow_key = 'perform_cache_url_tracking_overflow_' . $this->get_blog_id();
-			if ( ! get_option( $overflow_key, false ) ) {
-				update_option( $overflow_key, true, false );
-			}
-			return;
-		}
-		$urls[] = $url;
-		update_option( $key, $urls, false );
+		$chunk_key = $this->get_manifest_chunk_option( $generation, (int) $state['chunk'] );
+		$urls      = get_option( $chunk_key, [] );
+		$urls      = is_array( $urls ) ? $urls : [];
+		$urls[]    = esc_url_raw( $url );
+		update_option( $chunk_key, $urls, false );
+		++$state['count'];
+		update_option( $state_key, $state, false );
 	}
 
 	/** Queue tracked URLs instead of using Cloudflare purge_everything. */
@@ -1902,29 +1912,29 @@ class PageCache implements ModuleInterface {
 		if ( ! is_array( $settings ) || empty( $settings['enable_cloudflare_cache_sync'] ) ) {
 			return;
 		}
-		$blog_id = $this->get_blog_id();
-		$urls    = get_option( 'perform_cache_urls_' . $blog_id, [] );
-		$urls    = is_array( $urls ) ? $urls : [];
-		$urls    = array_values( array_unique( array_merge( $urls, $this->get_cached_urls_from_metadata( null === $generation ? $this->get_cache_generation() : (int) $generation ) ) ) );
-		if ( empty( $urls ) ) {
-			return;
-		}
-		$key     = 'perform_cache_cloudflare_queue_' . $blog_id;
-		$records = $this->get_cloudflare_queue_records( get_option( $key, [] ) );
-		$found   = false;
-		foreach ( $records as &$record ) {
-			if ( $record['fingerprint'] === $this->cloudflare_settings_key( $settings ) ) {
-				$record['urls']     = array_values( array_unique( array_merge( $record['urls'], $urls ) ) );
-				$record['failed']   = false;
-				$record['attempts'] = 0;
-				$found              = true;
-				break;
-			}
-		}
-		unset( $record );
-		if ( ! $found ) {
+		$blog_id    = $this->get_blog_id();
+		$generation = null === $generation ? $this->get_cache_generation() : $generation;
+		$key        = 'perform_cache_cloudflare_queue_' . $blog_id;
+		$records    = $this->get_cloudflare_queue_records( get_option( $key, [] ) );
+		$state      = get_option( $this->get_manifest_state_option( $generation ), [] );
+		$chunks     = is_array( $state ) ? range( 0, (int) $state['chunk'] ) : [];
+		foreach ( $chunks as $chunk ) {
 			$records[] = [
-				'urls'        => array_values( array_unique( $urls ) ),
+				'source'      => 'manifest',
+				'generation'  => $generation,
+				'chunk'       => $chunk,
+				'offset'      => 0,
+				'zone_id'     => (string) $settings['cloudflare_zone_id'],
+				'fingerprint' => $this->cloudflare_settings_key( $settings ),
+				'attempts'    => 0,
+				'failed'      => false,
+			];
+		}
+		$legacy = get_option( 'perform_cache_urls_' . $blog_id, [] );
+		if ( is_array( $legacy ) && ! empty( $legacy ) ) {
+			$records[] = [
+				'source'      => 'legacy_option',
+				'offset'      => 0,
 				'zone_id'     => (string) $settings['cloudflare_zone_id'],
 				'fingerprint' => $this->cloudflare_settings_key( $settings ),
 				'attempts'    => 0,
@@ -1937,27 +1947,12 @@ class PageCache implements ModuleInterface {
 		}
 	}
 
-	/**
-	 * Discover a bounded local cache inventory for pre-tracking installations.
-	 *
-	 * @return array<int, string>
-	 */
-	private function get_cached_urls_from_metadata( int $generation ) {
-		$limit = max( 1, (int) apply_filters( 'perform_cache_tracked_url_limit', 500 ) );
-		$files = array_merge(
-			is_array( glob( $this->get_generation_dir( $generation ) . '*.meta.json' ) ) ? glob( $this->get_generation_dir( $generation ) . '*.meta.json' ) : [],
-			is_array( glob( $this->cache_dir . '*.meta.json' ) ) ? glob( $this->cache_dir . '*.meta.json' ) : []
-		);
-		$urls  = [];
-		foreach ( array_slice( $files, 0, $limit ) as $file ) {
-			$raw  = file_get_contents( $file );
-			$data = is_string( $raw ) ? json_decode( $raw, true ) : null;
-			if ( is_array( $data ) && ! empty( $data['url'] ) && $this->is_site_url( $data['url'] ) ) {
-				$urls[] = esc_url_raw( $data['url'] );
-			}
-		}
-		return array_values( array_unique( $urls ) );
-	}
+	private function get_manifest_state_option( int $generation ): string {
+		return 'perform_cache_manifest_state_' . $this->get_blog_id() . '_' . $generation; }
+	private function get_manifest_chunk_option( int $generation, int $chunk ): string {
+		return 'perform_cache_manifest_' . $this->get_blog_id() . '_' . $generation . '_' . $chunk; }
+	private function get_manifest_chunk_size(): int {
+		return max( 1, (int) apply_filters( 'perform_cache_manifest_chunk_size', $this->manifest_chunk_size ) ); }
 
 	/** Purge a bounded batch of tracked URLs from Cloudflare, with retries. */
 	public function run_cloudflare_purge_batch(): void {
@@ -1970,14 +1965,23 @@ class PageCache implements ModuleInterface {
 			if ( ! empty( $record['failed'] ) ) {
 				continue;
 			}
-			$batch    = array_slice( $record['urls'], 0, max( 1, (int) $this->cloudflare_batch_size ) );
+			$urls  = $this->get_cloudflare_record_urls( $record );
+			$batch = array_slice( $urls, (int) ( $record['offset'] ?? 0 ), max( 1, (int) $this->cloudflare_batch_size ) );
+			if ( empty( $batch ) ) {
+				$this->retire_cloudflare_record( $record );
+				$record['urls'] = [];
+				continue;
+			}
 			$settings = Helpers::get_settings();
 			if ( ! is_array( $settings ) || $record['fingerprint'] !== $this->cloudflare_settings_key( $settings ) ) {
 				$record['failed'] = true;
 				update_option( 'perform_cache_cloudflare_credential_residual_' . $this->get_blog_id(), count( $record['urls'] ), false );
 			} elseif ( $this->purge_cloudflare_urls( $batch, $settings ) ) {
-				$record['urls'] = array_values( array_diff( $record['urls'], $batch ) );
-				$this->retire_tracked_urls( $batch );
+				if ( isset( $record['source'] ) ) {
+					$record['offset'] = (int) ( $record['offset'] ?? 0 ) + count( $batch );
+				} else {
+					$record['urls'] = array_values( array_diff( $record['urls'], $batch ) );
+				}
 			} else {
 				++$record['attempts'];
 				$record['failed'] = $record['attempts'] >= max( 1, (int) $this->cloudflare_max_retries );
@@ -1989,7 +1993,7 @@ class PageCache implements ModuleInterface {
 			array_filter(
 				$records,
 				static function ( $record ) {
-					return ! empty( $record['urls'] );
+					return ! isset( $record['done'] );
 				}
 			)
 		);
@@ -2005,21 +2009,34 @@ class PageCache implements ModuleInterface {
 		}
 	}
 
-	/** @param array<int,string> $urls */
-	private function retire_tracked_urls( array $urls ): void {
-		$key     = 'perform_cache_urls_' . $this->get_blog_id();
-		$tracked = get_option( $key, [] );
-		if ( is_array( $tracked ) ) {
-			$remaining = array_values( array_diff( $tracked, $urls ) );
-			if ( $remaining !== $tracked ) {
-				update_option( $key, $remaining, false );
-			}
+	/**
+	 * @param array<string, mixed> $record Record.
+	 * @return array<int, string>
+	 */
+	private function get_cloudflare_record_urls( array $record ): array {
+		if ( isset( $record['source'] ) && 'manifest' === $record['source'] ) {
+			$urls = get_option( $this->get_manifest_chunk_option( (int) $record['generation'], (int) $record['chunk'] ), [] );
+			return is_array( $urls ) ? $urls : [];
+		}
+		if ( isset( $record['source'] ) && 'legacy_option' === $record['source'] ) {
+			$urls = get_option( 'perform_cache_urls_' . $this->get_blog_id(), [] );
+			return is_array( $urls ) ? $urls : [];
+		}
+		return isset( $record['urls'] ) && is_array( $record['urls'] ) ? $record['urls'] : [];
+	}
+
+	/** @param array<string,mixed> $record */
+	private function retire_cloudflare_record( array $record ): void {
+		if ( isset( $record['source'] ) && 'manifest' === $record['source'] ) {
+			delete_option( $this->get_manifest_chunk_option( (int) $record['generation'], (int) $record['chunk'] ) );
+		} elseif ( isset( $record['source'] ) && 'legacy_option' === $record['source'] ) {
+			delete_option( 'perform_cache_urls_' . $this->get_blog_id() );
 		}
 	}
 
 	/**
 	 * @param mixed $records Queue records.
-	 * @return array<int, array{urls: array<int, string>, zone_id: string, fingerprint: string, attempts: int, failed: bool}>
+	 * @return array<int, array<string, mixed>>
 	 */
 	private function get_cloudflare_queue_records( $records ): array {
 		if ( ! is_array( $records ) || empty( $records ) ) {
