@@ -1930,6 +1930,27 @@ class PageCache implements ModuleInterface {
 				'failed'      => false,
 			];
 		}
+		if ( empty( $chunks ) ) {
+			$records[] = [
+				'source'      => 'metadata',
+				'generation'  => $generation,
+				'cursor'      => 0,
+				'zone_id'     => (string) $settings['cloudflare_zone_id'],
+				'fingerprint' => $this->cloudflare_settings_key( $settings ),
+				'attempts'    => 0,
+				'failed'      => false,
+			];
+		}
+		if ( 1 === $generation ) {
+			$records[] = [
+				'source'      => 'legacy_metadata',
+				'cursor'      => 0,
+				'zone_id'     => (string) $settings['cloudflare_zone_id'],
+				'fingerprint' => $this->cloudflare_settings_key( $settings ),
+				'attempts'    => 0,
+				'failed'      => false,
+			];
+		}
 		$legacy = get_option( 'perform_cache_urls_' . $blog_id, [] );
 		if ( is_array( $legacy ) && ! empty( $legacy ) ) {
 			$records[] = [
@@ -1969,7 +1990,7 @@ class PageCache implements ModuleInterface {
 			$batch = array_slice( $urls, (int) ( $record['offset'] ?? 0 ), max( 1, (int) $this->cloudflare_batch_size ) );
 			if ( empty( $batch ) ) {
 				$this->retire_cloudflare_record( $record );
-				$record['urls'] = [];
+				$record['done'] = true;
 				continue;
 			}
 			$settings = Helpers::get_settings();
