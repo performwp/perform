@@ -583,6 +583,14 @@ if ( ! function_exists( 'get_comment' ) ) {
 	}
 }
 
+if ( ! function_exists( 'get_objects_in_term' ) ) {
+	function get_objects_in_term( $term_ids, $taxonomies, $args = [] ) {
+		$term_id = (int) ( is_array( $term_ids ) ? reset( $term_ids ) : $term_ids );
+		$ids     = $GLOBALS['perform_test_term_object_ids'][ $term_id ] ?? [];
+		return array_slice( $ids, 0, isset( $args['number'] ) ? (int) $args['number'] : count( $ids ) );
+	}
+}
+
 if ( ! function_exists( 'wp_is_post_revision' ) ) {
 	function wp_is_post_revision( $post_id ) {
 		return false;

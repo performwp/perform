@@ -5,30 +5,31 @@ use Perform\Modules\Cache\PageCache;
 
 final class Tests_Page_Cache extends TestCase {
 	protected function setUp(): void {
-		$GLOBALS['perform_test_transients']       = [
+		$GLOBALS['perform_test_transients']              = [
 			'perform_cache_lock_test' => 'expected-token',
 		];
-		$GLOBALS['perform_test_options']          = [];
-		$GLOBALS['perform_test_filters']          = [];
-		$GLOBALS['perform_test_home_url']         = 'https://example.com';
-		$GLOBALS['perform_test_remote_get_map']   = [];
-		$GLOBALS['perform_test_remote_get_calls'] = [];
-		$GLOBALS['perform_test_remote_post_calls'] = [];
-		$GLOBALS['perform_test_actions']          = [];
-		$GLOBALS['perform_test_scheduled_events'] = [];
+		$GLOBALS['perform_test_options']                 = [];
+		$GLOBALS['perform_test_filters']                 = [];
+		$GLOBALS['perform_test_home_url']                = 'https://example.com';
+		$GLOBALS['perform_test_remote_get_map']          = [];
+		$GLOBALS['perform_test_remote_get_calls']        = [];
+		$GLOBALS['perform_test_remote_post_calls']       = [];
+		$GLOBALS['perform_test_actions']                 = [];
+		$GLOBALS['perform_test_scheduled_events']        = [];
 		$GLOBALS['perform_test_scheduled_single_events'] = [];
-		$GLOBALS['perform_test_permalinks']       = [];
-		$GLOBALS['perform_test_post_type_archives'] = [];
-		$GLOBALS['perform_test_taxonomies']       = [];
-		$GLOBALS['perform_test_post_terms']       = [];
-		$GLOBALS['perform_test_terms']            = [];
-		$GLOBALS['perform_test_terms_by_tt_id']   = [];
-		$GLOBALS['perform_test_comments']         = [];
-		$GLOBALS['perform_test_blog_id']          = 1;
-		$_COOKIE                                  = [];
-		$_GET                                     = [];
-		$_SERVER['REQUEST_METHOD']                = 'GET';
-		$_SERVER['REQUEST_URI']                   = '/';
+		$GLOBALS['perform_test_permalinks']              = [];
+		$GLOBALS['perform_test_post_type_archives']      = [];
+		$GLOBALS['perform_test_taxonomies']              = [];
+		$GLOBALS['perform_test_post_terms']              = [];
+		$GLOBALS['perform_test_terms']                   = [];
+		$GLOBALS['perform_test_terms_by_tt_id']          = [];
+		$GLOBALS['perform_test_comments']                = [];
+		$GLOBALS['perform_test_term_object_ids']         = [];
+		$GLOBALS['perform_test_blog_id']                 = 1;
+		$_COOKIE                   = [];
+		$_GET                      = [];
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$_SERVER['REQUEST_URI']    = '/';
 		unset( $_SERVER['HTTP_X_PERFORM_CACHE_REGEN'] );
 	}
 
@@ -52,7 +53,10 @@ final class Tests_Page_Cache extends TestCase {
 			$GLOBALS['perform_test_terms'],
 			$GLOBALS['perform_test_terms_by_tt_id'],
 			$GLOBALS['perform_test_comments'],
+			$GLOBALS['perform_test_term_object_ids'],
 			$GLOBALS['perform_test_blog_id'],
+			$GLOBALS['perform_test_current_user_can'],
+			$GLOBALS['perform_test_nonce_valid'],
 			$_SERVER['REQUEST_METHOD'],
 			$_SERVER['REQUEST_URI'],
 			$_SERVER['HTTP_X_PERFORM_CACHE_REGEN']
@@ -155,6 +159,7 @@ final class Tests_Page_Cache extends TestCase {
 	public function test_seed_preload_queue_keeps_existing_queue_when_sitemap_fetch_fails() {
 		$GLOBALS['perform_test_options']        = [
 			'perform_settings'            => [
+				'enable_page_cache'    => true,
 				'enable_cache_preload' => true,
 			],
 			'perform_cache_preload_queue' => [
@@ -262,7 +267,7 @@ final class Tests_Page_Cache extends TestCase {
 	public function test_bypass_reasons_are_aggregated_in_stats() {
 		$GLOBALS['perform_test_options']                                    = [
 			'perform_settings' => [
-				'enable_page_cache'        => true,
+				'enable_page_cache'         => true,
 				'cache_bypass_query_params' => [ 'preview_token' ],
 			],
 		];
@@ -286,6 +291,17 @@ final class Tests_Page_Cache extends TestCase {
 		foreach ( [ 'pre_post_update', 'before_delete_post', 'transition_post_status', 'transition_comment_status', 'set_object_terms', 'edited_term', 'updated_term_meta', 'wp_update_nav_menu', 'wp_update_nav_menu_item', 'switch_theme', 'customize_save_after', 'updated_option', 'perform_cache_cleanup_event' ] as $hook ) {
 			$this->assertContains( $hook, $hooks );
 		}
+	}
+
+	public function test_disabled_cache_does_not_start_stats_or_preload_work() {
+		$page_cache                      = new PageCache();
+		$GLOBALS['perform_test_options'] = [ 'perform_settings' => [ 'enable_cache_preload' => true ] ];
+		$page_cache->maybe_serve_cache();
+		$page_cache->maybe_schedule_events();
+		$page_cache->seed_preload_queue_from_sitemap_and_logs();
+
+		$this->assertSame( 0.0, $this->get_private_property( $page_cache, 'request_start' ) );
+		$this->assertSame( [], $GLOBALS['perform_test_scheduled_single_events'] );
 	}
 
 	public function test_targeted_purge_removes_old_post_url_but_keeps_unaffected_cache_entry() {
@@ -314,6 +330,23 @@ final class Tests_Page_Cache extends TestCase {
 		$page_cache->purge_related_urls_for_object_terms( 7, [], [], 'category', false, [ 12 ] );
 
 		$this->assertFalse( $this->cache_file_exists( $page_cache, 'https://example.com/old-term/' ) );
+	}
+
+	public function test_term_metadata_purges_bounded_affected_post_urls() {
+		$page_cache = new PageCache();
+		$cache_dir  = $this->temporary_cache_dir();
+		$this->set_private_property( $page_cache, 'cache_dir', $cache_dir );
+		$GLOBALS['perform_test_term_object_ids'][4] = [ 8 ];
+		$GLOBALS['perform_test_terms'][4]           = (object) [
+			'taxonomy' => 'category',
+			'link'     => 'https://example.com/term/',
+		];
+		$GLOBALS['perform_test_permalinks'][8]      = 'https://example.com/affected-post/';
+		$this->write_cached_url( $page_cache, 'https://example.com/affected-post/' );
+
+		$page_cache->purge_related_urls_for_term_meta( 1, 4 );
+
+		$this->assertFalse( $this->cache_file_exists( $page_cache, 'https://example.com/affected-post/' ) );
 	}
 
 	public function test_global_rotation_rejects_stale_write_and_is_scoped_to_current_blog() {
@@ -350,10 +383,25 @@ final class Tests_Page_Cache extends TestCase {
 		$this->assertSame( 'perform_cache_cleanup_event', $GLOBALS['perform_test_scheduled_single_events'][0]['hook'] );
 	}
 
-	public function test_cloudflare_global_purge_uses_tracked_urls_in_bounded_batches() {
+	public function test_cleanup_removes_legacy_root_cache_files_only() {
 		$page_cache = new PageCache();
+		$cache_dir  = $this->temporary_cache_dir();
+		$this->set_private_property( $page_cache, 'cache_dir', $cache_dir );
+		file_put_contents( $cache_dir . 'legacy.html', 'legacy' );
+		file_put_contents( $cache_dir . 'legacy.meta.json', '{}' );
+		file_put_contents( $cache_dir . 'keep.txt', 'keep' );
+
+		$page_cache->cleanup_obsolete_generations();
+
+		$this->assertFileDoesNotExist( $cache_dir . 'legacy.html' );
+		$this->assertFileDoesNotExist( $cache_dir . 'legacy.meta.json' );
+		$this->assertFileExists( $cache_dir . 'keep.txt' );
+	}
+
+	public function test_cloudflare_global_purge_uses_tracked_urls_in_bounded_batches() {
+		$page_cache                      = new PageCache();
 		$GLOBALS['perform_test_options'] = [
-			'perform_settings' => [
+			'perform_settings'                 => [
 				'enable_cloudflare_cache_sync' => true,
 				'cloudflare_zone_id'           => 'zone',
 				'cloudflare_api_token'         => 'token',
@@ -361,17 +409,21 @@ final class Tests_Page_Cache extends TestCase {
 			'perform_cache_cloudflare_queue_1' => [ 'https://example.com/a/', 'https://example.com/b/', 'https://example.com/c/' ],
 		];
 		$this->set_private_property( $page_cache, 'cloudflare_batch_size', 2 );
+		$GLOBALS['perform_test_remote_post_response'] = [
+			'response' => [ 'code' => 200 ],
+			'body'     => '{"success":true}',
+		];
 		$page_cache->run_cloudflare_purge_batch();
 
 		$this->assertCount( 1, $GLOBALS['perform_test_remote_post_calls'] );
 		$this->assertSame( [ 'https://example.com/a/', 'https://example.com/b/' ], json_decode( $GLOBALS['perform_test_remote_post_calls'][0]['args']['body'], true )['files'] );
-		$this->assertSame( [ 'https://example.com/c/' ], $GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'] );
+		$this->assertSame( [ 'https://example.com/c/' ], $GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'][0]['urls'] );
 	}
 
 	public function test_cloudflare_failed_batch_has_bounded_retries() {
-		$page_cache = new PageCache();
-		$GLOBALS['perform_test_options'] = [
-			'perform_settings' => [
+		$page_cache                                   = new PageCache();
+		$GLOBALS['perform_test_options']              = [
+			'perform_settings'                 => [
 				'enable_cloudflare_cache_sync' => true,
 				'cloudflare_zone_id'           => 'zone',
 				'cloudflare_api_token'         => 'token',
@@ -382,15 +434,23 @@ final class Tests_Page_Cache extends TestCase {
 		$this->set_private_property( $page_cache, 'cloudflare_max_retries', 2 );
 
 		$page_cache->run_cloudflare_purge_batch();
-		$this->assertSame( [ 'https://example.com/a/' ], $GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'] );
+		$this->assertSame( [ 'https://example.com/a/' ], $GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'][0]['urls'] );
 		$page_cache->run_cloudflare_purge_batch();
-		$this->assertSame( [], $GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'] );
+		$this->assertTrue( $GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'][0]['failed'] );
 	}
 
 	public function test_manual_purge_requires_manage_options() {
 		$page_cache = new PageCache();
 		$this->expectException( RuntimeException::class );
 		$page_cache->handle_manual_purge();
+	}
+
+	public function test_manual_purge_authorization_requires_valid_nonce() {
+		$page_cache                               = new PageCache();
+		$GLOBALS['perform_test_current_user_can'] = [ 'manage_options' => true ];
+		$GLOBALS['perform_test_nonce_valid']      = true;
+
+		$this->assertTrue( $this->invoke_private( $page_cache, 'is_manual_purge_authorized' ) );
 	}
 
 	private function set_private_property( PageCache $page_cache, string $property_name, $value ): void {
