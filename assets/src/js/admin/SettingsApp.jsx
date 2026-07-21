@@ -10,6 +10,11 @@ const SETTINGS_FIELDS = SETTINGS.fields || {};
 const SAVED_SETTINGS = SETTINGS.saved || {};
 const INITIAL_DIAGNOSTICS = SETTINGS.diagnostics || {};
 const DASHBOARD = SETTINGS.dashboard || {};
+const TAB_KEYS = [ 'dashboard', ...Object.keys( SETTINGS_TABS ) ];
+
+const normalizeTab = ( tab ) => ( TAB_KEYS.includes( tab ) ? tab : 'dashboard' );
+
+const getTabFromUrl = () => normalizeTab( new URL( window.location.href ).searchParams.get( 'tab' ) || 'dashboard' );
 
 const SettingsApp = () => {
 	const tabs = SETTINGS_TABS;
@@ -39,8 +44,21 @@ const SettingsApp = () => {
 	const [ saving, setSaving ] = useState( false );
 	const [ message, setMessage ] = useState( null );
 	const [ diagnostics, setDiagnostics ] = useState( INITIAL_DIAGNOSTICS );
-	const [ activeTab, setActiveTab ] = useState( 'dashboard' );
+	const [ activeTab, setActiveTab ] = useState( () => normalizeTab( SETTINGS.activeTab ) );
 	const messageTimerRef = useRef( null );
+
+	const handleTabChange = ( tab ) => {
+		const nextTab = normalizeTab( tab );
+		setActiveTab( nextTab );
+
+		const url = new URL( window.location.href );
+		if ( 'dashboard' === nextTab ) {
+			url.searchParams.delete( 'tab' );
+		} else {
+			url.searchParams.set( 'tab', nextTab );
+		}
+		window.history.pushState( { performTab: nextTab }, '', url );
+	};
 
 	// dirty detection
 
@@ -140,6 +158,13 @@ const SettingsApp = () => {
 		[]
 	);
 
+	useEffect( () => {
+		const handlePopState = () => setActiveTab( getTabFromUrl() );
+		window.addEventListener( 'popstate', handlePopState );
+
+		return () => window.removeEventListener( 'popstate', handlePopState );
+	}, [] );
+
 	return (
 		<>
 			<SettingsHeader />
@@ -149,12 +174,14 @@ const SettingsApp = () => {
 				dashboard={ DASHBOARD }
 				diagnostics={ diagnostics }
 				activeTab={ activeTab }
-				onTabChange={ setActiveTab }
+				onTabChange={ handleTabChange }
 				fieldValues={ fieldValues }
 				onFieldChange={ handleFieldChange }
 			/>
 			{ 'dashboard' === activeTab && <DiagnosticsPanel diagnostics={ diagnostics } /> }
-			<Footer dirty={ isDirty } saving={ saving } message={ message } onSave={ handleSave } />
+			{ 'cache-stats' !== activeTab && (
+				<Footer dirty={ isDirty } saving={ saving } message={ message } onSave={ handleSave } />
+			) }
 		</>
 	);
 };

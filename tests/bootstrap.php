@@ -137,6 +137,43 @@ if ( ! function_exists( 'add_filter' ) ) {
 	}
 }
 
+if ( ! function_exists( 'do_action' ) ) {
+	function do_action( $hook_name, ...$args ) {
+		foreach ( $GLOBALS['perform_test_actions'] ?? [] as $action ) {
+			if ( $hook_name === $action['hook'] ) {
+				call_user_func_array( $action['callback'], array_slice( $args, 0, $action['accepted_args'] ) );
+			}
+		}
+	}
+}
+
+if ( ! function_exists( 'did_action' ) ) {
+	function did_action( $hook_name ) {
+		return isset( $GLOBALS['perform_test_did_actions'][ $hook_name ] ) ? (int) $GLOBALS['perform_test_did_actions'][ $hook_name ] : 0;
+	}
+}
+
+if ( ! function_exists( 'add_options_page' ) ) {
+	function add_options_page( $page_title, $menu_title, $capability, $menu_slug, $callback = '' ) {
+		$GLOBALS['perform_test_options_pages'][] = compact( 'page_title', 'menu_title', 'capability', 'menu_slug', 'callback' );
+		return 'settings_page_' . $menu_slug;
+	}
+}
+
+if ( ! function_exists( 'add_submenu_page' ) ) {
+	function add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $callback = '' ) {
+		$GLOBALS['perform_test_submenu_pages'][] = compact( 'parent_slug', 'page_title', 'menu_title', 'capability', 'menu_slug', 'callback' );
+		return $parent_slug . '_page_' . $menu_slug;
+	}
+}
+
+if ( ! function_exists( 'remove_submenu_page' ) ) {
+	function remove_submenu_page( $menu_slug, $submenu_slug ) {
+		$GLOBALS['perform_test_removed_submenu_pages'][] = compact( 'menu_slug', 'submenu_slug' );
+		return [];
+	}
+}
+
 if ( ! function_exists( 'wp_enqueue_style' ) ) {
 	function wp_enqueue_style( $handle, $src = '', $deps = [], $ver = false, $media = 'all' ) {
 		$GLOBALS['perform_test_enqueued_styles'][] = $handle;
@@ -151,6 +188,9 @@ if ( ! function_exists( 'wp_enqueue_script' ) ) {
 
 if ( ! function_exists( 'add_query_arg' ) ) {
 	function add_query_arg( $key, $value = null, $url = null ) {
+		if ( is_array( $key ) && null === $url ) {
+			$url = $value;
+		}
 		$url  = null === $url ? ( $GLOBALS['perform_test_current_url'] ?? 'https://example.com/' ) : $url;
 		$args = is_array( $key ) ? $key : [ $key => $value ];
 
@@ -234,6 +274,18 @@ if ( ! function_exists( 'esc_url' ) ) {
 if ( ! function_exists( 'esc_html__' ) ) {
 	function esc_html__( $text, $domain = 'default' ) {
 		return (string) $text;
+	}
+}
+
+if ( ! function_exists( 'esc_html' ) ) {
+	function esc_html( $text ) {
+		return htmlspecialchars( (string) $text, ENT_QUOTES, 'UTF-8' );
+	}
+}
+
+if ( ! function_exists( 'esc_html_e' ) ) {
+	function esc_html_e( $text, $domain = 'default' ) {
+		echo esc_html( $text );
 	}
 }
 
@@ -469,6 +521,18 @@ if ( ! function_exists( 'sanitize_text_field' ) ) {
 	}
 }
 
+if ( ! function_exists( 'sanitize_key' ) ) {
+	function sanitize_key( $key ) {
+		return preg_replace( '/[^a-z0-9_\-]/', '', strtolower( (string) $key ) );
+	}
+}
+
+if ( ! function_exists( 'absint' ) ) {
+	function absint( $value ) {
+		return abs( (int) $value );
+	}
+}
+
 if ( ! function_exists( 'sanitize_textarea_field' ) ) {
 	function sanitize_textarea_field( $value ) {
 		return is_scalar( $value ) ? trim( (string) $value ) : $value;
@@ -478,6 +542,18 @@ if ( ! function_exists( 'sanitize_textarea_field' ) ) {
 if ( ! function_exists( 'wp_unslash' ) ) {
 	function wp_unslash( $value ) {
 		return $value;
+	}
+}
+
+if ( ! function_exists( 'wp_parse_args' ) ) {
+	function wp_parse_args( $args, $defaults = [] ) {
+		return array_merge( $defaults, is_array( $args ) ? $args : [] );
+	}
+}
+
+if ( ! function_exists( 'wp_verify_nonce' ) ) {
+	function wp_verify_nonce( $nonce, $action = -1 ) {
+		return ! empty( $GLOBALS['perform_test_nonce_valid'] );
 	}
 }
 
@@ -635,8 +711,37 @@ if ( ! function_exists( 'wp_safe_redirect' ) ) {
 }
 
 if ( ! function_exists( 'wp_die' ) ) {
-	function wp_die( $message = '' ) {
+	function wp_die( $message = '', $title = '', $args = [] ) {
 		throw new RuntimeException( (string) $message );
+	}
+}
+
+if ( ! function_exists( 'wp_send_json_success' ) ) {
+	function wp_send_json_success( $data = null, $status_code = null, $flags = 0 ) {
+		$GLOBALS['perform_test_json_response'] = [
+			'success' => true,
+			'data'    => $data,
+		];
+		throw new RuntimeException( 'perform_test_json_response' );
+	}
+}
+
+if ( ! function_exists( 'wp_send_json_error' ) ) {
+	function wp_send_json_error( $data = null, $status_code = null, $flags = 0 ) {
+		$GLOBALS['perform_test_json_response'] = [
+			'success' => false,
+			'data'    => $data,
+		];
+		throw new RuntimeException( 'perform_test_json_response' );
+	}
+}
+
+if ( ! function_exists( 'get_current_screen' ) ) {
+	function get_current_screen() {
+		return (object) [
+			'id'   => $GLOBALS['perform_test_current_screen_id'] ?? '',
+			'base' => $GLOBALS['perform_test_current_screen_base'] ?? '',
+		];
 	}
 }
 

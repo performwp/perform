@@ -13,6 +13,7 @@ namespace Perform\Admin;
 use Perform\Includes\Helpers;
 use Perform\Admin\Settings\ClientPayload;
 use Perform\Admin\Settings\DashboardPayload;
+use Perform\Admin\Settings\Menu;
 use Perform\Admin\Settings\RuntimeDiagnostics;
 
 // Bailout, if accessed directly.
@@ -70,7 +71,8 @@ class Actions {
 					'diagnostics'       => RuntimeDiagnostics::get_results(),
 					'sensitiveKeys'     => ClientPayload::get_sensitive_keys(),
 					'maskedSecretValue' => ClientPayload::MASKED_SECRET,
-					'tabs'              => \Perform\Includes\Helpers::get_settings_tabs(),
+					'tabs'              => Menu::get_navigation_tabs(),
+					'activeTab'         => Menu::get_requested_tab(),
 					'fields'            => \Perform\Includes\Helpers::get_settings_fields(), // Expose fields to JS
 				]
 			);

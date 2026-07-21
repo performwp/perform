@@ -21,11 +21,24 @@
 }
 
 .perform-settings-tab-panel {
-	background-color: var(--bg-color);
-	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 	margin-bottom: 20px;
 }
 
+.perform-settings-tab-panel .components-tab-panel__tabs {
+	overflow-x: auto;
+	background-color: var(--bg-color);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+	scrollbar-width: thin;
+}
+
+.perform-settings-tab-panel .components-tab-panel__tabs-item {
+	flex: 0 0 auto;
+}
+
+.perform-settings-tab-panel .components-tab-panel__tabs-item:focus-visible {
+	outline: 2px solid #2271b1;
+	outline-offset: -2px;
+}
 
 .perform-card-title,
 .perform-card-description {
@@ -34,6 +47,43 @@
 
 .perform-settings-content {
     padding: 0 20px;
+}
+
+.perform-cache-stats-container {
+	max-width: 1200px;
+}
+
+.perform-cache-stats h2 {
+	margin-top: 0;
+}
+
+.perform-cache-stats form {
+	margin: 16px 0;
+}
+
+.perform-cache-stats .widefat {
+	display: table;
+	width: 100%;
+	max-width: 1200px;
+	margin-bottom: 24px;
+}
+
+.perform-cache-stats__summary {
+	max-width: 900px !important;
+}
+
+@media screen and (max-width: 782px) {
+
+	.perform-settings-page {
+		margin-left: -10px;
+	}
+
+	.perform-settings-header,
+	.perform-settings-content {
+		padding-right: 12px;
+		padding-left: 12px;
+	}
+
 }
 
 

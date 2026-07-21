@@ -868,6 +868,68 @@ final class Tests_Page_Cache extends TestCase {
 		$this->assertSame( 1, $status['credential_residuals'] );
 	}
 
+	public function test_registers_cache_stats_content_and_a_hidden_legacy_route() {
+		$page_cache = new PageCache();
+		$page_cache->register();
+
+		$hooks = array_column( $GLOBALS['perform_test_actions'], 'hook' );
+		$this->assertContains( 'perform_settings_cache_stats_content', $hooks );
+		$this->assertContains( 'admin_menu', $hooks );
+		$this->assertNotContains( 'admin_init', $hooks );
+
+		$GLOBALS['perform_test_submenu_pages']         = [];
+		$GLOBALS['perform_test_removed_submenu_pages'] = [];
+		$page_cache->register_legacy_observability_route();
+
+		$this->assertSame( 'perform_cache_observability', $GLOBALS['perform_test_submenu_pages'][0]['menu_slug'] );
+		$this->assertSame( 'manage_options', $GLOBALS['perform_test_submenu_pages'][0]['capability'] );
+		$this->assertSame( 'perform_cache_observability', $GLOBALS['perform_test_removed_submenu_pages'][0]['submenu_slug'] );
+		$this->assertContains( 'load-options-general.php_page_perform_cache_observability', array_column( $GLOBALS['perform_test_actions'], 'hook' ) );
+	}
+
+	public function test_cache_stats_url_is_canonical_and_drops_unapproved_arguments() {
+		$page_cache = new PageCache();
+		$method     = new ReflectionMethod( $page_cache, 'get_observability_url' );
+		$method->setAccessible( true );
+
+		$this->assertSame(
+			'https://example.com/wp-admin/options-general.php?page=perform_settings&tab=cache-stats&perform_cache_purged=1',
+			$method->invoke(
+				$page_cache,
+				[
+					'perform_cache_purged' => 1,
+					'redirect_to'          => 'https://attacker.example.com',
+				]
+			)
+		);
+	}
+
+	public function test_legacy_cache_stats_url_retains_denial_for_unauthorized_users() {
+		$_GET['page'] = 'perform_cache_observability';
+
+		$this->expectException( RuntimeException::class );
+		( new PageCache() )->maybe_redirect_legacy_observability_page();
+	}
+
+	public function test_cache_stats_render_preserves_existing_counts_and_actions() {
+		$GLOBALS['perform_test_current_user_can']               = [ 'manage_options' => true ];
+		$GLOBALS['perform_test_options']['perform_cache_stats'] = [
+			'hits'       => 12,
+			'stale_hits' => 2,
+			'misses'     => 6,
+			'top_misses' => [ '/slow-page/' => 4 ],
+		];
+
+		ob_start();
+		( new PageCache() )->render_observability_page();
+		$output = ob_get_clean();
+
+		$this->assertStringContainsString( 'Perform Cache Observability', $output );
+		$this->assertStringContainsString( '70%', $output );
+		$this->assertStringContainsString( '/slow-page/', $output );
+		$this->assertStringContainsString( 'perform_purge_page_cache', $output );
+	}
+
 	public function test_manual_purge_requires_manage_options() {
 		$page_cache = new PageCache();
 		$this->expectException( RuntimeException::class );
