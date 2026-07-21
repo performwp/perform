@@ -46,6 +46,30 @@ class Menu {
 	}
 
 	/**
+	 * Get tabs shown on the canonical settings screen.
+	 *
+	 * @return array<string, string>
+	 */
+	public static function get_navigation_tabs() {
+		$tabs                = Helpers::get_settings_tabs();
+		$tabs['cache-stats'] = esc_html__( 'Cache Stats', 'perform' );
+
+		return $tabs;
+	}
+
+	/**
+	 * Resolve the requested settings tab to a known tab slug.
+	 *
+	 * @return string
+	 */
+	public static function get_requested_tab() {
+		$requested_tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'dashboard'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only navigation state.
+		$valid_tabs    = array_merge( [ 'dashboard' ], array_keys( self::get_navigation_tabs() ) );
+
+		return in_array( $requested_tab, $valid_tabs, true ) ? $requested_tab : 'dashboard';
+	}
+
+	/**
 	 * Render Settings Page.
 	 *
 	 * @since  1.0.0
@@ -62,6 +86,9 @@ class Menu {
 		}
 		?>
 		<div id="perform-settings-page" class="perform-settings-page"></div>
+		<template id="perform-cache-stats-template">
+			<?php do_action( 'perform_settings_cache_stats_content' ); ?>
+		</template>
 		<?php
 	}
 

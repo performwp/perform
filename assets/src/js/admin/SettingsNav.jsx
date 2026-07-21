@@ -8,7 +8,7 @@ import {
 	SelectControl,
 	TextareaControl,
 } from '@wordpress/components';
-import { useState, useMemo } from '@wordpress/element';
+import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import DashboardPanel from './DashboardPanel';
 
 const FIELD_COMPONENTS = {
@@ -48,6 +48,24 @@ const MASKED_SECRET_VALUE = window.performwpSettings?.maskedSecretValue || '__PE
 const SETTINGS = window.performwpSettings || {};
 
 const isSensitiveField = ( fieldId ) => SENSITIVE_KEYS.includes( fieldId );
+
+const CacheStatsPanel = () => {
+	const containerRef = useRef( null );
+
+	useEffect( () => {
+		const template = document.getElementById( 'perform-cache-stats-template' );
+		const container = containerRef.current;
+		if ( ! template || ! container ) {
+			return undefined;
+		}
+
+		container.replaceChildren( template.content.cloneNode( true ) );
+
+		return () => container.replaceChildren();
+	}, [] );
+
+	return <div ref={ containerRef } className="perform-cache-stats-container" />;
+};
 
 const renderField = ( field, value, onChange ) => {
 	const {
@@ -180,6 +198,12 @@ const SettingsNav = ( {
 	const fieldValues = propFieldValues ?? internalFieldValues;
 	const onFieldChange =
 		propOnFieldChange ?? ( ( id, val ) => setInternalFieldValues( ( p ) => ( { ...p, [ id ]: val } ) ) );
+	const tabPanelRef = useRef( null );
+
+	useEffect( () => {
+		const selectedTab = tabPanelRef.current?.querySelector( '[role="tab"][aria-selected="true"]' );
+		selectedTab?.scrollIntoView( { block: 'nearest', inline: 'nearest' } );
+	}, [ activeTab ] );
 
 	const tabPanelTabs = useMemo(
 		() =>
@@ -190,61 +214,71 @@ const SettingsNav = ( {
 		[ tabKeys, tabs ]
 	);
 
-	const cards = useMemo( () => fields[ activeTab ] || [], [ fields, activeTab ] );
-
 	if ( ! tabKeys.length ) {
 		return null;
 	}
 
 	return (
-		<>
-			<div className="perform-settings-content">
-				<TabPanel
-					className="perform-settings-tab-panel"
-					tabs={ tabPanelTabs }
-					initialTabName={ activeTab }
-					onSelect={ onTabChange }
-				>
-					{ () => null }
-				</TabPanel>
-				{ 'dashboard' === activeTab ? (
-					<DashboardPanel dashboard={ dashboard } diagnostics={ diagnostics } />
-				) : (
-					<div className="perform-settings-cards">
-						{ cards.map( ( card, idx ) => (
-							<Card
-								key={ idx }
-								style={ {
-									marginBottom: '24px',
-									boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
-									borderRadius: 0,
-								} }
-							>
-								<CardHeader style={ { alignItems: 'flex-start', flexDirection: 'column' } }>
-									<h3 className="perform-card-title">{ card.title }</h3>
-									{ card.description && (
-										<p className="perform-card-description">{ card.description }</p>
+		<div ref={ tabPanelRef }>
+			<TabPanel
+				key={ activeTab }
+				className="perform-settings-tab-panel"
+				tabs={ tabPanelTabs }
+				initialTabName={ activeTab }
+				onSelect={ ( tabName ) => {
+					if ( tabName !== activeTab ) {
+						onTabChange( tabName );
+					}
+				} }
+			>
+				{ ( selectedTab ) => {
+					const selectedTabName = selectedTab?.name || activeTab;
+					const cards = fields[ selectedTabName ] || [];
+					let content = (
+						<div className="perform-settings-cards">
+							{ cards.map( ( card, idx ) => (
+								<Card
+									key={ idx }
+									style={ {
+										marginBottom: '24px',
+										boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
+										borderRadius: 0,
+									} }
+								>
+									<CardHeader style={ { alignItems: 'flex-start', flexDirection: 'column' } }>
+										<h3 className="perform-card-title">{ card.title }</h3>
+										{ card.description && (
+											<p className="perform-card-description">{ card.description }</p>
+										) }
+									</CardHeader>
+									{ card.fields && card.fields.length > 0 && (
+										<CardBody>
+											{ card.fields.map( ( field ) => (
+												<div
+													key={ field.id }
+													className="perform-field"
+													style={ { marginBottom: 16 } }
+												>
+													{ renderField( field, fieldValues[ field.id ], onFieldChange ) }
+												</div>
+											) ) }
+										</CardBody>
 									) }
-								</CardHeader>
-								{ card.fields && card.fields.length > 0 && (
-									<CardBody>
-										{ card.fields.map( ( field ) => (
-											<div
-												key={ field.id }
-												className="perform-field"
-												style={ { marginBottom: 16 } }
-											>
-												{ renderField( field, fieldValues[ field.id ], onFieldChange ) }
-											</div>
-										) ) }
-									</CardBody>
-								) }
-							</Card>
-						) ) }
-					</div>
-				) }
-			</div>
-		</>
+								</Card>
+							) ) }
+						</div>
+					);
+
+					if ( 'dashboard' === selectedTabName ) {
+						content = <DashboardPanel dashboard={ dashboard } diagnostics={ diagnostics } />;
+					} else if ( 'cache-stats' === selectedTabName ) {
+						content = <CacheStatsPanel />;
+					}
+
+					return <div className="perform-settings-content">{ content }</div>;
+				} }
+			</TabPanel>
+		</div>
 	);
 };
 

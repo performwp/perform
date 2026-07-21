@@ -198,7 +198,8 @@ class PageCache implements ModuleInterface {
 		add_action( 'perform_cache_cleanup_event', [ $this, 'cleanup_obsolete_generations' ] );
 		add_action( 'perform_cache_cloudflare_purge_event', [ $this, 'run_cloudflare_purge_batch' ] );
 
-		add_action( 'admin_menu', [ $this, 'register_observability_page' ] );
+		add_action( 'admin_menu', [ $this, 'register_legacy_observability_route' ], 20 );
+		add_action( 'perform_settings_cache_stats_content', [ $this, 'render_observability_page' ] );
 		add_action( 'admin_post_perform_purge_page_cache', [ $this, 'handle_manual_purge' ] );
 		add_action( 'admin_post_perform_retry_cloudflare_cleanup', [ $this, 'handle_cloudflare_cleanup_retry' ] );
 		add_action( 'admin_post_perform_acknowledge_cloudflare_residual', [ $this, 'handle_cloudflare_residual_acknowledgement' ] );
@@ -735,20 +736,47 @@ class PageCache implements ModuleInterface {
 		$this->set_stat_value( 'preload_queue_size', count( $queue ) );
 	}
 
-	/**
-	 * Register cache observability page.
-	 *
-	 * @return void
-	 */
-	public function register_observability_page() {
-		add_submenu_page(
+	/** Register the retired URL as a hidden, capability-checked compatibility route. */
+	public function register_legacy_observability_route(): void {
+		$hook_suffix = add_submenu_page(
 			'options-general.php',
 			esc_html__( 'Perform Cache Observability', 'perform' ),
 			esc_html__( 'Perform Cache Stats', 'perform' ),
 			'manage_options',
 			'perform_cache_observability',
-			[ $this, 'render_observability_page' ]
+			[ $this, 'maybe_redirect_legacy_observability_page' ]
 		);
+		remove_submenu_page( 'options-general.php', 'perform_cache_observability' );
+
+		if ( $hook_suffix ) {
+			add_action( 'load-' . $hook_suffix, [ $this, 'maybe_redirect_legacy_observability_page' ] );
+		}
+	}
+
+	/** Redirect the retired Cache Stats submenu URL to its canonical settings tab. */
+	public function maybe_redirect_legacy_observability_page(): void {
+		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only route compatibility.
+		if ( 'perform_cache_observability' !== $page ) {
+			return;
+		}
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'Sorry, you are not allowed to access this page.', 'perform' ), '', [ 'response' => 403 ] );
+		}
+
+		$args = [];
+		if ( isset( $_GET['perform_cache_purged'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Existing post-action notice state.
+			$args['perform_cache_purged'] = 1;
+		}
+
+		foreach ( [ 'perform_cache_cloudflare_pending', 'perform_cache_cloudflare_retryable_failed' ] as $key ) {
+			if ( isset( $_GET[ $key ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Existing post-action notice state.
+				$args[ $key ] = absint( wp_unslash( $_GET[ $key ] ) );
+			}
+		}
+
+		wp_safe_redirect( $this->get_observability_url( $args ) );
+		exit;
 	}
 
 	/**
@@ -757,6 +785,10 @@ class PageCache implements ModuleInterface {
 	 * @return void
 	 */
 	public function render_observability_page() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'Sorry, you are not allowed to access this page.', 'perform' ), '', [ 'response' => 403 ] );
+		}
+
 		$stats = get_option( 'perform_cache_stats', [] );
 		if ( ! is_array( $stats ) ) {
 			$stats = [];
@@ -774,8 +806,8 @@ class PageCache implements ModuleInterface {
 		$cloudflare     = $this->get_cloudflare_queue_status();
 		$residual       = (int) get_option( 'perform_cache_cloudflare_credential_residual_' . $this->get_blog_id(), 0 );
 		?>
-		<div class="wrap">
-			<h1><?php esc_html_e( 'Perform Cache Observability', 'perform' ); ?></h1>
+		<section class="perform-cache-stats" aria-labelledby="perform-cache-stats-heading">
+			<h2 id="perform-cache-stats-heading"><?php esc_html_e( 'Perform Cache Observability', 'perform' ); ?></h2>
 			<p><?php esc_html_e( 'Live cache effectiveness and warmup health metrics.', 'perform' ); ?></p>
 			<?php if ( isset( $_GET['perform_cache_purged'] ) ) : ?>
 				<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'The local page-cache generation has been invalidated.', 'perform' ); ?></p></div>
@@ -812,7 +844,7 @@ class PageCache implements ModuleInterface {
 				</form>
 			<?php endif; ?>
 
-			<table class="widefat striped" style="max-width:900px;">
+			<table class="widefat striped perform-cache-stats__summary">
 				<tbody>
 					<tr><th><?php esc_html_e( 'Cache Hit Ratio', 'perform' ); ?></th><td><?php echo esc_html( $hit_ratio . '%' ); ?></td></tr>
 					<tr><th><?php esc_html_e( 'Hits', 'perform' ); ?></th><td><?php echo esc_html( $hits ); ?></td></tr>
@@ -833,7 +865,7 @@ class PageCache implements ModuleInterface {
 
 			<h2><?php esc_html_e( 'Slow Uncached URLs (ms)', 'perform' ); ?></h2>
 			<?php $this->render_stat_map_table( $slow_uncached, esc_html__( 'Render Time (ms)', 'perform' ) ); ?>
-		</div>
+		</section>
 		<?php
 	}
 
@@ -1010,7 +1042,7 @@ class PageCache implements ModuleInterface {
 					'perform_cache_cloudflare_pending' => $status['pending'],
 					'perform_cache_cloudflare_retryable_failed' => $status['retryable_failed'],
 				],
-				admin_url( 'options-general.php?page=perform_cache_observability' )
+				$this->get_observability_url()
 			)
 		);
 		exit;
@@ -1023,7 +1055,7 @@ class PageCache implements ModuleInterface {
 		}
 		$this->acknowledge_cloudflare_credential_residuals();
 		$this->schedule_cleanup();
-		wp_safe_redirect( admin_url( 'options-general.php?page=perform_cache_observability' ) );
+		wp_safe_redirect( $this->get_observability_url() );
 		exit;
 	}
 
@@ -1033,8 +1065,37 @@ class PageCache implements ModuleInterface {
 			wp_die( esc_html__( 'You are not allowed to retry Cloudflare cleanup.', 'perform' ) );
 		}
 		$this->retry_current_cloudflare_failures();
-		wp_safe_redirect( admin_url( 'options-general.php?page=perform_cache_observability' ) );
+		wp_safe_redirect( $this->get_observability_url() );
 		exit;
+	}
+
+	/**
+	 * Build the canonical Cache Stats tab URL with constrained notice arguments.
+	 *
+	 * @param array<string, mixed> $args Post-action notice arguments.
+	 *
+	 * @return string
+	 */
+	private function get_observability_url( array $args = [] ) {
+		$url     = add_query_arg(
+			[
+				'page' => 'perform_settings',
+				'tab'  => 'cache-stats',
+			],
+			admin_url( 'options-general.php' )
+		);
+		$allowed = array_intersect_key(
+			$args,
+			array_flip(
+				[
+					'perform_cache_purged',
+					'perform_cache_cloudflare_pending',
+					'perform_cache_cloudflare_retryable_failed',
+				]
+			)
+		);
+
+		return empty( $allowed ) ? $url : add_query_arg( $allowed, $url );
 	}
 
 	/** Retire only records that cannot use the current credentials. */

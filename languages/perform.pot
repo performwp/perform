@@ -7,7 +7,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language-Team: PerformWP <hello@performwp.com>\n"
-"POT-Creation-Date: 2026-07-02 10:16+0000\n"
+"POT-Creation-Date: 2026-07-21 14:39+0000\n"
 "Report-Msgid-Bugs-To: https://github.com/performwp/perform/issues/new\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
@@ -16,19 +16,19 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/Admin/Actions.php:102
+#: src/Admin/Actions.php:104
 msgid "Close Assets Manager"
 msgstr ""
 
-#: src/Admin/Actions.php:99, src/Modules/Assets/AssetsManager.php:258
+#: src/Admin/Actions.php:101, src/Modules/Assets/AssetsManager.php:258
 msgid "Assets Manager"
 msgstr ""
 
-#: src/Admin/Actions.php:109, src/Admin/Settings/Menu.php:40, src/Admin/Settings/Menu.php:41, src/Modules/Assets/AssetsManager.php:238
+#: src/Admin/Actions.php:111, src/Admin/Settings/Menu.php:40, src/Admin/Settings/Menu.php:41, src/Modules/Assets/AssetsManager.php:238
 msgid "Perform"
 msgstr ""
 
-#: src/Admin/Actions.php:129
+#: src/Admin/Actions.php:131
 msgid "Support Forum"
 msgstr ""
 
@@ -660,19 +660,23 @@ msgstr ""
 msgid "Assets Manager summary reports configured rule coverage, not historical byte savings."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:82
+#: src/Admin/Settings/Menu.php:55
+msgid "Cache Stats"
+msgstr ""
+
+#: src/Admin/Settings/Menu.php:109
 msgid "Insufficient permissions."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:93
+#: src/Admin/Settings/Menu.php:120
 msgid "Security check failed."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:209
+#: src/Admin/Settings/Menu.php:236
 msgid "Unable to save the settings. Please try again."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:201
+#: src/Admin/Settings/Menu.php:228
 msgid "Settings saved successfully."
 msgstr ""
 
@@ -995,78 +999,126 @@ msgstr ""
 msgid "No feed available, please visit the homepage!"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:148
+#: src/Modules/Cache/PageCache.php:219
 msgid "Every 5 minutes (Perform Cache)"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:480, src/Modules/Cache/PageCache.php:510
+#: src/Modules/Cache/PageCache.php:743, src/Modules/Cache/PageCache.php:810
 msgid "Perform Cache Observability"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:481
+#: src/Modules/Cache/PageCache.php:744
 msgid "Perform Cache Stats"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:511
+#: src/Modules/Cache/PageCache.php:764, src/Modules/Cache/PageCache.php:789
+msgid "Sorry, you are not allowed to access this page."
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:811
 msgid "Live cache effectiveness and warmup health metrics."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:515
+#: src/Modules/Cache/PageCache.php:813
+msgid "The local page-cache generation has been invalidated."
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:817
+msgid "Cloudflare URL cleanup is pending."
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:821
+msgid "Some Cloudflare URL cleanup batches need a manual retry."
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:826
+msgid "Purge Site Page Cache"
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:829
+msgid "Cloudflare cleanup: %1$d pending, %2$d retryable failures, %3$d old-credential residuals."
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:835
+msgid "Retry Failed Cloudflare Cleanup"
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:842
+msgid "After purging the old Cloudflare zone externally, acknowledge the residual to retire the old token-free queue and allow local cache cleanup."
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:843
+msgid "Acknowledge External Cloudflare Purge"
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:849
 msgid "Cache Hit Ratio"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:516
+#: src/Modules/Cache/PageCache.php:850
 msgid "Hits"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:517
+#: src/Modules/Cache/PageCache.php:851
 msgid "Stale Hits"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:518, src/Modules/Cache/PageCache.php:527
+#: src/Modules/Cache/PageCache.php:852, src/Modules/Cache/PageCache.php:861
 msgid "Misses"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:519, src/Modules/Cache/PageCache.php:530
+#: src/Modules/Cache/PageCache.php:853, src/Modules/Cache/PageCache.php:864
 msgid "Bypasses"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:520
+#: src/Modules/Cache/PageCache.php:854
 msgid "Lock Waits"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:521
+#: src/Modules/Cache/PageCache.php:855
 msgid "Preload Queue Size"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:522
+#: src/Modules/Cache/PageCache.php:856
 msgid "Preload Requests"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:526
+#: src/Modules/Cache/PageCache.php:860
 msgid "Top Missed URLs"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:529
+#: src/Modules/Cache/PageCache.php:863
 msgid "Bypass Reasons"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:530
+#: src/Modules/Cache/PageCache.php:864
 msgid "Reason"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:532
+#: src/Modules/Cache/PageCache.php:866
 msgid "Slow Uncached URLs (ms)"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:533
+#: src/Modules/Cache/PageCache.php:867
 msgid "Render Time (ms)"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:549
+#: src/Modules/Cache/PageCache.php:883
 msgid "No data yet."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:554
+#: src/Modules/Cache/PageCache.php:888
 msgid "URL"
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:1033
+msgid "You are not allowed to purge the page cache."
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:1054
+msgid "You are not allowed to acknowledge Cloudflare cleanup."
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:1065
+msgid "You are not allowed to retry Cloudflare cleanup."
 msgstr ""

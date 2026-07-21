@@ -39,6 +39,16 @@ try {
 			'eval',
 			'if ( class_exists( "Freemius" ) ) { $perform_fs = Freemius::get_instance_by_id( 18658 ); if ( $perform_fs ) { $perform_fs->skip_connection(); } }',
 		] );
+		await run( 'npm', [
+			'run',
+			'wp-env',
+			'--',
+			'run',
+			'cli',
+			'wp',
+			'eval',
+			'$user = get_user_by( "login", "perform-editor" ); if ( ! $user ) { $user_id = wp_create_user( "perform-editor", "password", "perform-editor@example.com" ); if ( is_wp_error( $user_id ) ) { throw new RuntimeException( $user_id->get_error_message() ); } $user = get_user_by( "id", $user_id ); } wp_set_password( "password", $user->ID ); $user->set_role( "editor" );',
+		] );
 	}
 
 	await run( 'npx', [ 'playwright', 'test', '--reporter=line' ] );
