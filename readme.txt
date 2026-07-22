@@ -15,7 +15,7 @@ Optimize WordPress performance with asset controls, page caching, CDN rewriting,
 
 Perform helps site owners reduce unnecessary frontend work in WordPress. It combines asset controls, cache features, CDN rewriting, and small cleanup modules in one settings area.
 
-Version 1.7.0 focuses on safer controls for real sites: a dashboard overview, runtime diagnostics, page cache exclusion controls, an Assets Manager reset action, and refreshed release metadata.
+Version 1.7.0 focuses on safer controls for real sites: a dashboard overview, dashboard-only runtime diagnostics, page cache exclusion and lifecycle controls, an Assets Manager reset action, and Cache Stats integrated into the main settings tabs.
 
 Key capabilities:
 
@@ -67,13 +67,15 @@ Contributions and bug reports welcome on GitHub: https://github.com/performwp/pe
 
 == Changelog ==
 
-= 1.7.0 - 2026-07-06 =
+= 1.7.0 - 2026-07-22 =
 - Added a dashboard overview for faster at-a-glance site status.
-- Added a runtime diagnostics panel for environment and plugin inspection.
+- Added a dashboard-only runtime diagnostics panel for environment and plugin inspection.
 - Added page cache exclusion controls for URLs and content that should bypass cache.
 - Added an Assets Manager reset action for safer repeated scans.
+- Moved Cache Stats into the main Perform settings tabs while preserving the previous URL for administrators.
+- Improved full-page cache invalidation after content, comment, taxonomy, settings, theme, and plugin changes, with bounded cleanup and CDN retry handling.
 - Hardened sitemap preload traversal and CDN module load gating.
-- Aligned public metadata surfaces and refreshed WordPress.org readme wording.
+- Aligned the dashboard and public metadata surfaces with version 1.7.0 and refreshed WordPress.org readme wording.
 
 = 1.6.0 - 2026-05-22 =
 - Redesigned Assets Manager with a more resilient scanner interface and WordPress-native admin controls.
@@ -122,9 +124,7 @@ Contributions and bug reports welcome on GitHub: https://github.com/performwp/pe
 == Upgrade Notice ==
 
 = 1.7.0 =
-Review Assets Manager, cache exclusions, and runtime diagnostics after updating.
-
-Back up your site before changing performance settings on production, then test important pages after enabling cache or asset controls.
+Review Assets Manager, cache exclusions, Cache Stats, and runtime diagnostics after updating. Cache Stats is now under Settings > Perform; the previous administrator URL redirects there.
 
 == Screenshots ==
 
