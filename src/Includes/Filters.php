@@ -10,9 +10,10 @@
 
 namespace Perform\Includes;
 
+defined( 'ABSPATH' ) || exit;
+
 class Filters {
 	public function __construct() {
-
 	}
 }
 new Filters();
