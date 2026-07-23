@@ -15,7 +15,7 @@
 	"require-dev": {
 		"dealerdirect/phpcodesniffer-composer-installer": "^1.2.1",
 		"phpcompatibility/phpcompatibility-wp": "*",
-		"wp-coding-standards/wpcs": "3.3",
+		"wp-coding-standards/wpcs": "3.4.0",
 		"phpstan/phpstan": "^2.0",
 		"phpstan/extension-installer": "^1.4",
 		"szepeviktor/phpstan-wordpress": "^2.0",
