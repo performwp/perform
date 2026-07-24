@@ -73,6 +73,23 @@ class AssetsManager implements ModuleInterface {
 	private $asset_source_groups = [];
 
 	/**
+	 * Assets Manager rule persistence.
+	 *
+	 * @var AssetRulesRepository|null
+	 */
+	private $rules_repository;
+
+	/**
+	 * Accept a repository for focused tests while preserving no-argument
+	 * construction through the module loader.
+	 *
+	 * @param AssetRulesRepository|null $rules_repository Rule repository.
+	 */
+	public function __construct( ?AssetRulesRepository $rules_repository = null ) {
+		$this->rules_repository = $rules_repository ?? new AssetRulesRepository();
+	}
+
+	/**
 	 * Constructor
 	 *
 	 * @since  1.1.0
@@ -140,8 +157,7 @@ class AssetsManager implements ModuleInterface {
 			return $this->selected_options;
 		}
 
-		$options                = get_option( 'perform_assets_manager_options' );
-		$this->selected_options = is_array( $options ) ? $options : [];
+		$this->selected_options = $this->rules_repository->get();
 
 		return $this->selected_options;
 	}
@@ -980,7 +996,7 @@ class AssetsManager implements ModuleInterface {
 
 			$current_id = $this->get_current_object_id();
 			$filters    = [ 'js', 'css', 'plugins', 'themes' ];
-			$options    = get_option( 'perform_assets_manager_options' );
+			$options    = $this->rules_repository->get();
 			$settings   = get_option( 'perform_assets_manager_settings' );
 
 			if ( ! is_array( $options ) ) {
@@ -1184,7 +1200,7 @@ class AssetsManager implements ModuleInterface {
 			}
 
 			// Save assets manager settings to DB.
-			update_option( 'perform_assets_manager_options', $options, false );
+			$this->rules_repository->save( $options );
 		}
 	}
 
@@ -1194,7 +1210,7 @@ class AssetsManager implements ModuleInterface {
 	 * @return string Redirect URL.
 	 */
 	private function reset_assets_manager_settings(): string {
-		delete_option( 'perform_assets_manager_options' );
+		$this->rules_repository->reset();
 
 		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
 		if ( '' === $request_uri ) {
