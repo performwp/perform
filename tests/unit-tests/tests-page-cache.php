@@ -883,10 +883,17 @@ final class Tests_Page_Cache extends TestCase {
 		$GLOBALS['perform_test_removed_submenu_pages'] = [];
 		$page_cache->register_legacy_observability_route();
 
-		$this->assertSame( 'perform_cache_observability', $GLOBALS['perform_test_submenu_pages'][0]['menu_slug'] );
-		$this->assertSame( 'manage_options', $GLOBALS['perform_test_submenu_pages'][0]['capability'] );
-		$this->assertSame( 'perform_cache_observability', $GLOBALS['perform_test_removed_submenu_pages'][0]['submenu_slug'] );
+		$this->assertSame(
+			[ 'perform_cache_observability', 'perform_cache_stats' ],
+			array_column( $GLOBALS['perform_test_submenu_pages'], 'menu_slug' )
+		);
+		$this->assertSame( [ 'manage_options', 'manage_options' ], array_column( $GLOBALS['perform_test_submenu_pages'], 'capability' ) );
+		$this->assertSame(
+			[ 'perform_cache_observability', 'perform_cache_stats' ],
+			array_column( $GLOBALS['perform_test_removed_submenu_pages'], 'submenu_slug' )
+		);
 		$this->assertContains( 'load-options-general.php_page_perform_cache_observability', array_column( $GLOBALS['perform_test_actions'], 'hook' ) );
+		$this->assertContains( 'load-options-general.php_page_perform_cache_stats', array_column( $GLOBALS['perform_test_actions'], 'hook' ) );
 	}
 
 	public function test_cache_stats_url_is_canonical_and_drops_unapproved_arguments() {
@@ -908,6 +915,13 @@ final class Tests_Page_Cache extends TestCase {
 
 	public function test_legacy_cache_stats_url_retains_denial_for_unauthorized_users() {
 		$_GET['page'] = 'perform_cache_observability';
+
+		$this->expectException( RuntimeException::class );
+		( new PageCache() )->maybe_redirect_legacy_observability_page();
+	}
+
+	public function test_alternate_legacy_cache_stats_url_retains_denial_for_unauthorized_users() {
+		$_GET['page'] = 'perform_cache_stats';
 
 		$this->expectException( RuntimeException::class );
 		( new PageCache() )->maybe_redirect_legacy_observability_page();

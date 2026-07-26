@@ -72,6 +72,9 @@ class CacheActivityService {
 			$stats  = is_array( $stored ) ? $stored : [];
 		}
 
+		// Keep the primary hit metric visible even before the first cache hit.
+		$stats = array_replace( [ 'hits' => 0 ], $stats );
+
 		$rows = [];
 		foreach ( $stats as $metric => $value ) {
 			if ( count( $rows ) >= self::MAX_EXPORT_ROWS ) {

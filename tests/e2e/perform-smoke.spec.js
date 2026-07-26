@@ -161,6 +161,12 @@ test( 'Cache Stats tab preserves legacy routing, actions, and keyboard access', 
 	await expect( page ).toHaveURL( /options-general\.php\?page=perform_settings&tab=cache-stats$/ );
 	await expect( page.getByRole( 'heading', { name: 'Perform Cache Observability' } ) ).toBeVisible();
 
+	await openAdminPage(
+		page,
+		'/wp-admin/options-general.php?page=perform_cache_stats&redirect_to=https%3A%2F%2Fattacker.example.com'
+	);
+	await expect( page ).toHaveURL( /options-general\.php\?page=perform_settings&tab=cache-stats$/ );
+
 	await page.getByRole( 'button', { name: 'Purge Site Page Cache' } ).click();
 	await expect( page ).toHaveURL( /page=perform_settings&tab=cache-stats&perform_cache_purged=1/ );
 	await expect( page.getByText( 'The local page-cache generation has been invalidated.' ) ).toBeVisible();
