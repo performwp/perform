@@ -4,7 +4,7 @@ import { ArrowDownTrayIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 const SETTINGS = window.performwpSettings?.cacheActivity || {};
 
-const CacheStatsPanel = () => {
+const CacheStatsPanel = ( { onClearSuccess = ( redirect ) => window.location.assign( redirect ) } ) => {
 	const containerRef = useRef( null );
 	const [ activeAction, setActiveAction ] = useState( '' );
 	const [ status, setStatus ] = useState( { text: '', type: '' } );
@@ -81,6 +81,7 @@ const CacheStatsPanel = () => {
 
 		setActiveAction( 'clear' );
 		setStatus( { text: SETTINGS.clearing || 'Clearing…', type: 'progress' } );
+		let failureMessage = SETTINGS.clearError || 'Cache activity could not be cleared.';
 
 		try {
 			const response = await fetch( SETTINGS.actionUrl, {
@@ -94,22 +95,28 @@ const CacheStatsPanel = () => {
 					perform_async: '1',
 				} ),
 			} );
-			const result = await response.json();
+			let result = null;
+			try {
+				result = await response.json();
+			} catch {
+				// A nonce failure, proxy, or upstream error may return HTML.
+			}
 
-			if ( ! response.ok || ! result?.success ) {
-				throw new Error(
-					result?.data?.message || SETTINGS.clearError || 'Cache activity could not be cleared.'
-				);
+			const redirect = result?.data?.redirect;
+			if ( ! response.ok || ! result?.success || 'string' !== typeof redirect || ! redirect ) {
+				failureMessage = result?.data?.message || failureMessage;
+				throw new Error( 'perform_clear_failed' );
 			}
 
 			setStatus( {
 				text: SETTINGS.clearSuccess || 'Cache activity cleared.',
 				type: 'success',
 			} );
-			window.location.assign( result.data.redirect );
+			setActiveAction( '' );
+			onClearSuccess( redirect );
 		} catch ( error ) {
 			setStatus( {
-				text: error?.message || SETTINGS.clearError || 'Cache activity could not be cleared.',
+				text: failureMessage,
 				type: 'error',
 			} );
 			setActiveAction( '' );

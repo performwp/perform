@@ -1,7 +1,7 @@
 /* eslint-env jest */
 
 import '@testing-library/jest-dom';
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 window.performwpSettings = {
 	cacheActivity: {
@@ -86,5 +86,39 @@ describe( 'CacheStatsPanel', () => {
 		expect( await screen.findByRole( 'alert' ) ).toHaveTextContent( 'Cache activity could not be exported.' );
 		expect( screen.getByRole( 'button', { name: 'Export CSV' } ) ).toBeEnabled();
 		expect( screen.getByRole( 'button', { name: 'Clear activity' } ) ).toBeEnabled();
+	} );
+
+	it( 'announces a localized non-JSON clear failure and allows a successful retry', async () => {
+		const onClearSuccess = jest.fn();
+		global.fetch = jest
+			.fn()
+			.mockResolvedValueOnce( {
+				ok: false,
+				json: async () => {
+					throw new SyntaxError( "Unexpected token '<'" );
+				},
+			} )
+			.mockResolvedValueOnce( {
+				ok: true,
+				json: async () => ( {
+					success: true,
+					data: { redirect: 'https://example.com/wp-admin/options-general.php?tab=cache-stats' },
+				} ),
+			} );
+
+		render( <CacheStatsPanel onClearSuccess={ onClearSuccess } /> );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Clear activity' } ) );
+
+		expect( await screen.findByRole( 'alert' ) ).toHaveTextContent( 'Cache activity could not be cleared.' );
+		expect( screen.getByRole( 'button', { name: 'Export CSV' } ) ).toBeEnabled();
+		expect( screen.getByRole( 'button', { name: 'Clear activity' } ) ).toBeEnabled();
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Clear activity' } ) );
+		await waitFor( () =>
+			expect( onClearSuccess ).toHaveBeenCalledWith(
+				'https://example.com/wp-admin/options-general.php?tab=cache-stats'
+			)
+		);
+		expect( global.fetch ).toHaveBeenCalledTimes( 2 );
 	} );
 } );

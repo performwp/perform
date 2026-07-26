@@ -1,4 +1,5 @@
 const { test, expect, request } = require( '@playwright/test' );
+const { readFile } = require( 'node:fs/promises' );
 
 async function dismissPluginOnboarding( page ) {
 	const skipButton = page.getByText( 'Skip', { exact: true } );
@@ -85,6 +86,25 @@ test( 'settings save, Assets Manager, and page cache smoke paths work', async ( 
 	await anonymous.dispose();
 } );
 
+test( 'settings field rows stack beneath their descriptions at narrow widths', async ( { page } ) => {
+	await page.setViewportSize( { width: 390, height: 844 } );
+	await login( page );
+	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings' );
+
+	for ( const tabName of [ 'General', 'Bloat', 'Assets', 'CDN', 'Cache', 'Advanced' ] ) {
+		await page.getByRole( 'tab', { name: tabName, exact: true } ).click();
+		const row = page.locator( '.perform-settings-field' ).first();
+		await expect( row ).toBeVisible();
+		const isStacked = await row.evaluate( ( element ) => {
+			const copy = element.querySelector( '.perform-settings-field__copy' ).getBoundingClientRect();
+			const control = element.querySelector( '.perform-settings-field__control' ).getBoundingClientRect();
+
+			return control.top >= copy.bottom;
+		} );
+		expect( isStacked ).toBeTruthy();
+	}
+} );
+
 test( 'Cache Stats tab preserves legacy routing, actions, and keyboard access', async ( { page } ) => {
 	await login( page );
 
@@ -107,7 +127,30 @@ test( 'Cache Stats tab preserves legacy routing, actions, and keyboard access', 
 	await page.getByRole( 'button', { name: 'Export CSV' } ).click();
 	const download = await downloadPromise;
 	expect( download.suggestedFilename() ).toMatch( /^perform-cache-activity-\d{4}-\d{2}-\d{2}\.csv$/ );
+	const csv = await readFile( await download.path(), 'utf8' );
+	expect( csv ).toContain( 'Metric,Item,Value' );
+	expect( csv ).toContain( 'Hits,,120' );
+	expect( csv ).toContain( '"Top Misses",/sample-page/,3' );
 	await expect( page.getByRole( 'status' ) ).toContainText( 'Cache activity exported.' );
+
+	await page.route( '**/wp-admin/admin-post.php', async ( route ) => {
+		if ( route.request().postData()?.includes( 'action=perform_clear_cache_activity' ) ) {
+			await route.fulfill( {
+				status: 500,
+				contentType: 'text/html',
+				body: '<h1>Temporary upstream error</h1>',
+			} );
+			return;
+		}
+
+		await route.continue();
+	} );
+	page.once( 'dialog', ( dialog ) => dialog.accept() );
+	await page.getByRole( 'button', { name: 'Clear activity' } ).click();
+	await expect( page.getByRole( 'alert' ) ).toContainText( 'Cache activity could not be cleared.' );
+	await expect( page.getByRole( 'button', { name: 'Export CSV' } ) ).toBeEnabled();
+	await expect( page.getByRole( 'button', { name: 'Clear activity' } ) ).toBeEnabled();
+	await page.unroute( '**/wp-admin/admin-post.php' );
 
 	await openAdminPage(
 		page,

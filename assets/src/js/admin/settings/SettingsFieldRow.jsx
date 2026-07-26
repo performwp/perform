@@ -78,6 +78,7 @@ const SettingsFieldRow = ( { field, value, onChange } ) => {
 				{ ...controlProps }
 				__next40pxDefaultSize
 				className={ fieldClass ?? 'perform-select-control' }
+				help={ <span className="screen-reader-text">{ desc }</span> }
 				options={ normalizedOptions }
 				value={ value ?? normalizedOptions[ 0 ]?.value ?? '' }
 				onChange={ ( nextValue ) => onChange( id, nextValue ) }
@@ -86,7 +87,12 @@ const SettingsFieldRow = ( { field, value, onChange } ) => {
 	} else if ( 'textarea' === type ) {
 		control = (
 			<TextareaControl
-				{ ...controlProps }
+				{ ...rest }
+				disabled={ disabled }
+				label={ name }
+				hideLabelFromVision
+				aria-describedby={ descriptionId }
+				__nextHasNoMarginBottom
 				rows={ field.rows ?? 5 }
 				placeholder={ placeholder }
 				value={ value ?? '' }

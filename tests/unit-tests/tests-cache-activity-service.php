@@ -24,6 +24,12 @@ final class Tests_Cache_Activity_Service extends TestCase {
 		$this->assertStringContainsString( '"Top Misses",/pricing/,3', $csv );
 	}
 
+	public function test_empty_export_contains_only_the_header() {
+		$service = new CacheActivityService();
+
+		$this->assertSame( "Metric,Item,Value\n", $service->export_csv( [] ) );
+	}
+
 	public function test_export_is_bounded_and_ignores_unsupported_values() {
 		$map = [];
 		for ( $index = 0; $index < CacheActivityService::MAX_EXPORT_ROWS + 50; ++$index ) {

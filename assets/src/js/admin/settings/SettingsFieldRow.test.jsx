@@ -53,6 +53,48 @@ describe( 'SettingsFieldRow', () => {
 		] );
 	} );
 
+	it( 'renders accessible select and textarea controls', () => {
+		const onSelectChange = jest.fn();
+		const { unmount } = render(
+			<SettingsFieldRow
+				field={ {
+					id: 'cache_mode',
+					name: 'Cache mode',
+					desc: 'Choose how aggressively Perform caches pages.',
+					type: 'select',
+					options: { balanced: 'Balanced', fast: 'Fast' },
+				} }
+				value="balanced"
+				onChange={ onSelectChange }
+			/>
+		);
+
+		const select = screen.getByRole( 'combobox', { name: 'Cache mode' } );
+		expect( select ).toHaveAccessibleDescription( 'Choose how aggressively Perform caches pages.' );
+		fireEvent.change( select, { target: { value: 'fast' } } );
+		expect( onSelectChange ).toHaveBeenCalledWith( 'cache_mode', 'fast' );
+		unmount();
+
+		const onTextareaChange = jest.fn();
+		render(
+			<SettingsFieldRow
+				field={ {
+					id: 'preconnect',
+					name: 'Preconnect',
+					desc: 'Enter one origin per line.',
+					type: 'textarea',
+				} }
+				value="//example.com"
+				onChange={ onTextareaChange }
+			/>
+		);
+
+		const textarea = screen.getByRole( 'textbox', { name: 'Preconnect' } );
+		expect( textarea ).toHaveAccessibleDescription( 'Enter one origin per line.' );
+		fireEvent.change( textarea, { target: { value: '//cdn.example.com' } } );
+		expect( onTextareaChange ).toHaveBeenCalledWith( 'preconnect', '//cdn.example.com' );
+	} );
+
 	it( 'keeps long translated copy readable beside a disabled control', () => {
 		const translatedName =
 			'Enable a deliberately long translated performance setting name without truncating its meaning';
