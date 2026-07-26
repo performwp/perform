@@ -127,7 +127,7 @@ Contributions and bug reports welcome on GitHub: https://github.com/performwp/pe
 == Upgrade Notice ==
 
 = 1.7.0 =
-Review Assets Manager, cache exclusions, Cache Stats, and runtime diagnostics after updating. Cache Stats is now under Settings > Perform; the previous administrator URL redirects there. Settings use a consistent responsive layout, and Cache Stats export and clear actions now report their progress and outcome.
+Review Assets Manager, cache exclusions, Cache Stats, and runtime diagnostics after updating. Cache Stats now appears under Settings > Perform, and its export and clear actions report progress and results.
 
 == Screenshots ==
 
