@@ -740,25 +740,27 @@ class PageCache implements ModuleInterface {
 
 	/** Register the retired URL as a hidden, capability-checked compatibility route. */
 	public function register_legacy_observability_route(): void {
-		$hook_suffix = add_submenu_page(
-			'options-general.php',
-			esc_html__( 'Perform Cache Observability', 'perform' ),
-			esc_html__( 'Perform Cache Stats', 'perform' ),
-			'manage_options',
-			'perform_cache_observability',
-			[ $this, 'maybe_redirect_legacy_observability_page' ]
-		);
-		remove_submenu_page( 'options-general.php', 'perform_cache_observability' );
+		foreach ( [ 'perform_cache_observability', 'perform_cache_stats' ] as $legacy_slug ) {
+			$hook_suffix = add_submenu_page(
+				'options-general.php',
+				esc_html__( 'Perform Cache Observability', 'perform' ),
+				esc_html__( 'Perform Cache Stats', 'perform' ),
+				'manage_options',
+				$legacy_slug,
+				[ $this, 'maybe_redirect_legacy_observability_page' ]
+			);
+			remove_submenu_page( 'options-general.php', $legacy_slug );
 
-		if ( $hook_suffix ) {
-			add_action( 'load-' . $hook_suffix, [ $this, 'maybe_redirect_legacy_observability_page' ] );
+			if ( $hook_suffix ) {
+				add_action( 'load-' . $hook_suffix, [ $this, 'maybe_redirect_legacy_observability_page' ] );
+			}
 		}
 	}
 
 	/** Redirect the retired Cache Stats submenu URL to its canonical settings tab. */
 	public function maybe_redirect_legacy_observability_page(): void {
 		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only route compatibility.
-		if ( 'perform_cache_observability' !== $page ) {
+		if ( ! in_array( $page, [ 'perform_cache_observability', 'perform_cache_stats' ], true ) ) {
 			return;
 		}
 

@@ -53,6 +53,7 @@ class CacheActivityService {
 
 		rewind( $stream );
 		$contents = stream_get_contents( $stream );
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- This closes an in-memory php://temp stream, not a filesystem path.
 		fclose( $stream );
 
 		return is_string( $contents ) ? $contents : "Metric,Item,Value\n";
@@ -70,6 +71,9 @@ class CacheActivityService {
 			$stored = get_option( self::OPTION_NAME, [] );
 			$stats  = is_array( $stored ) ? $stored : [];
 		}
+
+		// Keep the primary hit metric visible even before the first cache hit.
+		$stats = array_replace( [ 'hits' => 0 ], $stats );
 
 		$rows = [];
 		foreach ( $stats as $metric => $value ) {

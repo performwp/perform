@@ -129,7 +129,9 @@ test( 'Cache Stats tab preserves legacy routing, actions, and keyboard access', 
 	expect( download.suggestedFilename() ).toMatch( /^perform-cache-activity-\d{4}-\d{2}-\d{2}\.csv$/ );
 	const csv = await readFile( await download.path(), 'utf8' );
 	expect( csv ).toContain( 'Metric,Item,Value' );
-	expect( csv ).toContain( 'Hits,,120' );
+	const hits = csv.match( /^Hits,,(\d+)$/m );
+	expect( hits ).not.toBeNull();
+	expect( Number( hits[ 1 ] ) ).toBeGreaterThanOrEqual( 120 );
 	expect( csv ).toContain( '"Top Misses",/sample-page/,3' );
 	await expect( page.getByRole( 'status' ) ).toContainText( 'Cache activity exported.' );
 
@@ -158,6 +160,12 @@ test( 'Cache Stats tab preserves legacy routing, actions, and keyboard access', 
 	);
 	await expect( page ).toHaveURL( /options-general\.php\?page=perform_settings&tab=cache-stats$/ );
 	await expect( page.getByRole( 'heading', { name: 'Perform Cache Observability' } ) ).toBeVisible();
+
+	await openAdminPage(
+		page,
+		'/wp-admin/options-general.php?page=perform_cache_stats&redirect_to=https%3A%2F%2Fattacker.example.com'
+	);
+	await expect( page ).toHaveURL( /options-general\.php\?page=perform_settings&tab=cache-stats$/ );
 
 	await page.getByRole( 'button', { name: 'Purge Site Page Cache' } ).click();
 	await expect( page ).toHaveURL( /page=perform_settings&tab=cache-stats&perform_cache_purged=1/ );

@@ -39,6 +39,7 @@
 .wp-env.json
 
 AGENTS.md
+DESIGN.md
 sample-data/wordpress.sql
 sample-data/sample-data.numbers
 bower.json

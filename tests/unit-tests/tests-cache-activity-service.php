@@ -24,10 +24,10 @@ final class Tests_Cache_Activity_Service extends TestCase {
 		$this->assertStringContainsString( '"Top Misses",/pricing/,3', $csv );
 	}
 
-	public function test_empty_export_contains_only_the_header() {
+	public function test_empty_export_contains_zero_hits() {
 		$service = new CacheActivityService();
 
-		$this->assertSame( "Metric,Item,Value\n", $service->export_csv( [] ) );
+		$this->assertSame( "Metric,Item,Value\nHits,,0\n", $service->export_csv( [] ) );
 	}
 
 	public function test_export_is_bounded_and_ignores_unsupported_values() {
@@ -57,7 +57,7 @@ final class Tests_Cache_Activity_Service extends TestCase {
 			]
 		);
 
-		$this->assertSame( '\'=HYPERLINK("https://example.com")', $rows[0][1] );
+		$this->assertSame( '\'=HYPERLINK("https://example.com")', $rows[1][1] );
 	}
 
 	public function test_clear_removes_only_cache_activity() {
