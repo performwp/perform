@@ -28,6 +28,7 @@ final class Tests_Page_Cache extends TestCase {
 		$GLOBALS['perform_test_blog_id']                 = 1;
 		$_COOKIE                   = [];
 		$_GET                      = [];
+		$_POST                     = [];
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$_SERVER['REQUEST_URI']    = '/';
 		unset( $_SERVER['HTTP_X_PERFORM_CACHE_REGEN'] );
@@ -63,6 +64,7 @@ final class Tests_Page_Cache extends TestCase {
 		);
 		$_COOKIE = [];
 		$_GET    = [];
+		$_POST   = [];
 	}
 
 	public function test_internal_regeneration_requires_matching_lock_token() {
@@ -942,6 +944,40 @@ final class Tests_Page_Cache extends TestCase {
 		$GLOBALS['perform_test_nonce_valid']      = true;
 
 		$this->assertTrue( $this->invoke_private( $page_cache, 'is_manual_purge_authorized' ) );
+	}
+
+	public function test_cache_activity_actions_are_registered() {
+		( new PageCache() )->register();
+
+		$hooks = array_column( $GLOBALS['perform_test_actions'], 'hook' );
+		$this->assertContains( 'admin_post_perform_export_cache_activity', $hooks );
+		$this->assertContains( 'admin_post_perform_clear_cache_activity', $hooks );
+	}
+
+	public function test_cache_activity_export_requires_manage_options() {
+		$this->expectException( RuntimeException::class );
+		( new PageCache() )->handle_cache_activity_export();
+	}
+
+	public function test_async_cache_activity_clear_removes_stats_and_returns_canonical_redirect() {
+		$GLOBALS['perform_test_current_user_can']               = [ 'manage_options' => true ];
+		$GLOBALS['perform_test_nonce_valid']                    = true;
+		$GLOBALS['perform_test_options']['perform_cache_stats'] = [ 'hits' => 15 ];
+		$_POST['perform_async']                                 = '1';
+
+		try {
+			( new PageCache() )->handle_cache_activity_clear();
+			$this->fail( 'Expected the test JSON response to terminate the request.' );
+		} catch ( RuntimeException $exception ) {
+			$this->assertSame( 'perform_test_json_response', $exception->getMessage() );
+		}
+
+		$this->assertArrayNotHasKey( 'perform_cache_stats', $GLOBALS['perform_test_options'] );
+		$this->assertTrue( $GLOBALS['perform_test_json_response']['success'] );
+		$this->assertSame(
+			'https://example.com/wp-admin/options-general.php?page=perform_settings&tab=cache-stats&perform_cache_activity_cleared=1',
+			$GLOBALS['perform_test_json_response']['data']['redirect']
+		);
 	}
 
 	private function set_private_property( PageCache $page_cache, string $property_name, $value ): void {
