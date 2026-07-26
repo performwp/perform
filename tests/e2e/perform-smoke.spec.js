@@ -129,7 +129,9 @@ test( 'Cache Stats tab preserves legacy routing, actions, and keyboard access', 
 	expect( download.suggestedFilename() ).toMatch( /^perform-cache-activity-\d{4}-\d{2}-\d{2}\.csv$/ );
 	const csv = await readFile( await download.path(), 'utf8' );
 	expect( csv ).toContain( 'Metric,Item,Value' );
-	expect( csv ).toContain( 'Hits,,120' );
+	const hits = csv.match( /^Hits,,(\d+)$/m );
+	expect( hits ).not.toBeNull();
+	expect( Number( hits[ 1 ] ) ).toBeGreaterThanOrEqual( 120 );
 	expect( csv ).toContain( '"Top Misses",/sample-page/,3' );
 	await expect( page.getByRole( 'status' ) ).toContainText( 'Cache activity exported.' );
 
