@@ -7,7 +7,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language-Team: PerformWP <hello@performwp.com>\n"
-"POT-Creation-Date: 2026-07-26 04:03+0000\n"
+"POT-Creation-Date: 2026-07-26 06:25+0000\n"
 "Report-Msgid-Bugs-To: https://github.com/performwp/perform/issues/new\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
@@ -52,7 +52,7 @@ msgstr ""
 msgid "Clear all collected cache activity? This does not clear cached pages."
 msgstr ""
 
-#: src/Admin/Actions.php:91, src/Modules/Cache/PageCache.php:826, src/Modules/Cache/PageCache.php:1088
+#: src/Admin/Actions.php:91, src/Modules/Cache/PageCache.php:828, src/Modules/Cache/PageCache.php:1090
 msgid "Cache activity cleared."
 msgstr ""
 
@@ -1047,130 +1047,130 @@ msgstr ""
 msgid "Every 5 minutes (Perform Cache)"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:745, src/Modules/Cache/PageCache.php:812
+#: src/Modules/Cache/PageCache.php:746, src/Modules/Cache/PageCache.php:814
 msgid "Perform Cache Observability"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:746
+#: src/Modules/Cache/PageCache.php:747
 msgid "Perform Cache Stats"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:766, src/Modules/Cache/PageCache.php:791
+#: src/Modules/Cache/PageCache.php:768, src/Modules/Cache/PageCache.php:793
 msgid "Sorry, you are not allowed to access this page."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:813
+#: src/Modules/Cache/PageCache.php:815
 msgid "Live cache effectiveness and warmup health metrics."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:815
+#: src/Modules/Cache/PageCache.php:817
 msgid "The local page-cache generation has been invalidated."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:819
+#: src/Modules/Cache/PageCache.php:821
 msgid "Cloudflare URL cleanup is pending."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:823
+#: src/Modules/Cache/PageCache.php:825
 msgid "Some Cloudflare URL cleanup batches need a manual retry."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:831
+#: src/Modules/Cache/PageCache.php:833
 msgid "Purge Site Page Cache"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:834
+#: src/Modules/Cache/PageCache.php:836
 msgid "Cloudflare cleanup: %1$d pending, %2$d retryable failures, %3$d old-credential residuals."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:840
+#: src/Modules/Cache/PageCache.php:842
 msgid "Retry Failed Cloudflare Cleanup"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:847
+#: src/Modules/Cache/PageCache.php:849
 msgid "After purging the old Cloudflare zone externally, acknowledge the residual to retire the old token-free queue and allow local cache cleanup."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:848
+#: src/Modules/Cache/PageCache.php:850
 msgid "Acknowledge External Cloudflare Purge"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:854
+#: src/Modules/Cache/PageCache.php:856
 msgid "Cache Hit Ratio"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:855
+#: src/Modules/Cache/PageCache.php:857
 msgid "Hits"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:856
+#: src/Modules/Cache/PageCache.php:858
 msgid "Stale Hits"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:857, src/Modules/Cache/PageCache.php:866
+#: src/Modules/Cache/PageCache.php:859, src/Modules/Cache/PageCache.php:868
 msgid "Misses"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:858, src/Modules/Cache/PageCache.php:869
+#: src/Modules/Cache/PageCache.php:860, src/Modules/Cache/PageCache.php:871
 msgid "Bypasses"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:859
+#: src/Modules/Cache/PageCache.php:861
 msgid "Lock Waits"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:860
+#: src/Modules/Cache/PageCache.php:862
 msgid "Preload Queue Size"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:861
+#: src/Modules/Cache/PageCache.php:863
 msgid "Preload Requests"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:865
+#: src/Modules/Cache/PageCache.php:867
 msgid "Top Missed URLs"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:868
+#: src/Modules/Cache/PageCache.php:870
 msgid "Bypass Reasons"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:869
+#: src/Modules/Cache/PageCache.php:871
 msgid "Reason"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:871
+#: src/Modules/Cache/PageCache.php:873
 msgid "Slow Uncached URLs (ms)"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:872
+#: src/Modules/Cache/PageCache.php:874
 msgid "Render Time (ms)"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:888
+#: src/Modules/Cache/PageCache.php:890
 msgid "No data yet."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:893
+#: src/Modules/Cache/PageCache.php:895
 msgid "URL"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:1038
+#: src/Modules/Cache/PageCache.php:1040
 msgid "You are not allowed to purge the page cache."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:1059
+#: src/Modules/Cache/PageCache.php:1061
 msgid "You are not allowed to export cache activity."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:1074
+#: src/Modules/Cache/PageCache.php:1076
 msgid "You are not allowed to clear cache activity."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:1101
+#: src/Modules/Cache/PageCache.php:1103
 msgid "You are not allowed to acknowledge Cloudflare cleanup."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:1112
+#: src/Modules/Cache/PageCache.php:1114
 msgid "You are not allowed to retry Cloudflare cleanup."
 msgstr ""
