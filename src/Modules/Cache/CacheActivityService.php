@@ -53,6 +53,7 @@ class CacheActivityService {
 
 		rewind( $stream );
 		$contents = stream_get_contents( $stream );
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- This closes an in-memory php://temp stream, not a filesystem path.
 		fclose( $stream );
 
 		return is_string( $contents ) ? $contents : "Metric,Item,Value\n";
