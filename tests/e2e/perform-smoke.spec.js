@@ -99,7 +99,15 @@ test( 'Cache Stats tab preserves legacy routing, actions, and keyboard access', 
 	await expect( page ).toHaveURL( /[?&]tab=cache-stats(?:&|$)/ );
 	await expect( page.getByRole( 'heading', { name: 'Perform Cache Observability' } ) ).toBeVisible();
 	await expect( page.getByRole( 'button', { name: 'Purge Site Page Cache' } ) ).toBeVisible();
+	await expect( page.getByRole( 'button', { name: 'Export CSV' } ) ).toBeVisible();
+	await expect( page.getByRole( 'button', { name: 'Clear activity' } ) ).toBeVisible();
 	await expect( page.getByRole( 'button', { name: 'Save Settings' } ) ).toHaveCount( 0 );
+
+	const downloadPromise = page.waitForEvent( 'download' );
+	await page.getByRole( 'button', { name: 'Export CSV' } ).click();
+	const download = await downloadPromise;
+	expect( download.suggestedFilename() ).toMatch( /^perform-cache-activity-\d{4}-\d{2}-\d{2}\.csv$/ );
+	await expect( page.getByRole( 'status' ) ).toContainText( 'Cache activity exported.' );
 
 	await openAdminPage(
 		page,
@@ -111,6 +119,11 @@ test( 'Cache Stats tab preserves legacy routing, actions, and keyboard access', 
 	await page.getByRole( 'button', { name: 'Purge Site Page Cache' } ).click();
 	await expect( page ).toHaveURL( /page=perform_settings&tab=cache-stats&perform_cache_purged=1/ );
 	await expect( page.getByText( 'The local page-cache generation has been invalidated.' ) ).toBeVisible();
+
+	page.once( 'dialog', ( dialog ) => dialog.accept() );
+	await page.getByRole( 'button', { name: 'Clear activity' } ).click();
+	await expect( page ).toHaveURL( /perform_cache_activity_cleared=1/ );
+	await expect( page.getByText( 'Cache activity cleared.' ) ).toBeVisible();
 } );
 
 test( 'lower-privilege users cannot access the legacy or canonical Cache Stats routes', async ( { page } ) => {
@@ -132,6 +145,8 @@ test( 'lower-privilege users cannot access the legacy or canonical Cache Stats r
 
 	const protectedActions = [
 		[ 'perform_purge_page_cache', 'You are not allowed to purge the page cache.' ],
+		[ 'perform_export_cache_activity', 'You are not allowed to export cache activity.' ],
+		[ 'perform_clear_cache_activity', 'You are not allowed to clear cache activity.' ],
 		[ 'perform_retry_cloudflare_cleanup', 'You are not allowed to retry Cloudflare cleanup.' ],
 		[ 'perform_acknowledge_cloudflare_residual', 'You are not allowed to acknowledge Cloudflare cleanup.' ],
 	];

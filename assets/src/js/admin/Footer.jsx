@@ -1,29 +1,15 @@
 import { Button, Spinner } from '@wordpress/components';
 
 const Footer = ( { dirty, saving, message, onSave } ) => {
-	// message: { text, type } where type is 'success' | 'error' | ''
 	return (
-		<div
-			className="perform-savebar"
-			style={ {
-				position: 'sticky',
-				bottom: 0,
-				left: 0,
-				right: 0,
-				background: '#fff',
-				borderTop: '1px solid #eee',
-				padding: 12,
-				zIndex: 1000,
-				display: 'flex',
-				justifyContent: 'flex-end',
-				gap: 12,
-				alignItems: 'center',
-				marginBottom: '-20px',
-			} }
-		>
-			<div style={ { marginRight: 'auto' } } />
+		<div className="perform-savebar">
 			{ message && message.text && (
-				<div style={ { marginRight: 12, color: message.type === 'error' ? '#c00' : '#146e00' } }>
+				<div
+					className="perform-savebar__message"
+					data-status={ message.type }
+					role={ 'error' === message.type ? 'alert' : 'status' }
+					aria-live="polite"
+				>
 					{ message.text }
 				</div>
 			) }

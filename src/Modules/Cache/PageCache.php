@@ -201,6 +201,8 @@ class PageCache implements ModuleInterface {
 		add_action( 'admin_menu', [ $this, 'register_legacy_observability_route' ], 20 );
 		add_action( 'perform_settings_cache_stats_content', [ $this, 'render_observability_page' ] );
 		add_action( 'admin_post_perform_purge_page_cache', [ $this, 'handle_manual_purge' ] );
+		add_action( 'admin_post_perform_export_cache_activity', [ $this, 'handle_cache_activity_export' ] );
+		add_action( 'admin_post_perform_clear_cache_activity', [ $this, 'handle_cache_activity_clear' ] );
 		add_action( 'admin_post_perform_retry_cloudflare_cleanup', [ $this, 'handle_cloudflare_cleanup_retry' ] );
 		add_action( 'admin_post_perform_acknowledge_cloudflare_residual', [ $this, 'handle_cloudflare_residual_acknowledgement' ] );
 	}
@@ -820,6 +822,9 @@ class PageCache implements ModuleInterface {
 					?>
 					<div class="notice notice-error"><p><?php esc_html_e( 'Some Cloudflare URL cleanup batches need a manual retry.', 'perform' ); ?></p></div><?php endif; ?>
 			<?php endif; ?>
+			<?php if ( isset( $_GET['perform_cache_activity_cleared'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Existing post-action notice state. ?>
+				<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Cache activity cleared.', 'perform' ); ?></p></div>
+			<?php endif; ?>
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 				<input type="hidden" name="action" value="perform_purge_page_cache" />
 				<?php wp_nonce_field( 'perform_purge_page_cache' ); ?>
@@ -1048,6 +1053,48 @@ class PageCache implements ModuleInterface {
 		exit;
 	}
 
+	/** Download a bounded, spreadsheet-safe snapshot of cache activity. */
+	public function handle_cache_activity_export(): void {
+		if ( ! current_user_can( 'manage_options' ) || ! check_admin_referer( 'perform_export_cache_activity' ) ) {
+			wp_die( esc_html__( 'You are not allowed to export cache activity.', 'perform' ) );
+		}
+
+		$contents = ( new CacheActivityService() )->export_csv();
+		nocache_headers();
+		header( 'Content-Type: text/csv; charset=utf-8' );
+		header( 'Content-Disposition: attachment; filename="perform-cache-activity-' . gmdate( 'Y-m-d' ) . '.csv"' );
+		header( 'X-Content-Type-Options: nosniff' );
+		echo $contents; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Bounded CSV is escaped by CacheActivityService.
+		exit;
+	}
+
+	/** Clear collected activity without invalidating cached pages or settings. */
+	public function handle_cache_activity_clear(): void {
+		if ( ! current_user_can( 'manage_options' ) || ! check_admin_referer( 'perform_clear_cache_activity' ) ) {
+			wp_die( esc_html__( 'You are not allowed to clear cache activity.', 'perform' ) );
+		}
+
+		( new CacheActivityService() )->clear();
+		$redirect = $this->get_observability_url(
+			[
+				'perform_cache_activity_cleared' => 1,
+			]
+		);
+
+		$is_async = isset( $_POST['perform_async'] ) && '1' === sanitize_text_field( wp_unslash( $_POST['perform_async'] ) );
+		if ( $is_async ) {
+			wp_send_json_success(
+				[
+					'message'  => esc_html__( 'Cache activity cleared.', 'perform' ),
+					'redirect' => $redirect,
+				]
+			);
+		}
+
+		wp_safe_redirect( $redirect );
+		exit;
+	}
+
 	/** Retire explicitly acknowledged old-credential Cloudflare work. */
 	public function handle_cloudflare_residual_acknowledgement(): void {
 		if ( ! current_user_can( 'manage_options' ) || ! check_admin_referer( 'perform_acknowledge_cloudflare_residual' ) ) {
@@ -1089,6 +1136,7 @@ class PageCache implements ModuleInterface {
 			array_flip(
 				[
 					'perform_cache_purged',
+					'perform_cache_activity_cleared',
 					'perform_cache_cloudflare_pending',
 					'perform_cache_cloudflare_retryable_failed',
 				]

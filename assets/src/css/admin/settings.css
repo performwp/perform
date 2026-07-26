@@ -1,59 +1,356 @@
 .perform-settings-page {
+	--perform-color-brand: #0046d1;
+	--perform-color-brand-hover: #0037a8;
+	--perform-color-focus: #2271b1;
+	--perform-color-text: #1d2327;
+	--perform-color-text-muted: #50575e;
+	--perform-color-border: #dcdcde;
+	--perform-color-surface: #fff;
+	--perform-color-canvas: #f0f0f1;
+	--perform-color-success: #008a20;
+	--perform-color-warning: #996800;
+	--perform-color-danger: #b32d2e;
+	display: flex;
+	flex-direction: column;
+	min-height: calc(100vh - 32px);
 	margin-left: -20px;
+	color: var(--perform-color-text);
+	background: var(--perform-color-surface);
+}
+
+.perform-settings-page *,
+.perform-settings-page *::before,
+.perform-settings-page *::after {
+	box-sizing: border-box;
 }
 
 .perform-settings-header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	margin-bottom: 24px;
-	background-color: var(--white-color);
-	padding: 0 20px;
-	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+	min-height: 76px;
+	padding: 8px clamp(20px, 3vw, 44px);
+	border-bottom: 1px solid var(--perform-color-border);
+	background: var(--perform-color-surface);
+}
+
+.perform-settings-header__logo {
+	width: auto;
+	height: 52px;
+}
+
+.perform-settings-header__actions {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.perform-settings-header__actions .components-button {
+	min-height: 44px;
+	gap: 6px;
+	color: var(--perform-color-brand);
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.perform-settings-header__actions .components-button svg {
+	width: 18px;
+	height: 18px;
 }
 
 .perform-plugin-version {
-	font-size: 10px;
-	color: var(--white-color);
-	background-color: var(--primary-color);
-	padding: 3px 8px;
-	border-radius: 5px;
+	padding: 4px 9px;
+	border-radius: 999px;
+	color: var(--perform-color-brand);
+	background: #edf4ff;
+	font-size: 11px;
+	font-weight: 600;
+	line-height: 1.4;
 }
 
 .perform-settings-tab-panel {
-	margin-bottom: 20px;
+	margin-bottom: 0;
 }
 
 .perform-settings-tab-panel .components-tab-panel__tabs {
+	display: flex;
 	overflow-x: auto;
-	background-color: var(--bg-color);
-	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+	padding: 0 clamp(20px, 3vw, 44px);
+	border-bottom: 1px solid var(--perform-color-border);
+	background: var(--perform-color-surface);
 	scrollbar-width: thin;
 }
 
 .perform-settings-tab-panel .components-tab-panel__tabs-item {
+	position: relative;
 	flex: 0 0 auto;
+	min-height: 48px;
+	padding: 0 16px;
+	color: var(--perform-color-text-muted);
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.4;
 }
 
-.perform-settings-tab-panel .components-tab-panel__tabs-item:focus-visible {
-	outline: 2px solid #2271b1;
-	outline-offset: -2px;
+.perform-settings-tab-panel .components-tab-panel__tabs-item:first-child {
+	margin-left: -16px;
 }
 
-.perform-card-title,
-.perform-card-description {
-	margin: 0;
+.perform-settings-tab-panel .components-tab-panel__tabs-item[aria-selected='true'] {
+	color: var(--perform-color-brand);
+}
+
+.perform-settings-tab-panel .components-tab-panel__tabs-item[aria-selected='true']::after {
+	position: absolute;
+	right: 16px;
+	bottom: 0;
+	left: 16px;
+	height: 3px;
+	border-radius: 3px 3px 0 0;
+	background: var(--perform-color-brand);
+	content: '';
+}
+
+.perform-settings-tab-panel .components-tab-panel__tabs-item:focus-visible,
+.perform-settings-page .components-button:focus-visible,
+.perform-settings-page a:focus-visible {
+	outline: 2px solid var(--perform-color-focus);
+	outline-offset: 2px;
+	box-shadow: none;
 }
 
 .perform-settings-content {
-    padding: 0 20px;
+	width: 100%;
+	padding: 36px clamp(20px, 3vw, 44px) 48px;
+}
+
+.perform-settings-sections {
+	display: grid;
+	gap: 40px;
+	width: 100%;
+}
+
+.perform-settings-section {
+	width: 100%;
+}
+
+.perform-settings-section__header {
+	max-width: 760px;
+	margin-bottom: 10px;
+}
+
+.perform-settings-section__header h2 {
+	margin: 0;
+	font-size: 20px;
+	font-weight: 600;
+	line-height: 1.3;
+}
+
+.perform-settings-section__header p {
+	margin: 8px 0 0;
+	color: var(--perform-color-text-muted);
+	font-size: 14px;
+	line-height: 1.55;
+}
+
+.perform-settings-section__fields {
+	border-top: 1px solid var(--perform-color-border);
+}
+
+.perform-settings-field {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
+	align-items: center;
+	gap: clamp(32px, 6vw, 96px);
+	min-height: 92px;
+	padding: 22px 0;
+	border-bottom: 1px solid var(--perform-color-border);
+}
+
+.perform-settings-field__copy,
+.perform-settings-field__control {
+	min-width: 0;
+}
+
+.perform-settings-field__title-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+}
+
+.perform-settings-field__title-row h4 {
+	margin: 0;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.4;
+}
+
+.perform-settings-field__copy > p {
+	max-width: 720px;
+	margin: 6px 0 0;
+	color: var(--perform-color-text-muted);
+	font-size: 13px;
+	line-height: 1.55;
+	overflow-wrap: anywhere;
+}
+
+.perform-settings-field__learn-more {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	color: var(--perform-color-brand);
+	font-size: 12px;
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.perform-settings-field__learn-more:hover {
+	color: var(--perform-color-brand-hover);
+	text-decoration: underline;
+}
+
+.perform-settings-field__learn-more svg {
+	width: 14px;
+	height: 14px;
+}
+
+.perform-settings-field__saved-secret {
+	display: block;
+	margin-top: 4px;
+	color: var(--perform-color-success);
+}
+
+.perform-settings-field__control {
+	display: flex;
+	justify-content: flex-end;
+}
+
+.perform-settings-field__control > .components-base-control,
+.perform-settings-field__control .components-base-control__field,
+.perform-settings-field__control .components-select-control,
+.perform-settings-field__control .components-text-control__input,
+.perform-settings-field__control .components-textarea-control__input {
+	width: 100%;
+	margin-bottom: 0;
+}
+
+.perform-settings-field__control .components-input-control__container,
+.perform-settings-field__control .components-text-control__input {
+	min-height: 40px;
+}
+
+.perform-settings-field[data-control='toggle'] .perform-settings-field__control {
+	align-items: center;
+	min-height: 44px;
+}
+
+.perform-settings-field__unsupported {
+	margin: 0;
+	color: var(--perform-color-danger);
+}
+
+.perform-savebar {
+	position: sticky;
+	z-index: 1000;
+	bottom: 0;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 16px;
+	min-height: 68px;
+	margin-top: auto;
+	padding: 12px clamp(20px, 3vw, 44px);
+	border-top: 1px solid var(--perform-color-border);
+	background: rgba(255, 255, 255, 0.96);
+	backdrop-filter: blur(8px);
+}
+
+.perform-savebar__message {
+	margin-right: auto;
+	color: var(--perform-color-success);
+	font-weight: 500;
+}
+
+.perform-savebar__message[data-status='error'] {
+	color: var(--perform-color-danger);
+}
+
+.perform-savebar .components-button {
+	min-height: 40px;
 }
 
 .perform-cache-stats-container {
-	max-width: 1200px;
+	width: 100%;
+	max-width: none;
+}
+
+.perform-cache-activity-actions {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 32px;
+	margin-bottom: 20px;
+	padding-bottom: 24px;
+	border-bottom: 1px solid var(--perform-color-border);
+}
+
+.perform-cache-activity-actions h2 {
+	margin: 0;
+	font-size: 20px;
+	line-height: 1.3;
+}
+
+.perform-cache-activity-actions p {
+	margin: 6px 0 0;
+	color: var(--perform-color-text-muted);
+	line-height: 1.5;
+}
+
+.perform-cache-activity-actions__controls {
+	display: flex;
+	flex: 0 0 auto;
+	align-items: center;
+	gap: 12px;
+}
+
+.perform-cache-activity-actions__controls .components-button {
+	min-height: 40px;
+	gap: 6px;
+	font-weight: 600;
+}
+
+.perform-cache-activity-actions__controls .components-button svg {
+	width: 18px;
+	height: 18px;
+}
+
+.perform-cache-activity-actions__export {
+	text-decoration: none;
+}
+
+.perform-cache-activity-status {
+	min-height: 20px;
+	margin-bottom: 12px;
+	color: var(--perform-color-text-muted);
+	font-weight: 500;
+}
+
+.perform-cache-activity-status[data-status='success'] {
+	color: var(--perform-color-success);
+}
+
+.perform-cache-activity-status[data-status='error'] {
+	color: var(--perform-color-danger);
 }
 
 .perform-cache-stats h2 {
+	margin: 32px 0 8px;
+	font-size: 18px;
+	line-height: 1.35;
+}
+
+.perform-cache-stats > h2:first-child {
 	margin-top: 0;
 }
 
@@ -64,65 +361,22 @@
 .perform-cache-stats .widefat {
 	display: table;
 	width: 100%;
-	max-width: 1200px;
+	max-width: none !important;
 	margin-bottom: 24px;
 }
 
-.perform-cache-stats__summary {
-	max-width: 900px !important;
+.perform-cache-stats .widefat th,
+.perform-cache-stats .widefat td {
+	padding: 12px 14px;
+	overflow-wrap: anywhere;
 }
-
-@media screen and (max-width: 782px) {
-
-	.perform-settings-page {
-		margin-left: -10px;
-	}
-
-	.perform-settings-header,
-	.perform-settings-content {
-		padding-right: 12px;
-		padding-left: 12px;
-	}
-
-}
-
 
 .perform-admin-settings-wrap {
-  display: flex;
-}
-
-.perform-tooltip {
-  display: inline-flex;
-  width: 15px;
-  height: 15px;
-  background-color: var(--secondary-color);
-  border-radius: 50px;
-  justify-content: center;
-  align-items: center;
-  font-size: 10px;
-  text-decoration: none;
-  color: var(--text-color);
-}
-
-/* Help link styling for settings fields */
-.perform-help-link {
-	text-decoration: none; /* remove underline */
-	color: var(--primary-color);
-	font-weight: 500;
-}
-
-.perform-help-link:hover,
-.perform-help-link:focus {
-	text-decoration: underline; /* show underline on hover for affordance */
-	color: var(--primary-color) !important;
-}
-
-.perform-help-icon {
-	margin-left: 0;
+	display: flex;
 }
 
 .perform-diagnostics-panel {
-	margin: 0 20px 24px;
+	margin: 0 clamp(20px, 3vw, 44px) 24px;
 	border-radius: 0;
 	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
@@ -139,17 +393,17 @@
 }
 
 .perform-diagnostics-item {
-	border-left: 4px solid var(--primary-color);
-	background: #f6f7f7;
 	padding: 12px 14px;
+	border-left: 4px solid var(--perform-color-brand);
+	background: #f6f7f7;
 }
 
 .perform-diagnostics-item[data-status='warning'] {
-	border-left-color: #b26200;
+	border-left-color: var(--perform-color-warning);
 }
 
 .perform-diagnostics-item[data-status='needs-attention'] {
-	border-left-color: #b32d2e;
+	border-left-color: var(--perform-color-danger);
 }
 
 .perform-diagnostics-item__heading {
@@ -164,16 +418,16 @@
 }
 
 .perform-diagnostics-item__action {
-	color: #50575e;
+	color: var(--perform-color-text-muted);
 }
 
 .perform-diagnostics-badge {
 	display: inline-flex;
 	align-items: center;
 	min-height: 22px;
-	border-radius: 3px;
-	background: #fff;
 	padding: 2px 8px;
+	border-radius: 3px;
+	background: var(--perform-color-surface);
 	font-size: 11px;
 	font-weight: 600;
 	text-transform: uppercase;
@@ -204,12 +458,12 @@
 .perform-dashboard-hero p {
 	max-width: 720px;
 	margin: 0;
-	color: #50575e;
+	color: var(--perform-color-text-muted);
 }
 
 .perform-dashboard-eyebrow {
 	margin: 0 0 6px !important;
-	color: var(--primary-color) !important;
+	color: var(--perform-color-brand) !important;
 	font-size: 12px;
 	font-weight: 700;
 	text-transform: uppercase;
@@ -243,14 +497,14 @@
 
 .perform-dashboard-stat {
 	min-height: 84px;
-	border-left: 4px solid var(--primary-color);
-	background: #f6f7f7;
 	padding: 12px 14px;
+	border-left: 4px solid var(--perform-color-brand);
+	background: #f6f7f7;
 }
 
 .perform-dashboard-stat span {
 	display: block;
-	color: #50575e;
+	color: var(--perform-color-text-muted);
 	font-size: 12px;
 	font-weight: 600;
 	text-transform: uppercase;
@@ -266,7 +520,7 @@
 .perform-dashboard-stat p,
 .perform-dashboard-empty {
 	margin: 8px 0 0;
-	color: #50575e;
+	color: var(--perform-color-text-muted);
 }
 
 .perform-dashboard-list {
@@ -275,4 +529,87 @@
 
 .perform-dashboard-list li {
 	margin-bottom: 8px;
+}
+
+@media screen and (max-width: 782px) {
+
+	.perform-settings-page {
+		min-height: calc(100vh - 46px);
+		margin-left: -10px;
+	}
+
+	.perform-settings-header {
+		min-height: 68px;
+		padding-right: 16px;
+		padding-left: 16px;
+	}
+
+	.perform-settings-header__logo {
+		height: 44px;
+	}
+
+	.perform-settings-header__actions .components-button {
+		padding-right: 6px;
+		padding-left: 6px;
+		font-size: 0;
+	}
+
+	.perform-settings-header__actions .components-button svg {
+		width: 20px;
+		height: 20px;
+	}
+
+	.perform-settings-tab-panel .components-tab-panel__tabs,
+	.perform-settings-content,
+	.perform-savebar {
+		padding-right: 16px;
+		padding-left: 16px;
+	}
+
+	.perform-settings-content {
+		padding-top: 28px;
+		padding-bottom: 40px;
+	}
+
+	.perform-settings-field {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 16px;
+		padding: 20px 0;
+	}
+
+	.perform-settings-field__control {
+		justify-content: flex-start;
+		width: 100%;
+	}
+
+	.perform-settings-field[data-control='toggle'] .perform-settings-field__control {
+		min-height: 32px;
+	}
+
+	.perform-cache-activity-actions {
+		align-items: flex-start;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	.perform-cache-activity-actions__controls {
+		flex-wrap: wrap;
+	}
+
+	.perform-diagnostics-panel {
+		margin-right: 16px;
+		margin-left: 16px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+	.perform-settings-page *,
+	.perform-settings-page *::before,
+	.perform-settings-page *::after {
+		scroll-behavior: auto !important;
+		transition-duration: 0.01ms !important;
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+	}
 }

@@ -7,7 +7,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language-Team: PerformWP <hello@performwp.com>\n"
-"POT-Creation-Date: 2026-07-21 14:39+0000\n"
+"POT-Creation-Date: 2026-07-26 03:54+0000\n"
 "Report-Msgid-Bugs-To: https://github.com/performwp/perform/issues/new\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
@@ -16,19 +16,63 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/Admin/Actions.php:104
+#: src/Admin/Actions.php:82
+msgid "Activity actions"
+msgstr ""
+
+#: src/Admin/Actions.php:83
+msgid "Export cache activity for review or clear the collected metrics."
+msgstr ""
+
+#: src/Admin/Actions.php:84
+msgid "Export CSV"
+msgstr ""
+
+#: src/Admin/Actions.php:85
+msgid "Exporting…"
+msgstr ""
+
+#: src/Admin/Actions.php:86
+msgid "Cache activity exported."
+msgstr ""
+
+#: src/Admin/Actions.php:87
+msgid "Cache activity could not be exported."
+msgstr ""
+
+#: src/Admin/Actions.php:88
+msgid "Clear activity"
+msgstr ""
+
+#: src/Admin/Actions.php:89
+msgid "Clearing…"
+msgstr ""
+
+#: src/Admin/Actions.php:90
+msgid "Clear all collected cache activity? This does not clear cached pages."
+msgstr ""
+
+#: src/Admin/Actions.php:91, src/Modules/Cache/PageCache.php:826, src/Modules/Cache/PageCache.php:1088
+msgid "Cache activity cleared."
+msgstr ""
+
+#: src/Admin/Actions.php:92
+msgid "Cache activity could not be cleared."
+msgstr ""
+
+#: src/Admin/Actions.php:121
 msgid "Close Assets Manager"
 msgstr ""
 
-#: src/Admin/Actions.php:101, src/Modules/Assets/AssetsManager.php:258
+#: src/Admin/Actions.php:118, src/Modules/Assets/AssetsManager.php:274
 msgid "Assets Manager"
 msgstr ""
 
-#: src/Admin/Actions.php:111, src/Admin/Settings/Menu.php:40, src/Admin/Settings/Menu.php:41, src/Modules/Assets/AssetsManager.php:238
+#: src/Admin/Actions.php:128, src/Admin/Settings/Menu.php:40, src/Admin/Settings/Menu.php:41, src/Modules/Assets/AssetsManager.php:254
 msgid "Perform"
 msgstr ""
 
-#: src/Admin/Actions.php:131
+#: src/Admin/Actions.php:148
 msgid "Support Forum"
 msgstr ""
 
@@ -828,170 +872,170 @@ msgstr ""
 msgid "Enter a full CDN URL with http or https before enabling CDN rewriting."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:217
+#: src/Modules/Assets/AssetsManager.php:233
 msgid "Search detected assets"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:218
+#: src/Modules/Assets/AssetsManager.php:234
 msgid "Search by handle, source, or file URL"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:219
+#: src/Modules/Assets/AssetsManager.php:235
 msgid "Filter detected assets"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:220
+#: src/Modules/Assets/AssetsManager.php:236
 msgid "All"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:221
+#: src/Modules/Assets/AssetsManager.php:237
 msgid "Plugins"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:222
+#: src/Modules/Assets/AssetsManager.php:238
 msgid "Themes"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:223, src/Modules/Assets/AssetsManager.php:641
+#: src/Modules/Assets/AssetsManager.php:239, src/Modules/Assets/AssetsManager.php:657
 msgid "Other"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:224
+#: src/Modules/Assets/AssetsManager.php:240
 msgid "JS"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:225, src/Modules/Assets/AssetsManager.php:276
+#: src/Modules/Assets/AssetsManager.php:241, src/Modules/Assets/AssetsManager.php:292
 msgid "CSS"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:226
+#: src/Modules/Assets/AssetsManager.php:242
 msgid "Disabled"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:240
+#: src/Modules/Assets/AssetsManager.php:256
 msgid "Page asset scanner"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:241
+#: src/Modules/Assets/AssetsManager.php:257
 msgid "Perform Assets Manager"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:245
+#: src/Modules/Assets/AssetsManager.php:261
 msgid "Close"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:246
+#: src/Modules/Assets/AssetsManager.php:262
 msgid "This will reset all Assets Manager settings for this site. Continue?"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:247
+#: src/Modules/Assets/AssetsManager.php:263
 msgid "Reset"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:249
+#: src/Modules/Assets/AssetsManager.php:265
 msgid "Save changes"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:255
+#: src/Modules/Assets/AssetsManager.php:271
 msgid "Current page"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:261
+#: src/Modules/Assets/AssetsManager.php:277
 msgid "Review scripts and styles detected on this page, then disable only the assets you have verified are not needed."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:265
+#: src/Modules/Assets/AssetsManager.php:281
 msgid "Asset scan summary"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:268
+#: src/Modules/Assets/AssetsManager.php:284
 msgid "Detected assets"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:272
+#: src/Modules/Assets/AssetsManager.php:288
 msgid "JavaScript"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:280
+#: src/Modules/Assets/AssetsManager.php:296
 msgid "Disabled rules"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:284
+#: src/Modules/Assets/AssetsManager.php:300
 msgid "Known file size"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:321
+#: src/Modules/Assets/AssetsManager.php:337
 msgid "No assets match the current scan filter."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:642
+#: src/Modules/Assets/AssetsManager.php:658
 msgid "WordPress core, CDN, and uncategorized assets"
 msgstr ""
 
 #. translators: %d: number of assets.
-#: src/Modules/Assets/AssetsManager.php:647, src/Modules/Assets/AssetsManager.php:626
+#: src/Modules/Assets/AssetsManager.php:663, src/Modules/Assets/AssetsManager.php:642
 msgid "%d detected asset"
 msgid_plural "%d detected assets"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Modules/Assets/AssetsManager.php:661
+#: src/Modules/Assets/AssetsManager.php:677
 msgid "Handle"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:664
+#: src/Modules/Assets/AssetsManager.php:680
 msgid "Type"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:667
+#: src/Modules/Assets/AssetsManager.php:683
 msgid "Size"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:670
+#: src/Modules/Assets/AssetsManager.php:686
 msgid "Status"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:673
+#: src/Modules/Assets/AssetsManager.php:689
 msgid "Actions"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:731
+#: src/Modules/Assets/AssetsManager.php:747
 msgid "External"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:739
+#: src/Modules/Assets/AssetsManager.php:755
 msgid "View File"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:786
+#: src/Modules/Assets/AssetsManager.php:802
 msgid "All assets in this group have been disabled. Enable the group again to manage individual assets."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:807, src/Modules/Assets/AssetsManager.php:901
+#: src/Modules/Assets/AssetsManager.php:823, src/Modules/Assets/AssetsManager.php:917
 msgid "Current URL"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:808
+#: src/Modules/Assets/AssetsManager.php:824
 msgid "Everywhere"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:813
+#: src/Modules/Assets/AssetsManager.php:829
 msgid "Disable on"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:863
+#: src/Modules/Assets/AssetsManager.php:879
 msgid "Asset loading status"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:865
+#: src/Modules/Assets/AssetsManager.php:881
 msgid "ON"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:868
+#: src/Modules/Assets/AssetsManager.php:884
 msgid "OFF"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:894
+#: src/Modules/Assets/AssetsManager.php:910
 msgid "Exceptions"
 msgstr ""
 
@@ -999,126 +1043,134 @@ msgstr ""
 msgid "No feed available, please visit the homepage!"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:219
+#: src/Modules/Cache/PageCache.php:221
 msgid "Every 5 minutes (Perform Cache)"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:743, src/Modules/Cache/PageCache.php:810
+#: src/Modules/Cache/PageCache.php:745, src/Modules/Cache/PageCache.php:812
 msgid "Perform Cache Observability"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:744
+#: src/Modules/Cache/PageCache.php:746
 msgid "Perform Cache Stats"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:764, src/Modules/Cache/PageCache.php:789
+#: src/Modules/Cache/PageCache.php:766, src/Modules/Cache/PageCache.php:791
 msgid "Sorry, you are not allowed to access this page."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:811
+#: src/Modules/Cache/PageCache.php:813
 msgid "Live cache effectiveness and warmup health metrics."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:813
+#: src/Modules/Cache/PageCache.php:815
 msgid "The local page-cache generation has been invalidated."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:817
+#: src/Modules/Cache/PageCache.php:819
 msgid "Cloudflare URL cleanup is pending."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:821
+#: src/Modules/Cache/PageCache.php:823
 msgid "Some Cloudflare URL cleanup batches need a manual retry."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:826
+#: src/Modules/Cache/PageCache.php:831
 msgid "Purge Site Page Cache"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:829
+#: src/Modules/Cache/PageCache.php:834
 msgid "Cloudflare cleanup: %1$d pending, %2$d retryable failures, %3$d old-credential residuals."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:835
+#: src/Modules/Cache/PageCache.php:840
 msgid "Retry Failed Cloudflare Cleanup"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:842
+#: src/Modules/Cache/PageCache.php:847
 msgid "After purging the old Cloudflare zone externally, acknowledge the residual to retire the old token-free queue and allow local cache cleanup."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:843
+#: src/Modules/Cache/PageCache.php:848
 msgid "Acknowledge External Cloudflare Purge"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:849
+#: src/Modules/Cache/PageCache.php:854
 msgid "Cache Hit Ratio"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:850
+#: src/Modules/Cache/PageCache.php:855
 msgid "Hits"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:851
+#: src/Modules/Cache/PageCache.php:856
 msgid "Stale Hits"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:852, src/Modules/Cache/PageCache.php:861
+#: src/Modules/Cache/PageCache.php:857, src/Modules/Cache/PageCache.php:866
 msgid "Misses"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:853, src/Modules/Cache/PageCache.php:864
+#: src/Modules/Cache/PageCache.php:858, src/Modules/Cache/PageCache.php:869
 msgid "Bypasses"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:854
+#: src/Modules/Cache/PageCache.php:859
 msgid "Lock Waits"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:855
+#: src/Modules/Cache/PageCache.php:860
 msgid "Preload Queue Size"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:856
+#: src/Modules/Cache/PageCache.php:861
 msgid "Preload Requests"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:860
+#: src/Modules/Cache/PageCache.php:865
 msgid "Top Missed URLs"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:863
+#: src/Modules/Cache/PageCache.php:868
 msgid "Bypass Reasons"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:864
+#: src/Modules/Cache/PageCache.php:869
 msgid "Reason"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:866
+#: src/Modules/Cache/PageCache.php:871
 msgid "Slow Uncached URLs (ms)"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:867
+#: src/Modules/Cache/PageCache.php:872
 msgid "Render Time (ms)"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:883
+#: src/Modules/Cache/PageCache.php:888
 msgid "No data yet."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:888
+#: src/Modules/Cache/PageCache.php:893
 msgid "URL"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:1033
+#: src/Modules/Cache/PageCache.php:1038
 msgid "You are not allowed to purge the page cache."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:1054
+#: src/Modules/Cache/PageCache.php:1059
+msgid "You are not allowed to export cache activity."
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:1074
+msgid "You are not allowed to clear cache activity."
+msgstr ""
+
+#: src/Modules/Cache/PageCache.php:1101
 msgid "You are not allowed to acknowledge Cloudflare cleanup."
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:1065
+#: src/Modules/Cache/PageCache.php:1112
 msgid "You are not allowed to retry Cloudflare cleanup."
 msgstr ""
