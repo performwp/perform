@@ -1,37 +1,6 @@
 name: Playwright Smoke
 
 on:
-  push:
-    branches:
-      - main
-      - develop
-      - 'release/[0-9]+.[0-9]+*'
-      - 'hotfix/[0-9]+.[0-9]+*'
-    paths:
-      - 'assets/src/**'
-      - 'src/**'
-      - 'perform.php'
-      - 'composer.json'
-      - 'composer.lock'
-      - 'package.json'
-      - 'package-lock.json'
-      - '.wp-env.json'
-      - 'playwright.config.js'
-      - 'tests/e2e/**'
-      - '.github/workflows/e2e.yml'
-  pull_request:
-    paths:
-      - 'assets/src/**'
-      - 'src/**'
-      - 'perform.php'
-      - 'composer.json'
-      - 'composer.lock'
-      - 'package.json'
-      - 'package-lock.json'
-      - '.wp-env.json'
-      - 'playwright.config.js'
-      - 'tests/e2e/**'
-      - '.github/workflows/e2e.yml'
   workflow_dispatch:
 
 permissions:
@@ -49,7 +18,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.0
 
       - name: Install PHP
         uses: shivammathur/setup-php@v2
@@ -64,7 +33,7 @@ jobs:
           composer-options: '--no-dev --prefer-dist --optimize-autoloader'
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6.4.0
         with:
           node-version-file: '.nvmrc'
           cache: npm

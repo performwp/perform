@@ -1,12 +1,20 @@
 import SettingsHeader from './SettingsHeader';
 import SettingsNav from './SettingsNav';
 import Footer from './Footer';
+import DiagnosticsPanel from './DiagnosticsPanel';
 import { useState, useEffect, useMemo, useRef } from '@wordpress/element';
 
 const SETTINGS = window.performwpSettings || {};
 const SETTINGS_TABS = SETTINGS.tabs || {};
 const SETTINGS_FIELDS = SETTINGS.fields || {};
 const SAVED_SETTINGS = SETTINGS.saved || {};
+const INITIAL_DIAGNOSTICS = SETTINGS.diagnostics || {};
+const DASHBOARD = SETTINGS.dashboard || {};
+const TAB_KEYS = [ 'dashboard', ...Object.keys( SETTINGS_TABS ) ];
+
+const normalizeTab = ( tab ) => ( TAB_KEYS.includes( tab ) ? tab : 'dashboard' );
+
+const getTabFromUrl = () => normalizeTab( new URL( window.location.href ).searchParams.get( 'tab' ) || 'dashboard' );
 
 const SettingsApp = () => {
 	const tabs = SETTINGS_TABS;
@@ -35,8 +43,22 @@ const SettingsApp = () => {
 	const [ fieldValues, setFieldValues ] = useState( initialValues );
 	const [ saving, setSaving ] = useState( false );
 	const [ message, setMessage ] = useState( null );
-	const [ activeTab, setActiveTab ] = useState( Object.keys( tabs )[ 0 ] || '' );
+	const [ diagnostics, setDiagnostics ] = useState( INITIAL_DIAGNOSTICS );
+	const [ activeTab, setActiveTab ] = useState( () => normalizeTab( SETTINGS.activeTab ) );
 	const messageTimerRef = useRef( null );
+
+	const handleTabChange = ( tab ) => {
+		const nextTab = normalizeTab( tab );
+		setActiveTab( nextTab );
+
+		const url = new URL( window.location.href );
+		if ( 'dashboard' === nextTab ) {
+			url.searchParams.delete( 'tab' );
+		} else {
+			url.searchParams.set( 'tab', nextTab );
+		}
+		window.history.pushState( { performTab: nextTab }, '', url );
+	};
 
 	// dirty detection
 
@@ -62,6 +84,9 @@ const SettingsApp = () => {
 			const json = await res.json();
 			if ( json && json.success ) {
 				setMessage( { text: json.data?.message || 'Settings saved.', type: 'success' } );
+				if ( json.data?.diagnostics ) {
+					setDiagnostics( json.data.diagnostics );
+				}
 				// update initialValues snapshot
 				// mutate initialValues object won't update memo, so reset by rebuild: setFieldValues equals current, but we need to reset initialValues - simplest approach: set initial snapshot to current by resetting via a state.
 				// We'll set the initialValues by replacing the state used for comparison: emulate by setting all initialValues to current values via a ref - but here we'll just clear dirty by resetting initialValues via resetting fieldValues baseline.
@@ -133,18 +158,30 @@ const SettingsApp = () => {
 		[]
 	);
 
+	useEffect( () => {
+		const handlePopState = () => setActiveTab( getTabFromUrl() );
+		window.addEventListener( 'popstate', handlePopState );
+
+		return () => window.removeEventListener( 'popstate', handlePopState );
+	}, [] );
+
 	return (
 		<>
 			<SettingsHeader />
 			<SettingsNav
 				fields={ fields }
 				tabs={ tabs }
+				dashboard={ DASHBOARD }
+				diagnostics={ diagnostics }
 				activeTab={ activeTab }
-				onTabChange={ setActiveTab }
+				onTabChange={ handleTabChange }
 				fieldValues={ fieldValues }
 				onFieldChange={ handleFieldChange }
 			/>
-			<Footer dirty={ isDirty } saving={ saving } message={ message } onSave={ handleSave } />
+			{ 'dashboard' === activeTab && <DiagnosticsPanel diagnostics={ diagnostics } /> }
+			{ 'cache-stats' !== activeTab && (
+				<Footer dirty={ isDirty } saving={ saving } message={ message } onSave={ handleSave } />
+			) }
 		</>
 	);
 };

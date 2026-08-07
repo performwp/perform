@@ -12,6 +12,9 @@ namespace Perform\Admin;
 
 use Perform\Includes\Helpers;
 use Perform\Admin\Settings\ClientPayload;
+use Perform\Admin\Settings\DashboardPayload;
+use Perform\Admin\Settings\Menu;
+use Perform\Admin\Settings\RuntimeDiagnostics;
 
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -64,10 +67,30 @@ class Actions {
 					'logoUrl'           => plugins_url( 'assets/dist/images/logo.png', PERFORM_PLUGIN_FILE ),
 					'nonce'             => wp_create_nonce( 'perform_save_settings' ),
 					'saved'             => ClientPayload::sanitize_for_client( (array) \Perform\Includes\Helpers::get_settings() ),
+					'dashboard'         => DashboardPayload::get_data(),
+					'diagnostics'       => RuntimeDiagnostics::get_results(),
 					'sensitiveKeys'     => ClientPayload::get_sensitive_keys(),
 					'maskedSecretValue' => ClientPayload::MASKED_SECRET,
-					'tabs'              => \Perform\Includes\Helpers::get_settings_tabs(),
+					'tabs'              => Menu::get_navigation_tabs(),
+					'activeTab'         => Menu::get_requested_tab(),
 					'fields'            => \Perform\Includes\Helpers::get_settings_fields(), // Expose fields to JS
+					'cacheActivity'     => [
+						'actionUrl'         => admin_url( 'admin-post.php' ),
+						'exportNonce'       => wp_create_nonce( 'perform_export_cache_activity' ),
+						'clearNonce'        => wp_create_nonce( 'perform_clear_cache_activity' ),
+						'downloadName'      => 'perform-cache-activity-' . gmdate( 'Y-m-d' ) . '.csv',
+						'heading'           => esc_html__( 'Activity actions', 'perform' ),
+						'description'       => esc_html__( 'Export cache activity for review or clear the collected metrics.', 'perform' ),
+						'exportLabel'       => esc_html__( 'Export CSV', 'perform' ),
+						'exporting'         => esc_html__( 'Exporting…', 'perform' ),
+						'exportSuccess'     => esc_html__( 'Cache activity exported.', 'perform' ),
+						'exportError'       => esc_html__( 'Cache activity could not be exported.', 'perform' ),
+						'clearLabel'        => esc_html__( 'Clear activity', 'perform' ),
+						'clearing'          => esc_html__( 'Clearing…', 'perform' ),
+						'clearConfirmation' => esc_html__( 'Clear all collected cache activity? This does not clear cached pages.', 'perform' ),
+						'clearSuccess'      => esc_html__( 'Cache activity cleared.', 'perform' ),
+						'clearError'        => esc_html__( 'Cache activity could not be cleared.', 'perform' ),
+					],
 				]
 			);
 	}

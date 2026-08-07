@@ -26,6 +26,47 @@ class PageCache implements ModuleInterface {
 	private $cache_dir = '';
 
 	/**
+	 * Generation captured when this request became eligible to write.
+	 *
+	 * @var int
+	 */
+	private $request_generation = 0;
+
+	/**
+	 * URLs captured before a post mutation removes their old routing context.
+	 *
+	 * @var array<int, array<int, string>>
+	 */
+	private $captured_post_urls = [];
+
+	/**
+	 * Maximum files deleted from obsolete cache generations per cron run.
+	 *
+	 * @var int
+	 */
+	private $cleanup_batch_size = 100;
+
+	/**
+	 * Maximum Cloudflare URLs purged per request.
+	 *
+	 * @var int
+	 */
+	private $cloudflare_batch_size = 30;
+
+	/** @var int */
+	private $cloudflare_metadata_scan_limit = 100;
+
+	/**
+	 * Maximum retry attempts for a failed Cloudflare URL batch.
+	 *
+	 * @var int
+	 */
+	private $cloudflare_max_retries = 3;
+
+	/** @var bool */
+	private $site_purge_requested = false;
+
+	/**
 	 * Current cache key for the request.
 	 *
 	 * @var string
@@ -45,6 +86,13 @@ class PageCache implements ModuleInterface {
 	 * @var bool
 	 */
 	private $should_write_cache = false;
+
+	/**
+	 * Current cache bypass reason for the request.
+	 *
+	 * @var string
+	 */
+	private $current_bypass_reason = '';
 
 	/**
 	 * Request start time.
@@ -75,12 +123,28 @@ class PageCache implements ModuleInterface {
 	private $url_normalizer = null;
 
 	/**
+	 * Maximum number of child sitemap documents to fetch per seed run.
+	 *
+	 * @var int
+	 */
+	private $preload_sitemap_child_limit = 20;
+
+	/**
+	 * Maximum number of unique sitemap URLs to collect per seed run.
+	 *
+	 * @var int
+	 */
+	private $preload_sitemap_url_cap = 500;
+
+	/**
 	 * Determine whether this module should be loaded.
 	 *
 	 * @return bool
 	 */
 	public function should_load(): bool {
-		return ! empty( Helpers::get_option( 'enable_page_cache', 'perform_settings', false ) );
+		// Invalidation must remain available while the page cache is disabled so a
+		// later enable cannot expose entries written by an earlier configuration.
+		return true;
 	}
 
 	/**
@@ -101,16 +165,46 @@ class PageCache implements ModuleInterface {
 		add_action( 'shutdown', [ $this, 'record_slow_uncached_request' ], 9999 );
 		add_action( 'shutdown', [ $this, 'flush_stats' ], 10000 );
 
+		add_action( 'pre_post_update', [ $this, 'capture_post_urls_before_mutation' ], 10, 2 );
+		add_action( 'wp_trash_post', [ $this, 'capture_post_urls_before_removal' ] );
+		add_action( 'untrash_post', [ $this, 'capture_post_urls_before_removal' ] );
+		add_action( 'before_delete_post', [ $this, 'capture_post_urls_before_removal' ] );
 		add_action( 'save_post', [ $this, 'purge_related_urls_for_post' ], 10, 3 );
 		add_action( 'deleted_post', [ $this, 'purge_related_urls_for_deleted_post' ], 10, 1 );
 		add_action( 'trashed_post', [ $this, 'purge_related_urls_for_deleted_post' ], 10, 1 );
+		add_action( 'untrashed_post', [ $this, 'purge_related_urls_for_untrashed_post' ], 10, 1 );
+		add_action( 'transition_post_status', [ $this, 'purge_related_urls_for_status_transition' ], 10, 3 );
 		add_action( 'set_object_terms', [ $this, 'purge_related_urls_for_object_terms' ], 10, 6 );
-		add_action( 'switch_theme', [ $this, 'purge_homepage' ] );
+		add_action( 'comment_post', [ $this, 'purge_related_urls_for_comment' ], 10, 1 );
+		add_action( 'edit_comment', [ $this, 'purge_related_urls_for_comment' ] );
+		add_action( 'transition_comment_status', [ $this, 'purge_related_urls_for_comment_status' ], 10, 3 );
+		add_action( 'deleted_comment', [ $this, 'purge_related_urls_for_comment' ] );
+		add_action( 'created_term', [ $this, 'purge_related_urls_for_term' ], 10, 3 );
+		add_action( 'edited_term', [ $this, 'purge_related_urls_for_term' ], 10, 3 );
+		add_action( 'delete_term', [ $this, 'purge_related_urls_for_deleted_term' ], 10, 5 );
+		add_action( 'added_term_meta', [ $this, 'purge_related_urls_for_term_meta' ], 10, 2 );
+		add_action( 'updated_term_meta', [ $this, 'purge_related_urls_for_term_meta' ], 10, 2 );
+		add_action( 'deleted_term_meta', [ $this, 'purge_related_urls_for_term_meta' ], 10, 2 );
+		add_action( 'wp_update_nav_menu', [ $this, 'purge_site_cache' ] );
+		add_action( 'wp_update_nav_menu_item', [ $this, 'purge_site_cache' ] );
+		add_action( 'wp_delete_nav_menu', [ $this, 'purge_site_cache' ] );
+		add_action( 'switch_theme', [ $this, 'purge_site_cache' ] );
+		add_action( 'customize_save_after', [ $this, 'purge_site_cache' ] );
+		add_action( 'updated_option', [ $this, 'purge_related_urls_for_option' ], 10, 3 );
+		add_filter( 'pre_update_option_perform_settings', [ $this, 'capture_cloudflare_settings_before_update' ], 10, 3 );
 
 		add_action( 'perform_cache_preload_event', [ $this, 'run_preload_batch' ] );
 		add_action( 'perform_cache_sitemap_seed_event', [ $this, 'seed_preload_queue_from_sitemap_and_logs' ] );
+		add_action( 'perform_cache_cleanup_event', [ $this, 'cleanup_obsolete_generations' ] );
+		add_action( 'perform_cache_cloudflare_purge_event', [ $this, 'run_cloudflare_purge_batch' ] );
 
-		add_action( 'admin_menu', [ $this, 'register_observability_page' ] );
+		add_action( 'admin_menu', [ $this, 'register_legacy_observability_route' ], 20 );
+		add_action( 'perform_settings_cache_stats_content', [ $this, 'render_observability_page' ] );
+		add_action( 'admin_post_perform_purge_page_cache', [ $this, 'handle_manual_purge' ] );
+		add_action( 'admin_post_perform_export_cache_activity', [ $this, 'handle_cache_activity_export' ] );
+		add_action( 'admin_post_perform_clear_cache_activity', [ $this, 'handle_cache_activity_clear' ] );
+		add_action( 'admin_post_perform_retry_cloudflare_cleanup', [ $this, 'handle_cloudflare_cleanup_retry' ] );
+		add_action( 'admin_post_perform_acknowledge_cloudflare_residual', [ $this, 'handle_cloudflare_residual_acknowledgement' ] );
 	}
 
 	/**
@@ -137,7 +231,7 @@ class PageCache implements ModuleInterface {
 	 * @return void
 	 */
 	public function maybe_schedule_events() {
-		$preload_enabled = ! empty( Helpers::get_option( 'enable_cache_preload', 'perform_settings', false ) );
+		$preload_enabled = $this->page_cache_enabled() && ! empty( Helpers::get_option( 'enable_cache_preload', 'perform_settings', false ) );
 
 		if ( $preload_enabled && ! wp_next_scheduled( 'perform_cache_preload_event' ) ) {
 			wp_schedule_event( time() + 60, 'perform_cache_every_5_minutes', 'perform_cache_preload_event' );
@@ -162,18 +256,25 @@ class PageCache implements ModuleInterface {
 	 * @return void
 	 */
 	public function maybe_serve_cache() {
+		if ( ! $this->page_cache_enabled() ) {
+			return;
+		}
 		$this->request_start = microtime( true );
 
 		if ( ! $this->is_cacheable_request() ) {
-			$this->increment_stat( 'bypasses' );
+			$bypass_increment = $this->increment_stat( 'bypasses' );
+			if ( 0 < $bypass_increment ) {
+				$this->record_bypass_reason( $this->current_bypass_reason, $bypass_increment );
+			}
 			return;
 		}
 
 		$this->ensure_cache_dir();
 
-		$this->current_url       = $this->get_normalized_request_url();
-		$this->current_cache_key = $this->get_cache_key_for_url( $this->current_url );
-		$this->lock_key          = 'perform_cache_lock_' . $this->current_cache_key;
+		$this->current_url        = $this->get_normalized_request_url();
+		$this->current_cache_key  = $this->get_cache_key_for_url( $this->current_url );
+		$this->request_generation = $this->get_cache_generation();
+		$this->lock_key           = 'perform_cache_lock_' . $this->current_cache_key;
 
 		$meta = $this->read_cache_meta( $this->current_cache_key );
 		$html = $this->read_cache_body( $this->current_cache_key );
@@ -254,7 +355,13 @@ class PageCache implements ModuleInterface {
 	 */
 	public function store_cache( $html ) {
 		try {
-			if ( ! $this->should_write_cache || ! is_string( $html ) || '' === $html ) {
+			if ( ! $this->should_write_cache || ! $this->page_cache_enabled() || ! is_string( $html ) || '' === $html ) {
+				return $html;
+			}
+
+			// A global purge may happen while WordPress renders this response. Do not
+			// let that request repopulate the generation that was just retired.
+			if ( $this->request_generation !== $this->get_cache_generation() ) {
 				return $html;
 			}
 
@@ -276,8 +383,16 @@ class PageCache implements ModuleInterface {
 				return $html;
 			}
 
+			if ( $this->request_generation !== $this->get_cache_generation() ) {
+				wp_delete_file( $this->get_body_file_path( $this->current_cache_key ) );
+				return $html;
+			}
+
 			if ( ! $this->write_cache_meta( $this->current_cache_key, $meta_payload ) ) {
 				wp_delete_file( $this->get_body_file_path( $this->current_cache_key ) );
+			} elseif ( $this->request_generation !== $this->get_cache_generation() ) {
+				wp_delete_file( $this->get_body_file_path( $this->current_cache_key ) );
+				wp_delete_file( $this->get_meta_file_path( $this->current_cache_key ) );
 			}
 		} finally {
 			$this->release_lock();
@@ -292,7 +407,7 @@ class PageCache implements ModuleInterface {
 	 * @return void
 	 */
 	public function record_slow_uncached_request() {
-		if ( 0.0 === $this->request_start || ! $this->is_cacheable_request() ) {
+		if ( ! $this->page_cache_enabled() || 0.0 === $this->request_start || ! $this->is_cacheable_request() ) {
 			return;
 		}
 
@@ -321,15 +436,13 @@ class PageCache implements ModuleInterface {
 	 *
 	 * @return void
 	 */
-	public function purge_related_urls_for_post( $post_id, $post, $update ) {
+	public function purge_related_urls_for_post( int $post_id, ?\WP_Post $post = null, bool $update = false ): void {
 		if ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
 			return;
 		}
 
-		$urls = $this->get_invalidation_urls_for_post( $post_id );
-		foreach ( $urls as $url ) {
-			$this->purge_url( $url );
-		}
+		$urls = array_merge( $this->get_captured_post_urls( $post_id ), $this->get_invalidation_urls_for_post( $post_id ) );
+		$this->purge_urls( $urls );
 
 		$this->queue_urls_for_preload( $urls );
 	}
@@ -342,10 +455,12 @@ class PageCache implements ModuleInterface {
 	 * @return void
 	 */
 	public function purge_related_urls_for_deleted_post( $post_id ) {
-		$urls = $this->get_invalidation_urls_for_post( $post_id );
-		foreach ( $urls as $url ) {
-			$this->purge_url( $url );
-		}
+		$this->purge_urls( array_merge( $this->get_captured_post_urls( $post_id ), $this->get_invalidation_urls_for_post( $post_id ) ) );
+	}
+
+	/** Purge newly restored public URLs after WordPress completes untrash. */
+	public function purge_related_urls_for_untrashed_post( int $post_id ): void {
+		$this->purge_related_urls_for_post( $post_id );
 	}
 
 	/**
@@ -362,9 +477,162 @@ class PageCache implements ModuleInterface {
 	 */
 	public function purge_related_urls_for_object_terms( $object_id, $terms, $tt_ids, $taxonomy, $append, $old_tt_ids ) {
 		$urls = $this->get_invalidation_urls_for_post( $object_id );
-		foreach ( $urls as $url ) {
-			$this->purge_url( $url );
+		foreach ( (array) $old_tt_ids as $term_taxonomy_id ) {
+			$term = get_term_by( 'term_taxonomy_id', $term_taxonomy_id );
+			if ( $term ) {
+				$link = get_term_link( $term );
+				if ( ! is_wp_error( $link ) ) {
+					$urls[] = $link;
+				}
+			}
 		}
+
+		$this->purge_urls( $urls );
+	}
+
+	/**
+	 * Capture URLs before WordPress changes a post's status or permalink.
+	 *
+	 * @param int                 $post_id Post ID.
+	 * @param array<string,mixed> $data Post data.
+	 */
+	public function capture_post_urls_before_mutation( int $post_id, array $data = [] ): void {
+		$this->capture_post_urls_before_removal( $post_id );
+	}
+
+	/** Capture URLs before WordPress removes routing context. */
+	public function capture_post_urls_before_removal( int $post_id ): void {
+		$this->captured_post_urls[ (int) $post_id ] = $this->get_invalidation_urls_for_post( $post_id );
+	}
+
+	/** Purge URLs affected by a public status transition. */
+	public function purge_related_urls_for_status_transition( string $new_status, string $old_status, \WP_Post $post ): void {
+		if ( $new_status === $old_status || empty( $post->ID ) ) {
+			return;
+		}
+
+		$this->purge_related_urls_for_post( (int) $post->ID );
+	}
+
+	/** Purge pages that can render a public comment. */
+	public function purge_related_urls_for_comment( int $comment_id ): void {
+		$comment = get_comment( $comment_id );
+		if ( ! $comment || empty( $comment->comment_post_ID ) ) {
+			return;
+		}
+
+		$this->purge_related_urls_for_post( (int) $comment->comment_post_ID );
+	}
+
+	/** Purge pages for visible comment-status transitions. */
+	public function purge_related_urls_for_comment_status( string $new_status, string $old_status, \WP_Comment $comment ): void {
+		if ( $new_status !== $old_status && ! empty( $comment->comment_post_ID ) ) {
+			$this->purge_related_urls_for_post( (int) $comment->comment_post_ID );
+		}
+	}
+
+	/** Purge a changed term archive and its home surface. */
+	public function purge_related_urls_for_term( int $term_id, int $tt_id = 0, string $taxonomy = '', ?\WP_Term $deleted_term = null ): void {
+		$term = is_object( $deleted_term ) ? $deleted_term : get_term( $term_id, $taxonomy );
+		$urls = [ home_url( '/' ) ];
+		if ( $term ) {
+			$link = get_term_link( $term );
+			if ( ! is_wp_error( $link ) ) {
+				$urls[] = $link;
+			}
+		}
+		$affected = $this->get_affected_object_ids_for_term( $term_id, $taxonomy );
+		if ( $affected['overflow'] ) {
+			$this->purge_site_cache();
+			return;
+		}
+		$this->purge_urls( array_merge( $urls, $this->get_invalidation_urls_for_posts( $affected['ids'] ) ) );
+	}
+
+	/**
+	 * Purge affected post URLs supplied by WordPress before a term is deleted.
+	 *
+	 * @param mixed          $deleted_term Deleted term.
+	 * @param array<int,int> $object_ids Object IDs.
+	 */
+	public function purge_related_urls_for_deleted_term( int $term_id, int $tt_id, string $taxonomy, $deleted_term, array $object_ids = [] ): void {
+		$limit = $this->get_term_object_limit();
+		if ( count( $object_ids ) > $limit ) {
+			$this->purge_site_cache();
+			return;
+		}
+		$urls = array_merge( [ home_url( '/' ) ], $this->get_invalidation_urls_for_posts( array_slice( $object_ids, 0, $limit ) ) );
+		if ( $deleted_term instanceof \WP_Term ) {
+			$link = get_term_link( $deleted_term );
+			if ( ! is_wp_error( $link ) ) {
+				$urls[] = $link;
+			}
+		}
+		$this->purge_urls( $urls );
+	}
+
+	/**
+	 * Purge a term archive when term metadata changes.
+	 *
+	 * @param mixed $meta_id Metadata ID.
+	 */
+	public function purge_related_urls_for_term_meta( $meta_id, int $term_id ): void {
+		$term     = get_term( $term_id );
+		$taxonomy = is_object( $term ) && ! empty( $term->taxonomy ) ? (string) $term->taxonomy : '';
+		$this->purge_related_urls_for_term( $term_id, 0, $taxonomy );
+	}
+
+	/** Rotate the local cache after a site-wide output change. */
+	public function purge_site_cache(): void {
+		if ( $this->site_purge_requested ) {
+			return;
+		}
+		$this->site_purge_requested = true;
+		$current                    = $this->get_cache_generation();
+		$this->queue_cloudflare_tracked_urls( null, $current );
+		update_option( $this->get_generation_option_name(), $current + 1, false );
+		$this->schedule_cleanup();
+	}
+
+	/**
+	 * Invalidate when a setting changes public output or cache compatibility.
+	 *
+	 * @param mixed $old_value Previous value.
+	 * @param mixed $value New value.
+	 */
+	public function purge_related_urls_for_option( string $option, $old_value, $value ): void {
+		$global_options = [
+			'permalink_structure',
+			'category_base',
+			'tag_base',
+			'page_on_front',
+			'page_for_posts',
+			'show_on_front',
+			'theme_mods_' . get_option( 'stylesheet' ),
+			'perform_settings',
+		];
+
+		if ( in_array( $option, $global_options, true ) && $old_value !== $value ) {
+			$this->purge_site_cache();
+		}
+	}
+
+	/**
+	 * Queue tracked edge URLs with the old credentials before they are replaced.
+	 *
+	 * @param mixed $value New settings.
+	 * @param mixed $old_value Previous settings.
+	 * @param mixed $option Option name.
+	 * @return mixed
+	 */
+	public function capture_cloudflare_settings_before_update( $value, $old_value, $option ) {
+		if ( ! is_array( $old_value ) || ! is_array( $value ) || ! $this->cloudflare_settings_changed( $old_value, $value ) ) {
+			return $value;
+		}
+		if ( ! empty( $old_value['enable_cloudflare_cache_sync'] ) ) {
+			$this->queue_cloudflare_tracked_urls( $old_value, $this->get_cache_generation() );
+		}
+		return $value;
 	}
 
 	/**
@@ -377,12 +645,37 @@ class PageCache implements ModuleInterface {
 	}
 
 	/**
+	 * Purge a normalized set of known URLs.
+	 *
+	 * @param array<int, string> $urls URLs.
+	 */
+	private function purge_urls( array $urls ): void {
+		$urls = array_values( array_unique( array_filter( array_map( 'strval', (array) $urls ) ) ) );
+		foreach ( $urls as $url ) {
+			$this->purge_url( $url );
+		}
+	}
+
+	/**
+	 * Retrieve and clear pre-mutation post URLs.
+	 *
+	 * @return array<int, string>
+	 */
+	private function get_captured_post_urls( int $post_id ): array {
+		$post_id = (int) $post_id;
+		$urls    = $this->captured_post_urls[ $post_id ] ?? [];
+		unset( $this->captured_post_urls[ $post_id ] );
+
+		return $urls;
+	}
+
+	/**
 	 * Seed preload queue using sitemap and recent traffic.
 	 *
 	 * @return void
 	 */
 	public function seed_preload_queue_from_sitemap_and_logs() {
-		if ( empty( Helpers::get_option( 'enable_cache_preload', 'perform_settings', false ) ) ) {
+		if ( ! $this->page_cache_enabled() || empty( Helpers::get_option( 'enable_cache_preload', 'perform_settings', false ) ) ) {
 			return;
 		}
 
@@ -407,7 +700,7 @@ class PageCache implements ModuleInterface {
 	 * @return void
 	 */
 	public function run_preload_batch() {
-		if ( empty( Helpers::get_option( 'enable_cache_preload', 'perform_settings', false ) ) ) {
+		if ( ! $this->page_cache_enabled() || empty( Helpers::get_option( 'enable_cache_preload', 'perform_settings', false ) ) ) {
 			return;
 		}
 
@@ -445,20 +738,49 @@ class PageCache implements ModuleInterface {
 		$this->set_stat_value( 'preload_queue_size', count( $queue ) );
 	}
 
-	/**
-	 * Register cache observability page.
-	 *
-	 * @return void
-	 */
-	public function register_observability_page() {
-		add_submenu_page(
-			'options-general.php',
-			esc_html__( 'Perform Cache Observability', 'perform' ),
-			esc_html__( 'Perform Cache Stats', 'perform' ),
-			'manage_options',
-			'perform_cache_observability',
-			[ $this, 'render_observability_page' ]
-		);
+	/** Register the retired URL as a hidden, capability-checked compatibility route. */
+	public function register_legacy_observability_route(): void {
+		foreach ( [ 'perform_cache_observability', 'perform_cache_stats' ] as $legacy_slug ) {
+			$hook_suffix = add_submenu_page(
+				'options-general.php',
+				esc_html__( 'Perform Cache Observability', 'perform' ),
+				esc_html__( 'Perform Cache Stats', 'perform' ),
+				'manage_options',
+				$legacy_slug,
+				[ $this, 'maybe_redirect_legacy_observability_page' ]
+			);
+			remove_submenu_page( 'options-general.php', $legacy_slug );
+
+			if ( $hook_suffix ) {
+				add_action( 'load-' . $hook_suffix, [ $this, 'maybe_redirect_legacy_observability_page' ] );
+			}
+		}
+	}
+
+	/** Redirect the retired Cache Stats submenu URL to its canonical settings tab. */
+	public function maybe_redirect_legacy_observability_page(): void {
+		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only route compatibility.
+		if ( ! in_array( $page, [ 'perform_cache_observability', 'perform_cache_stats' ], true ) ) {
+			return;
+		}
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'Sorry, you are not allowed to access this page.', 'perform' ), '', [ 'response' => 403 ] );
+		}
+
+		$args = [];
+		if ( isset( $_GET['perform_cache_purged'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Existing post-action notice state.
+			$args['perform_cache_purged'] = 1;
+		}
+
+		foreach ( [ 'perform_cache_cloudflare_pending', 'perform_cache_cloudflare_retryable_failed' ] as $key ) {
+			if ( isset( $_GET[ $key ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Existing post-action notice state.
+				$args[ $key ] = absint( wp_unslash( $_GET[ $key ] ) );
+			}
+		}
+
+		wp_safe_redirect( $this->get_observability_url( $args ) );
+		exit;
 	}
 
 	/**
@@ -467,6 +789,10 @@ class PageCache implements ModuleInterface {
 	 * @return void
 	 */
 	public function render_observability_page() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'Sorry, you are not allowed to access this page.', 'perform' ), '', [ 'response' => 403 ] );
+		}
+
 		$stats = get_option( 'perform_cache_stats', [] );
 		if ( ! is_array( $stats ) ) {
 			$stats = [];
@@ -478,14 +804,54 @@ class PageCache implements ModuleInterface {
 		$total      = max( 1, ( $hits + $stale_hits + $misses ) );
 		$hit_ratio  = round( ( ( $hits + $stale_hits ) / $total ) * 100, 2 );
 
-		$top_misses    = $stats['top_misses'] ?? [];
-		$slow_uncached = $stats['slow_uncached'] ?? [];
+		$top_misses     = $stats['top_misses'] ?? [];
+		$bypass_reasons = $stats['bypass_reasons'] ?? [];
+		$slow_uncached  = $stats['slow_uncached'] ?? [];
+		$cloudflare     = $this->get_cloudflare_queue_status();
+		$residual       = (int) get_option( 'perform_cache_cloudflare_credential_residual_' . $this->get_blog_id(), 0 );
 		?>
-		<div class="wrap">
-			<h1><?php esc_html_e( 'Perform Cache Observability', 'perform' ); ?></h1>
+		<section class="perform-cache-stats" aria-labelledby="perform-cache-stats-heading">
+			<h2 id="perform-cache-stats-heading"><?php esc_html_e( 'Perform Cache Observability', 'perform' ); ?></h2>
 			<p><?php esc_html_e( 'Live cache effectiveness and warmup health metrics.', 'perform' ); ?></p>
+			<?php if ( isset( $_GET['perform_cache_purged'] ) ) : ?>
+				<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'The local page-cache generation has been invalidated.', 'perform' ); ?></p></div>
+				<?php
+				if ( ! empty( $_GET['perform_cache_cloudflare_pending'] ) ) :
+					?>
+					<div class="notice notice-warning"><p><?php esc_html_e( 'Cloudflare URL cleanup is pending.', 'perform' ); ?></p></div><?php endif; ?>
+				<?php
+				if ( ! empty( $_GET['perform_cache_cloudflare_retryable_failed'] ) ) :
+					?>
+					<div class="notice notice-error"><p><?php esc_html_e( 'Some Cloudflare URL cleanup batches need a manual retry.', 'perform' ); ?></p></div><?php endif; ?>
+			<?php endif; ?>
+			<?php if ( isset( $_GET['perform_cache_activity_cleared'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Existing post-action notice state. ?>
+				<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Cache activity cleared.', 'perform' ); ?></p></div>
+			<?php endif; ?>
+			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+				<input type="hidden" name="action" value="perform_purge_page_cache" />
+				<?php wp_nonce_field( 'perform_purge_page_cache' ); ?>
+				<?php submit_button( esc_html__( 'Purge Site Page Cache', 'perform' ), 'secondary', 'submit', false ); ?>
+			</form>
+			<?php if ( $cloudflare['pending'] || $cloudflare['retryable_failed'] || $cloudflare['credential_residuals'] || $residual ) : ?>
+				<div class="notice notice-<?php echo $cloudflare['retryable_failed'] || $cloudflare['credential_residuals'] || $residual ? 'error' : 'warning'; ?>"><p><?php echo esc_html( sprintf( __( 'Cloudflare cleanup: %1$d pending, %2$d retryable failures, %3$d old-credential residuals.', 'perform' ), $cloudflare['pending'], $cloudflare['retryable_failed'], max( $cloudflare['credential_residuals'], $residual ) ) ); ?></p></div>
+			<?php endif; ?>
+			<?php if ( $cloudflare['retryable_failed'] ) : ?>
+				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+					<input type="hidden" name="action" value="perform_retry_cloudflare_cleanup" />
+					<?php wp_nonce_field( 'perform_retry_cloudflare_cleanup' ); ?>
+					<?php submit_button( esc_html__( 'Retry Failed Cloudflare Cleanup', 'perform' ), 'secondary', 'submit', false ); ?>
+				</form>
+			<?php endif; ?>
+			<?php if ( $residual ) : ?>
+				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+					<input type="hidden" name="action" value="perform_acknowledge_cloudflare_residual" />
+					<?php wp_nonce_field( 'perform_acknowledge_cloudflare_residual' ); ?>
+					<p><?php esc_html_e( 'After purging the old Cloudflare zone externally, acknowledge the residual to retire the old token-free queue and allow local cache cleanup.', 'perform' ); ?></p>
+					<?php submit_button( esc_html__( 'Acknowledge External Cloudflare Purge', 'perform' ), 'secondary', 'submit', false ); ?>
+				</form>
+			<?php endif; ?>
 
-			<table class="widefat striped" style="max-width:900px;">
+			<table class="widefat striped perform-cache-stats__summary">
 				<tbody>
 					<tr><th><?php esc_html_e( 'Cache Hit Ratio', 'perform' ); ?></th><td><?php echo esc_html( $hit_ratio . '%' ); ?></td></tr>
 					<tr><th><?php esc_html_e( 'Hits', 'perform' ); ?></th><td><?php echo esc_html( $hits ); ?></td></tr>
@@ -501,9 +867,12 @@ class PageCache implements ModuleInterface {
 			<h2><?php esc_html_e( 'Top Missed URLs', 'perform' ); ?></h2>
 			<?php $this->render_stat_map_table( $top_misses, esc_html__( 'Misses', 'perform' ) ); ?>
 
+			<h2><?php esc_html_e( 'Bypass Reasons', 'perform' ); ?></h2>
+			<?php $this->render_stat_map_table( $bypass_reasons, esc_html__( 'Bypasses', 'perform' ), esc_html__( 'Reason', 'perform' ) ); ?>
+
 			<h2><?php esc_html_e( 'Slow Uncached URLs (ms)', 'perform' ); ?></h2>
 			<?php $this->render_stat_map_table( $slow_uncached, esc_html__( 'Render Time (ms)', 'perform' ) ); ?>
-		</div>
+		</section>
 		<?php
 	}
 
@@ -512,19 +881,24 @@ class PageCache implements ModuleInterface {
 	 *
 	 * @param array<string, int|float> $map Stat map.
 	 * @param string                    $value_header Value header label.
+	 * @param string                    $key_header Key header label.
 	 *
 	 * @return void
 	 */
-	private function render_stat_map_table( $map, $value_header ) {
+	private function render_stat_map_table( $map, $value_header, $key_header = '' ) {
 		if ( ! is_array( $map ) || empty( $map ) ) {
 			echo '<p>' . esc_html__( 'No data yet.', 'perform' ) . '</p>';
 			return;
+		}
+
+		if ( '' === $key_header ) {
+			$key_header = esc_html__( 'URL', 'perform' );
 		}
 		?>
 		<table class="widefat striped" style="max-width:1200px;">
 			<thead>
 				<tr>
-					<th><?php esc_html_e( 'URL', 'perform' ); ?></th>
+					<th><?php echo esc_html( $key_header ); ?></th>
 					<th><?php echo esc_html( $value_header ); ?></th>
 				</tr>
 			</thead>
@@ -584,6 +958,60 @@ class PageCache implements ModuleInterface {
 	}
 
 	/**
+	 * Get invalidation URLs for a bounded set of posts.
+	 *
+	 * @param array<int, int> $post_ids Post IDs.
+	 * @return array<int, string>
+	 */
+	private function get_invalidation_urls_for_posts( array $post_ids ) {
+		$urls = [];
+		foreach ( array_slice( array_unique( array_map( 'intval', $post_ids ) ), 0, $this->get_term_object_limit() ) as $post_id ) {
+			$urls = array_merge( $urls, $this->get_invalidation_urls_for_post( $post_id ) );
+		}
+		return array_values( array_unique( $urls ) );
+	}
+
+	/**
+	 * Find a bounded set of posts related to a term.
+	 *
+	 * @return array{ids: array<int, int>, overflow: bool}
+	 */
+	private function get_affected_object_ids_for_term( int $term_id, string $taxonomy ) {
+		if ( '' === $taxonomy || ! function_exists( 'get_posts' ) ) {
+			return [
+				'ids'      => [],
+				'overflow' => false,
+			];
+		}
+		$limit      = $this->get_term_object_limit();
+		$object_ids = get_posts(
+			[
+				'fields'         => 'ids',
+				'posts_per_page' => $limit + 1,
+				'post_status'    => 'any',
+				'no_found_rows'  => true,
+				'tax_query'      => [
+					[
+						'taxonomy' => $taxonomy,
+						'field'    => 'term_id',
+						'terms'    => [ $term_id ],
+					],
+				],
+			]
+		);
+		$object_ids = is_array( $object_ids ) ? array_map( 'intval', $object_ids ) : [];
+		return [
+			'ids'      => array_slice( $object_ids, 0, $limit ),
+			'overflow' => count( $object_ids ) > $limit,
+		];
+	}
+
+	/** @return int */
+	private function get_term_object_limit() {
+		return max( 1, (int) apply_filters( 'perform_cache_term_invalidation_object_limit', 100 ) );
+	}
+
+	/**
 	 * Purge a specific URL from local cache and Cloudflare.
 	 *
 	 * @param string $url Target URL.
@@ -604,6 +1032,174 @@ class PageCache implements ModuleInterface {
 		}
 
 		$this->purge_cloudflare_url( $url );
+	}
+
+	/** Handle the explicit administrator-only site cache purge. */
+	public function handle_manual_purge(): void {
+		if ( ! $this->is_manual_purge_authorized() ) {
+			wp_die( esc_html__( 'You are not allowed to purge the page cache.', 'perform' ) );
+		}
+
+		$this->purge_site_cache();
+		$status = $this->get_cloudflare_queue_status();
+		wp_safe_redirect(
+			add_query_arg(
+				[
+					'perform_cache_purged'             => '1',
+					'perform_cache_cloudflare_pending' => $status['pending'],
+					'perform_cache_cloudflare_retryable_failed' => $status['retryable_failed'],
+				],
+				$this->get_observability_url()
+			)
+		);
+		exit;
+	}
+
+	/** Download a bounded, spreadsheet-safe snapshot of cache activity. */
+	public function handle_cache_activity_export(): void {
+		if ( ! current_user_can( 'manage_options' ) || ! check_admin_referer( 'perform_export_cache_activity' ) ) {
+			wp_die( esc_html__( 'You are not allowed to export cache activity.', 'perform' ) );
+		}
+
+		$contents = ( new CacheActivityService() )->export_csv();
+		nocache_headers();
+		header( 'Content-Type: text/csv; charset=utf-8' );
+		header( 'Content-Disposition: attachment; filename="perform-cache-activity-' . gmdate( 'Y-m-d' ) . '.csv"' );
+		header( 'X-Content-Type-Options: nosniff' );
+		echo $contents; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Bounded CSV is escaped by CacheActivityService.
+		exit;
+	}
+
+	/** Clear collected activity without invalidating cached pages or settings. */
+	public function handle_cache_activity_clear(): void {
+		if ( ! current_user_can( 'manage_options' ) || ! check_admin_referer( 'perform_clear_cache_activity' ) ) {
+			wp_die( esc_html__( 'You are not allowed to clear cache activity.', 'perform' ) );
+		}
+
+		( new CacheActivityService() )->clear();
+		$redirect = $this->get_observability_url(
+			[
+				'perform_cache_activity_cleared' => 1,
+			]
+		);
+
+		$is_async = isset( $_POST['perform_async'] ) && '1' === sanitize_text_field( wp_unslash( $_POST['perform_async'] ) );
+		if ( $is_async ) {
+			wp_send_json_success(
+				[
+					'message'  => esc_html__( 'Cache activity cleared.', 'perform' ),
+					'redirect' => $redirect,
+				]
+			);
+		}
+
+		wp_safe_redirect( $redirect );
+		exit;
+	}
+
+	/** Retire explicitly acknowledged old-credential Cloudflare work. */
+	public function handle_cloudflare_residual_acknowledgement(): void {
+		if ( ! current_user_can( 'manage_options' ) || ! check_admin_referer( 'perform_acknowledge_cloudflare_residual' ) ) {
+			wp_die( esc_html__( 'You are not allowed to acknowledge Cloudflare cleanup.', 'perform' ) );
+		}
+		$this->acknowledge_cloudflare_credential_residuals();
+		$this->schedule_cleanup();
+		wp_safe_redirect( $this->get_observability_url() );
+		exit;
+	}
+
+	/** Retry failed cleanup records that still match the current credentials. */
+	public function handle_cloudflare_cleanup_retry(): void {
+		if ( ! $this->is_cloudflare_retry_authorized() ) {
+			wp_die( esc_html__( 'You are not allowed to retry Cloudflare cleanup.', 'perform' ) );
+		}
+		$this->retry_current_cloudflare_failures();
+		wp_safe_redirect( $this->get_observability_url() );
+		exit;
+	}
+
+	/**
+	 * Build the canonical Cache Stats tab URL with constrained notice arguments.
+	 *
+	 * @param array<string, mixed> $args Post-action notice arguments.
+	 *
+	 * @return string
+	 */
+	private function get_observability_url( array $args = [] ) {
+		$url     = add_query_arg(
+			[
+				'page' => 'perform_settings',
+				'tab'  => 'cache-stats',
+			],
+			admin_url( 'options-general.php' )
+		);
+		$allowed = array_intersect_key(
+			$args,
+			array_flip(
+				[
+					'perform_cache_purged',
+					'perform_cache_activity_cleared',
+					'perform_cache_cloudflare_pending',
+					'perform_cache_cloudflare_retryable_failed',
+				]
+			)
+		);
+
+		return empty( $allowed ) ? $url : add_query_arg( $allowed, $url );
+	}
+
+	/** Retire only records that cannot use the current credentials. */
+	private function acknowledge_cloudflare_credential_residuals(): void {
+		$key     = 'perform_cache_cloudflare_queue_' . $this->get_blog_id();
+		$records = $this->get_cloudflare_queue_records( get_option( $key, [] ) );
+		$records = array_values(
+			array_filter(
+				$records,
+				static function ( $record ) {
+					return empty( $record['credential_residual'] );
+				}
+			)
+		);
+		update_option( $key, $records, false );
+		delete_option( 'perform_cache_cloudflare_credential_residual_' . $this->get_blog_id() );
+	}
+
+	/** Reset only retryable failures that match the currently configured edge credentials. */
+	private function retry_current_cloudflare_failures(): int {
+		$settings = Helpers::get_settings();
+		if ( ! is_array( $settings ) ) {
+			return 0;
+		}
+		$key         = 'perform_cache_cloudflare_queue_' . $this->get_blog_id();
+		$records     = $this->get_cloudflare_queue_records( get_option( $key, [] ) );
+		$fingerprint = $this->cloudflare_settings_key( $settings );
+		$retries     = 0;
+		foreach ( $records as &$record ) {
+			if ( empty( $record['failed'] ) || ! empty( $record['credential_residual'] ) || ( $record['fingerprint'] ?? '' ) !== $fingerprint ) {
+				continue;
+			}
+			$record['failed']   = false;
+			$record['attempts'] = 0;
+			++$retries;
+		}
+		unset( $record );
+		if ( $retries ) {
+			update_option( $key, $records, false );
+			if ( ! wp_next_scheduled( 'perform_cache_cloudflare_purge_event' ) ) {
+				wp_schedule_single_event( time() + 10, 'perform_cache_cloudflare_purge_event' );
+			}
+		}
+		return $retries;
+	}
+
+	/** Confirm the administrator capability and nonce before retrying current Cloudflare cleanup. */
+	private function is_cloudflare_retry_authorized(): bool {
+		return current_user_can( 'manage_options' ) && (bool) check_admin_referer( 'perform_retry_cloudflare_cleanup' );
+	}
+
+	/** Confirm the administrator capability and action nonce before purging. */
+	private function is_manual_purge_authorized(): bool {
+		return current_user_can( 'manage_options' ) && (bool) check_admin_referer( 'perform_purge_page_cache' );
 	}
 
 	/**
@@ -656,9 +1252,17 @@ class PageCache implements ModuleInterface {
 			return [];
 		}
 
-		$urls = [];
+		$urls                   = [];
+		$url_cap                = max( 1, (int) $this->preload_sitemap_url_cap );
+		$child_sitemap_limit    = max( 1, (int) $this->preload_sitemap_child_limit );
+		$child_sitemaps_fetched = 0;
+
 		if ( isset( $index->sitemap ) ) {
 			foreach ( $index->sitemap as $sitemap ) {
+				if ( count( $urls ) >= $url_cap || $child_sitemaps_fetched >= $child_sitemap_limit ) {
+					break;
+				}
+
 				if ( empty( $sitemap->loc ) ) {
 					continue;
 				}
@@ -668,6 +1272,7 @@ class PageCache implements ModuleInterface {
 					continue;
 				}
 
+				++$child_sitemaps_fetched;
 				$child_response = wp_remote_get( $child_sitemap_url, [ 'timeout' => 8 ] );
 				if ( is_wp_error( $child_response ) ) {
 					continue;
@@ -684,17 +1289,21 @@ class PageCache implements ModuleInterface {
 				}
 
 				foreach ( $child->url as $item ) {
+					if ( count( $urls ) >= $url_cap ) {
+						break;
+					}
+
 					if ( ! empty( $item->loc ) ) {
 						$item_url = esc_url_raw( (string) $item->loc );
 						if ( $this->is_site_url( $item_url ) ) {
-							$urls[] = $item_url;
+							$urls[ $item_url ] = true;
 						}
 					}
 				}
 			}
 		}
 
-		return array_slice( array_values( array_unique( array_filter( $urls ) ) ), 0, 500 );
+		return array_keys( $urls );
 	}
 
 	/**
@@ -732,18 +1341,44 @@ class PageCache implements ModuleInterface {
 	 * @return void
 	 */
 	private function purge_cloudflare_url( $url ) {
-		$enabled = Helpers::get_option( 'enable_cloudflare_cache_sync', 'perform_settings', false );
+		if ( ! $this->purge_cloudflare_urls( [ $url ] ) ) {
+			$this->queue_cloudflare_inline_urls( [ $url ] );
+		}
+	}
+
+	/**
+	 * Purge a bounded set of Cloudflare URLs.
+	 *
+	 * @param array<int, string> $urls URLs to purge.
+	 *
+	 * @return bool
+	 */
+	/**
+	 * @param array<int, string>        $urls URLs.
+	 * @param array<string, mixed>|null $settings Settings.
+	 */
+	private function purge_cloudflare_urls( array $urls, $settings = null ): bool {
+		$settings = is_array( $settings ) ? $settings : Helpers::get_settings();
+		if ( ! is_array( $settings ) ) {
+			return false;
+		}
+		$enabled = ! empty( $settings['enable_cloudflare_cache_sync'] );
 		if ( empty( $enabled ) ) {
-			return;
+			return true;
 		}
 
-		$zone_id = trim( (string) Helpers::get_option( 'cloudflare_zone_id', 'perform_settings', '' ) );
-		$token   = trim( (string) Helpers::get_option( 'cloudflare_api_token', 'perform_settings', '' ) );
+		$zone_id = trim( (string) ( $settings['cloudflare_zone_id'] ?? '' ) );
+		$token   = trim( (string) ( $settings['cloudflare_api_token'] ?? '' ) );
 		if ( '' === $zone_id || '' === $token ) {
-			return;
+			return false;
 		}
 
-		wp_remote_post(
+		$urls = array_values( array_unique( array_filter( array_map( 'esc_url_raw', (array) $urls ) ) ) );
+		if ( empty( $urls ) ) {
+			return true;
+		}
+
+		$response = wp_remote_post(
 			'https://api.cloudflare.com/client/v4/zones/' . rawurlencode( $zone_id ) . '/purge_cache',
 			[
 				'timeout' => 10,
@@ -751,9 +1386,15 @@ class PageCache implements ModuleInterface {
 					'Authorization' => 'Bearer ' . $token,
 					'Content-Type'  => 'application/json',
 				],
-				'body'    => wp_json_encode( [ 'files' => [ esc_url_raw( $url ) ] ] ),
+				'body'    => wp_json_encode( [ 'files' => $urls ] ),
 			]
 		);
+
+		if ( is_wp_error( $response ) || empty( $response['response']['code'] ) || 200 > (int) $response['response']['code'] || 300 <= (int) $response['response']['code'] ) {
+			return false;
+		}
+		$body = json_decode( wp_remote_retrieve_body( $response ), true );
+		return is_array( $body ) && ! empty( $body['success'] );
 	}
 
 	/**
@@ -855,27 +1496,38 @@ class PageCache implements ModuleInterface {
 	 * @return bool
 	 */
 	private function is_cacheable_request() {
+		$this->current_bypass_reason = $this->get_cache_bypass_reason();
+
+		return '' === $this->current_bypass_reason;
+	}
+
+	/**
+	 * Get the reason the current request should bypass page cache.
+	 *
+	 * @return string Empty string when cacheable.
+	 */
+	private function get_cache_bypass_reason() {
 		if ( is_admin() || wp_doing_ajax() || wp_doing_cron() ) {
-			return false;
+			return 'runtime_context';
 		}
 
 		if ( ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || ( defined( 'WP_CLI' ) && WP_CLI ) ) {
-			return false;
+			return 'runtime_context';
 		}
 
 		if ( is_user_logged_in() || is_preview() || is_feed() || is_trackback() || is_robots() || is_search() ) {
-			return false;
+			return 'wordpress_context';
 		}
 
 		$method = isset( $_SERVER['REQUEST_METHOD'] ) ? strtoupper( sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) ) : 'GET';
 		if ( ! in_array( $method, [ 'GET', 'HEAD' ], true ) ) {
-			return false;
+			return 'http_method';
 		}
 
 		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
 		$path        = '' !== $request_uri ? wp_parse_url( $request_uri, PHP_URL_PATH ) : '';
 		if ( is_string( $path ) ) {
-			$path          = untrailingslashit( strtolower( $path ) );
+			$path          = $this->normalize_request_path( $path );
 			$blocked_paths = [
 				'/cart',
 				'/checkout',
@@ -884,13 +1536,25 @@ class PageCache implements ModuleInterface {
 			];
 			foreach ( $blocked_paths as $blocked_path ) {
 				if ( 0 === strpos( $path, $blocked_path ) ) {
-					return false;
+					return 'default_path';
 				}
+			}
+
+			if ( $this->path_matches_exact_bypass_rule( $path ) ) {
+				return 'path_exact';
+			}
+
+			if ( $this->path_matches_prefix_bypass_rule( $path ) ) {
+				return 'path_prefix';
 			}
 		}
 
 		if ( isset( $_GET['add-to-cart'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only cache bypass signal.
-			return false;
+			return 'default_query';
+		}
+
+		if ( $this->request_has_bypass_query_key() ) {
+			return 'query_key';
 		}
 
 		$cookies        = $_COOKIE; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
@@ -905,12 +1569,262 @@ class PageCache implements ModuleInterface {
 		foreach ( $cookies as $cookie_name => $cookie_value ) {
 			foreach ( $bypass_cookies as $prefix ) {
 				if ( 0 === strpos( (string) $cookie_name, $prefix ) ) {
-					return false;
+					return 'default_cookie';
 				}
 			}
 		}
 
-		return true;
+		if ( $this->request_has_bypass_cookie_name() ) {
+			return 'cookie_name';
+		}
+
+		if ( $this->request_has_bypass_cookie_prefix() ) {
+			return 'cookie_prefix';
+		}
+
+		$custom_reason = $this->get_custom_bypass_reason(
+			[
+				'method'       => $method,
+				'path'         => is_string( $path ) ? $path : '',
+				'query_keys'   => $this->get_request_query_keys(),
+				'cookie_names' => $this->get_request_cookie_names(),
+				'request_uri'  => $request_uri,
+			]
+		);
+
+		return $custom_reason;
+	}
+
+	/**
+	 * Normalize a request path for case-insensitive matching.
+	 *
+	 * @param string $path Request path.
+	 *
+	 * @return string
+	 */
+	private function normalize_request_path( $path ) {
+		$path = '/' . ltrim( strtolower( rawurldecode( (string) $path ) ), '/' );
+		$path = rtrim( $path, '/' );
+
+		return '' === $path ? '/' : $path;
+	}
+
+	/**
+	 * Determine if the request path matches an exact exclusion rule.
+	 *
+	 * @param string $path Normalized request path.
+	 *
+	 * @return bool
+	 */
+	private function path_matches_exact_bypass_rule( $path ) {
+		$rules = $this->get_cache_bypass_rules( 'cache_bypass_exact_paths' );
+		foreach ( $rules as $rule ) {
+			if ( $path === $this->normalize_request_path( $rule ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Determine if the request path matches a prefix exclusion rule.
+	 *
+	 * @param string $path Normalized request path.
+	 *
+	 * @return bool
+	 */
+	private function path_matches_prefix_bypass_rule( $path ) {
+		$rules = $this->get_cache_bypass_rules( 'cache_bypass_path_prefixes' );
+		foreach ( $rules as $rule ) {
+			$prefix = $this->normalize_request_path( $rule );
+			if ( '/' === $prefix || 0 === strpos( $path, $prefix ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Determine if any configured query key should bypass cache.
+	 *
+	 * @return bool
+	 */
+	private function request_has_bypass_query_key() {
+		$bypass_keys = $this->get_cache_bypass_rules( 'cache_bypass_query_params' );
+		if ( empty( $bypass_keys ) ) {
+			return false;
+		}
+
+		$bypass_keys = array_fill_keys( array_map( [ $this, 'normalize_rule_token' ], $bypass_keys ), true );
+		foreach ( $this->get_request_query_keys() as $query_key ) {
+			if ( isset( $bypass_keys[ $this->normalize_rule_token( $query_key ) ] ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Determine if any configured cookie name should bypass cache.
+	 *
+	 * @return bool
+	 */
+	private function request_has_bypass_cookie_name() {
+		$bypass_names = $this->get_cache_bypass_rules( 'cache_bypass_cookie_names' );
+		if ( empty( $bypass_names ) ) {
+			return false;
+		}
+
+		$bypass_names = array_fill_keys( array_map( [ $this, 'normalize_rule_token' ], $bypass_names ), true );
+		foreach ( $this->get_request_cookie_names() as $cookie_name ) {
+			if ( isset( $bypass_names[ $this->normalize_rule_token( $cookie_name ) ] ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Determine if any configured cookie prefix should bypass cache.
+	 *
+	 * @return bool
+	 */
+	private function request_has_bypass_cookie_prefix() {
+		$prefixes = $this->get_cache_bypass_rules( 'cache_bypass_cookie_prefixes' );
+		if ( empty( $prefixes ) ) {
+			return false;
+		}
+
+		$prefixes = array_map( [ $this, 'normalize_rule_token' ], $prefixes );
+		foreach ( $this->get_request_cookie_names() as $cookie_name ) {
+			$cookie_name = $this->normalize_rule_token( $cookie_name );
+			foreach ( $prefixes as $prefix ) {
+				if ( '' !== $prefix && 0 === strpos( $cookie_name, $prefix ) ) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get normalized configured bypass rules from settings.
+	 *
+	 * @param string $option Settings key.
+	 *
+	 * @return array<int, string>
+	 */
+	private function get_cache_bypass_rules( $option ) {
+		$value = Helpers::get_option( $option, 'perform_settings', [] );
+		if ( is_string( $value ) ) {
+			$value = preg_split( '/[\r\n,]+/', $value );
+		}
+
+		if ( ! is_array( $value ) ) {
+			return [];
+		}
+
+		$rules = [];
+		foreach ( $value as $rule ) {
+			if ( ! is_scalar( $rule ) ) {
+				continue;
+			}
+
+			$rule = trim( (string) $rule );
+			if ( '' === $rule ) {
+				continue;
+			}
+
+			$rules[] = $rule;
+		}
+
+		return array_values( array_unique( $rules ) );
+	}
+
+	/**
+	 * Get request query keys without query values.
+	 *
+	 * @return array<int, string>
+	 */
+	private function get_request_query_keys() {
+		return array_map( 'strval', array_keys( $_GET ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only cache bypass signal.
+	}
+
+	/**
+	 * Get request cookie names without cookie values.
+	 *
+	 * @return array<int, string>
+	 */
+	private function get_request_cookie_names() {
+		return array_map( 'strval', array_keys( $_COOKIE ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Names only.
+	}
+
+	/**
+	 * Normalize a query or cookie rule token for case-insensitive matching.
+	 *
+	 * @param string $token Rule token.
+	 *
+	 * @return string
+	 */
+	private function normalize_rule_token( $token ) {
+		return strtolower( trim( rawurldecode( (string) $token ) ) );
+	}
+
+	/**
+	 * Get optional custom bypass reason from advanced filter logic.
+	 *
+	 * @param array<string, mixed> $context Request context without raw query or cookie values.
+	 *
+	 * @return string Empty string when cacheable.
+	 */
+	private function get_custom_bypass_reason( array $context ) {
+		$reason = apply_filters( 'perform_page_cache_bypass_reason', '', $context );
+
+		if ( true === $reason ) {
+			return 'custom_filter';
+		}
+
+		if ( is_scalar( $reason ) && '' !== trim( (string) $reason ) ) {
+			return $this->normalize_stat_key( (string) $reason );
+		}
+
+		return '';
+	}
+
+	/**
+	 * Record aggregate bypass reason stats.
+	 *
+	 * @param string $reason Bypass reason.
+	 * @param int    $increment Increment amount.
+	 *
+	 * @return void
+	 */
+	private function record_bypass_reason( $reason, $increment ) {
+		$reason = '' !== $reason ? $reason : 'unknown';
+		$reason = $this->normalize_stat_key( $reason );
+
+		$reasons            = $this->get_stat_map( 'bypass_reasons' );
+		$reasons[ $reason ] = ( $reasons[ $reason ] ?? 0 ) + $increment;
+		$this->set_stat_map( 'bypass_reasons', $reasons );
+	}
+
+	/**
+	 * Normalize a string for use as a stats-map key.
+	 *
+	 * @param string $key Stats key.
+	 *
+	 * @return string
+	 */
+	private function normalize_stat_key( $key ) {
+		$key = strtolower( sanitize_text_field( $key ) );
+		$key = preg_replace( '/[^a-z0-9_\-]+/', '_', $key );
+
+		return is_string( $key ) && '' !== trim( $key, '_' ) ? trim( $key, '_' ) : 'custom_filter';
 	}
 
 	/**
@@ -1029,8 +1943,10 @@ class PageCache implements ModuleInterface {
 	 * @return void
 	 */
 	private function ensure_cache_dir() {
-		if ( ! is_dir( $this->cache_dir ) ) {
-			wp_mkdir_p( $this->cache_dir );
+		$generation = 0 < $this->request_generation ? $this->request_generation : $this->get_cache_generation();
+		$directory  = $this->get_generation_dir( $generation );
+		if ( ! is_dir( $directory ) ) {
+			wp_mkdir_p( $directory );
 		}
 	}
 
@@ -1070,7 +1986,8 @@ class PageCache implements ModuleInterface {
 	 * @return string
 	 */
 	private function get_body_file_path( $key ) {
-		return $this->cache_dir . $key . '.html';
+		$generation = 0 < $this->request_generation ? $this->request_generation : $this->get_cache_generation();
+		return $this->get_generation_dir( $generation ) . $key . '.html';
 	}
 
 	/**
@@ -1081,7 +1998,449 @@ class PageCache implements ModuleInterface {
 	 * @return string
 	 */
 	private function get_meta_file_path( $key ) {
-		return $this->cache_dir . $key . '.meta.json';
+		$generation = 0 < $this->request_generation ? $this->request_generation : $this->get_cache_generation();
+		return $this->get_generation_dir( $generation ) . $key . '.meta.json';
+	}
+
+	/** Return the current site's cache generation option name. */
+	private function get_generation_option_name(): string {
+		return 'perform_cache_generation_' . $this->get_blog_id();
+	}
+
+	/** Get the current cache generation, initializing legacy sites at one. */
+	private function get_cache_generation(): int {
+		$generation = (int) get_option( $this->get_generation_option_name(), 1 );
+		return max( 1, $generation );
+	}
+
+	/** Get a multisite-isolated generation directory. */
+	private function get_generation_dir( int $generation ): string {
+		return $this->cache_dir . 'site-' . $this->get_blog_id() . '/generation-' . max( 1, (int) $generation ) . '/';
+	}
+
+	/** Get the current site ID without making a network-wide assumption. */
+	private function get_blog_id(): int {
+		return function_exists( 'get_current_blog_id' ) ? max( 1, (int) get_current_blog_id() ) : 1;
+	}
+
+	/** Whether frontend cache reads and writes are enabled. */
+	private function page_cache_enabled(): bool {
+		return ! empty( Helpers::get_option( 'enable_page_cache', 'perform_settings', false ) );
+	}
+
+	/** Schedule bounded cleanup of retired local generations. */
+	private function schedule_cleanup(): void {
+		if ( ! wp_next_scheduled( 'perform_cache_cleanup_event' ) ) {
+			wp_schedule_single_event( time() + 10, 'perform_cache_cleanup_event' );
+		}
+	}
+
+	/** Delete a bounded number of files from retired generations. */
+	public function cleanup_obsolete_generations(): void {
+		$site_dir  = $this->cache_dir . 'site-' . $this->get_blog_id() . '/';
+		$remaining = max( 1, (int) $this->cleanup_batch_size );
+		$has_more  = false;
+		if ( $this->has_pending_metadata_inventory() ) {
+			$this->schedule_cleanup();
+			return;
+		}
+		$has_more = $this->cleanup_directory_files( $this->cache_dir, $remaining, true );
+		$current  = $this->get_generation_dir( $this->get_cache_generation() );
+		if ( $remaining > 0 && is_dir( $site_dir ) ) {
+			foreach ( new \DirectoryIterator( $site_dir ) as $directory ) {
+				if ( $directory->isDot() || ! $directory->isDir() || 0 !== strpos( $directory->getFilename(), 'generation-' ) || trailingslashit( $directory->getPathname() ) === $current ) {
+					continue;
+				}
+				if ( $this->cleanup_directory_files( $directory->getPathname(), $remaining, false ) ) {
+					$has_more = true;
+					break;
+				}
+				if ( ! $this->directory_has_files( $directory->getPathname() ) ) {
+					rmdir( $directory->getPathname() ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_rmdir
+				}
+			}
+		}
+
+		if ( $has_more || $remaining <= 0 ) {
+			wp_schedule_single_event( time() + 30, 'perform_cache_cleanup_event' );
+		}
+	}
+
+	private function cleanup_directory_files( string $directory, int &$remaining, bool $legacy_root ): bool {
+		if ( ! is_dir( $directory ) ) {
+			return false;
+		}
+		foreach ( new \DirectoryIterator( $directory ) as $file ) {
+			if ( $file->isDot() || ! $file->isFile() ) {
+				continue;
+			}
+			$name = $file->getFilename();
+			if ( $legacy_root && ! preg_match( '/^[a-f0-9]{32}(?:\.html|\.meta\.json)$/', $name ) ) {
+				continue;
+			}
+			if ( $remaining <= 0 ) {
+				return true;
+			}
+			wp_delete_file( $file->getPathname() );
+			--$remaining;
+		}
+		return $remaining <= 0 && $this->directory_has_files( $directory, $legacy_root );
+	}
+
+	private function directory_has_files( string $directory, bool $legacy_root = false ): bool {
+		foreach ( new \DirectoryIterator( $directory ) as $file ) {
+			if ( $file->isDot() || ! $file->isFile() ) {
+				continue;
+			}
+			if ( ! $legacy_root || preg_match( '/^[a-f0-9]{32}(?:\.html|\.meta\.json)$/', $file->getFilename() ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/** Queue metadata inventory instead of using Cloudflare purge_everything. */
+	/** @param array<string,mixed>|null $settings */
+	private function queue_cloudflare_tracked_urls( $settings = null, ?int $generation = null ): void {
+		$settings = is_array( $settings ) ? $settings : Helpers::get_settings();
+		if ( ! is_array( $settings ) || empty( $settings['enable_cloudflare_cache_sync'] ) ) {
+			return;
+		}
+		$blog_id    = $this->get_blog_id();
+		$generation = null === $generation ? $this->get_cache_generation() : $generation;
+		$key        = 'perform_cache_cloudflare_queue_' . $blog_id;
+		$records    = $this->get_cloudflare_queue_records( get_option( $key, [] ) );
+		$records    = $this->queue_cloudflare_source( $records, 'metadata', $generation, $settings );
+		if ( $this->has_legacy_metadata_files() ) {
+			$records = $this->queue_cloudflare_source( $records, 'legacy_metadata', null, $settings );
+		}
+		$legacy = get_option( 'perform_cache_urls_' . $blog_id, [] );
+		if ( is_array( $legacy ) && ! empty( $legacy ) ) {
+			$records = $this->queue_cloudflare_source( $records, 'legacy_option', null, $settings );
+		}
+		update_option( $key, $records, false );
+		if ( ! wp_next_scheduled( 'perform_cache_cloudflare_purge_event' ) ) {
+			wp_schedule_single_event( time() + 10, 'perform_cache_cloudflare_purge_event' );
+		}
+	}
+
+	private function has_legacy_metadata_files(): bool {
+		if ( ! is_dir( $this->cache_dir ) ) {
+			return false;
+		}
+		foreach ( new \DirectoryIterator( $this->cache_dir ) as $file ) {
+			if ( ! $file->isDot() && $file->isFile() && preg_match( '/^[a-f0-9]{32}\.meta\.json$/', $file->getFilename() ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @param array<int, array<string, mixed>> $records
+	 * @param array<string, mixed> $settings
+	 * @return array<int, array<string, mixed>>
+	 */
+	private function queue_cloudflare_source( array $records, string $source, ?int $generation, array $settings ): array {
+		$fingerprint = $this->cloudflare_settings_key( $settings );
+		foreach ( $records as &$record ) {
+			if ( ! in_array( $source, [ $record['source'] ?? '' ], true ) || ! in_array( (int) $generation, [ (int) ( $record['generation'] ?? 0 ) ], true ) ) {
+				continue;
+			}
+			if ( ( $record['fingerprint'] ?? '' ) === $fingerprint && ! empty( $record['failed'] ) ) {
+				$record['failed']   = false;
+				$record['attempts'] = 0;
+			}
+			unset( $record );
+			return $records;
+		}
+		unset( $record );
+		$records[] = [
+			'source'      => $source,
+			'generation'  => $generation,
+			'cursor'      => 0,
+			'zone_id'     => (string) $settings['cloudflare_zone_id'],
+			'fingerprint' => $fingerprint,
+			'enabled'     => ! empty( $settings['enable_cloudflare_cache_sync'] ),
+			'attempts'    => 0,
+			'failed'      => false,
+		];
+		return $records;
+	}
+
+	/** @param array<int, string> $urls */
+	private function queue_cloudflare_inline_urls( array $urls ): void {
+		$settings = Helpers::get_settings();
+		if ( ! is_array( $settings ) || empty( $settings['enable_cloudflare_cache_sync'] ) ) {
+			return;
+		}
+		$urls = array_values( array_unique( array_filter( array_map( 'esc_url_raw', $urls ) ) ) );
+		if ( empty( $urls ) ) {
+			return;
+		}
+		$key         = 'perform_cache_cloudflare_queue_' . $this->get_blog_id();
+		$records     = $this->get_cloudflare_queue_records( get_option( $key, [] ) );
+		$limit       = max( 1, (int) $this->cloudflare_batch_size );
+		$fingerprint = $this->cloudflare_settings_key( $settings );
+		foreach ( $records as &$record ) {
+			if ( ! empty( $record['source'] ) || ! in_array( $fingerprint, [ $record['fingerprint'] ?? '' ], true ) || ! empty( $record['failed'] ) ) {
+				continue;
+			}
+			$current  = isset( $record['urls'] ) && is_array( $record['urls'] ) ? $record['urls'] : [];
+			$capacity = $limit - count( $current );
+			if ( $capacity <= 0 ) {
+				continue;
+			}
+			$record['urls'] = array_values( array_unique( array_merge( $current, array_splice( $urls, 0, $capacity ) ) ) );
+		}
+		unset( $record );
+		while ( ! empty( $urls ) ) {
+			$records[] = [
+				'urls'        => array_splice( $urls, 0, $limit ),
+				'zone_id'     => (string) $settings['cloudflare_zone_id'],
+				'fingerprint' => $fingerprint,
+				'enabled'     => true,
+				'attempts'    => 0,
+				'failed'      => false,
+			];
+		}
+		update_option( $key, $records, false );
+		if ( ! wp_next_scheduled( 'perform_cache_cloudflare_purge_event' ) ) {
+			wp_schedule_single_event( time() + 10, 'perform_cache_cloudflare_purge_event' );
+		}
+	}
+
+	/** Purge a bounded batch of tracked URLs from Cloudflare, with retries. */
+	public function run_cloudflare_purge_batch(): void {
+		$key     = 'perform_cache_cloudflare_queue_' . $this->get_blog_id();
+		$records = $this->get_cloudflare_queue_records( get_option( $key, [] ) );
+		if ( empty( $records ) ) {
+			return;
+		}
+		foreach ( $records as $index => &$record ) {
+			if ( ! empty( $record['failed'] ) ) {
+				continue;
+			}
+			$work  = $this->get_cloudflare_record_work( $record );
+			$batch = $work['urls'];
+			if ( empty( $batch ) ) {
+				if ( isset( $work['cursor'] ) && empty( $work['complete'] ) ) {
+					$record['cursor'] = $work['cursor'];
+					break;
+				}
+				$this->retire_cloudflare_record( $record );
+				$record['done'] = true;
+				continue;
+			}
+			$settings = Helpers::get_settings();
+			if ( ! is_array( $settings ) || ( $record['fingerprint'] ?? '' ) !== $this->cloudflare_settings_key( $settings ) ) {
+				$record['failed']              = true;
+				$record['credential_residual'] = true;
+				update_option( 'perform_cache_cloudflare_credential_residual_' . $this->get_blog_id(), $this->get_cloudflare_residual_count( $record, $batch ), false );
+			} else {
+				$settings['enable_cloudflare_cache_sync'] = array_key_exists( 'enabled', $record ) ? ! empty( $record['enabled'] ) : true;
+				if ( $this->purge_cloudflare_urls( $batch, $settings ) ) {
+					if ( isset( $work['cursor'] ) ) {
+						$record['cursor'] = $work['cursor'];
+						if ( ! empty( $work['complete'] ) ) {
+							$record['inventory_complete'] = true;
+						}
+					} elseif ( isset( $record['source'] ) ) {
+						$record['offset'] = (int) ( $record['offset'] ?? 0 ) + count( $batch );
+					} else {
+						$record['urls'] = array_values( array_diff( $record['urls'], $batch ) );
+					}
+				} else {
+					++$record['attempts'];
+					$record['failed'] = $record['attempts'] >= max( 1, (int) $this->cloudflare_max_retries );
+				}
+			}
+			break;
+		}
+		unset( $record );
+		$records = array_values(
+			array_filter(
+				$records,
+				static function ( $record ) {
+					return ! isset( $record['done'] );
+				}
+			)
+		);
+		update_option( $key, $records, false );
+		$active = array_filter(
+			$records,
+			static function ( $record ) {
+				return empty( $record['failed'] );
+			}
+		);
+		if ( ! empty( $active ) ) {
+			wp_schedule_single_event( time() + 60, 'perform_cache_cloudflare_purge_event' );
+		}
+	}
+
+	/**
+	 * @param array<string, mixed> $record Record.
+	 * @return array{urls: array<int, string>, cursor?: int, complete?: bool}
+	 */
+	private function get_cloudflare_record_work( array $record ): array {
+		if ( isset( $record['source'] ) && 'legacy_option' === $record['source'] ) {
+			$urls = get_option( 'perform_cache_urls_' . $this->get_blog_id(), [] );
+			return [ 'urls' => is_array( $urls ) ? array_slice( $urls, (int) ( $record['offset'] ?? 0 ), max( 1, (int) $this->cloudflare_batch_size ) ) : [] ];
+		}
+		if ( isset( $record['source'] ) && in_array( $record['source'], [ 'metadata', 'legacy_metadata' ], true ) ) {
+			return $this->get_cloudflare_metadata_urls( $record );
+		}
+		$urls = isset( $record['urls'] ) && is_array( $record['urls'] ) ? $record['urls'] : [];
+		return [ 'urls' => array_slice( $urls, 0, max( 1, (int) $this->cloudflare_batch_size ) ) ];
+	}
+
+	/**
+	 * @param array<string, mixed> $record
+	 * @return array{urls: array<int, string>, cursor: int, complete: bool}
+	 */
+	private function get_cloudflare_metadata_urls( array $record ): array {
+		$directory = 'metadata' === $record['source'] ? $this->get_generation_dir( (int) $record['generation'] ) : $this->cache_dir;
+		if ( ! is_dir( $directory ) ) {
+			return [
+				'urls'     => [],
+				'cursor'   => (int) ( $record['cursor'] ?? 0 ),
+				'complete' => true,
+			];
+		}
+
+		$cursor  = max( 0, (int) ( $record['cursor'] ?? 0 ) );
+		$index   = 0;
+		$urls    = [];
+		$limit   = max( 1, (int) $this->cloudflare_batch_size );
+		$budget  = max( 1, (int) apply_filters( 'perform_cache_cloudflare_metadata_scan_limit', $this->cloudflare_metadata_scan_limit ) );
+		$scanned = 0;
+		$files   = new \DirectoryIterator( $directory );
+		foreach ( $files as $file ) {
+			if ( $file->isDot() ) {
+				continue;
+			}
+			if ( $index++ < $cursor ) {
+				continue;
+			}
+			++$scanned;
+			if ( ! $file->isFile() || '.meta.json' !== substr( $file->getFilename(), -10 ) ) {
+				if ( $scanned >= $budget ) {
+					return [
+						'urls'     => [],
+						'cursor'   => $index,
+						'complete' => false,
+					];
+				}
+				continue;
+			}
+			$raw  = file_get_contents( $file->getPathname() );
+			$data = false === $raw ? null : json_decode( $raw, true );
+			$url  = is_array( $data ) && isset( $data['url'] ) ? esc_url_raw( (string) $data['url'] ) : '';
+			if ( '' !== $url && $this->is_site_url( $url ) ) {
+				$urls[] = $url;
+			}
+			if ( count( $urls ) >= $limit || $scanned >= $budget ) {
+				return [
+					'urls'     => array_values( array_unique( $urls ) ),
+					'cursor'   => $index,
+					'complete' => false,
+				];
+			}
+		}
+		return [
+			'urls'     => array_values( array_unique( $urls ) ),
+			'cursor'   => $index,
+			'complete' => true,
+		];
+	}
+
+	/**
+	 * @param array<string, mixed> $record
+	 * @param array<int, string> $urls
+	 */
+	private function get_cloudflare_residual_count( array $record, array $urls ): int {
+		if ( isset( $record['urls'] ) && is_array( $record['urls'] ) ) {
+			return max( 1, count( $record['urls'] ) - (int) ( $record['offset'] ?? 0 ) );
+		}
+		return max( 1, count( $urls ) );
+	}
+
+	/** @param array<string,mixed> $record */
+	private function retire_cloudflare_record( array $record ): void {
+		if ( isset( $record['source'] ) && 'legacy_option' === $record['source'] ) {
+			delete_option( 'perform_cache_urls_' . $this->get_blog_id() );
+		}
+	}
+
+	/** Keep local metadata until its bounded Cloudflare inventory is drained. */
+	private function has_pending_metadata_inventory(): bool {
+		$records = $this->get_cloudflare_queue_records( get_option( 'perform_cache_cloudflare_queue_' . $this->get_blog_id(), [] ) );
+		foreach ( $records as $record ) {
+			if ( in_array( $record['source'] ?? '', [ 'metadata', 'legacy_metadata' ], true ) && empty( $record['done'] ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @param mixed $records Queue records.
+	 * @return array<int, array<string, mixed>>
+	 */
+	private function get_cloudflare_queue_records( $records ): array {
+		if ( ! is_array( $records ) || empty( $records ) ) {
+			return []; }
+		if ( isset( $records[0] ) && is_string( $records[0] ) ) {
+			$settings = Helpers::get_settings();
+			$settings = is_array( $settings ) ? $settings : [];
+			return [
+				[
+					'urls'        => array_values( array_unique( $records ) ),
+					'zone_id'     => (string) ( $settings['cloudflare_zone_id'] ?? '' ),
+					'fingerprint' => $this->cloudflare_settings_key( $settings ),
+					'attempts'    => 0,
+					'failed'      => false,
+				],
+			];
+		}
+		return $records;
+	}
+
+	/** @param array<string,mixed> $settings */
+	private function cloudflare_settings_key( array $settings ): string {
+		return md5( (string) ( $settings['cloudflare_zone_id'] ?? '' ) . '|' . (string) ( $settings['cloudflare_api_token'] ?? '' ) ); }
+
+	/**
+	 * @param array<string, mixed> $old Previous settings.
+	 * @param array<string, mixed> $new_settings New settings.
+	 */
+	private function cloudflare_settings_changed( array $old, array $new_settings ): bool {
+		return $this->cloudflare_settings_key( $old ) !== $this->cloudflare_settings_key( $new_settings ) || ! empty( $old['enable_cloudflare_cache_sync'] ) !== ! empty( $new_settings['enable_cloudflare_cache_sync'] );
+	}
+
+	/** @return array<string, int> */
+	private function get_cloudflare_queue_status() {
+		$records  = $this->get_cloudflare_queue_records( get_option( 'perform_cache_cloudflare_queue_' . $this->get_blog_id(), [] ) );
+		$settings = Helpers::get_settings();
+		$current  = is_array( $settings ) ? $this->cloudflare_settings_key( $settings ) : '';
+		$status   = [
+			'pending'              => 0,
+			'failed'               => 0,
+			'retryable_failed'     => 0,
+			'credential_residuals' => 0,
+		];
+		foreach ( $records as $record ) {
+			if ( ! empty( $record['failed'] ) ) {
+				++$status['failed'];
+				if ( ! empty( $record['credential_residual'] ) ) {
+					++$status['credential_residuals'];
+				} elseif ( ( $record['fingerprint'] ?? '' ) === $current ) {
+					++$status['retryable_failed'];
+				}
+			} else {
+				++$status['pending']; }
+		}
+		return $status;
 	}
 
 	/**
