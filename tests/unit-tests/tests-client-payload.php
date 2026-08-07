@@ -20,4 +20,17 @@ final class Tests_Client_Payload extends TestCase {
 		$this->assertTrue( ClientPayload::is_masked_secret( ClientPayload::MASKED_SECRET ) );
 		$this->assertFalse( ClientPayload::is_masked_secret( 'plain-value' ) );
 	}
+
+	public function test_textarea_array_values_are_normalized_for_client_payload() {
+		$payload = ClientPayload::sanitize_for_client(
+			[
+				'cache_bypass_exact_paths' => [
+					'/members',
+					'/account/dashboard',
+				],
+			]
+		);
+
+		$this->assertSame( "/members\n/account/dashboard", $payload['cache_bypass_exact_paths'] );
+	}
 }

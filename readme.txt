@@ -5,61 +5,80 @@ Donate link: https://www.buymeacoffee.com/mehulgohil
 Requires at least: 4.8
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.6.0
+Stable tag: 1.7.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-Speed up your WordPress site by removing unused assets, optimize loading order, and much more; ideal for WooCommerce, page builders and busy sites.
+Optimize WordPress performance with asset controls, page caching, CDN rewriting, and cleanup tools.
 
 == Description ==
 
-Perform helps you speed up WordPress by removing unused CSS/JS, deferring or disabling scripts, and giving fine-grained control over asset loading per page.
+Perform helps site owners reduce unnecessary frontend work in WordPress. It combines asset controls, cache features, CDN rewriting, and small cleanup modules in one settings area.
 
-The plugin is designed to be lightweight, beginner-friendly and developer-extensible. It focuses on practical optimizations that improve front-end load times and Core Web Vitals without complicated setup.
+Version 1.7.0 focuses on safer, easier-to-understand controls for real sites: a dashboard overview, dashboard-only runtime diagnostics, page cache exclusion and lifecycle controls, an Assets Manager reset action, consistent settings layouts, and Cache Stats integrated into the main settings tabs.
 
-Key benefits (short):
+Key capabilities:
 
-- Reduce page size and HTTP requests by disabling unused assets per page.
-- Improve Largest Contentful Paint and Time to Interactive via script deferring and selective loading.
-- Reduce admin and server overhead, minimal CPU and memory footprint.
+- Inspect scripts and styles on the current page with the Assets Manager.
+- Disable selected CSS or JavaScript globally or keep it enabled for specific pages.
+- Enable full-page caching with cache validation, stale regeneration, preload scheduling, and cache stats.
+- Add DNS prefetch and preconnect hints for external resources.
+- Rewrite static asset URLs to a CDN when a CDN URL is configured.
+- Cache classic WordPress navigation menus on non-block themes.
+- Remove common frontend extras such as emojis, embeds, query strings, feed links, REST links, shortlinks, and jQuery Migrate.
+- Adjust Heartbeat, autosave, post revision, and self-pingback behavior.
+- Apply WooCommerce-specific asset and cart fragment controls when WooCommerce is active.
 
-Features
+How Perform works:
 
-- Assets Manager: selectively disable CSS and JS per page, post type or template.
-- Remove jQuery Migrate, emojis, embeds and other unnecessary features.
-- WooCommerce optimizations: control cart fragments, scripts and styles to speed up stores.
-- CDN & preconnect: add DNS-prefetch, preconnect, and native CDN integration hooks.
-- Menu caching and lightweight transient caching for faster navigation.
-- Developer-friendly hooks and filters for custom integrations.
-
-Other Plugins
-- [OneCaptcha](https://onecaptchawp.com): Connect popular captcha providers with WordPress forms for SPAM prevention
-- [WP Theme Switcher](https://wpthemeswitcher.com): Use multiple themes on your WordPress site at once. Useful for theme migration projects.
-- [WordPress Development Services](https://mehulgohil.com): Want to build something amazing in WordPress space. I'm here to help. Let's discuss!
+- Most modules are disabled until you turn them on.
+- Asset changes are reversible from the Assets Manager.
+- Existing settings from older Perform versions are preserved during migration.
+- Developers can customize selected behavior through Perform filters.
 
 == Installation ==
 
-1. Upload the `perform` folder to the `/wp-content/plugins/` directory, or install via the WordPress plugin directory if available.
+1. Upload the `perform` folder to the `/wp-content/plugins/` directory, or install Perform from the WordPress plugin directory.
 2. Activate the plugin through the 'Plugins' screen in WordPress.
-3. Go to Perform → Settings to review defaults (the plugin works well out-of-the-box).
+3. Go to Settings > Perform to review and enable the modules you want to use.
 
 == FAQ ==
 
 = Will Perform break my theme or plugins? =
-Perform is conservative by default: it only disables assets when you explicitly choose them in the Assets Manager. If you disable something and see issues, re-enable the asset. Changes are reversible.
+Perform is conservative by default. Asset unloading, page cache, CDN rewriting, and integration-specific controls only run when you enable them. If an asset change causes a layout or behavior issue, re-enable that asset from the Assets Manager.
 
 = Is this compatible with other caching plugins? =
-Yes. Perform works alongside many caching plugins and most server-level caching solutions. Clear cache after making asset changes.
+Perform can run alongside many host-level and plugin-level caching setups, but avoid enabling two full-page caches for the same page response unless you understand the cache order. Clear all caches after changing cache, CDN, or asset settings.
 
-= Which page builders are supported? =
-Full compatibility with majority of all the page builders.
+= Does Menu Cache work with block themes? =
+Menu Cache is designed for classic themes that render menus through `wp_nav_menu()`. Block themes generally do not need this module because navigation is rendered through block theme paths.
+
+= Does Assets Manager scan the whole site? =
+Assets Manager scans the current frontend page while you are logged in as an administrator. Use it page by page for safer asset decisions, then test important templates before applying broad changes.
+
+= Are settings preserved when updating to 1.7.0? =
+Yes. Perform 1.7.0 preserves existing public option keys and migrates legacy settings into the current settings shape where needed.
 
 == Support ==
 
+Project site and release updates: https://performwp.com/
 For help and troubleshooting, use our WordPress.org support forum: https://wordpress.org/support/plugin/perform
 Contributions and bug reports welcome on GitHub: https://github.com/performwp/perform
 
 == Changelog ==
+
+= 1.7.0 - 2026-07-26 =
+- Added a dashboard overview for faster at-a-glance site status.
+- Added a dashboard-only runtime diagnostics panel for environment and plugin inspection.
+- Added page cache exclusion controls for URLs and content that should bypass cache.
+- Added an Assets Manager reset action for safer repeated scans.
+- Standardized the General, Bloat, Assets, CDN, Cache, and Advanced settings with shared responsive field layouts and consistent accessible iconography.
+- Moved Cache Stats into the main Perform settings tabs while preserving the previous URL for administrators.
+- Added clear progress, success, failure, and retry feedback for Cache Stats CSV export and activity clearing.
+- Improved full-page cache invalidation after content, comment, taxonomy, settings, theme, and plugin changes, with bounded cleanup and CDN retry handling.
+- Hardened sitemap preload traversal and CDN module load gating.
+- Improved internal module loading and Assets Manager settings persistence without changing existing setting contracts.
+- Aligned the dashboard and public metadata surfaces with version 1.7.0 and refreshed WordPress.org readme wording.
 
 = 1.6.0 - 2026-05-22 =
 - Redesigned Assets Manager with a more resilient scanner interface and WordPress-native admin controls.
@@ -107,17 +126,15 @@ Contributions and bug reports welcome on GitHub: https://github.com/performwp/pe
 
 == Upgrade Notice ==
 
-= 1.6.0 =
-Review your Assets Manager and cache settings after updating. Perform 1.6.0 adds the redesigned scanner, page cache controls, and safer release validation.
-
-Always backup your database before updating. Follow the changelog for breaking changes.
+= 1.7.0 =
+Review Assets Manager, cache exclusions, Cache Stats, and runtime diagnostics after updating. Cache Stats now appears under Settings > Perform, and its export and clear actions report progress and results.
 
 == Screenshots ==
 
 1. General Settings Screen
-2. Bloat Settings Screen
-3. Assets Settings Screen
-4. CDN Settings Screen
+2. Frontend cleanup and performance toggle settings
+3. Assets Manager scanner and per-page asset controls
+4. CDN and resource hint settings
 
 == Contributors ==
 

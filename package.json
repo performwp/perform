@@ -1,6 +1,6 @@
 {
   "name": "perform",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "Web Performance Optimization Plugin for WordPress",
   "homepage": "https://github.com/performwp/perform#readme",
   "license": "GPL-3.0-or-later",
@@ -24,7 +24,8 @@
     "lint": "npm run lint:js && npm run lint:css",
     "lint:css": "wp-scripts lint-style \"assets/src/**/*.css\"",
     "lint:js": "wp-scripts lint-js \"assets/src/**/*.js\" \"assets/src/**/*.jsx\" postcss.config.js webpack.config.js",
-    "plugin-zip": "rm -rf build/perform perform.zip && mkdir -p build/perform && rsync -rc --exclude-from=.distignore ./ build/perform/ --delete --delete-excluded && cp composer.json composer.lock build/perform/ && composer install --working-dir=build/perform --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-progress --no-scripts && rm -f build/perform/composer.json build/perform/composer.lock && rm -rf build/perform/vendor/bin build/perform/vendor/composer/installers && cd build && zip -qr ../perform.zip perform && cd .. && rm -rf build/perform",
+    "test:unit": "wp-scripts test-unit-js --runInBand",
+    "plugin-zip": "rm -rf build/perform perform.zip && mkdir -p build/perform && rsync -rc --exclude-from=.distignore ./ build/perform/ --delete --delete-excluded && cp composer.json composer.lock build/perform/ && composer install --working-dir=build/perform --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-progress --no-scripts && rm -f build/perform/composer.lock && rm -rf build/perform/vendor/bin build/perform/vendor/composer/installers && cd build && zip -qr ../perform.zip perform && cd .. && rm -rf build/perform",
     "test:e2e": "playwright test",
     "test:e2e:ci": "node tests/e2e/run-ci.mjs",
     "wp-env": "wp-env"
@@ -34,7 +35,10 @@
     "npm": ">=10.0.0"
   },
   "devDependencies": {
+    "@heroicons/react": "^2.2.0",
     "@playwright/test": "^1.60.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@wordpress/components": "^29.12.0",
     "@wordpress/element": "^6.26.0",
     "@wordpress/env": "^10.39.0",

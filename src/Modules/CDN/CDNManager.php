@@ -12,7 +12,7 @@
 namespace Perform\Modules\CDN;
 
 use Perform\Includes\Helpers;
-use Perform\Modules\ModuleInterface;
+use Perform\Modules\AbstractModule;
 
 // Bail out, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -24,7 +24,20 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.0.0
  */
-class CDNManager implements ModuleInterface {
+class CDNManager extends AbstractModule {
+	/**
+	 * Toggle setting used to activate the module.
+	 *
+	 * @var string
+	 */
+	protected static $option_key = 'enable_cdn';
+
+	/**
+	 * Normalized request-local CDN settings.
+	 *
+	 * @var array<string, mixed>|null
+	 */
+	private $normalized_settings = null;
 
 	/**
 	 * Determine whether this module should be loaded.
@@ -32,7 +45,9 @@ class CDNManager implements ModuleInterface {
 	 * @return bool
 	 */
 	public function should_load(): bool {
-		return Helpers::get_option( 'enable_cdn', 'perform_settings', false );
+		$settings = $this->get_normalized_settings();
+
+		return $settings['enabled'] && '' !== $settings['cdn_url'];
 	}
 
 	/**
@@ -77,17 +92,17 @@ class CDNManager implements ModuleInterface {
 			return $html;
 		}
 
-		$site_url        = quotemeta( get_option( 'home' ) );
-		$url_regex       = '(https?:|)' . substr( $site_url, strpos( $site_url, '//' ) );
-		$directories     = 'wp\-content|wp\-includes';
-		$cdn_directories = Helpers::get_option( 'cdn_directories', 'perform_settings' );
-
-		if ( ! empty( $cdn_directories ) ) {
-			$directory_list = array_map( 'trim', explode( ',', $cdn_directories ) );
-			if ( count( $directory_list ) > 0 ) {
-				$directories = implode( '|', array_map( 'quotemeta', array_filter( $directory_list ) ) );
-			}
+		$settings = $this->get_normalized_settings();
+		if ( '' === $settings['cdn_url'] ) {
+			return $html;
 		}
+
+		$site_url    = quotemeta( get_option( 'home' ) );
+		$url_regex   = '(https?:|)' . substr( $site_url, strpos( $site_url, '//' ) );
+		$directories = implode(
+			'|',
+			array_map( 'quotemeta', $settings['directories'] )
+		);
 
 		$regex         = '#(?<=[(\"\'])(?:' . $url_regex . ')?/(?:((?:' . $directories . ')[^\"\')]+)|([^/\"\']+\.[^/\"\')]+))(?=[\"\')])#';
 		$html_with_cdn = preg_replace_callback( $regex, [ $this, 'rewrited_cdn_url' ], $html );
@@ -106,22 +121,14 @@ class CDNManager implements ModuleInterface {
 	 * @return string
 	 */
 	public function rewrited_cdn_url( $url ) {
-		$cdn_url = Helpers::get_option( 'cdn_url', 'perform_settings' );
+		$settings = $this->get_normalized_settings();
+		$cdn_url  = $settings['cdn_url'];
 
-		if ( ! empty( $cdn_url ) ) {
-			$cdn_exclusions = Helpers::get_option( 'cdn_exclusions', 'perform_settings' );
-
+		if ( '' !== $cdn_url ) {
 			// Don't Rewrite URL, if Excluded.
-			if ( ! empty( $cdn_exclusions ) ) {
-				$exclusions = array_map( 'trim', explode( ',', $cdn_exclusions ) );
-
-				foreach ( $exclusions as $exclusion ) {
-					if (
-						! empty( $exclusion ) &&
-						false !== stristr( $url[0], $exclusion )
-					) {
-						return $url[0];
-					}
+			foreach ( $settings['exclusions'] as $exclusion ) {
+				if ( false !== stristr( $url[0], $exclusion ) ) {
+					return $url[0];
 				}
 			}
 
@@ -152,5 +159,102 @@ class CDNManager implements ModuleInterface {
 		}
 
 		return $url[0];
+	}
+
+	/**
+	 * Read a CDN-related setting from injected settings first.
+	 *
+	 * @param string $key            Setting key.
+	 * @param mixed  $fallback_value Default value when the setting is missing.
+	 *
+	 * @return mixed
+	 */
+	private function read_setting( string $key, $fallback_value = '' ) {
+		if ( is_array( $this->settings ) && array_key_exists( $key, $this->settings ) ) {
+			return $this->settings[ $key ];
+		}
+
+		return Helpers::get_option( $key, 'perform_settings', $fallback_value );
+	}
+
+	/**
+	 * Get normalized settings used by load checks and rewrites.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function get_normalized_settings(): array {
+		if ( is_array( $this->normalized_settings ) ) {
+			return $this->normalized_settings;
+		}
+
+		$this->normalized_settings = [
+			'enabled'     => ! empty( $this->read_setting( 'enable_cdn', false ) ),
+			'cdn_url'     => $this->normalize_cdn_url( $this->read_setting( 'cdn_url', '' ) ),
+			'directories' => $this->normalize_csv_setting( $this->read_setting( 'cdn_directories', '' ), [ 'wp-content', 'wp-includes' ] ),
+			'exclusions'  => $this->normalize_csv_setting( $this->read_setting( 'cdn_exclusions', '' ) ),
+		];
+
+		return $this->normalized_settings;
+	}
+
+	/**
+	 * Normalize a comma-separated list setting.
+	 *
+	 * @param mixed    $value    Raw setting value.
+	 * @param string[] $fallback Default values when the setting is empty.
+	 *
+	 * @return string[]
+	 */
+	private function normalize_csv_setting( $value, array $fallback = [] ): array {
+		if ( is_array( $value ) ) {
+			$items = $value;
+		} elseif ( is_scalar( $value ) && '' !== trim( (string) $value ) ) {
+			$items = explode( ',', (string) $value );
+		} else {
+			return $fallback;
+		}
+
+		$items = array_values(
+			array_filter(
+				array_map(
+					static function ( $item ): string {
+						return trim( (string) $item );
+					},
+					$items
+				),
+				static function ( string $item ): bool {
+					return '' !== $item;
+				}
+			)
+		);
+
+		return ! empty( $items ) ? $items : $fallback;
+	}
+
+	/**
+	 * Normalize the configured CDN URL for safe runtime checks.
+	 *
+	 * @param mixed $cdn_url Raw CDN URL setting.
+	 *
+	 * @return string
+	 */
+	private function normalize_cdn_url( $cdn_url ): string {
+		if ( ! is_scalar( $cdn_url ) ) {
+			return '';
+		}
+
+		$cdn_url = trim( (string) $cdn_url );
+		if ( '' === $cdn_url ) {
+			return '';
+		}
+
+		$scheme = strtolower( (string) wp_parse_url( $cdn_url, PHP_URL_SCHEME ) );
+		$host   = (string) wp_parse_url( $cdn_url, PHP_URL_HOST );
+
+		if ( ! in_array( $scheme, [ 'http', 'https' ], true ) || '' === $host ) {
+			return '';
+		}
+
+		return $cdn_url;
 	}
 }
