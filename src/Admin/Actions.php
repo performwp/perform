@@ -12,6 +12,7 @@ namespace Perform\Admin;
 
 use Perform\Includes\Helpers;
 use Perform\Admin\Settings\ClientPayload;
+use Perform\Admin\Settings\AutoloadOptionsAudit;
 use Perform\Admin\Settings\DashboardPayload;
 use Perform\Admin\Settings\Menu;
 use Perform\Admin\Settings\RuntimeDiagnostics;
@@ -62,19 +63,21 @@ class Actions {
 				'perform-admin',
 				'performwpSettings',
 				[
-					'version'           => defined( 'PERFORM_VERSION' ) ? PERFORM_VERSION : '',
-					'docsUrl'           => defined( 'PERFORM_PLUGIN_DOCS_URL' ) ? PERFORM_PLUGIN_DOCS_URL : 'https://performwp.com/docs/',
-					'logoUrl'           => plugins_url( 'assets/dist/images/logo.png', PERFORM_PLUGIN_FILE ),
-					'nonce'             => wp_create_nonce( 'perform_save_settings' ),
-					'saved'             => ClientPayload::sanitize_for_client( (array) \Perform\Includes\Helpers::get_settings() ),
-					'dashboard'         => DashboardPayload::get_data(),
-					'diagnostics'       => RuntimeDiagnostics::get_results(),
-					'sensitiveKeys'     => ClientPayload::get_sensitive_keys(),
-					'maskedSecretValue' => ClientPayload::MASKED_SECRET,
-					'tabs'              => Menu::get_navigation_tabs(),
-					'activeTab'         => Menu::get_requested_tab(),
-					'fields'            => \Perform\Includes\Helpers::get_settings_fields(), // Expose fields to JS
-					'cacheActivity'     => [
+					'version'            => defined( 'PERFORM_VERSION' ) ? PERFORM_VERSION : '',
+					'docsUrl'            => defined( 'PERFORM_PLUGIN_DOCS_URL' ) ? PERFORM_PLUGIN_DOCS_URL : 'https://performwp.com/docs/',
+					'logoUrl'            => plugins_url( 'assets/dist/images/logo.png', PERFORM_PLUGIN_FILE ),
+					'nonce'              => wp_create_nonce( 'perform_save_settings' ),
+					'saved'              => ClientPayload::sanitize_for_client( (array) \Perform\Includes\Helpers::get_settings() ),
+					'dashboard'          => DashboardPayload::get_data(),
+					'diagnostics'        => RuntimeDiagnostics::get_results(),
+					'databaseAudit'      => AutoloadOptionsAudit::get_cached_snapshot(),
+					'databaseAuditNonce' => wp_create_nonce( 'perform_refresh_autoload_options_audit' ),
+					'sensitiveKeys'      => ClientPayload::get_sensitive_keys(),
+					'maskedSecretValue'  => ClientPayload::MASKED_SECRET,
+					'tabs'               => Menu::get_navigation_tabs(),
+					'activeTab'          => Menu::get_requested_tab(),
+					'fields'             => \Perform\Includes\Helpers::get_settings_fields(), // Expose fields to JS
+					'cacheActivity'      => [
 						'actionUrl'         => admin_url( 'admin-post.php' ),
 						'exportNonce'       => wp_create_nonce( 'perform_export_cache_activity' ),
 						'clearNonce'        => wp_create_nonce( 'perform_clear_cache_activity' ),
