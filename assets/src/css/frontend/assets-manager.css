@@ -148,6 +148,18 @@
 	color: var(--perform-am-primary);
 }
 
+.perform-assets-manager-button--reset {
+	border-color: var(--perform-am-danger);
+	background: var(--perform-am-white);
+	color: var(--perform-am-danger);
+}
+
+.perform-assets-manager-button--reset:hover,
+.perform-assets-manager-button--reset:focus {
+	background: var(--perform-am-danger);
+	color: var(--perform-am-white);
+}
+
 .perform-assets-manager-button:focus,
 .perform-assets-manager-header-actions input[type='submit']:focus,
 .perform-assets-manager--controls .components-button:focus,

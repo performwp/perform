@@ -6,12 +6,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Define plugin version in SemVer format.
 if ( ! defined( 'PERFORM_VERSION' ) ) {
-	define( 'PERFORM_VERSION', '1.6.0' );
+	define( 'PERFORM_VERSION', '1.7.0' );
 }
 
 // Define plugin root File.
 if ( ! defined( 'PERFORM_PLUGIN_FILE' ) ) {
-	define( 'PERFORM_PLUGIN_FILE', dirname( dirname( __FILE__ ) ) . '/perform.php' );
+	define( 'PERFORM_PLUGIN_FILE', dirname( __DIR__ ) . '/perform.php' );
 }
 
 // Define plugin basename.
