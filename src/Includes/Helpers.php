@@ -954,6 +954,12 @@ class Helpers {
 							'desc' => esc_html__( 'Collect bounded, private aggregate timing, memory, and query-count diagnostics for WordPress admin requests.', 'perform' ),
 						],
 						[
+							'id'   => 'enable_admin_asset_audit',
+							'type' => 'toggle',
+							'name' => esc_html__( 'Admin Asset Audit', 'perform' ),
+							'desc' => esc_html__( 'Temporarily inventory script and style handles across sampled WordPress admin screens without disabling anything.', 'perform' ),
+						],
+						[
 							'id'        => 'remove_data_on_uninstall',
 							'type'      => 'toggle',
 							'name'      => esc_html__( 'Remove Data on Uninstall', 'perform' ),
