@@ -94,6 +94,16 @@ final class Tests_Runtime_Diagnostics extends TestCase {
 		$this->assertCount( 6, $results['items'] );
 	}
 
+	public function test_diagnostic_items_have_unique_stable_ids() {
+		$results = RuntimeDiagnostics::get_results();
+		$ids     = array_column( $results['items'], 'id' );
+
+		$this->assertCount( 6, $ids );
+		$this->assertCount( 6, array_unique( $ids ) );
+		$this->assertContains( 'dynamic-cache-exclusions', $ids );
+		$this->assertNotContains( '', $ids );
+	}
+
 	private function find_item( array $results, string $label ): array {
 		foreach ( $results['items'] as $item ) {
 			if ( $label === $item['label'] ) {

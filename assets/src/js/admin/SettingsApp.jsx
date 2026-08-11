@@ -183,7 +183,7 @@ const SettingsApp = () => {
 				onFieldChange={ handleFieldChange }
 			/>
 			{ 'dashboard' === activeTab && <DiagnosticsPanel diagnostics={ diagnostics } /> }
-			{ ! [ 'cache-stats', 'database', 'inventory' ].includes( activeTab ) && (
+			{ ! [ 'dashboard', 'cache-stats', 'database', 'inventory' ].includes( activeTab ) && (
 				<Footer dirty={ isDirty } saving={ saving } message={ message } onSave={ handleSave } />
 			) }
 		</>

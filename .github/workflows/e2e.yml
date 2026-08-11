@@ -81,11 +81,11 @@ jobs:
       - name: Run Playwright smoke tests
         run: npm run test:e2e:ci
 
-      - name: Upload Site Inventory UI proof
+      - name: Upload settings UI proof
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: site-inventory-ui-proof
+          name: perform-settings-ui-proof
           path: test-results/proof/
           if-no-files-found: ignore
           retention-days: 14

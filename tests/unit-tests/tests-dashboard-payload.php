@@ -6,10 +6,11 @@ use Perform\Admin\Settings\DashboardPayload;
 final class Tests_Dashboard_Payload extends TestCase {
 	protected function setUp(): void {
 		$GLOBALS['perform_test_options'] = [];
+		$GLOBALS['perform_test_filters'] = [];
 	}
 
 	protected function tearDown(): void {
-		unset( $GLOBALS['perform_test_options'] );
+		unset( $GLOBALS['perform_test_options'], $GLOBALS['perform_test_filters'] );
 	}
 
 	public function test_cache_summary_uses_existing_stats_without_writes() {
@@ -91,6 +92,63 @@ final class Tests_Dashboard_Payload extends TestCase {
 		$this->assertSame( 0.0, $payload['cache']['hitRatio'] );
 		$this->assertSame( 0, $payload['assetsManager']['disabledJsHandles'] );
 		$this->assertSame( 0, $payload['assetsManager']['disabledCssHandles'] );
+		$this->assertContains( $payload['server']['opcache']['state'], [ 'ready', 'warning', 'not-available' ] );
+		$this->assertContains( $payload['server']['compression']['state'], [ 'ready', 'needs-separate-test' ] );
 		$this->assertNotEmpty( $payload['changelog'] );
+		$this->assertStringNotContainsString( 'release-candidate', implode( ' ', $payload['changelog'] ) );
+	}
+
+	public function test_server_summary_normalizes_filtered_local_signals() {
+		$GLOBALS['perform_test_filters']['perform_dashboard_server_summary'] = [
+			'opcache'     => [
+				'state'   => 'ready',
+				'enabled' => true,
+			],
+			'compression' => [
+				'state'      => 'ready',
+				'phpEnabled' => true,
+			],
+		];
+
+		$payload = DashboardPayload::get_data();
+
+		$this->assertSame(
+			[
+				'state'   => 'ready',
+				'enabled' => true,
+			],
+			$payload['server']['opcache']
+		);
+		$this->assertSame(
+			[
+				'state'      => 'ready',
+				'phpEnabled' => true,
+			],
+			$payload['server']['compression']
+		);
+	}
+
+	public function test_server_summary_fails_closed_for_malformed_filtered_signals() {
+		$GLOBALS['perform_test_filters']['perform_dashboard_server_summary'] = [
+			'opcache'     => [ 'state' => 'invented' ],
+			'compression' => 'invalid',
+		];
+
+		$payload = DashboardPayload::get_data();
+
+		$this->assertSame(
+			[
+				'state'   => 'not-available',
+				'enabled' => null,
+			],
+			$payload['server']['opcache']
+		);
+		$this->assertSame(
+			[
+				'state'      => 'needs-separate-test',
+				'phpEnabled' => false,
+			],
+			$payload['server']['compression']
+		);
 	}
 }

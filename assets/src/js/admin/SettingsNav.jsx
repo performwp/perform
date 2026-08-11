@@ -101,7 +101,15 @@ const SettingsNav = ( {
 					);
 
 					if ( 'dashboard' === selectedTabName ) {
-						content = <DashboardPanel dashboard={ dashboard } diagnostics={ diagnostics } />;
+						content = (
+							<DashboardPanel
+								dashboard={ dashboard }
+								diagnostics={ diagnostics }
+								databaseAudit={ databaseAudit }
+								siteInventory={ siteInventory }
+								onNavigate={ onTabChange }
+							/>
+						);
 					} else if ( 'database' === selectedTabName ) {
 						content = <DatabaseAuditPanel initialAudit={ databaseAudit } />;
 					} else if ( 'inventory' === selectedTabName ) {

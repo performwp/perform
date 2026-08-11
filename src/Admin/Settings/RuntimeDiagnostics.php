@@ -65,6 +65,7 @@ final class RuntimeDiagnostics {
 	private static function diagnose_page_cache_storage( array $settings ) {
 		if ( empty( $settings['enable_page_cache'] ) ) {
 			return self::item(
+				'page-cache-storage',
 				'ready',
 				__( 'Page cache storage', 'perform' ),
 				__( 'Page cache is disabled, so no cache storage is required yet.', 'perform' ),
@@ -78,6 +79,7 @@ final class RuntimeDiagnostics {
 		$storage_status = $storage_ready ? 'ready' : 'needs-attention';
 
 		return self::item(
+			'page-cache-storage',
 			$storage_status,
 			__( 'Page cache storage', 'perform' ),
 			$storage_ready
@@ -98,6 +100,7 @@ final class RuntimeDiagnostics {
 		$dropin_exists = file_exists( trailingslashit( self::get_wp_content_dir() ) . 'advanced-cache.php' );
 
 		return self::item(
+			'page-cache-dropin',
 			$dropin_exists ? 'warning' : 'ready',
 			__( 'Page cache drop-in', 'perform' ),
 			$dropin_exists
@@ -119,6 +122,7 @@ final class RuntimeDiagnostics {
 	private static function diagnose_cache_preload_schedule( array $settings ) {
 		if ( empty( $settings['enable_cache_preload'] ) ) {
 			return self::item(
+				'cache-preload-schedule',
 				'ready',
 				__( 'Cache preload schedule', 'perform' ),
 				__( 'Adaptive cache preload is disabled.', 'perform' ),
@@ -129,6 +133,7 @@ final class RuntimeDiagnostics {
 		$scheduled = function_exists( 'wp_next_scheduled' ) && wp_next_scheduled( 'perform_cache_preload_event' );
 
 		return self::item(
+			'cache-preload-schedule',
 			$scheduled ? 'ready' : 'warning',
 			__( 'Cache preload schedule', 'perform' ),
 			$scheduled
@@ -150,6 +155,7 @@ final class RuntimeDiagnostics {
 	private static function diagnose_dynamic_cache_exclusions( array $settings ) {
 		if ( empty( $settings['enable_page_cache'] ) ) {
 			return self::item(
+				'dynamic-cache-exclusions',
 				'ready',
 				__( 'Dynamic request exclusions', 'perform' ),
 				__( 'Page cache is disabled, so dynamic request exclusions are not required yet.', 'perform' ),
@@ -164,6 +170,7 @@ final class RuntimeDiagnostics {
 			|| ! empty( $settings['cache_bypass_cookie_prefixes'] );
 
 		return self::item(
+			'dynamic-cache-exclusions',
 			$has_exclusions ? 'ready' : 'warning',
 			__( 'Dynamic request exclusions', 'perform' ),
 			$has_exclusions
@@ -185,6 +192,7 @@ final class RuntimeDiagnostics {
 	private static function diagnose_menu_cache_theme_support( array $settings ) {
 		if ( empty( $settings['enable_navigation_menu_cache'] ) ) {
 			return self::item(
+				'menu-cache-theme-support',
 				'ready',
 				__( 'Menu cache theme support', 'perform' ),
 				__( 'Menu cache is disabled.', 'perform' ),
@@ -196,6 +204,7 @@ final class RuntimeDiagnostics {
 		$supported      = (bool) apply_filters( 'perform_menu_cache_supports_current_theme', ! $is_block_theme, $is_block_theme );
 
 		return self::item(
+			'menu-cache-theme-support',
 			$supported ? 'ready' : 'warning',
 			__( 'Menu cache theme support', 'perform' ),
 			$supported
@@ -217,6 +226,7 @@ final class RuntimeDiagnostics {
 	private static function diagnose_cdn_configuration( array $settings ) {
 		if ( empty( $settings['enable_cdn'] ) ) {
 			return self::item(
+				'cdn-configuration',
 				'ready',
 				__( 'CDN configuration', 'perform' ),
 				__( 'CDN rewriting is disabled.', 'perform' ),
@@ -230,6 +240,7 @@ final class RuntimeDiagnostics {
 		$ready   = '' !== $cdn_url && in_array( $scheme, [ 'http', 'https' ], true ) && '' !== $host;
 
 		return self::item(
+			'cdn-configuration',
 			$ready ? 'ready' : 'needs-attention',
 			__( 'CDN configuration', 'perform' ),
 			$ready
@@ -244,6 +255,7 @@ final class RuntimeDiagnostics {
 	/**
 	 * Build a diagnostic item.
 	 *
+	 * @param string $id Stable diagnostic ID.
 	 * @param string $status Status.
 	 * @param string $label Label.
 	 * @param string $message Message.
@@ -251,8 +263,9 @@ final class RuntimeDiagnostics {
 	 *
 	 * @return array<string, string>
 	 */
-	private static function item( $status, $label, $message, $action ) {
+	private static function item( $id, $status, $label, $message, $action ) {
 		return [
+			'id'      => sanitize_key( $id ),
 			'status'  => $status,
 			'label'   => $label,
 			'message' => $message,

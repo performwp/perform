@@ -45,15 +45,19 @@ test( 'settings save, Assets Manager, and page cache smoke paths work', async ( 
 
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings' );
 	await expect( page.locator( '#perform-settings-page' ) ).toBeVisible();
-	await expect( page.getByRole( 'button', { name: 'Save Settings' } ) ).toBeVisible();
 	await expect( page.getByRole( 'tab', { name: 'Dashboard' } ) ).toBeVisible();
-	await expect( page.getByRole( 'heading', { name: 'Perform overview' } ) ).toBeVisible();
-	await expect( page.getByText( 'Runtime diagnostics currently marked ready.' ) ).toBeVisible();
+	await expect( page.getByText( 'Performance health' ) ).toBeVisible();
+	await expect( page.getByText( 'Core Web Vitals need a separate test' ) ).toBeVisible();
+	await expect( page.getByText( /unverified speed score/ ) ).toBeVisible();
 	await expect( page.getByRole( 'heading', { name: 'Runtime Diagnostics' } ) ).toBeVisible();
+	await expect( page.getByRole( 'button', { name: 'Save Settings' } ) ).toHaveCount( 0 );
+	await mkdir( 'test-results/proof', { recursive: true } );
+	await page.screenshot( { path: 'test-results/proof/performance-health-dashboard-desktop.png', fullPage: true } );
 
 	await page.getByRole( 'tab', { name: 'General' } ).click();
 	await expect( page.getByText( 'General Settings' ) ).toBeVisible();
 	await expect( page.getByRole( 'heading', { name: 'Runtime Diagnostics' } ) ).toHaveCount( 0 );
+	await expect( page.getByRole( 'button', { name: 'Save Settings' } ) ).toBeVisible();
 	await expect( page ).toHaveURL( /[?&]tab=general(?:&|$)/ );
 
 	await page.getByRole( 'tab', { name: 'Assets' } ).click();
@@ -90,6 +94,13 @@ test( 'settings field rows stack beneath their descriptions at narrow widths', a
 	await page.setViewportSize( { width: 390, height: 844 } );
 	await login( page );
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings' );
+	await expect( page.getByText( 'Core Web Vitals need a separate test' ) ).toBeVisible();
+	await mkdir( 'test-results/proof', { recursive: true } );
+	await page.screenshot( { path: 'test-results/proof/performance-health-dashboard-mobile.png', fullPage: true } );
+	const dashboardHasHorizontalOverflow = await page.evaluate(
+		() => document.documentElement.scrollWidth > document.documentElement.clientWidth
+	);
+	expect( dashboardHasHorizontalOverflow ).toBeFalsy();
 
 	for ( const tabName of [ 'General', 'Bloat', 'Assets', 'CDN', 'Cache', 'Advanced' ] ) {
 		await page.getByRole( 'tab', { name: tabName, exact: true } ).click();
