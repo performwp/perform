@@ -320,6 +320,25 @@ test( 'Plugin impact report separates measured local evidence from unavailable a
 	await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
 } );
 
+test( 'Classic menu cache stays functional across unrelated query variables', async ( { page } ) => {
+	await login( page );
+	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=general' );
+	const menuCacheToggle = page.getByRole( 'checkbox', { name: 'Enable Menu Cache' } );
+	if ( ! ( await menuCacheToggle.isChecked() ) ) {
+		await menuCacheToggle.check();
+		await page.getByRole( 'button', { name: 'Save Settings' } ).click();
+		await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
+	}
+
+	await page.context().clearCookies( { name: /^wordpress_/ } );
+	await page.goto( '/?unrelated=first' );
+	await expect( page.locator( '#perform-test-navigation' ).getByRole( 'link', { name: 'Home' } ) ).toBeVisible();
+	const firstMarkup = await page.locator( '#perform-test-navigation' ).innerHTML();
+	await page.goto( '/?unrelated=second' );
+	await expect( page.locator( '#perform-test-navigation' ).getByRole( 'link', { name: 'Home' } ) ).toBeVisible();
+	expect( await page.locator( '#perform-test-navigation' ).innerHTML() ).toBe( firstMarkup );
+} );
+
 test( 'Cache Stats tab preserves legacy routing, actions, and keyboard access', async ( { page } ) => {
 	await login( page );
 

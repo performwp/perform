@@ -36,6 +36,27 @@ try {
 			'run',
 			'cli',
 			'wp',
+			'theme',
+			'activate',
+			'perform-classic-theme',
+		] );
+		await run( 'npm', [
+			'run',
+			'wp-env',
+			'--',
+			'run',
+			'cli',
+			'wp',
+			'eval',
+			'$menu = wp_get_nav_menu_object( "Primary" ); $menu_id = $menu ? (int) $menu->term_id : wp_create_nav_menu( "Primary" ); if ( is_wp_error( $menu_id ) ) { throw new RuntimeException( $menu_id->get_error_message() ); } if ( ! wp_get_nav_menu_items( $menu_id ) ) { wp_update_nav_menu_item( $menu_id, 0, [ "menu-item-title" => "Home", "menu-item-url" => home_url( "/" ), "menu-item-status" => "publish" ] ); } set_theme_mod( "nav_menu_locations", [ "primary" => $menu_id ] );',
+		] );
+		await run( 'npm', [
+			'run',
+			'wp-env',
+			'--',
+			'run',
+			'cli',
+			'wp',
 			'eval',
 			'if ( class_exists( "Freemius" ) ) { $perform_fs = Freemius::get_instance_by_id( 18658 ); if ( $perform_fs ) { $perform_fs->skip_connection(); } }',
 		] );

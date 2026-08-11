@@ -409,6 +409,47 @@ if ( ! function_exists( 'wp_is_block_theme' ) ) {
 	}
 }
 
+if ( ! function_exists( 'determine_locale' ) ) {
+	function determine_locale() {
+		return isset( $GLOBALS['perform_test_locale'] ) ? (string) $GLOBALS['perform_test_locale'] : 'en_US';
+	}
+}
+
+if ( ! function_exists( 'get_locale' ) ) {
+	function get_locale() {
+		return determine_locale();
+	}
+}
+
+if ( ! function_exists( 'wp_get_nav_menu_object' ) ) {
+	function wp_get_nav_menu_object( $menu ) {
+		if ( is_object( $menu ) && isset( $menu->term_id ) ) {
+			return $menu;
+		}
+		$menus = isset( $GLOBALS['perform_test_nav_menus'] ) && is_array( $GLOBALS['perform_test_nav_menus'] ) ? $GLOBALS['perform_test_nav_menus'] : [];
+		return $menus[ (string) $menu ] ?? false;
+	}
+}
+
+if ( ! function_exists( 'get_nav_menu_locations' ) ) {
+	function get_nav_menu_locations() {
+		return isset( $GLOBALS['perform_test_nav_menu_locations'] ) && is_array( $GLOBALS['perform_test_nav_menu_locations'] ) ? $GLOBALS['perform_test_nav_menu_locations'] : [];
+	}
+}
+
+if ( ! function_exists( 'wp_get_nav_menus' ) ) {
+	function wp_get_nav_menus() {
+		return isset( $GLOBALS['perform_test_nav_menu_list'] ) && is_array( $GLOBALS['perform_test_nav_menu_list'] ) ? $GLOBALS['perform_test_nav_menu_list'] : [];
+	}
+}
+
+if ( ! function_exists( 'wp_get_nav_menu_items' ) ) {
+	function wp_get_nav_menu_items( $menu_id, $args = [] ) {
+		$items = isset( $GLOBALS['perform_test_nav_menu_items'] ) && is_array( $GLOBALS['perform_test_nav_menu_items'] ) ? $GLOBALS['perform_test_nav_menu_items'] : [];
+		return $items[ (int) $menu_id ] ?? [];
+	}
+}
+
 if ( ! function_exists( 'apply_filters' ) ) {
 	function apply_filters( $hook_name, $value, ...$args ) {
 		$filters = isset( $GLOBALS['perform_test_filters'] ) && is_array( $GLOBALS['perform_test_filters'] ) ? $GLOBALS['perform_test_filters'] : [];
