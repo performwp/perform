@@ -209,16 +209,18 @@ const AdminPerformanceMonitorPanel = ( { initialSnapshot = SETTINGS.adminPerform
 													{ context.capabilityBucket }
 												</small>
 											</th>
-											<td>{ context.count }</td>
-											<td>
+											<td data-label={ __( 'Requests', 'perform' ) }>{ context.count }</td>
+											<td data-label={ __( 'Duration', 'perform' ) }>
 												<strong>{ context.maxDurationMs } ms</strong>
 												<small>
 													{ context.averageDurationMs } ms { __( 'average', 'perform' ) }
 												</small>
 											</td>
-											<td>{ formatBytes( context.maxMemoryBytes ) }</td>
-											<td>{ context.maxQueryCount }</td>
-											<td>
+											<td data-label={ __( 'Peak memory', 'perform' ) }>
+												{ formatBytes( context.maxMemoryBytes ) }
+											</td>
+											<td data-label={ __( 'Queries', 'perform' ) }>{ context.maxQueryCount }</td>
+											<td data-label={ __( 'Guidance', 'perform' ) }>
 												<span className="perform-admin-monitor__state">
 													{ 'review' === context.status
 														? __( 'Review', 'perform' )
