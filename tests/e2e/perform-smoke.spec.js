@@ -127,11 +127,11 @@ test( 'Site Inventory refresh is private, bounded, and responsive', async ( { pa
 
 	await page.setViewportSize( { width: 390, height: 844 } );
 	await expect( page.locator( '.perform-site-inventory__summary' ) ).toBeVisible();
+	await page.screenshot( { path: 'test-results/proof/site-inventory-mobile.png', fullPage: true } );
 	const hasHorizontalOverflow = await page.evaluate(
 		() => document.documentElement.scrollWidth > document.documentElement.clientWidth
 	);
 	expect( hasHorizontalOverflow ).toBeFalsy();
-	await page.screenshot( { path: 'test-results/proof/site-inventory-mobile.png', fullPage: true } );
 } );
 
 test( 'Cache Stats tab preserves legacy routing, actions, and keyboard access', async ( { page } ) => {
