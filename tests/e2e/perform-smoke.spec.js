@@ -249,16 +249,16 @@ test( 'Admin asset audit is opt-in, bounded, private, clearable, and responsive'
 	const auditToggle = page.getByRole( 'checkbox', { name: 'Admin Asset Audit' } );
 	if ( ! ( await auditToggle.isChecked() ) ) {
 		await auditToggle.check();
+		await page.getByRole( 'button', { name: 'Save Settings' } ).click();
+		await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
 	}
-	await page.getByRole( 'button', { name: 'Save Settings' } ).click();
-	await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
 
 	await page.goto( '/wp-admin/index.php' );
 	await page.goto( '/wp-admin/edit.php' );
 	await page.goto( '/wp-admin/plugins.php' );
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=admin-assets' );
 
-	await expect( page.getByRole( 'tab', { name: 'Admin Assets' } ) ).toHaveAttribute( 'aria-selected', 'true' );
+	await expect( page.getByLabel( 'Diagnostic report' ) ).toHaveValue( 'admin-assets' );
 	await expect( page.getByText( 'Inventory only — nothing is disabled' ) ).toBeVisible();
 	await expect( page.getByText( /URLs, query strings, nonces, and user data are not stored/ ) ).toBeVisible();
 	await expect( page.getByText( 'Repeated across admin screens' ) ).toBeVisible();
@@ -291,13 +291,13 @@ test( 'Plugin impact report separates measured local evidence from unavailable a
 	const auditToggle = page.getByRole( 'checkbox', { name: 'Admin Asset Audit' } );
 	if ( ! ( await auditToggle.isChecked() ) ) {
 		await auditToggle.check();
+		await page.getByRole( 'button', { name: 'Save Settings' } ).click();
+		await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
 	}
-	await page.getByRole( 'button', { name: 'Save Settings' } ).click();
-	await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
 
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=general' );
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=plugin-impact' );
-	await expect( page.getByRole( 'tab', { name: 'Plugin Impact' } ) ).toHaveAttribute( 'aria-selected', 'true' );
+	await expect( page.getByLabel( 'Diagnostic report' ) ).toHaveValue( 'plugin-impact' );
 	await expect( page.getByText( 'Evidence, not a plugin ranking' ) ).toBeVisible();
 	await expect( page.getByText( /does not attribute query, callback, or memory cost/ ) ).toBeVisible();
 	await expect( page.getByText( /Zero means not observed in this sample/ ) ).toBeVisible();
