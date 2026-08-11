@@ -12,6 +12,7 @@ const INITIAL_DIAGNOSTICS = SETTINGS.diagnostics || {};
 const DASHBOARD = SETTINGS.dashboard || {};
 const DATABASE_AUDIT = SETTINGS.databaseAudit || {};
 const SITE_INVENTORY = SETTINGS.siteInventory || {};
+const SYSTEM_HEALTH = SETTINGS.systemHealth || {};
 const ADMIN_PERFORMANCE = SETTINGS.adminPerformance || {};
 const TAB_KEYS = [ 'dashboard', ...Object.keys( SETTINGS_TABS ) ];
 
@@ -178,6 +179,7 @@ const SettingsApp = () => {
 				diagnostics={ diagnostics }
 				databaseAudit={ DATABASE_AUDIT }
 				siteInventory={ SITE_INVENTORY }
+				systemHealth={ SYSTEM_HEALTH }
 				adminPerformance={ ADMIN_PERFORMANCE }
 				activeTab={ activeTab }
 				onTabChange={ handleTabChange }
