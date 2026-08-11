@@ -19,6 +19,10 @@ if ( ! defined( 'PHP_URL_HOST' ) ) {
 	define( 'PHP_URL_HOST', 1 );
 }
 
+if ( ! defined( 'ARRAY_A' ) ) {
+	define( 'ARRAY_A', 'ARRAY_A' );
+}
+
 if ( ! function_exists( 'plugin_basename' ) ) {
 	function plugin_basename( $file ) {
 		$basename = basename( (string) $file );
@@ -560,6 +564,24 @@ if ( ! function_exists( 'wp_verify_nonce' ) ) {
 if ( ! function_exists( 'get_current_blog_id' ) ) {
 	function get_current_blog_id() {
 		return isset( $GLOBALS['perform_test_blog_id'] ) ? (int) $GLOBALS['perform_test_blog_id'] : 1;
+	}
+}
+
+if ( ! function_exists( 'is_multisite' ) ) {
+	function is_multisite() {
+		return ! empty( $GLOBALS['perform_test_is_multisite'] );
+	}
+}
+
+if ( ! function_exists( 'wp_using_ext_object_cache' ) ) {
+	function wp_using_ext_object_cache() {
+		return ! empty( $GLOBALS['perform_test_ext_object_cache'] );
+	}
+}
+
+if ( ! function_exists( 'wp_autoload_values_to_autoload' ) ) {
+	function wp_autoload_values_to_autoload() {
+		return $GLOBALS['perform_test_autoload_values'] ?? [ 'yes', 'on', 'auto-on', 'auto' ];
 	}
 }
 

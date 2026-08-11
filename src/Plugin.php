@@ -52,6 +52,7 @@ final class Plugin {
 
 		// Load Admin Files.
 		new Settings\Menu();
+		new Settings\AutoloadOptionsAuditController();
 		new Admin\Actions();
 		new Admin\Filters();
 

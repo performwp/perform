@@ -18,7 +18,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
  */
 function perform_handle_plugin_uninstall() {
 
-	$option_keys = array(
+	$option_keys = [
 		'perform_settings',
 		'perform_common',
 		'perform_ssl',
@@ -30,7 +30,8 @@ function perform_handle_plugin_uninstall() {
 		'perform_assets_manager_options',
 		'perform_cache_preload_queue',
 		'perform_cache_stats',
-	);
+		'perform_autoload_options_audit',
+	];
 
 	$remove_data_on_uninstall = false;
 
@@ -44,7 +45,7 @@ function perform_handle_plugin_uninstall() {
 	if ( $remove_data_on_uninstall ) {
 
 		if ( is_multisite() ) {
-			$sites = get_sites( array( 'deleted' => 0 ) );
+			$sites = get_sites( [ 'deleted' => 0 ] );
 
 			if ( ! empty( $sites ) ) {
 				foreach ( $sites as $site ) {

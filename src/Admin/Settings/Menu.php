@@ -52,6 +52,7 @@ class Menu {
 	 */
 	public static function get_navigation_tabs() {
 		$tabs                = Helpers::get_settings_tabs();
+		$tabs['database']    = esc_html__( 'Database', 'perform' );
 		$tabs['cache-stats'] = esc_html__( 'Cache Stats', 'perform' );
 
 		return $tabs;

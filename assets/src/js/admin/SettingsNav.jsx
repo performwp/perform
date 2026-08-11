@@ -2,6 +2,7 @@ import { TabPanel } from '@wordpress/components';
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import CacheStatsPanel from './CacheStatsPanel';
 import DashboardPanel from './DashboardPanel';
+import DatabaseAuditPanel from './DatabaseAuditPanel';
 import SettingsFieldRow from './settings/SettingsFieldRow';
 
 const SETTINGS = window.performwpSettings || {};
@@ -11,6 +12,7 @@ const SettingsNav = ( {
 	fields: propFields,
 	dashboard,
 	diagnostics,
+	databaseAudit,
 	activeTab: propActiveTab,
 	onTabChange: propOnTabChange,
 	fieldValues: propFieldValues,
@@ -98,6 +100,8 @@ const SettingsNav = ( {
 
 					if ( 'dashboard' === selectedTabName ) {
 						content = <DashboardPanel dashboard={ dashboard } diagnostics={ diagnostics } />;
+					} else if ( 'database' === selectedTabName ) {
+						content = <DatabaseAuditPanel initialAudit={ databaseAudit } />;
 					} else if ( 'cache-stats' === selectedTabName ) {
 						content = <CacheStatsPanel />;
 					}
