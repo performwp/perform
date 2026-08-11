@@ -7,7 +7,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language-Team: PerformWP <hello@performwp.com>\n"
-"POT-Creation-Date: 2026-08-07 10:29+0000\n"
+"POT-Creation-Date: 2026-08-11 03:15+0000\n"
 "Report-Msgid-Bugs-To: https://github.com/performwp/perform/issues/new\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
@@ -16,63 +16,63 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/Admin/Actions.php:85
+#: src/Admin/Actions.php:89
 msgid "Activity actions"
 msgstr ""
 
-#: src/Admin/Actions.php:86
+#: src/Admin/Actions.php:90
 msgid "Export cache activity for review or clear the collected metrics."
 msgstr ""
 
-#: src/Admin/Actions.php:87
+#: src/Admin/Actions.php:91
 msgid "Export CSV"
 msgstr ""
 
-#: src/Admin/Actions.php:88
+#: src/Admin/Actions.php:92
 msgid "Exporting…"
 msgstr ""
 
-#: src/Admin/Actions.php:89
+#: src/Admin/Actions.php:93
 msgid "Cache activity exported."
 msgstr ""
 
-#: src/Admin/Actions.php:90
+#: src/Admin/Actions.php:94
 msgid "Cache activity could not be exported."
 msgstr ""
 
-#: src/Admin/Actions.php:91
+#: src/Admin/Actions.php:95
 msgid "Clear activity"
 msgstr ""
 
-#: src/Admin/Actions.php:92
+#: src/Admin/Actions.php:96
 msgid "Clearing…"
 msgstr ""
 
-#: src/Admin/Actions.php:93
+#: src/Admin/Actions.php:97
 msgid "Clear all collected cache activity? This does not clear cached pages."
 msgstr ""
 
-#: src/Admin/Actions.php:94, src/Modules/Cache/PageCache.php:828, src/Modules/Cache/PageCache.php:1090
+#: src/Admin/Actions.php:98, src/Modules/Cache/PageCache.php:828, src/Modules/Cache/PageCache.php:1090
 msgid "Cache activity cleared."
 msgstr ""
 
-#: src/Admin/Actions.php:95
+#: src/Admin/Actions.php:99
 msgid "Cache activity could not be cleared."
 msgstr ""
 
-#: src/Admin/Actions.php:124
+#: src/Admin/Actions.php:128
 msgid "Close Assets Manager"
 msgstr ""
 
-#: src/Admin/Actions.php:121, src/Modules/Assets/AssetsManager.php:274
+#: src/Admin/Actions.php:125, src/Modules/Assets/AssetsManager.php:274
 msgid "Assets Manager"
 msgstr ""
 
-#: src/Admin/Actions.php:131, src/Admin/Settings/Menu.php:40, src/Admin/Settings/Menu.php:41, src/Modules/Assets/AssetsManager.php:254
+#: src/Admin/Actions.php:135, src/Admin/Settings/Menu.php:40, src/Admin/Settings/Menu.php:41, src/Modules/Assets/AssetsManager.php:254
 msgid "Perform"
 msgstr ""
 
-#: src/Admin/Actions.php:151
+#: src/Admin/Actions.php:155
 msgid "Support Forum"
 msgstr ""
 
@@ -708,11 +708,11 @@ msgstr ""
 msgid "Unknown"
 msgstr ""
 
-#: src/Admin/Settings/AutoloadOptionsAuditController.php:38, src/Admin/Settings/Menu.php:110
+#: src/Admin/Settings/AutoloadOptionsAuditController.php:38, src/Admin/Settings/Menu.php:111, src/Admin/Settings/SiteInventoryController.php:59
 msgid "Insufficient permissions."
 msgstr ""
 
-#: src/Admin/Settings/AutoloadOptionsAuditController.php:48, src/Admin/Settings/Menu.php:121
+#: src/Admin/Settings/AutoloadOptionsAuditController.php:48, src/Admin/Settings/Menu.php:122
 msgid "Security check failed."
 msgstr ""
 
@@ -737,18 +737,22 @@ msgid "Assets Manager summary reports configured rule coverage, not historical b
 msgstr ""
 
 #: src/Admin/Settings/Menu.php:55
-msgid "Database"
+msgid "Site Inventory"
 msgstr ""
 
 #: src/Admin/Settings/Menu.php:56
+msgid "Database"
+msgstr ""
+
+#: src/Admin/Settings/Menu.php:57
 msgid "Cache Stats"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:237
+#: src/Admin/Settings/Menu.php:238
 msgid "Unable to save the settings. Please try again."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:229
+#: src/Admin/Settings/Menu.php:230
 msgid "Settings saved successfully."
 msgstr ""
 
@@ -898,6 +902,30 @@ msgstr ""
 
 #: src/Admin/Settings/RuntimeDiagnostics.php:240
 msgid "Enter a full CDN URL with http or https before enabling CDN rewriting."
+msgstr ""
+
+#: src/Admin/Settings/SiteInventory.php:88
+msgid "The site inventory could not be saved."
+msgstr ""
+
+#: src/Admin/Settings/SiteInventory.php:173
+msgid "Installed extension"
+msgstr ""
+
+#: src/Admin/Settings/SiteInventory.php:214
+msgid "Active theme"
+msgstr ""
+
+#: src/Admin/Settings/SiteInventory.php:276
+msgid "Custom or extension"
+msgstr ""
+
+#: src/Admin/Settings/SiteInventoryController.php:75
+msgid "The site inventory could not be refreshed. Please try again."
+msgstr ""
+
+#: src/Admin/Settings/SiteInventoryController.php:81
+msgid "Site inventory refreshed."
 msgstr ""
 
 #: src/Modules/Assets/AssetsManager.php:233

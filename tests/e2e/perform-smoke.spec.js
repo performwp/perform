@@ -1,5 +1,5 @@
 const { test, expect, request } = require( '@playwright/test' );
-const { readFile } = require( 'node:fs/promises' );
+const { mkdir, readFile } = require( 'node:fs/promises' );
 
 async function dismissPluginOnboarding( page ) {
 	const skipButton = page.getByText( 'Skip', { exact: true } );
@@ -103,6 +103,35 @@ test( 'settings field rows stack beneath their descriptions at narrow widths', a
 		} );
 		expect( isStacked ).toBeTruthy();
 	}
+} );
+
+test( 'Site Inventory refresh is private, bounded, and responsive', async ( { page } ) => {
+	await login( page );
+	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=inventory' );
+
+	await expect( page.getByRole( 'tab', { name: 'Site Inventory' } ) ).toHaveAttribute( 'aria-selected', 'true' );
+	await expect( page.getByText( 'Private and local' ) ).toBeVisible();
+	await expect( page.getByText( /no post content, option values, private URLs/i ) ).toBeVisible();
+	await expect( page.getByRole( 'button', { name: /Generate inventory|Refresh inventory/ } ) ).toBeVisible();
+	await page.getByRole( 'button', { name: /Generate inventory|Refresh inventory/ } ).click();
+	await expect( page.getByRole( 'status' ) ).toContainText( 'Site inventory refreshed.' );
+	await expect( page.getByRole( 'heading', { name: 'Environment' } ) ).toBeVisible();
+	await expect( page.getByRole( 'heading', { name: 'Installed plugins' } ) ).toBeVisible();
+	await expect( page.getByRole( 'heading', { name: 'Registered content types' } ) ).toBeVisible();
+	await expect( page.getByText( 'Core Web Vitals field data' ) ).toBeVisible();
+	await expect( page.getByText( 'Needs a separate test' ).last() ).toBeVisible();
+	await expect( page.getByRole( 'button', { name: 'Save Settings' } ) ).toHaveCount( 0 );
+
+	await mkdir( 'test-results/proof', { recursive: true } );
+	await page.screenshot( { path: 'test-results/proof/site-inventory-desktop.png', fullPage: true } );
+
+	await page.setViewportSize( { width: 390, height: 844 } );
+	await expect( page.locator( '.perform-site-inventory__summary' ) ).toBeVisible();
+	await page.screenshot( { path: 'test-results/proof/site-inventory-mobile.png', fullPage: true } );
+	const hasHorizontalOverflow = await page.evaluate(
+		() => document.documentElement.scrollWidth > document.documentElement.clientWidth
+	);
+	expect( hasHorizontalOverflow ).toBeFalsy();
 } );
 
 test( 'Cache Stats tab preserves legacy routing, actions, and keyboard access', async ( { page } ) => {

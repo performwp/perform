@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import CacheStatsPanel from './CacheStatsPanel';
 import DashboardPanel from './DashboardPanel';
 import DatabaseAuditPanel from './DatabaseAuditPanel';
+import SiteInventoryPanel from './SiteInventoryPanel';
 import SettingsFieldRow from './settings/SettingsFieldRow';
 
 const SETTINGS = window.performwpSettings || {};
@@ -13,6 +14,7 @@ const SettingsNav = ( {
 	dashboard,
 	diagnostics,
 	databaseAudit,
+	siteInventory,
 	activeTab: propActiveTab,
 	onTabChange: propOnTabChange,
 	fieldValues: propFieldValues,
@@ -102,6 +104,8 @@ const SettingsNav = ( {
 						content = <DashboardPanel dashboard={ dashboard } diagnostics={ diagnostics } />;
 					} else if ( 'database' === selectedTabName ) {
 						content = <DatabaseAuditPanel initialAudit={ databaseAudit } />;
+					} else if ( 'inventory' === selectedTabName ) {
+						content = <SiteInventoryPanel initialInventory={ siteInventory } />;
 					} else if ( 'cache-stats' === selectedTabName ) {
 						content = <CacheStatsPanel />;
 					}

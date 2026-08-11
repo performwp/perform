@@ -471,15 +471,88 @@ if ( ! class_exists( 'WP_Error' ) ) {
 		public $message = '';
 
 		/**
+		 * Error data.
+		 *
+		 * @var mixed
+		 */
+		public $data;
+
+		/**
 		 * Constructor.
 		 *
 		 * @param string $code Error code.
 		 * @param string $message Error message.
+		 * @param mixed  $data Error data.
 		 */
-		public function __construct( $code = '', $message = '' ) {
+		public function __construct( $code = '', $message = '', $data = null ) {
 			$this->code    = (string) $code;
 			$this->message = (string) $message;
+			$this->data    = $data;
 		}
+
+		public function get_error_code() {
+			return $this->code;
+		}
+
+		public function get_error_message() {
+			return $this->message;
+		}
+
+		public function get_error_data() {
+			return $this->data;
+		}
+	}
+}
+
+if ( ! function_exists( 'register_rest_route' ) ) {
+	function register_rest_route( $route_namespace, $route, $args = [], $override = false ) {
+		$GLOBALS['perform_test_rest_routes'][] = [
+			'namespace' => $route_namespace,
+			'route'     => $route,
+			'args'      => $args,
+			'override'  => $override,
+		];
+		return true;
+	}
+}
+
+if ( ! function_exists( 'rest_url' ) ) {
+	function rest_url( $path = '' ) {
+		return 'https://example.com/wp-json/' . ltrim( (string) $path, '/' );
+	}
+}
+
+if ( ! function_exists( 'get_plugins' ) ) {
+	function get_plugins() {
+		return isset( $GLOBALS['perform_test_plugins'] ) && is_array( $GLOBALS['perform_test_plugins'] ) ? $GLOBALS['perform_test_plugins'] : [];
+	}
+}
+
+if ( ! function_exists( 'is_plugin_active' ) ) {
+	function is_plugin_active( $plugin_file ) {
+		$active_plugins = get_option( 'active_plugins', [] );
+		$network_active = isset( $GLOBALS['perform_test_network_active_plugins'] ) && is_array( $GLOBALS['perform_test_network_active_plugins'] ) ? $GLOBALS['perform_test_network_active_plugins'] : [];
+
+		return in_array( (string) $plugin_file, (array) $active_plugins, true ) || in_array( (string) $plugin_file, $network_active, true );
+	}
+}
+
+if ( ! function_exists( 'wp_get_theme' ) ) {
+	function wp_get_theme() {
+		return $GLOBALS['perform_test_theme'] ?? false;
+	}
+}
+
+if ( ! function_exists( 'get_post_types' ) ) {
+	function get_post_types( $args = [], $output = 'names', $operator = 'and' ) {
+		return isset( $GLOBALS['perform_test_post_types'] ) && is_array( $GLOBALS['perform_test_post_types'] ) ? $GLOBALS['perform_test_post_types'] : [];
+	}
+}
+
+if ( ! function_exists( 'wp_count_posts' ) ) {
+	function wp_count_posts( $type = 'post', $perm = '' ) {
+		$counts = isset( $GLOBALS['perform_test_post_counts'] ) && is_array( $GLOBALS['perform_test_post_counts'] ) ? $GLOBALS['perform_test_post_counts'] : [];
+		return (object) ( $counts[ $type ] ?? [] );
 	}
 }
 
