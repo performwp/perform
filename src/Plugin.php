@@ -55,6 +55,7 @@ final class Plugin {
 		new Settings\AutoloadOptionsAuditController();
 		new Settings\SiteInventoryController();
 		new Settings\AdminPerformanceMonitorController();
+		new Settings\CronPressureAuditController();
 		new Admin\Actions();
 		new Admin\Filters();
 

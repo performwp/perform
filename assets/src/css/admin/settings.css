@@ -1259,6 +1259,165 @@
 	color: var(--perform-color-warning);
 }
 
+.perform-cron-pressure {
+	display: grid;
+	gap: 24px;
+}
+
+.perform-cron-pressure > *,
+.perform-cron-pressure .components-card__body {
+	min-width: 0;
+}
+
+.perform-cron-pressure__heading {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 24px;
+	padding-bottom: 24px;
+	border-bottom: 1px solid var(--perform-color-border);
+}
+
+.perform-cron-pressure__heading h2 {
+	margin: 0 0 8px;
+	font-size: 24px;
+	line-height: 1.25;
+}
+
+.perform-cron-pressure__heading p:not(.perform-dashboard-eyebrow) {
+	max-width: 760px;
+	margin: 0;
+	color: var(--perform-color-text-muted);
+	font-size: 14px;
+	line-height: 1.55;
+}
+
+.perform-cron-pressure__actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.perform-cron-pressure__privacy,
+.perform-cron-pressure__message,
+.perform-cron-pressure__notice,
+.perform-cron-pressure__guidance {
+	padding: 16px 20px;
+	border-left: 4px solid var(--perform-color-brand);
+	background: #f6f7f7;
+}
+
+.perform-cron-pressure__privacy p,
+.perform-cron-pressure__notice p,
+.perform-cron-pressure__guidance p {
+	margin: 6px 0 0;
+	color: var(--perform-color-text-muted);
+	line-height: 1.5;
+}
+
+.perform-cron-pressure__message.is-error,
+.perform-cron-pressure__guidance.is-action-recommended {
+	border-left-color: var(--perform-color-danger);
+}
+
+.perform-cron-pressure__message.is-success,
+.perform-cron-pressure__guidance.is-good {
+	border-left-color: var(--perform-color-success);
+}
+
+.perform-cron-pressure__notice,
+.perform-cron-pressure__guidance.is-review {
+	border-left-color: var(--perform-color-warning);
+	background: #fcf9e8;
+}
+
+.perform-cron-pressure__empty {
+	border-radius: 0;
+	box-shadow: none;
+}
+
+.perform-cron-pressure__empty h3 {
+	margin: 0 0 8px;
+	font-size: 18px;
+}
+
+.perform-cron-pressure__empty p {
+	margin: 0;
+	color: var(--perform-color-text-muted);
+}
+
+.perform-cron-pressure__summary {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	border-top: 1px solid var(--perform-color-border);
+	border-bottom: 1px solid var(--perform-color-border);
+}
+
+.perform-cron-pressure__summary > div {
+	min-width: 0;
+	padding: 20px 24px;
+	border-right: 1px solid var(--perform-color-border);
+}
+
+.perform-cron-pressure__summary > div:first-child {
+	padding-left: 0;
+}
+
+.perform-cron-pressure__summary > div:last-child {
+	border-right: 0;
+}
+
+.perform-cron-pressure__summary span,
+.perform-cron-pressure__summary small {
+	display: block;
+	color: var(--perform-color-text-muted);
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.perform-cron-pressure__summary strong {
+	display: block;
+	margin: 8px 0 4px;
+	font-size: 24px;
+	line-height: 1.2;
+}
+
+.perform-cron-pressure__table-wrap {
+	max-width: 100%;
+	overflow-x: auto;
+}
+
+.perform-cron-pressure__table {
+	width: 100%;
+	border-collapse: collapse;
+	text-align: left;
+}
+
+.perform-cron-pressure__table th,
+.perform-cron-pressure__table td {
+	padding: 14px 12px;
+	border-bottom: 1px solid var(--perform-color-border);
+	vertical-align: top;
+}
+
+.perform-cron-pressure__table thead th {
+	color: var(--perform-color-text-muted);
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+}
+
+.perform-cron-pressure__table code {
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+
+.perform-cron-pressure__meta {
+	margin: 16px 0 0;
+	color: var(--perform-color-text-muted);
+	font-size: 12px;
+}
+
 @media screen and (max-width: 782px) {
 
 	.perform-settings-page {
@@ -1352,6 +1511,35 @@
 	.perform-admin-monitor__heading .components-button {
 		width: 100%;
 		justify-content: center;
+	}
+
+	.perform-cron-pressure__heading,
+	.perform-cron-pressure__actions {
+		flex-direction: column;
+	}
+
+	.perform-cron-pressure__actions,
+	.perform-cron-pressure__actions .components-button {
+		width: 100%;
+	}
+
+	.perform-cron-pressure__actions .components-button {
+		justify-content: center;
+	}
+
+	.perform-cron-pressure__summary {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.perform-cron-pressure__summary > div,
+	.perform-cron-pressure__summary > div:first-child {
+		padding: 16px 0;
+		border-right: 0;
+		border-bottom: 1px solid var(--perform-color-border);
+	}
+
+	.perform-cron-pressure__summary > div:last-child {
+		border-bottom: 0;
 	}
 
 	.perform-admin-monitor__table-wrap {
