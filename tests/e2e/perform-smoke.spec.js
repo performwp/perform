@@ -60,7 +60,7 @@ test( 'settings save, Assets Manager, and page cache smoke paths work', async ( 
 	await expect( page.getByRole( 'button', { name: 'Save Settings' } ) ).toBeVisible();
 	await expect( page ).toHaveURL( /[?&]tab=general(?:&|$)/ );
 
-	await page.getByRole( 'tab', { name: 'Assets' } ).click();
+	await page.getByRole( 'tab', { name: 'Assets', exact: true } ).click();
 	await page.getByRole( 'checkbox', { name: 'Enable Assets Manager' } ).check();
 	await page.getByRole( 'textbox', { name: 'Preconnect' } ).fill( `//ci-${ Date.now() }.example.com` );
 
