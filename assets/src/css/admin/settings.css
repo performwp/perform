@@ -435,30 +435,37 @@
 
 .perform-dashboard {
 	display: grid;
-	gap: 20px;
+	gap: 24px;
 }
 
-.perform-dashboard-hero {
-	border-radius: 0;
-	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+.perform-dashboard > *,
+.perform-dashboard-grid > *,
+.perform-health-grid > *,
+.perform-dashboard .components-card__body {
+	min-width: 0;
 }
 
-.perform-dashboard-hero__header {
+.perform-dashboard-overview {
+	display: flex;
 	align-items: flex-start;
 	justify-content: space-between;
-	gap: 20px;
+	gap: 32px;
+	padding-bottom: 24px;
+	border-bottom: 1px solid var(--perform-color-border);
 }
 
-.perform-dashboard-hero h2 {
+.perform-dashboard-overview h2 {
 	margin: 0 0 8px;
-	font-size: 24px;
+	font-size: 28px;
 	line-height: 1.25;
 }
 
-.perform-dashboard-hero p {
+.perform-dashboard-overview p:not(.perform-dashboard-eyebrow) {
 	max-width: 720px;
 	margin: 0;
 	color: var(--perform-color-text-muted);
+	font-size: 14px;
+	line-height: 1.55;
 }
 
 .perform-dashboard-eyebrow {
@@ -473,11 +480,13 @@
 	display: flex;
 	flex-wrap: wrap;
 	gap: 8px;
+	flex-shrink: 0;
 }
 
 .perform-dashboard-grid,
 .perform-dashboard-stats,
-.perform-dashboard-metrics {
+.perform-dashboard-metrics,
+.perform-health-grid {
 	display: grid;
 	gap: 16px;
 }
@@ -487,7 +496,7 @@
 }
 
 .perform-dashboard-stats {
-	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .perform-dashboard-metrics {
@@ -496,10 +505,79 @@
 }
 
 .perform-dashboard-stat {
+	min-width: 0;
 	min-height: 84px;
 	padding: 12px 14px;
 	border-left: 4px solid var(--perform-color-brand);
 	background: #f6f7f7;
+}
+
+.perform-health-grid {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.perform-health-card {
+	border-radius: 0;
+	border-left: 4px solid var(--perform-color-border);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.perform-health-card[data-status='ready'] {
+	border-left-color: var(--perform-color-success);
+}
+
+.perform-health-card[data-status='review'] {
+	border-left-color: var(--perform-color-warning);
+}
+
+.perform-health-card[data-status='observe'] {
+	border-left-color: var(--perform-color-brand);
+}
+
+.perform-health-card__heading {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.perform-health-card__heading h3 {
+	margin: 0;
+	font-size: 16px;
+	line-height: 1.35;
+}
+
+.perform-health-card__heading span {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	min-height: 24px;
+	padding: 2px 8px;
+	border: 1px solid var(--perform-color-border);
+	border-radius: 12px;
+	background: #f6f7f7;
+	color: var(--perform-color-text-muted);
+	font-size: 11px;
+	font-weight: 600;
+}
+
+.perform-health-card p {
+	min-height: 44px;
+	margin: 12px 0;
+	color: var(--perform-color-text-muted);
+	line-height: 1.5;
+}
+
+.perform-dashboard-measurement-note {
+	padding: 16px 20px;
+	border-left: 4px solid var(--perform-color-brand);
+	background: #f6f7f7;
+}
+
+.perform-dashboard-measurement-note p {
+	margin: 6px 0 0;
+	color: var(--perform-color-text-muted);
+	line-height: 1.5;
 }
 
 .perform-dashboard-stat span {
@@ -1007,6 +1085,29 @@
 
 	.perform-database-audit__heading {
 		flex-direction: column;
+	}
+
+	.perform-dashboard-overview {
+		flex-direction: column;
+	}
+
+	.perform-dashboard-actions,
+	.perform-dashboard-actions .components-button {
+		width: 100%;
+	}
+
+	.perform-dashboard-actions .components-button {
+		justify-content: center;
+	}
+
+	.perform-dashboard-stats,
+	.perform-health-grid,
+	.perform-dashboard-grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.perform-health-card p {
+		min-height: 0;
 	}
 
 	.perform-site-inventory__heading {

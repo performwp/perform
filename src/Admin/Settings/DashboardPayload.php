@@ -8,6 +8,8 @@
 
 namespace Perform\Admin\Settings;
 
+use Throwable;
+
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -25,7 +27,74 @@ final class DashboardPayload {
 			'links'         => self::get_links(),
 			'cache'         => self::get_cache_summary(),
 			'assetsManager' => self::get_assets_manager_summary(),
+			'server'        => self::get_server_summary(),
 			'changelog'     => self::get_changelog_items(),
+		];
+	}
+
+	/**
+	 * Detect bounded local server capabilities without external requests.
+	 *
+	 * @return array<string, array<string, mixed>>
+	 */
+	private static function get_server_summary() {
+		$opcache_state   = 'not-available';
+		$opcache_enabled = null;
+
+		if ( function_exists( 'opcache_get_status' ) ) {
+			try {
+				$status = opcache_get_status( false );
+				if ( is_array( $status ) ) {
+					$opcache_enabled = ! empty( $status['opcache_enabled'] );
+					$opcache_state   = $opcache_enabled ? 'ready' : 'warning';
+				}
+			} catch ( Throwable $exception ) {
+				$opcache_state   = 'not-available';
+				$opcache_enabled = null;
+			}
+		}
+
+		$zlib_value       = strtolower( trim( (string) ini_get( 'zlib.output_compression' ) ) );
+		$zlib_enabled     = in_array( $zlib_value, [ '1', 'on', 'yes', 'true' ], true );
+		$detected_summary = [
+			'opcache'     => [
+				'state'   => $opcache_state,
+				'enabled' => $opcache_enabled,
+			],
+			'compression' => [
+				'state'      => $zlib_enabled ? 'ready' : 'needs-separate-test',
+				'phpEnabled' => $zlib_enabled,
+			],
+		];
+
+		$summary = apply_filters( 'perform_dashboard_server_summary', $detected_summary );
+
+		return self::normalize_server_summary( is_array( $summary ) ? $summary : [] );
+	}
+
+	/**
+	 * Normalize filtered server signals to the public dashboard contract.
+	 *
+	 * @param array<string, mixed> $summary Filtered summary.
+	 *
+	 * @return array<string, array<string, mixed>>
+	 */
+	private static function normalize_server_summary( array $summary ) {
+		$allowed_states = [ 'ready', 'warning', 'not-available', 'needs-separate-test' ];
+		$opcache        = is_array( $summary['opcache'] ?? null ) ? $summary['opcache'] : [];
+		$compression    = is_array( $summary['compression'] ?? null ) ? $summary['compression'] : [];
+		$opcache_state  = (string) ( $opcache['state'] ?? 'not-available' );
+		$compress_state = (string) ( $compression['state'] ?? 'needs-separate-test' );
+
+		return [
+			'opcache'     => [
+				'state'   => in_array( $opcache_state, $allowed_states, true ) ? $opcache_state : 'not-available',
+				'enabled' => isset( $opcache['enabled'] ) ? (bool) $opcache['enabled'] : null,
+			],
+			'compression' => [
+				'state'      => in_array( $compress_state, $allowed_states, true ) ? $compress_state : 'needs-separate-test',
+				'phpEnabled' => ! empty( $compression['phpEnabled'] ),
+			],
 		];
 	}
 
@@ -102,9 +171,9 @@ final class DashboardPayload {
 	 */
 	private static function get_changelog_items() {
 		return [
-			__( 'Dashboard, diagnostics, cache, and Assets Manager work in 1.7.0 remains release-candidate content until the owner approves publication.', 'perform' ),
-			__( 'Runtime diagnostics summarize cache, CDN, menu cache, and dynamic request prerequisites without writing new tracking data.', 'perform' ),
-			__( 'Assets Manager summary reports configured rule coverage, not historical byte savings.', 'perform' ),
+			__( 'Perform 1.7.0 introduced the dashboard, runtime diagnostics, cache activity reporting, and the redesigned settings experience.', 'perform' ),
+			__( 'The 1.8.0 diagnostic foundation adds bounded database and site-inventory evidence for safer recommendations.', 'perform' ),
+			__( 'Configured rules and cache activity are reported without claiming unmeasured byte or Core Web Vitals savings.', 'perform' ),
 		];
 	}
 

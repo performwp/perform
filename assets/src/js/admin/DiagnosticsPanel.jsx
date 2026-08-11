@@ -1,9 +1,10 @@
 import { Card, CardBody, CardHeader } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 
 const STATUS_LABELS = {
-	ready: 'Ready',
-	warning: 'Warning',
-	'needs-attention': 'Needs attention',
+	ready: __( 'Ready', 'perform' ),
+	warning: __( 'Warning', 'perform' ),
+	'needs-attention': __( 'Needs attention', 'perform' ),
 };
 
 const DiagnosticsPanel = ( { diagnostics } ) => {
@@ -14,12 +15,12 @@ const DiagnosticsPanel = ( { diagnostics } ) => {
 	}
 
 	return (
-		<Card className="perform-diagnostics-panel">
+		<Card id="perform-runtime-diagnostics" className="perform-diagnostics-panel">
 			<CardHeader className="perform-diagnostics-panel__header">
 				<div>
-					<h3 className="perform-card-title">Runtime Diagnostics</h3>
+					<h3 className="perform-card-title">{ __( 'Runtime Diagnostics', 'perform' ) }</h3>
 					<p className="perform-card-description">
-						Read-only checks for cache, CDN, and optimization prerequisites.
+						{ __( 'Read-only checks for cache, CDN, and optimization prerequisites.', 'perform' ) }
 					</p>
 				</div>
 			</CardHeader>
@@ -29,11 +30,15 @@ const DiagnosticsPanel = ( { diagnostics } ) => {
 						const status = item.status || 'warning';
 
 						return (
-							<div className="perform-diagnostics-item" data-status={ status } key={ item.label }>
+							<div
+								className="perform-diagnostics-item"
+								data-status={ status }
+								key={ item.id || item.label }
+							>
 								<div className="perform-diagnostics-item__heading">
 									<strong>{ item.label }</strong>
 									<span className="perform-diagnostics-badge">
-										{ STATUS_LABELS[ status ] || 'Warning' }
+										{ STATUS_LABELS[ status ] || STATUS_LABELS.warning }
 									</span>
 								</div>
 								<p>{ item.message }</p>
