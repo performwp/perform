@@ -161,6 +161,7 @@
 	font-weight: 600;
 }
 
+.perform-diagnostic-tabs__item:focus,
 .perform-diagnostic-tabs__item:focus-visible {
 	outline: 2px solid var(--perform-color-focus);
 	outline-offset: 1px;
