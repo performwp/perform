@@ -7,6 +7,7 @@ import DatabaseAuditPanel from './DatabaseAuditPanel';
 import SiteInventoryPanel from './SiteInventoryPanel';
 import CronPressurePanel from './CronPressurePanel';
 import AdminAssetAuditPanel from './AdminAssetAuditPanel';
+import PluginImpactPanel from './PluginImpactPanel';
 import SettingsFieldRow from './settings/SettingsFieldRow';
 
 const SETTINGS = window.performwpSettings || {};
@@ -22,6 +23,7 @@ const SettingsNav = ( {
 	adminPerformance,
 	cronPressure,
 	adminAssetAudit,
+	pluginImpact,
 	activeTab: propActiveTab,
 	onTabChange: propOnTabChange,
 	fieldValues: propFieldValues,
@@ -136,6 +138,8 @@ const SettingsNav = ( {
 						content = (
 							<AdminAssetAuditPanel initialSnapshot={ adminAssetAudit } onNavigate={ onTabChange } />
 						);
+					} else if ( 'plugin-impact' === selectedTabName ) {
+						content = <PluginImpactPanel report={ pluginImpact } onNavigate={ onTabChange } />;
 					} else if ( 'cache-stats' === selectedTabName ) {
 						content = <CacheStatsPanel />;
 					}
