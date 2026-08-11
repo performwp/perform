@@ -344,7 +344,7 @@ class Helpers {
 						[
 							'id'        => 'disable_emojis',
 							'type'      => 'toggle',
-							'name'      => __( 'Disable Emoji\'s', 'perform' ),
+							'name'      => __( 'Disable Emojis', 'perform' ),
 							'desc'      => __( 'Prevents WordPress from loading the emoji detection script and related styles, reducing one extra HTTP request.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(

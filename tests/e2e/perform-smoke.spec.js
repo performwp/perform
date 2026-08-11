@@ -120,7 +120,7 @@ test( 'Site Inventory refresh is private, bounded, and responsive', async ( { pa
 	await login( page );
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=inventory' );
 
-	await expect( page.getByRole( 'tab', { name: 'Site Inventory' } ) ).toHaveAttribute( 'aria-selected', 'true' );
+	await expect( page.getByLabel( 'Diagnostic report' ) ).toHaveValue( 'inventory' );
 	await expect( page.getByText( 'Private and local' ) ).toBeVisible();
 	await expect( page.getByText( /no post content, option values, private URLs/i ) ).toBeVisible();
 	await expect( page.getByRole( 'heading', { name: 'System health' } ) ).toBeVisible();
@@ -153,7 +153,7 @@ test( 'Scheduled-task pressure is bounded, private, resettable, and responsive',
 	await login( page );
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=scheduled-tasks' );
 
-	await expect( page.getByRole( 'tab', { name: 'Scheduled Tasks' } ) ).toHaveAttribute( 'aria-selected', 'true' );
+	await expect( page.getByLabel( 'Diagnostic report' ) ).toHaveValue( 'scheduled-tasks' );
 	await expect( page.getByText( 'Read-only and bounded' ) ).toBeVisible();
 	await expect( page.getByText( /excludes hook arguments, payloads, URLs, and user data/ ) ).toBeVisible();
 	await page.getByRole( 'button', { name: /Run check|Refresh check/ } ).click();
@@ -181,7 +181,7 @@ test( 'Action Scheduler diagnostic handles an absent queue without mutation', as
 	await login( page );
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=action-scheduler' );
 
-	await expect( page.getByRole( 'tab', { name: 'Action Scheduler' } ) ).toHaveAttribute( 'aria-selected', 'true' );
+	await expect( page.getByLabel( 'Diagnostic report' ) ).toHaveValue( 'action-scheduler' );
 	await expect( page.getByText( 'Read-only and private' ) ).toBeVisible();
 	await expect( page.getByText( /never runs, cancels, or deletes queued work/ ) ).toBeVisible();
 	await page.getByRole( 'button', { name: /Run check|Refresh check/ } ).click();
@@ -216,7 +216,7 @@ test( 'Admin Performance Monitor is opt-in, bounded, private, clearable, and res
 
 	await page.goto( '/wp-admin/edit.php' );
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=admin-monitor' );
-	await expect( page.getByRole( 'tab', { name: 'Admin Monitor' } ) ).toHaveAttribute( 'aria-selected', 'true' );
+	await expect( page.getByLabel( 'Diagnostic report' ) ).toHaveValue( 'admin-monitor' );
 	await expect( page.getByText( 'Aggregate-only and per site' ) ).toBeVisible();
 	await expect( page.getByText( /does not store full URLs, query arguments, request payloads/ ) ).toBeVisible();
 	await expect( page.getByText( 'edit-post' ) ).toBeVisible();
@@ -249,16 +249,16 @@ test( 'Admin asset audit is opt-in, bounded, private, clearable, and responsive'
 	const auditToggle = page.getByRole( 'checkbox', { name: 'Admin Asset Audit' } );
 	if ( ! ( await auditToggle.isChecked() ) ) {
 		await auditToggle.check();
+		await page.getByRole( 'button', { name: 'Save Settings' } ).click();
+		await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
 	}
-	await page.getByRole( 'button', { name: 'Save Settings' } ).click();
-	await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
 
 	await page.goto( '/wp-admin/index.php' );
 	await page.goto( '/wp-admin/edit.php' );
 	await page.goto( '/wp-admin/plugins.php' );
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=admin-assets' );
 
-	await expect( page.getByRole( 'tab', { name: 'Admin Assets' } ) ).toHaveAttribute( 'aria-selected', 'true' );
+	await expect( page.getByLabel( 'Diagnostic report' ) ).toHaveValue( 'admin-assets' );
 	await expect( page.getByText( 'Inventory only — nothing is disabled' ) ).toBeVisible();
 	await expect( page.getByText( /URLs, query strings, nonces, and user data are not stored/ ) ).toBeVisible();
 	await expect( page.getByText( 'Repeated across admin screens' ) ).toBeVisible();
@@ -291,13 +291,13 @@ test( 'Plugin impact report separates measured local evidence from unavailable a
 	const auditToggle = page.getByRole( 'checkbox', { name: 'Admin Asset Audit' } );
 	if ( ! ( await auditToggle.isChecked() ) ) {
 		await auditToggle.check();
+		await page.getByRole( 'button', { name: 'Save Settings' } ).click();
+		await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
 	}
-	await page.getByRole( 'button', { name: 'Save Settings' } ).click();
-	await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
 
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=general' );
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=plugin-impact' );
-	await expect( page.getByRole( 'tab', { name: 'Plugin Impact' } ) ).toHaveAttribute( 'aria-selected', 'true' );
+	await expect( page.getByLabel( 'Diagnostic report' ) ).toHaveValue( 'plugin-impact' );
 	await expect( page.getByText( 'Evidence, not a plugin ranking' ) ).toBeVisible();
 	await expect( page.getByText( /does not attribute query, callback, or memory cost/ ) ).toBeVisible();
 	await expect( page.getByText( /Zero means not observed in this sample/ ) ).toBeVisible();
@@ -339,17 +339,18 @@ test( 'Classic menu cache stays functional across unrelated query variables', as
 	expect( await page.locator( '#perform-test-navigation' ).innerHTML() ).toBe( firstMarkup );
 } );
 
-test( 'Cache Stats tab preserves legacy routing, actions, and keyboard access', async ( { page } ) => {
+test( 'Cache Stats report preserves legacy routing, actions, and keyboard access', async ( { page } ) => {
 	await login( page );
 
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings' );
-	const cacheStatsTab = page.getByRole( 'tab', { name: 'Cache Stats' } );
-	await cacheStatsTab.focus();
-	await expect( cacheStatsTab ).toBeFocused();
-	await expect( cacheStatsTab ).toHaveCSS( 'outline-style', 'solid' );
-	await page.keyboard.press( 'Enter' );
+	await page.getByRole( 'tab', { name: 'Diagnostics' } ).click();
+	const reportSelector = page.getByLabel( 'Diagnostic report' );
+	await reportSelector.focus();
+	await expect( reportSelector ).toBeFocused();
+	await expect( reportSelector ).toHaveCSS( 'outline-style', 'solid' );
+	await reportSelector.selectOption( 'cache-stats' );
 
-	await expect( cacheStatsTab ).toHaveAttribute( 'aria-selected', 'true' );
+	await expect( reportSelector ).toHaveValue( 'cache-stats' );
 	await expect( page ).toHaveURL( /[?&]tab=cache-stats(?:&|$)/ );
 	await expect( page.getByRole( 'heading', { name: 'Perform Cache Observability' } ) ).toBeVisible();
 	await expect( page.getByRole( 'button', { name: 'Purge Site Page Cache' } ) ).toBeVisible();
@@ -426,7 +427,7 @@ test( 'lower-privilege users cannot access the legacy or canonical Cache Stats r
 	expect( canonicalResponse.status() ).not.toBe( 302 );
 	await expect( page ).toHaveURL( /page=perform_settings&tab=cache-stats$/ );
 	await expect( page.getByText( 'Sorry, you are not allowed to access this page.' ) ).toBeVisible();
-	await expect( page.getByRole( 'tab', { name: 'Cache Stats' } ) ).toHaveCount( 0 );
+	await expect( page.getByLabel( 'Diagnostic report' ) ).toHaveCount( 0 );
 
 	const protectedActions = [
 		[ 'perform_purge_page_cache', 'You are not allowed to purge the page cache.' ],
