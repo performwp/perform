@@ -1,11 +1,11 @@
 /* eslint-env jest */
 
 import '@testing-library/jest-dom';
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import SettingsNav from './SettingsNav';
 
 describe( 'SettingsNav', () => {
-	it( 'groups advanced diagnostics behind one primary tab and supports arrow-key navigation', async () => {
+	it( 'groups advanced diagnostics behind one primary tab and a report selector', async () => {
 		render(
 			<SettingsNav
 				tabs={ {
@@ -25,15 +25,14 @@ describe( 'SettingsNav', () => {
 		await act( async () => {
 			fireEvent.click( screen.getByRole( 'tab', { name: 'Diagnostics' } ) );
 		} );
-		const inventoryTab = screen.getByRole( 'tab', { name: 'Site Inventory' } );
-		expect( inventoryTab ).toHaveAttribute( 'aria-selected', 'true' );
+		const reportSelector = screen.getByRole( 'combobox', { name: 'Diagnostic report' } );
+		expect( reportSelector ).toHaveValue( 'inventory' );
+		expect( screen.getByText( 'Private, local reports for this WordPress site' ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'tablist', { name: 'Diagnostic tools' } ) ).not.toBeInTheDocument();
 
-		inventoryTab.focus();
 		await act( async () => {
-			fireEvent.keyDown( inventoryTab, { key: 'ArrowRight' } );
+			fireEvent.change( reportSelector, { target: { value: 'database' } } );
 		} );
-		await waitFor( () => {
-			expect( screen.getByRole( 'tab', { name: 'Database' } ) ).toHaveAttribute( 'aria-selected', 'true' );
-		} );
+		expect( reportSelector ).toHaveValue( 'database' );
 	} );
 } );

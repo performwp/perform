@@ -1,4 +1,5 @@
 import { TabPanel } from '@wordpress/components';
+import { WrenchScrewdriverIcon } from '@heroicons/react/24/outline';
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import CacheStatsPanel from './CacheStatsPanel';
 import AdminPerformanceMonitorPanel from './AdminPerformanceMonitorPanel';
@@ -71,25 +72,6 @@ const SettingsNav = ( {
 				[ id ]: value,
 			} ) ) );
 	const tabPanelRef = useRef( null );
-	const handleDiagnosticKeyDown = ( event, index ) => {
-		let nextIndex = index;
-		if ( 'ArrowRight' === event.key ) {
-			nextIndex = ( index + 1 ) % diagnosticTabKeys.length;
-		} else if ( 'ArrowLeft' === event.key ) {
-			nextIndex = ( index - 1 + diagnosticTabKeys.length ) % diagnosticTabKeys.length;
-		} else if ( 'Home' === event.key ) {
-			nextIndex = 0;
-		} else if ( 'End' === event.key ) {
-			nextIndex = diagnosticTabKeys.length - 1;
-		} else {
-			return;
-		}
-
-		event.preventDefault();
-		onTabChange( diagnosticTabKeys[ nextIndex ] );
-		event.currentTarget.parentElement?.querySelectorAll( '[role="tab"]' )[ nextIndex ]?.focus();
-	};
-
 	useEffect( () => {
 		const selectedTab = tabPanelRef.current?.querySelector( '[role="tab"][aria-selected="true"]' );
 		selectedTab?.scrollIntoView?.( { block: 'nearest', inline: 'nearest' } );
@@ -205,22 +187,35 @@ const SettingsNav = ( {
 					return (
 						<>
 							{ diagnosticTabKeys.includes( selectedTabName ) && (
-								<div className="perform-diagnostic-tabs" role="tablist" aria-label="Diagnostic tools">
-									{ diagnosticTabKeys.map( ( slug, index ) => (
-										<button
-											key={ slug }
-											type="button"
-											role="tab"
-											aria-selected={ slug === selectedTabName }
-											tabIndex={ slug === selectedTabName ? 0 : -1 }
-											className="perform-diagnostic-tabs__item"
-											onClick={ () => onTabChange( slug ) }
-											onKeyDown={ ( event ) => handleDiagnosticKeyDown( event, index ) }
+								<section className="perform-diagnostic-switcher" aria-label="Diagnostics workspace">
+									<div className="perform-diagnostic-switcher__context">
+										<span className="perform-diagnostic-switcher__icon" aria-hidden="true">
+											<WrenchScrewdriverIcon className="perform-ui-icon" />
+										</span>
+										<span>
+											<strong>Diagnostics workspace</strong>
+											<small>Private, local reports for this WordPress site</small>
+										</span>
+									</div>
+									<label
+										className="perform-diagnostic-switcher__control"
+										htmlFor="perform-diagnostic-report"
+									>
+										<span>Current report</span>
+										<select
+											id="perform-diagnostic-report"
+											aria-label="Diagnostic report"
+											value={ selectedTabName }
+											onChange={ ( event ) => onTabChange( event.target.value ) }
 										>
-											{ tabs[ slug ] }
-										</button>
-									) ) }
-								</div>
+											{ diagnosticTabKeys.map( ( slug ) => (
+												<option key={ slug } value={ slug }>
+													{ tabs[ slug ] }
+												</option>
+											) ) }
+										</select>
+									</label>
+								</section>
 							) }
 							<div className="perform-settings-content">{ content }</div>
 						</>

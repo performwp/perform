@@ -124,47 +124,83 @@
 	content: '';
 }
 
-.perform-diagnostic-tabs {
+.perform-diagnostic-switcher {
 	display: flex;
-	gap: 4px;
-	overflow-x: auto;
-	padding: 12px clamp(20px, 3vw, 44px);
+	align-items: center;
+	justify-content: space-between;
+	gap: 24px;
+	padding: 16px clamp(20px, 3vw, 44px);
 	border-bottom: 1px solid var(--perform-color-border);
 	background: var(--perform-color-surface-subtle);
-	scrollbar-width: thin;
 }
 
-.perform-diagnostic-tabs__item {
+.perform-diagnostic-switcher__context {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	min-width: 0;
+}
+
+.perform-diagnostic-switcher__icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 	flex: 0 0 auto;
-	min-height: 36px;
-	padding: 7px 12px;
-	border: 1px solid transparent;
-	border-radius: 7px;
-	color: var(--perform-color-text-muted);
-	background: transparent;
-	font-size: 12px;
-	font-weight: 500;
-	line-height: 1.4;
-	cursor: pointer;
-}
-
-.perform-diagnostic-tabs__item:hover {
-	color: var(--perform-color-text);
-	background: rgba(255, 255, 255, 0.72);
-}
-
-.perform-diagnostic-tabs__item[aria-selected='true'] {
-	border-color: var(--perform-color-border);
+	width: 40px;
+	height: 40px;
+	border: 1px solid #d7e3fb;
+	border-radius: 9px;
 	color: var(--perform-color-brand);
-	background: var(--perform-color-surface);
-	box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06);
+	background: var(--perform-color-surface-accent);
+}
+
+.perform-diagnostic-switcher__context > span:last-child {
+	display: grid;
+	gap: 2px;
+}
+
+.perform-diagnostic-switcher__context strong {
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.35;
+}
+
+.perform-diagnostic-switcher__context small {
+	color: var(--perform-color-text-muted);
+	font-size: 12px;
+	line-height: 1.4;
+}
+
+.perform-diagnostic-switcher__control {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex: 0 0 auto;
+}
+
+.perform-diagnostic-switcher__control > span {
+	color: var(--perform-color-text-muted);
+	font-size: 12px;
 	font-weight: 600;
 }
 
-.perform-diagnostic-tabs__item:focus,
-.perform-diagnostic-tabs__item:focus-visible {
+.perform-diagnostic-switcher__control select {
+	min-width: 220px;
+	height: 40px;
+	margin: 0;
+	border-color: var(--perform-color-border);
+	border-radius: 7px;
+	color: var(--perform-color-text);
+	background-color: var(--perform-color-surface);
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.perform-diagnostic-switcher__control select:focus {
+	border-color: var(--perform-color-focus);
 	outline: 2px solid var(--perform-color-focus);
-	outline-offset: 1px;
+	outline-offset: 2px;
+	box-shadow: none;
 }
 
 .perform-settings-tab-panel .components-tab-panel__tabs-item:focus-visible,
@@ -1850,7 +1886,7 @@
 	}
 
 	.perform-settings-tab-panel .components-tab-panel__tabs,
-	.perform-diagnostic-tabs,
+	.perform-diagnostic-switcher,
 	.perform-settings-content,
 	.perform-savebar {
 		padding-right: 16px;
@@ -1860,6 +1896,23 @@
 	.perform-settings-content {
 		padding-top: 28px;
 		padding-bottom: 40px;
+	}
+
+	.perform-diagnostic-switcher {
+		align-items: stretch;
+		flex-direction: column;
+		gap: 14px;
+	}
+
+	.perform-diagnostic-switcher__control {
+		align-items: stretch;
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	.perform-diagnostic-switcher__control select {
+		width: 100%;
+		max-width: none;
 	}
 
 	.perform-settings-field {
