@@ -7,7 +7,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language-Team: PerformWP <hello@performwp.com>\n"
-"POT-Creation-Date: 2026-08-11 04:41+0000\n"
+"POT-Creation-Date: 2026-08-11 05:00+0000\n"
 "Report-Msgid-Bugs-To: https://github.com/performwp/perform/issues/new\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
@@ -16,63 +16,63 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/Admin/Actions.php:100
+#: src/Admin/Actions.php:102
 msgid "Activity actions"
 msgstr ""
 
-#: src/Admin/Actions.php:101
+#: src/Admin/Actions.php:103
 msgid "Export cache activity for review or clear the collected metrics."
 msgstr ""
 
-#: src/Admin/Actions.php:102
+#: src/Admin/Actions.php:104
 msgid "Export CSV"
 msgstr ""
 
-#: src/Admin/Actions.php:103
+#: src/Admin/Actions.php:105
 msgid "Exporting…"
 msgstr ""
 
-#: src/Admin/Actions.php:104
+#: src/Admin/Actions.php:106
 msgid "Cache activity exported."
 msgstr ""
 
-#: src/Admin/Actions.php:105
+#: src/Admin/Actions.php:107
 msgid "Cache activity could not be exported."
 msgstr ""
 
-#: src/Admin/Actions.php:106
+#: src/Admin/Actions.php:108
 msgid "Clear activity"
 msgstr ""
 
-#: src/Admin/Actions.php:107
+#: src/Admin/Actions.php:109
 msgid "Clearing…"
 msgstr ""
 
-#: src/Admin/Actions.php:108
+#: src/Admin/Actions.php:110
 msgid "Clear all collected cache activity? This does not clear cached pages."
 msgstr ""
 
-#: src/Admin/Actions.php:109, src/Modules/Cache/PageCache.php:828, src/Modules/Cache/PageCache.php:1090
+#: src/Admin/Actions.php:111, src/Modules/Cache/PageCache.php:828, src/Modules/Cache/PageCache.php:1090
 msgid "Cache activity cleared."
 msgstr ""
 
-#: src/Admin/Actions.php:110
+#: src/Admin/Actions.php:112
 msgid "Cache activity could not be cleared."
 msgstr ""
 
-#: src/Admin/Actions.php:139
+#: src/Admin/Actions.php:141
 msgid "Close Assets Manager"
 msgstr ""
 
-#: src/Admin/Actions.php:136, src/Modules/Assets/AssetsManager.php:274
+#: src/Admin/Actions.php:138, src/Modules/Assets/AssetsManager.php:274
 msgid "Assets Manager"
 msgstr ""
 
-#: src/Admin/Actions.php:146, src/Admin/Settings/Menu.php:40, src/Admin/Settings/Menu.php:41, src/Modules/Assets/AssetsManager.php:254
+#: src/Admin/Actions.php:148, src/Admin/Settings/Menu.php:40, src/Admin/Settings/Menu.php:41, src/Modules/Assets/AssetsManager.php:254
 msgid "Perform"
 msgstr ""
 
-#: src/Admin/Actions.php:166
+#: src/Admin/Actions.php:168
 msgid "Support Forum"
 msgstr ""
 
@@ -700,7 +700,7 @@ msgstr ""
 msgid "You are not allowed to clear admin asset audit data."
 msgstr ""
 
-#: src/Admin/Settings/AdminAssetAuditController.php:29, src/Admin/Settings/AdminPerformanceMonitorController.php:36, src/Admin/Settings/AutoloadOptionsAuditController.php:48, src/Admin/Settings/CronPressureAuditController.php:84, src/Admin/Settings/Menu.php:125
+#: src/Admin/Settings/AdminAssetAuditController.php:29, src/Admin/Settings/AdminPerformanceMonitorController.php:36, src/Admin/Settings/AutoloadOptionsAuditController.php:48, src/Admin/Settings/CronPressureAuditController.php:84, src/Admin/Settings/Menu.php:126
 msgid "Security check failed."
 msgstr ""
 
@@ -744,7 +744,7 @@ msgstr ""
 msgid "Unknown"
 msgstr ""
 
-#: src/Admin/Settings/AutoloadOptionsAuditController.php:38, src/Admin/Settings/CronPressureAuditController.php:79, src/Admin/Settings/Menu.php:114, src/Admin/Settings/SiteInventoryController.php:59
+#: src/Admin/Settings/AutoloadOptionsAuditController.php:38, src/Admin/Settings/CronPressureAuditController.php:79, src/Admin/Settings/Menu.php:115, src/Admin/Settings/SiteInventoryController.php:59
 msgid "Insufficient permissions."
 msgstr ""
 
@@ -841,18 +841,22 @@ msgid "Admin Assets"
 msgstr ""
 
 #: src/Admin/Settings/Menu.php:59
-msgid "Scheduled Tasks"
+msgid "Plugin Impact"
 msgstr ""
 
 #: src/Admin/Settings/Menu.php:60
+msgid "Scheduled Tasks"
+msgstr ""
+
+#: src/Admin/Settings/Menu.php:61
 msgid "Cache Stats"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:241
+#: src/Admin/Settings/Menu.php:242
 msgid "Unable to save the settings. Please try again."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:233
+#: src/Admin/Settings/Menu.php:234
 msgid "Settings saved successfully."
 msgstr ""
 

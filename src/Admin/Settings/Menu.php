@@ -56,6 +56,7 @@ class Menu {
 		$tabs['database']        = esc_html__( 'Database', 'perform' );
 		$tabs['admin-monitor']   = esc_html__( 'Admin Monitor', 'perform' );
 		$tabs['admin-assets']    = esc_html__( 'Admin Assets', 'perform' );
+		$tabs['plugin-impact']   = esc_html__( 'Plugin Impact', 'perform' );
 		$tabs['scheduled-tasks'] = esc_html__( 'Scheduled Tasks', 'perform' );
 		$tabs['cache-stats']     = esc_html__( 'Cache Stats', 'perform' );
 

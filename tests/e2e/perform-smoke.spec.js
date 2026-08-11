@@ -259,6 +259,41 @@ test( 'Admin asset audit is opt-in, bounded, private, clearable, and responsive'
 	await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
 } );
 
+test( 'Plugin impact report separates measured local evidence from unavailable attribution', async ( { page } ) => {
+	await login( page );
+	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=advanced' );
+	const auditToggle = page.getByRole( 'checkbox', { name: 'Admin Asset Audit' } );
+	if ( ! ( await auditToggle.isChecked() ) ) {
+		await auditToggle.check();
+	}
+	await page.getByRole( 'button', { name: 'Save Settings' } ).click();
+	await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
+
+	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=general' );
+	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=plugin-impact' );
+	await expect( page.getByRole( 'tab', { name: 'Plugin Impact' } ) ).toHaveAttribute( 'aria-selected', 'true' );
+	await expect( page.getByText( 'Evidence, not a plugin ranking' ) ).toBeVisible();
+	await expect( page.getByText( /does not attribute query, callback, or memory cost/ ) ).toBeVisible();
+	await expect( page.getByText( /Zero means not observed in this sample/ ) ).toBeVisible();
+	await expect( page.getByText( 'Database query contribution by plugin' ) ).toBeVisible();
+	await expect( page.getByText( 'Callback execution time by plugin' ) ).toBeVisible();
+	await expect( page.getByRole( 'button', { name: 'Save Settings' } ) ).toHaveCount( 0 );
+
+	await mkdir( 'test-results/proof', { recursive: true } );
+	await page.screenshot( { path: 'test-results/proof/plugin-impact-desktop.png', fullPage: true } );
+	await page.setViewportSize( { width: 390, height: 844 } );
+	await page.screenshot( { path: 'test-results/proof/plugin-impact-mobile.png', fullPage: true } );
+	const hasHorizontalOverflow = await page.evaluate(
+		() => document.documentElement.scrollWidth > document.documentElement.clientWidth
+	);
+	expect( hasHorizontalOverflow ).toBeFalsy();
+
+	await page.getByRole( 'tab', { name: 'Advanced' } ).click();
+	await page.getByRole( 'checkbox', { name: 'Admin Asset Audit' } ).uncheck();
+	await page.getByRole( 'button', { name: 'Save Settings' } ).click();
+	await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
+} );
+
 test( 'Cache Stats tab preserves legacy routing, actions, and keyboard access', async ( { page } ) => {
 	await login( page );
 

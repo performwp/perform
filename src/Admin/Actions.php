@@ -21,6 +21,7 @@ use Perform\Admin\Settings\RuntimeDiagnostics;
 use Perform\Admin\Settings\SiteInventory;
 use Perform\Admin\Settings\SystemHealth;
 use Perform\Admin\Settings\CronPressureAudit;
+use Perform\Admin\Settings\PluginImpactReport;
 
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -80,6 +81,7 @@ class Actions {
 					'adminMonitorNonce'    => wp_create_nonce( 'perform_clear_admin_performance_monitor' ),
 					'adminAssetAudit'      => AdminAssetAudit::get_snapshot(),
 					'adminAssetAuditNonce' => wp_create_nonce( 'perform_clear_admin_asset_audit' ),
+					'pluginImpact'         => PluginImpactReport::get_data(),
 					'databaseAuditNonce'   => wp_create_nonce( 'perform_refresh_autoload_options_audit' ),
 					'siteInventory'        => SiteInventory::get_cached_snapshot(),
 					'siteInventoryUrl'     => esc_url_raw( rest_url( 'perform/v1/site-inventory' ) ),
