@@ -149,6 +149,34 @@ test( 'Site Inventory refresh is private, bounded, and responsive', async ( { pa
 	expect( hasHorizontalOverflow ).toBeFalsy();
 } );
 
+test( 'Scheduled-task pressure is bounded, private, resettable, and responsive', async ( { page } ) => {
+	await login( page );
+	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=scheduled-tasks' );
+
+	await expect( page.getByRole( 'tab', { name: 'Scheduled Tasks' } ) ).toHaveAttribute( 'aria-selected', 'true' );
+	await expect( page.getByText( 'Read-only and bounded' ) ).toBeVisible();
+	await expect( page.getByText( /excludes hook arguments, payloads, URLs, and user data/ ) ).toBeVisible();
+	await page.getByRole( 'button', { name: /Run check|Refresh check/ } ).click();
+	await expect( page.getByRole( 'status' ) ).toContainText( 'Scheduled-task diagnostic refreshed.' );
+	await expect( page.getByText( 'Most frequent scheduled hooks' ) ).toBeVisible();
+	await expect( page.getByText( /Frequency does not prove that a hook is harmful/ ) ).toBeVisible();
+	await expect( page.getByRole( 'button', { name: 'Save Settings' } ) ).toHaveCount( 0 );
+
+	await mkdir( 'test-results/proof', { recursive: true } );
+	await page.screenshot( { path: 'test-results/proof/cron-pressure-desktop.png', fullPage: true } );
+	await page.setViewportSize( { width: 390, height: 844 } );
+	await page.screenshot( { path: 'test-results/proof/cron-pressure-mobile.png', fullPage: true } );
+	const hasHorizontalOverflow = await page.evaluate(
+		() => document.documentElement.scrollWidth > document.documentElement.clientWidth
+	);
+	expect( hasHorizontalOverflow ).toBeFalsy();
+
+	page.once( 'dialog', ( dialog ) => dialog.accept() );
+	await page.getByRole( 'button', { name: 'Clear snapshot' } ).click();
+	await expect( page.getByRole( 'status' ) ).toContainText( 'Scheduled-task diagnostic cleared.' );
+	await expect( page.getByRole( 'button', { name: 'Run check' } ) ).toBeVisible();
+} );
+
 test( 'Admin Performance Monitor is opt-in, bounded, private, clearable, and responsive', async ( { page } ) => {
 	await login( page );
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=advanced' );
@@ -304,4 +332,13 @@ test( 'lower-privilege users cannot access the legacy or canonical Cache Stats r
 	} );
 	expect( adminMonitorResponse.status() ).toBe( 403 );
 	expect( await adminMonitorResponse.json() ).toMatchObject( { success: false } );
+
+	const cronAuditResponse = await page.request.post( '/wp-admin/admin-ajax.php', {
+		form: {
+			action: 'perform_refresh_cron_pressure_audit',
+			nonce: 'invalid-for-editor-capability-check',
+		},
+	} );
+	expect( cronAuditResponse.status() ).toBe( 403 );
+	expect( await cronAuditResponse.json() ).toMatchObject( { success: false } );
 } );

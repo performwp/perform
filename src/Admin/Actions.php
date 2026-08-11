@@ -19,6 +19,7 @@ use Perform\Admin\Settings\Menu;
 use Perform\Admin\Settings\RuntimeDiagnostics;
 use Perform\Admin\Settings\SiteInventory;
 use Perform\Admin\Settings\SystemHealth;
+use Perform\Admin\Settings\CronPressureAudit;
 
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -80,6 +81,8 @@ class Actions {
 					'siteInventory'      => SiteInventory::get_cached_snapshot(),
 					'siteInventoryUrl'   => esc_url_raw( rest_url( 'perform/v1/site-inventory' ) ),
 					'systemHealth'       => SystemHealth::get_data(),
+					'cronPressure'       => CronPressureAudit::get_cached_snapshot(),
+					'cronPressureNonce'  => wp_create_nonce( 'perform_cron_pressure_audit' ),
 					'restNonce'          => wp_create_nonce( 'wp_rest' ),
 					'sensitiveKeys'      => ClientPayload::get_sensitive_keys(),
 					'maskedSecretValue'  => ClientPayload::MASKED_SECRET,

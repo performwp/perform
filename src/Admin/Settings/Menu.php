@@ -51,11 +51,12 @@ class Menu {
 	 * @return array<string, string>
 	 */
 	public static function get_navigation_tabs() {
-		$tabs                  = Helpers::get_settings_tabs();
-		$tabs['inventory']     = esc_html__( 'Site Inventory', 'perform' );
-		$tabs['database']      = esc_html__( 'Database', 'perform' );
-		$tabs['admin-monitor'] = esc_html__( 'Admin Monitor', 'perform' );
-		$tabs['cache-stats']   = esc_html__( 'Cache Stats', 'perform' );
+		$tabs                    = Helpers::get_settings_tabs();
+		$tabs['inventory']       = esc_html__( 'Site Inventory', 'perform' );
+		$tabs['database']        = esc_html__( 'Database', 'perform' );
+		$tabs['admin-monitor']   = esc_html__( 'Admin Monitor', 'perform' );
+		$tabs['scheduled-tasks'] = esc_html__( 'Scheduled Tasks', 'perform' );
+		$tabs['cache-stats']     = esc_html__( 'Cache Stats', 'perform' );
 
 		return $tabs;
 	}

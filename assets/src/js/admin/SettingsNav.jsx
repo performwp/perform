@@ -5,6 +5,7 @@ import AdminPerformanceMonitorPanel from './AdminPerformanceMonitorPanel';
 import DashboardPanel from './DashboardPanel';
 import DatabaseAuditPanel from './DatabaseAuditPanel';
 import SiteInventoryPanel from './SiteInventoryPanel';
+import CronPressurePanel from './CronPressurePanel';
 import SettingsFieldRow from './settings/SettingsFieldRow';
 
 const SETTINGS = window.performwpSettings || {};
@@ -18,6 +19,7 @@ const SettingsNav = ( {
 	siteInventory,
 	systemHealth,
 	adminPerformance,
+	cronPressure,
 	activeTab: propActiveTab,
 	onTabChange: propOnTabChange,
 	fieldValues: propFieldValues,
@@ -126,6 +128,8 @@ const SettingsNav = ( {
 								onNavigate={ onTabChange }
 							/>
 						);
+					} else if ( 'scheduled-tasks' === selectedTabName ) {
+						content = <CronPressurePanel initialAudit={ cronPressure } />;
 					} else if ( 'cache-stats' === selectedTabName ) {
 						content = <CacheStatsPanel />;
 					}
