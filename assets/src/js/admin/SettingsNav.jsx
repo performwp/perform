@@ -8,6 +8,7 @@ import SiteInventoryPanel from './SiteInventoryPanel';
 import CronPressurePanel from './CronPressurePanel';
 import AdminAssetAuditPanel from './AdminAssetAuditPanel';
 import PluginImpactPanel from './PluginImpactPanel';
+import ActionSchedulerPanel from './ActionSchedulerPanel';
 import SettingsFieldRow from './settings/SettingsFieldRow';
 
 const SETTINGS = window.performwpSettings || {};
@@ -24,6 +25,7 @@ const SettingsNav = ( {
 	cronPressure,
 	adminAssetAudit,
 	pluginImpact,
+	actionScheduler,
 	activeTab: propActiveTab,
 	onTabChange: propOnTabChange,
 	fieldValues: propFieldValues,
@@ -140,6 +142,8 @@ const SettingsNav = ( {
 						);
 					} else if ( 'plugin-impact' === selectedTabName ) {
 						content = <PluginImpactPanel report={ pluginImpact } onNavigate={ onTabChange } />;
+					} else if ( 'action-scheduler' === selectedTabName ) {
+						content = <ActionSchedulerPanel initialAudit={ actionScheduler } />;
 					} else if ( 'cache-stats' === selectedTabName ) {
 						content = <CacheStatsPanel />;
 					}

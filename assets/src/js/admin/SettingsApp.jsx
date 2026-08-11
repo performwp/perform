@@ -17,6 +17,7 @@ const ADMIN_PERFORMANCE = SETTINGS.adminPerformance || {};
 const CRON_PRESSURE = SETTINGS.cronPressure || {};
 const ADMIN_ASSET_AUDIT = SETTINGS.adminAssetAudit || {};
 const PLUGIN_IMPACT = SETTINGS.pluginImpact || {};
+const ACTION_SCHEDULER = SETTINGS.actionScheduler || {};
 const TAB_KEYS = [ 'dashboard', ...Object.keys( SETTINGS_TABS ) ];
 
 const normalizeTab = ( tab ) => ( TAB_KEYS.includes( tab ) ? tab : 'dashboard' );
@@ -187,6 +188,7 @@ const SettingsApp = () => {
 				cronPressure={ CRON_PRESSURE }
 				adminAssetAudit={ ADMIN_ASSET_AUDIT }
 				pluginImpact={ PLUGIN_IMPACT }
+				actionScheduler={ ACTION_SCHEDULER }
 				activeTab={ activeTab }
 				onTabChange={ handleTabChange }
 				fieldValues={ fieldValues }
@@ -202,6 +204,7 @@ const SettingsApp = () => {
 				'scheduled-tasks',
 				'admin-assets',
 				'plugin-impact',
+				'action-scheduler',
 			].includes( activeTab ) && (
 				<Footer dirty={ isDirty } saving={ saving } message={ message } onSave={ handleSave } />
 			) }

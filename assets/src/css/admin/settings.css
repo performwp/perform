@@ -2095,6 +2095,172 @@
 	}
 }
 
+.perform-action-scheduler {
+	display: grid;
+	gap: 24px;
+	max-width: 1080px;
+	margin: 0 auto;
+}
+
+.perform-action-scheduler__heading,
+.perform-action-scheduler__actions,
+.perform-action-scheduler__storage,
+.perform-action-scheduler__grids {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.perform-action-scheduler__heading h2 {
+	margin: 4px 0 8px;
+	font-size: 28px;
+	line-height: 1.2;
+}
+
+.perform-action-scheduler__heading p,
+.perform-action-scheduler__privacy p,
+.perform-action-scheduler__guidance,
+.perform-action-scheduler__limitation {
+	margin: 0;
+	color: var(--perform-color-text-muted);
+	line-height: 1.6;
+}
+
+.perform-action-scheduler__limitation {
+	margin: -12px 0 0;
+	font-size: 12px;
+}
+
+.perform-action-scheduler__actions {
+	flex: 0 0 auto;
+}
+
+.perform-action-scheduler__privacy,
+.perform-action-scheduler__guidance {
+	padding: 18px 20px;
+	border-left: 4px solid var(--perform-color-primary);
+	background: var(--perform-color-surface-subtle);
+}
+
+.perform-action-scheduler__privacy strong {
+	display: block;
+	margin-bottom: 6px;
+}
+
+.perform-action-scheduler__message {
+	padding: 12px 16px;
+	border: 1px solid var(--perform-color-border);
+	background: var(--perform-color-surface);
+}
+
+.perform-action-scheduler__message.is-success {
+	border-color: #68a76f;
+}
+
+.perform-action-scheduler__message.is-error {
+	border-color: #d63638;
+}
+
+.perform-action-scheduler__summary {
+	display: grid;
+	grid-template-columns: repeat(5, minmax(0, 1fr));
+	border-top: 1px solid var(--perform-color-border);
+	border-bottom: 1px solid var(--perform-color-border);
+}
+
+.perform-action-scheduler__summary > div,
+.perform-action-scheduler__storage > div {
+	display: grid;
+	gap: 6px;
+	min-width: 0;
+	padding: 18px;
+	border-right: 1px solid var(--perform-color-border);
+}
+
+.perform-action-scheduler__summary > div:last-child,
+.perform-action-scheduler__storage > div:last-child {
+	border-right: 0;
+}
+
+.perform-action-scheduler__summary span,
+.perform-action-scheduler__storage span {
+	color: var(--perform-color-text-muted);
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.perform-action-scheduler__summary strong {
+	font-size: 26px;
+}
+
+.perform-action-scheduler__storage {
+	border: 1px solid var(--perform-color-border);
+	border-radius: 8px;
+}
+
+.perform-action-scheduler__storage > div {
+	flex: 1 1 0;
+}
+
+.perform-action-scheduler__grids > .components-card {
+	flex: 1 1 0;
+	min-width: 0;
+}
+
+.perform-action-scheduler__table-wrap {
+	overflow-x: auto;
+}
+
+.perform-action-scheduler__table-wrap table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.perform-action-scheduler__table-wrap th,
+.perform-action-scheduler__table-wrap td {
+	padding: 12px;
+	border-bottom: 1px solid var(--perform-color-border);
+	text-align: left;
+}
+
+@media (max-width: 782px) {
+
+	.perform-action-scheduler__heading,
+	.perform-action-scheduler__actions,
+	.perform-action-scheduler__storage,
+	.perform-action-scheduler__grids {
+		flex-direction: column;
+	}
+
+	.perform-action-scheduler__actions,
+	.perform-action-scheduler__actions .components-button,
+	.perform-action-scheduler__grids > .components-card,
+	.perform-action-scheduler__storage > div {
+		width: 100%;
+	}
+
+	.perform-action-scheduler__actions .components-button {
+		justify-content: center;
+	}
+
+	.perform-action-scheduler__summary {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.perform-action-scheduler__summary > div,
+	.perform-action-scheduler__storage > div {
+		box-sizing: border-box;
+		border-right: 0;
+		border-bottom: 1px solid var(--perform-color-border);
+	}
+
+	.perform-action-scheduler__summary > div:last-child,
+	.perform-action-scheduler__storage > div:last-child {
+		border-bottom: 0;
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
 
 	.perform-settings-page *,

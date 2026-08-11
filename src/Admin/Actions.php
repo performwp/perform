@@ -22,6 +22,7 @@ use Perform\Admin\Settings\SiteInventory;
 use Perform\Admin\Settings\SystemHealth;
 use Perform\Admin\Settings\CronPressureAudit;
 use Perform\Admin\Settings\PluginImpactReport;
+use Perform\Admin\Settings\ActionSchedulerAudit;
 
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -88,6 +89,8 @@ class Actions {
 					'systemHealth'         => SystemHealth::get_data(),
 					'cronPressure'         => CronPressureAudit::get_cached_snapshot(),
 					'cronPressureNonce'    => wp_create_nonce( 'perform_cron_pressure_audit' ),
+					'actionScheduler'      => ActionSchedulerAudit::get_cached_snapshot(),
+					'actionSchedulerNonce' => wp_create_nonce( 'perform_action_scheduler_audit' ),
 					'restNonce'            => wp_create_nonce( 'wp_rest' ),
 					'sensitiveKeys'        => ClientPayload::get_sensitive_keys(),
 					'maskedSecretValue'    => ClientPayload::MASKED_SECRET,

@@ -57,6 +57,7 @@ final class Plugin {
 		new Settings\AdminPerformanceMonitorController();
 		new Settings\AdminAssetAuditController();
 		new Settings\CronPressureAuditController();
+		new Settings\ActionSchedulerAuditController();
 		new Admin\Actions();
 		new Admin\Filters();
 
