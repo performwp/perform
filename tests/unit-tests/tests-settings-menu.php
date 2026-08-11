@@ -41,6 +41,7 @@ final class Tests_Settings_Menu extends TestCase {
 	public function test_cache_stats_is_a_known_canonical_tab_and_unknown_tabs_fall_back() {
 		$this->assertArrayHasKey( 'cache-stats', Menu::get_navigation_tabs() );
 		$this->assertArrayHasKey( 'database', Menu::get_navigation_tabs() );
+		$this->assertArrayHasKey( 'inventory', Menu::get_navigation_tabs() );
 
 		$_GET['tab'] = 'cache-stats';
 		$this->assertSame( 'cache-stats', Menu::get_requested_tab() );

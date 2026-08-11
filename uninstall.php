@@ -31,6 +31,7 @@ function perform_handle_plugin_uninstall() {
 		'perform_cache_preload_queue',
 		'perform_cache_stats',
 		'perform_autoload_options_audit',
+		'perform_site_inventory',
 	];
 
 	$remove_data_on_uninstall = false;

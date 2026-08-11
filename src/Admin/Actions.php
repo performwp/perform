@@ -16,6 +16,7 @@ use Perform\Admin\Settings\AutoloadOptionsAudit;
 use Perform\Admin\Settings\DashboardPayload;
 use Perform\Admin\Settings\Menu;
 use Perform\Admin\Settings\RuntimeDiagnostics;
+use Perform\Admin\Settings\SiteInventory;
 
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -72,6 +73,9 @@ class Actions {
 					'diagnostics'        => RuntimeDiagnostics::get_results(),
 					'databaseAudit'      => AutoloadOptionsAudit::get_cached_snapshot(),
 					'databaseAuditNonce' => wp_create_nonce( 'perform_refresh_autoload_options_audit' ),
+					'siteInventory'      => SiteInventory::get_cached_snapshot(),
+					'siteInventoryUrl'   => esc_url_raw( rest_url( 'perform/v1/site-inventory' ) ),
+					'restNonce'          => wp_create_nonce( 'wp_rest' ),
 					'sensitiveKeys'      => ClientPayload::get_sensitive_keys(),
 					'maskedSecretValue'  => ClientPayload::MASKED_SECRET,
 					'tabs'               => Menu::get_navigation_tabs(),
