@@ -54,6 +54,7 @@ final class Plugin {
 		new Settings\Menu();
 		new Settings\AutoloadOptionsAuditController();
 		new Settings\SiteInventoryController();
+		new Settings\AdminPerformanceMonitorController();
 		new Admin\Actions();
 		new Admin\Filters();
 
@@ -66,6 +67,7 @@ final class Plugin {
 		// supporting new modules implementing ModuleInterface.
 		$settings = Helpers::get_settings();
 		$settings = is_array( $settings ) ? $settings : [];
+		new Settings\AdminPerformanceMonitor( $settings );
 
 		$loader = new Modules\Loader( $settings );
 

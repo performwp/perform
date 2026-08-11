@@ -7,7 +7,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language-Team: PerformWP <hello@performwp.com>\n"
-"POT-Creation-Date: 2026-08-11 03:29+0000\n"
+"POT-Creation-Date: 2026-08-11 03:45+0000\n"
 "Report-Msgid-Bugs-To: https://github.com/performwp/perform/issues/new\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
@@ -16,63 +16,63 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/Admin/Actions.php:89
+#: src/Admin/Actions.php:92
 msgid "Activity actions"
 msgstr ""
 
-#: src/Admin/Actions.php:90
+#: src/Admin/Actions.php:93
 msgid "Export cache activity for review or clear the collected metrics."
 msgstr ""
 
-#: src/Admin/Actions.php:91
+#: src/Admin/Actions.php:94
 msgid "Export CSV"
 msgstr ""
 
-#: src/Admin/Actions.php:92
+#: src/Admin/Actions.php:95
 msgid "Exporting…"
 msgstr ""
 
-#: src/Admin/Actions.php:93
+#: src/Admin/Actions.php:96
 msgid "Cache activity exported."
 msgstr ""
 
-#: src/Admin/Actions.php:94
+#: src/Admin/Actions.php:97
 msgid "Cache activity could not be exported."
 msgstr ""
 
-#: src/Admin/Actions.php:95
+#: src/Admin/Actions.php:98
 msgid "Clear activity"
 msgstr ""
 
-#: src/Admin/Actions.php:96
+#: src/Admin/Actions.php:99
 msgid "Clearing…"
 msgstr ""
 
-#: src/Admin/Actions.php:97
+#: src/Admin/Actions.php:100
 msgid "Clear all collected cache activity? This does not clear cached pages."
 msgstr ""
 
-#: src/Admin/Actions.php:98, src/Modules/Cache/PageCache.php:828, src/Modules/Cache/PageCache.php:1090
+#: src/Admin/Actions.php:101, src/Modules/Cache/PageCache.php:828, src/Modules/Cache/PageCache.php:1090
 msgid "Cache activity cleared."
 msgstr ""
 
-#: src/Admin/Actions.php:99
+#: src/Admin/Actions.php:102
 msgid "Cache activity could not be cleared."
 msgstr ""
 
-#: src/Admin/Actions.php:128
+#: src/Admin/Actions.php:131
 msgid "Close Assets Manager"
 msgstr ""
 
-#: src/Admin/Actions.php:125, src/Modules/Assets/AssetsManager.php:274
+#: src/Admin/Actions.php:128, src/Modules/Assets/AssetsManager.php:274
 msgid "Assets Manager"
 msgstr ""
 
-#: src/Admin/Actions.php:135, src/Admin/Settings/Menu.php:40, src/Admin/Settings/Menu.php:41, src/Modules/Assets/AssetsManager.php:254
+#: src/Admin/Actions.php:138, src/Admin/Settings/Menu.php:40, src/Admin/Settings/Menu.php:41, src/Modules/Assets/AssetsManager.php:254
 msgid "Perform"
 msgstr ""
 
-#: src/Admin/Actions.php:155
+#: src/Admin/Actions.php:158
 msgid "Support Forum"
 msgstr ""
 
@@ -649,35 +649,55 @@ msgid "Settings for advanced configurations."
 msgstr ""
 
 #: src/Includes/Helpers.php:953
-msgid "Remove Data on Uninstall"
+msgid "Admin Performance Monitor"
 msgstr ""
 
 #: src/Includes/Helpers.php:954
+msgid "Collect bounded, private aggregate timing, memory, and query-count diagnostics for WordPress admin requests."
+msgstr ""
+
+#: src/Includes/Helpers.php:959
+msgid "Remove Data on Uninstall"
+msgstr ""
+
+#: src/Includes/Helpers.php:960
 msgid "Enabling this will remove all plugin data upon uninstallation."
 msgstr ""
 
-#: src/Includes/Helpers.php:967
+#: src/Includes/Helpers.php:973
 msgid "WooCommerce Settings"
 msgstr ""
 
-#: src/Includes/Helpers.php:968
+#: src/Includes/Helpers.php:974
 msgid "Settings specific to WooCommerce."
 msgstr ""
 
-#: src/Includes/Helpers.php:973
+#: src/Includes/Helpers.php:979
 msgid "Enable WooCommerce Manager"
 msgstr ""
 
-#: src/Includes/Helpers.php:974
+#: src/Includes/Helpers.php:980
 msgid "Enabling this will allow you to manage WooCommerce specific settings."
 msgstr ""
 
-#: src/Includes/Helpers.php:985
+#: src/Includes/Helpers.php:991
 msgid "Enable WooCommerce Cache"
 msgstr ""
 
-#: src/Includes/Helpers.php:986
+#: src/Includes/Helpers.php:992
 msgid "Enabling this will cache WooCommerce pages for better performance."
+msgstr ""
+
+#: src/Admin/Settings/AdminPerformanceMonitorController.php:31
+msgid "You are not allowed to clear admin performance data."
+msgstr ""
+
+#: src/Admin/Settings/AdminPerformanceMonitorController.php:36, src/Admin/Settings/AutoloadOptionsAuditController.php:48, src/Admin/Settings/Menu.php:123
+msgid "Security check failed."
+msgstr ""
+
+#: src/Admin/Settings/AdminPerformanceMonitorController.php:42
+msgid "Admin performance data cleared."
 msgstr ""
 
 #: src/Admin/Settings/Api.php:48
@@ -708,12 +728,8 @@ msgstr ""
 msgid "Unknown"
 msgstr ""
 
-#: src/Admin/Settings/AutoloadOptionsAuditController.php:38, src/Admin/Settings/Menu.php:111, src/Admin/Settings/SiteInventoryController.php:59
+#: src/Admin/Settings/AutoloadOptionsAuditController.php:38, src/Admin/Settings/Menu.php:112, src/Admin/Settings/SiteInventoryController.php:59
 msgid "Insufficient permissions."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsAuditController.php:48, src/Admin/Settings/Menu.php:122
-msgid "Security check failed."
 msgstr ""
 
 #: src/Admin/Settings/AutoloadOptionsAuditController.php:59
@@ -745,14 +761,18 @@ msgid "Database"
 msgstr ""
 
 #: src/Admin/Settings/Menu.php:57
+msgid "Admin Monitor"
+msgstr ""
+
+#: src/Admin/Settings/Menu.php:58
 msgid "Cache Stats"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:238
+#: src/Admin/Settings/Menu.php:239
 msgid "Unable to save the settings. Please try again."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:230
+#: src/Admin/Settings/Menu.php:231
 msgid "Settings saved successfully."
 msgstr ""
 

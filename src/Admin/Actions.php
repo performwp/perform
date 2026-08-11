@@ -13,6 +13,7 @@ namespace Perform\Admin;
 use Perform\Includes\Helpers;
 use Perform\Admin\Settings\ClientPayload;
 use Perform\Admin\Settings\AutoloadOptionsAudit;
+use Perform\Admin\Settings\AdminPerformanceMonitor;
 use Perform\Admin\Settings\DashboardPayload;
 use Perform\Admin\Settings\Menu;
 use Perform\Admin\Settings\RuntimeDiagnostics;
@@ -72,6 +73,8 @@ class Actions {
 					'dashboard'          => DashboardPayload::get_data(),
 					'diagnostics'        => RuntimeDiagnostics::get_results(),
 					'databaseAudit'      => AutoloadOptionsAudit::get_cached_snapshot(),
+					'adminPerformance'   => AdminPerformanceMonitor::get_snapshot(),
+					'adminMonitorNonce'  => wp_create_nonce( 'perform_clear_admin_performance_monitor' ),
 					'databaseAuditNonce' => wp_create_nonce( 'perform_refresh_autoload_options_audit' ),
 					'siteInventory'      => SiteInventory::get_cached_snapshot(),
 					'siteInventoryUrl'   => esc_url_raw( rest_url( 'perform/v1/site-inventory' ) ),

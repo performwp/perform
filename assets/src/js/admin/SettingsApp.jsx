@@ -12,6 +12,7 @@ const INITIAL_DIAGNOSTICS = SETTINGS.diagnostics || {};
 const DASHBOARD = SETTINGS.dashboard || {};
 const DATABASE_AUDIT = SETTINGS.databaseAudit || {};
 const SITE_INVENTORY = SETTINGS.siteInventory || {};
+const ADMIN_PERFORMANCE = SETTINGS.adminPerformance || {};
 const TAB_KEYS = [ 'dashboard', ...Object.keys( SETTINGS_TABS ) ];
 
 const normalizeTab = ( tab ) => ( TAB_KEYS.includes( tab ) ? tab : 'dashboard' );
@@ -177,13 +178,14 @@ const SettingsApp = () => {
 				diagnostics={ diagnostics }
 				databaseAudit={ DATABASE_AUDIT }
 				siteInventory={ SITE_INVENTORY }
+				adminPerformance={ ADMIN_PERFORMANCE }
 				activeTab={ activeTab }
 				onTabChange={ handleTabChange }
 				fieldValues={ fieldValues }
 				onFieldChange={ handleFieldChange }
 			/>
 			{ 'dashboard' === activeTab && <DiagnosticsPanel diagnostics={ diagnostics } /> }
-			{ ! [ 'dashboard', 'cache-stats', 'database', 'inventory' ].includes( activeTab ) && (
+			{ ! [ 'dashboard', 'cache-stats', 'database', 'inventory', 'admin-monitor' ].includes( activeTab ) && (
 				<Footer dirty={ isDirty } saving={ saving } message={ message } onSave={ handleSave } />
 			) }
 		</>

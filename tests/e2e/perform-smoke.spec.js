@@ -145,6 +145,45 @@ test( 'Site Inventory refresh is private, bounded, and responsive', async ( { pa
 	expect( hasHorizontalOverflow ).toBeFalsy();
 } );
 
+test( 'Admin Performance Monitor is opt-in, bounded, private, clearable, and responsive', async ( { page } ) => {
+	await login( page );
+	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=advanced' );
+
+	const monitorToggle = page.getByRole( 'checkbox', { name: 'Admin Performance Monitor' } );
+	if ( ! ( await monitorToggle.isChecked() ) ) {
+		await monitorToggle.check();
+	}
+	await page.getByRole( 'button', { name: 'Save Settings' } ).click();
+	await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
+
+	await page.goto( '/wp-admin/edit.php' );
+	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=admin-monitor' );
+	await expect( page.getByRole( 'tab', { name: 'Admin Monitor' } ) ).toHaveAttribute( 'aria-selected', 'true' );
+	await expect( page.getByText( 'Aggregate-only and per site' ) ).toBeVisible();
+	await expect( page.getByText( /does not store full URLs, query arguments, request payloads/ ) ).toBeVisible();
+	await expect( page.getByText( 'edit-post' ) ).toBeVisible();
+	await expect( page.getByRole( 'button', { name: 'Save Settings' } ) ).toHaveCount( 0 );
+
+	await mkdir( 'test-results/proof', { recursive: true } );
+	await page.screenshot( { path: 'test-results/proof/admin-performance-monitor-desktop.png', fullPage: true } );
+	await page.setViewportSize( { width: 390, height: 844 } );
+	await page.screenshot( { path: 'test-results/proof/admin-performance-monitor-mobile.png', fullPage: true } );
+	const hasHorizontalOverflow = await page.evaluate(
+		() => document.documentElement.scrollWidth > document.documentElement.clientWidth
+	);
+	expect( hasHorizontalOverflow ).toBeFalsy();
+
+	page.once( 'dialog', ( dialog ) => dialog.accept() );
+	await page.getByRole( 'button', { name: 'Clear collected data' } ).click();
+	await expect( page.getByRole( 'status' ) ).toContainText( 'Admin performance data cleared.' );
+	await expect( page.getByText( 'Collecting the first admin contexts' ) ).toBeVisible();
+
+	await page.getByRole( 'tab', { name: 'Advanced' } ).click();
+	await page.getByRole( 'checkbox', { name: 'Admin Performance Monitor' } ).uncheck();
+	await page.getByRole( 'button', { name: 'Save Settings' } ).click();
+	await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
+} );
+
 test( 'Cache Stats tab preserves legacy routing, actions, and keyboard access', async ( { page } ) => {
 	await login( page );
 
@@ -252,4 +291,13 @@ test( 'lower-privilege users cannot access the legacy or canonical Cache Stats r
 		expect( response.status() ).not.toBe( 302 );
 		expect( await response.text() ).toContain( denialMessage );
 	}
+
+	const adminMonitorResponse = await page.request.post( '/wp-admin/admin-ajax.php', {
+		form: {
+			action: 'perform_clear_admin_performance_monitor',
+			nonce: 'invalid-for-editor-capability-check',
+		},
+	} );
+	expect( adminMonitorResponse.status() ).toBe( 403 );
+	expect( await adminMonitorResponse.json() ).toMatchObject( { success: false } );
 } );

@@ -1,6 +1,7 @@
 import { TabPanel } from '@wordpress/components';
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import CacheStatsPanel from './CacheStatsPanel';
+import AdminPerformanceMonitorPanel from './AdminPerformanceMonitorPanel';
 import DashboardPanel from './DashboardPanel';
 import DatabaseAuditPanel from './DatabaseAuditPanel';
 import SiteInventoryPanel from './SiteInventoryPanel';
@@ -15,6 +16,7 @@ const SettingsNav = ( {
 	diagnostics,
 	databaseAudit,
 	siteInventory,
+	adminPerformance,
 	activeTab: propActiveTab,
 	onTabChange: propOnTabChange,
 	fieldValues: propFieldValues,
@@ -114,6 +116,13 @@ const SettingsNav = ( {
 						content = <DatabaseAuditPanel initialAudit={ databaseAudit } />;
 					} else if ( 'inventory' === selectedTabName ) {
 						content = <SiteInventoryPanel initialInventory={ siteInventory } />;
+					} else if ( 'admin-monitor' === selectedTabName ) {
+						content = (
+							<AdminPerformanceMonitorPanel
+								initialSnapshot={ adminPerformance }
+								onNavigate={ onTabChange }
+							/>
+						);
 					} else if ( 'cache-stats' === selectedTabName ) {
 						content = <CacheStatsPanel />;
 					}
