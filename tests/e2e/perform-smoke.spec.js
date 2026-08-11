@@ -177,6 +177,32 @@ test( 'Scheduled-task pressure is bounded, private, resettable, and responsive',
 	await expect( page.getByRole( 'button', { name: 'Run check' } ) ).toBeVisible();
 } );
 
+test( 'Action Scheduler diagnostic handles an absent queue without mutation', async ( { page } ) => {
+	await login( page );
+	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=action-scheduler' );
+
+	await expect( page.getByRole( 'tab', { name: 'Action Scheduler' } ) ).toHaveAttribute( 'aria-selected', 'true' );
+	await expect( page.getByText( 'Read-only and private' ) ).toBeVisible();
+	await expect( page.getByText( /never runs, cancels, or deletes queued work/ ) ).toBeVisible();
+	await page.getByRole( 'button', { name: /Run check|Refresh check/ } ).click();
+	await expect( page.getByRole( 'status' ) ).toContainText( 'Action Scheduler diagnostic refreshed.' );
+	await expect( page.getByRole( 'heading', { name: 'Action Scheduler is not available' } ) ).toBeVisible();
+	await expect( page.getByRole( 'button', { name: 'Save Settings' } ) ).toHaveCount( 0 );
+
+	await mkdir( 'test-results/proof', { recursive: true } );
+	await page.screenshot( { path: 'test-results/proof/action-scheduler-desktop.png', fullPage: true } );
+	await page.setViewportSize( { width: 390, height: 844 } );
+	await page.screenshot( { path: 'test-results/proof/action-scheduler-mobile.png', fullPage: true } );
+	const hasHorizontalOverflow = await page.evaluate(
+		() => document.documentElement.scrollWidth > document.documentElement.clientWidth
+	);
+	expect( hasHorizontalOverflow ).toBeFalsy();
+
+	page.once( 'dialog', ( dialog ) => dialog.accept() );
+	await page.getByRole( 'button', { name: 'Clear snapshot' } ).click();
+	await expect( page.getByRole( 'status' ) ).toContainText( 'Action Scheduler diagnostic cleared.' );
+} );
+
 test( 'Admin Performance Monitor is opt-in, bounded, private, clearable, and responsive', async ( { page } ) => {
 	await login( page );
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=advanced' );
@@ -419,6 +445,15 @@ test( 'lower-privilege users cannot access the legacy or canonical Cache Stats r
 	} );
 	expect( cronAuditResponse.status() ).toBe( 403 );
 	expect( await cronAuditResponse.json() ).toMatchObject( { success: false } );
+
+	const actionSchedulerResponse = await page.request.post( '/wp-admin/admin-ajax.php', {
+		form: {
+			action: 'perform_refresh_action_scheduler_audit',
+			nonce: 'invalid-for-editor-capability-check',
+		},
+	} );
+	expect( actionSchedulerResponse.status() ).toBe( 403 );
+	expect( await actionSchedulerResponse.json() ).toMatchObject( { success: false } );
 
 	const adminAssetResponse = await page.request.post( '/wp-admin/admin-ajax.php', {
 		form: {
