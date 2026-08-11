@@ -343,6 +343,7 @@ test( 'Cache Stats tab preserves legacy routing, actions, and keyboard access', 
 	await login( page );
 
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings' );
+	await page.getByRole( 'tab', { name: 'Diagnostics' } ).click();
 	const cacheStatsTab = page.getByRole( 'tab', { name: 'Cache Stats' } );
 	await cacheStatsTab.focus();
 	await expect( cacheStatsTab ).toBeFocused();
