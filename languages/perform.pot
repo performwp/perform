@@ -7,7 +7,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language-Team: PerformWP <hello@performwp.com>\n"
-"POT-Creation-Date: 2026-08-11 03:45+0000\n"
+"POT-Creation-Date: 2026-08-11 04:07+0000\n"
 "Report-Msgid-Bugs-To: https://github.com/performwp/perform/issues/new\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
@@ -16,63 +16,63 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/Admin/Actions.php:92
+#: src/Admin/Actions.php:94
 msgid "Activity actions"
 msgstr ""
 
-#: src/Admin/Actions.php:93
+#: src/Admin/Actions.php:95
 msgid "Export cache activity for review or clear the collected metrics."
 msgstr ""
 
-#: src/Admin/Actions.php:94
+#: src/Admin/Actions.php:96
 msgid "Export CSV"
 msgstr ""
 
-#: src/Admin/Actions.php:95
+#: src/Admin/Actions.php:97
 msgid "Exporting…"
 msgstr ""
 
-#: src/Admin/Actions.php:96
+#: src/Admin/Actions.php:98
 msgid "Cache activity exported."
 msgstr ""
 
-#: src/Admin/Actions.php:97
+#: src/Admin/Actions.php:99
 msgid "Cache activity could not be exported."
 msgstr ""
 
-#: src/Admin/Actions.php:98
+#: src/Admin/Actions.php:100
 msgid "Clear activity"
 msgstr ""
 
-#: src/Admin/Actions.php:99
+#: src/Admin/Actions.php:101
 msgid "Clearing…"
 msgstr ""
 
-#: src/Admin/Actions.php:100
+#: src/Admin/Actions.php:102
 msgid "Clear all collected cache activity? This does not clear cached pages."
 msgstr ""
 
-#: src/Admin/Actions.php:101, src/Modules/Cache/PageCache.php:828, src/Modules/Cache/PageCache.php:1090
+#: src/Admin/Actions.php:103, src/Modules/Cache/PageCache.php:828, src/Modules/Cache/PageCache.php:1090
 msgid "Cache activity cleared."
 msgstr ""
 
-#: src/Admin/Actions.php:102
+#: src/Admin/Actions.php:104
 msgid "Cache activity could not be cleared."
 msgstr ""
 
-#: src/Admin/Actions.php:131
+#: src/Admin/Actions.php:133
 msgid "Close Assets Manager"
 msgstr ""
 
-#: src/Admin/Actions.php:128, src/Modules/Assets/AssetsManager.php:274
+#: src/Admin/Actions.php:130, src/Modules/Assets/AssetsManager.php:274
 msgid "Assets Manager"
 msgstr ""
 
-#: src/Admin/Actions.php:138, src/Admin/Settings/Menu.php:40, src/Admin/Settings/Menu.php:41, src/Modules/Assets/AssetsManager.php:254
+#: src/Admin/Actions.php:140, src/Admin/Settings/Menu.php:40, src/Admin/Settings/Menu.php:41, src/Modules/Assets/AssetsManager.php:254
 msgid "Perform"
 msgstr ""
 
-#: src/Admin/Actions.php:158
+#: src/Admin/Actions.php:160
 msgid "Support Forum"
 msgstr ""
 
@@ -948,6 +948,166 @@ msgstr ""
 msgid "Site inventory refreshed."
 msgstr ""
 
+#: src/Admin/Settings/SystemHealth.php:107
+msgid "This runtime is newer than Perform’s current automated PHP test matrix; verify compatibility before rollout."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:105
+msgid "Review a supported PHP upgrade with your host before changing production."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:103
+msgid "This runtime matches Perform’s actively tested PHP range."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:110
+msgid "PHP version"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:122, src/Admin/Settings/SystemHealth.php:130
+msgid "WordPress memory limit"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:122, src/Admin/Settings/SystemHealth.php:171, src/Admin/Settings/SystemHealth.php:216, src/Admin/Settings/SystemHealth.php:247, src/Admin/Settings/SystemHealth.php:257
+msgid "Unavailable"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:122
+msgid "Confirm the effective WordPress memory limit with your host."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:127
+msgid "The configured limit provides reasonable headroom for typical administration."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:128
+msgid "Review memory pressure and hosting limits before increasing this value."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:141, src/Admin/Settings/SystemHealth.php:149
+msgid "Maximum execution time"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:141
+msgid "Unlimited"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:141
+msgid "PHP does not impose a request execution-time limit."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:146
+msgid "The limit supports ordinary WordPress maintenance tasks."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:147
+msgid "Short limits can interrupt imports, updates, or maintenance; review with your host."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:149
+msgid "%d seconds"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:171
+msgid "The runtime did not expose OPcache status."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:177, src/Admin/Settings/SystemHealth.php:284
+msgid "Enabled"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:177, src/Modules/Assets/AssetsManager.php:242
+msgid "Disabled"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:179
+msgid "Compiled PHP code is cached by the runtime."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:179
+msgid "Ask your host whether OPcache can be enabled safely."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:193
+msgid "Persistent object cache"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:194
+msgid "Detected"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:194
+msgid "Not detected"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:196
+msgid "WordPress is using an external object cache."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:196
+msgid "Busy or database-heavy sites may benefit; confirm support with your host first."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:215
+msgid "Database version"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:218
+msgid "Version detected locally; compatibility still depends on the database family and host."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:218
+msgid "Confirm the database version with your host."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:247
+msgid "HTTP and server"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:247
+msgid "This is a local runtime hint, not a public response-performance test."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:257, src/Admin/Settings/SystemHealth.php:266
+msgid "Uploads directory"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:257
+msgid "WordPress did not expose upload-directory status."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:267
+msgid "Writable"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:267
+msgid "Needs review"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:269
+msgid "WordPress reports that media storage is writable."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:269
+msgid "Review media storage permissions with your host; the filesystem path is intentionally hidden."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:283
+msgid "Debug logging"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:284
+msgid "Not enabled"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:286
+msgid "Confirm logging is intentional and monitor its size on production sites."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:286
+msgid "Perform does not expose or read any debug-log path or contents."
+msgstr ""
+
 #: src/Modules/Assets/AssetsManager.php:233
 msgid "Search detected assets"
 msgstr ""
@@ -982,10 +1142,6 @@ msgstr ""
 
 #: src/Modules/Assets/AssetsManager.php:241, src/Modules/Assets/AssetsManager.php:292
 msgid "CSS"
-msgstr ""
-
-#: src/Modules/Assets/AssetsManager.php:242
-msgid "Disabled"
 msgstr ""
 
 #: src/Modules/Assets/AssetsManager.php:256

@@ -16,6 +16,7 @@ const SettingsNav = ( {
 	diagnostics,
 	databaseAudit,
 	siteInventory,
+	systemHealth,
 	adminPerformance,
 	activeTab: propActiveTab,
 	onTabChange: propOnTabChange,
@@ -115,7 +116,9 @@ const SettingsNav = ( {
 					} else if ( 'database' === selectedTabName ) {
 						content = <DatabaseAuditPanel initialAudit={ databaseAudit } />;
 					} else if ( 'inventory' === selectedTabName ) {
-						content = <SiteInventoryPanel initialInventory={ siteInventory } />;
+						content = (
+							<SiteInventoryPanel initialInventory={ siteInventory } systemHealth={ systemHealth } />
+						);
 					} else if ( 'admin-monitor' === selectedTabName ) {
 						content = (
 							<AdminPerformanceMonitorPanel

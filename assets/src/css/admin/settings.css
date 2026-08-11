@@ -926,6 +926,90 @@
 	color: var(--perform-color-warning);
 }
 
+.perform-system-health__summary,
+.perform-system-health__status {
+	display: inline-flex;
+	align-items: center;
+	min-height: 26px;
+	padding: 2px 9px;
+	border: 1px solid #9ecda8;
+	border-radius: 14px;
+	background: #f0f8f1;
+	color: var(--perform-color-success);
+	font-size: 11px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.perform-system-health__summary.has-review,
+.perform-system-health__status.is-review {
+	border-color: #dba617;
+	background: #fcf9e8;
+	color: var(--perform-color-warning);
+}
+
+.perform-system-health__status.is-action-recommended {
+	border-color: #d63638;
+	background: #fcf0f1;
+	color: var(--perform-color-danger);
+}
+
+.perform-system-health__status.is-unavailable {
+	border-color: var(--perform-color-border);
+	background: #f6f7f7;
+	color: var(--perform-color-text-muted);
+}
+
+.perform-system-health__grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0 24px;
+}
+
+.perform-system-health__signal {
+	min-width: 0;
+	padding: 16px 0;
+	border-bottom: 1px solid var(--perform-color-border);
+}
+
+.perform-system-health__signal-heading {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.perform-system-health__signal-heading span:first-child,
+.perform-system-health__signal-heading strong {
+	display: block;
+}
+
+.perform-system-health__signal-heading span:first-child {
+	color: var(--perform-color-text-muted);
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.perform-system-health__signal-heading strong {
+	margin-top: 5px;
+	font-size: 16px;
+}
+
+.perform-system-health__signal p {
+	margin: 10px 0 0;
+	color: var(--perform-color-text-muted);
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+.perform-system-health__privacy {
+	margin: 16px 0 0;
+	padding-top: 16px;
+	border-top: 1px solid var(--perform-color-border);
+	color: var(--perform-color-text-muted);
+	font-size: 12px;
+}
+
 .perform-site-inventory__grid {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1349,8 +1433,14 @@
 
 	.perform-site-inventory__summary,
 	.perform-site-inventory__facts,
-	.perform-site-inventory__grid {
+	.perform-site-inventory__grid,
+	.perform-system-health__grid {
 		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.perform-system-health .components-card__header {
+		align-items: flex-start;
+		flex-direction: column;
 	}
 
 	.perform-database-audit__summary > div,

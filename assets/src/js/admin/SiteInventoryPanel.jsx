@@ -1,6 +1,7 @@
 import { Button, Card, CardBody, CardHeader } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import SystemHealthPanel from './SystemHealthPanel';
 
 const SETTINGS = window.performwpSettings || {};
 
@@ -41,7 +42,10 @@ const getFrontPageLabel = ( value ) => {
 	return __( 'Unavailable', 'perform' );
 };
 
-const SiteInventoryPanel = ( { initialInventory = SETTINGS.siteInventory || {} } ) => {
+const SiteInventoryPanel = ( {
+	initialInventory = SETTINGS.siteInventory || {},
+	systemHealth = SETTINGS.systemHealth || {},
+} ) => {
 	const [ inventory, setInventory ] = useState( initialInventory );
 	const [ refreshing, setRefreshing ] = useState( false );
 	const [ message, setMessage ] = useState( null );
@@ -125,6 +129,8 @@ const SiteInventoryPanel = ( { initialInventory = SETTINGS.siteInventory || {} }
 					{ message.text }
 				</div>
 			) }
+
+			<SystemHealthPanel health={ systemHealth } />
 
 			{ ! hasInventory ? (
 				<Card className="perform-site-inventory__empty">

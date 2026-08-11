@@ -123,6 +123,10 @@ test( 'Site Inventory refresh is private, bounded, and responsive', async ( { pa
 	await expect( page.getByRole( 'tab', { name: 'Site Inventory' } ) ).toHaveAttribute( 'aria-selected', 'true' );
 	await expect( page.getByText( 'Private and local' ) ).toBeVisible();
 	await expect( page.getByText( /no post content, option values, private URLs/i ) ).toBeVisible();
+	await expect( page.getByRole( 'heading', { name: 'System health' } ) ).toBeVisible();
+	await expect( page.getByText( 'PHP version' ) ).toBeVisible();
+	await expect( page.getByText( 'Persistent object cache' ) ).toBeVisible();
+	await expect( page.getByText( /Paths, credentials, request data/ ) ).toBeVisible();
 	await expect( page.getByRole( 'button', { name: /Generate inventory|Refresh inventory/ } ) ).toBeVisible();
 	await page.getByRole( 'button', { name: /Generate inventory|Refresh inventory/ } ).click();
 	await expect( page.getByRole( 'status' ) ).toContainText( 'Site inventory refreshed.' );
