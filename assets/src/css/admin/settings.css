@@ -1028,6 +1028,153 @@
 	font-size: 12px;
 }
 
+.perform-admin-monitor {
+	display: grid;
+	gap: 24px;
+}
+
+.perform-admin-monitor > *,
+.perform-admin-monitor .components-card__body {
+	min-width: 0;
+}
+
+.perform-admin-monitor__heading {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 24px;
+	padding-bottom: 24px;
+	border-bottom: 1px solid var(--perform-color-border);
+}
+
+.perform-admin-monitor__heading h2 {
+	margin: 0 0 8px;
+	font-size: 24px;
+	line-height: 1.25;
+}
+
+.perform-admin-monitor__heading p:not(.perform-dashboard-eyebrow) {
+	max-width: 760px;
+	margin: 0;
+	color: var(--perform-color-text-muted);
+	font-size: 14px;
+	line-height: 1.55;
+}
+
+.perform-admin-monitor__privacy,
+.perform-admin-monitor__message {
+	padding: 16px 20px;
+	border-left: 4px solid var(--perform-color-brand);
+	background: #f6f7f7;
+}
+
+.perform-admin-monitor__privacy p {
+	margin: 6px 0 0;
+	color: var(--perform-color-text-muted);
+	line-height: 1.5;
+}
+
+.perform-admin-monitor__privacy .perform-admin-monitor__thresholds {
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.perform-admin-monitor__message.is-error {
+	border-left-color: var(--perform-color-danger);
+}
+
+.perform-admin-monitor__message.is-success {
+	border-left-color: var(--perform-color-success);
+}
+
+.perform-admin-monitor__empty {
+	border-radius: 0;
+	box-shadow: none;
+}
+
+.perform-admin-monitor__empty h3 {
+	margin: 0 0 8px;
+	font-size: 18px;
+}
+
+.perform-admin-monitor__empty p {
+	max-width: 720px;
+	margin: 0;
+	color: var(--perform-color-text-muted);
+}
+
+.perform-admin-monitor__table-wrap {
+	max-width: 100%;
+	overflow-x: auto;
+}
+
+.perform-admin-monitor__guidance {
+	margin-bottom: 16px;
+	padding: 12px 16px;
+	border-left: 4px solid var(--perform-color-warning);
+	background: #fcf9e8;
+}
+
+.perform-admin-monitor__guidance p {
+	margin: 6px 0 0;
+	color: var(--perform-color-text-muted);
+}
+
+.perform-admin-monitor__table {
+	width: 100%;
+	border-collapse: collapse;
+	text-align: left;
+}
+
+.perform-admin-monitor__table th,
+.perform-admin-monitor__table td {
+	padding: 14px 12px;
+	border-bottom: 1px solid var(--perform-color-border);
+	vertical-align: top;
+}
+
+.perform-admin-monitor__table thead th {
+	color: var(--perform-color-text-muted);
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+}
+
+.perform-admin-monitor__table tbody th {
+	font-weight: 600;
+}
+
+.perform-admin-monitor__table code {
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+
+.perform-admin-monitor__table small {
+	display: block;
+	margin-top: 4px;
+	color: var(--perform-color-text-muted);
+	font-weight: 400;
+}
+
+.perform-admin-monitor__state {
+	display: inline-flex;
+	align-items: center;
+	min-height: 24px;
+	padding: 2px 8px;
+	border: 1px solid var(--perform-color-border);
+	border-radius: 12px;
+	background: #f6f7f7;
+	color: var(--perform-color-text-muted);
+	font-size: 11px;
+	font-weight: 600;
+}
+
+.perform-admin-monitor__table tr[data-status='review'] .perform-admin-monitor__state {
+	border-color: #dba617;
+	background: #fcf9e8;
+	color: var(--perform-color-warning);
+}
+
 @media screen and (max-width: 782px) {
 
 	.perform-settings-page {
@@ -1112,6 +1259,78 @@
 
 	.perform-site-inventory__heading {
 		flex-direction: column;
+	}
+
+	.perform-admin-monitor__heading {
+		flex-direction: column;
+	}
+
+	.perform-admin-monitor__heading .components-button {
+		width: 100%;
+		justify-content: center;
+	}
+
+	.perform-admin-monitor__table-wrap {
+		overflow: visible;
+	}
+
+	.perform-admin-monitor__table,
+	.perform-admin-monitor__table tbody,
+	.perform-admin-monitor__table tr,
+	.perform-admin-monitor__table th,
+	.perform-admin-monitor__table td {
+		display: block;
+		width: 100%;
+	}
+
+	.perform-admin-monitor__table thead {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
+
+	.perform-admin-monitor__table tbody tr {
+		margin-top: 16px;
+		border: 1px solid var(--perform-color-border);
+		border-radius: 4px;
+	}
+
+	.perform-admin-monitor__table tbody tr:first-child {
+		margin-top: 0;
+	}
+
+	.perform-admin-monitor__table tbody th,
+	.perform-admin-monitor__table tbody td {
+		box-sizing: border-box;
+		padding: 12px 14px;
+	}
+
+	.perform-admin-monitor__table tbody th {
+		background: #f6f7f7;
+	}
+
+	.perform-admin-monitor__table tbody td {
+		display: grid;
+		grid-template-columns: minmax(92px, 0.45fr) minmax(0, 1fr);
+		gap: 12px;
+	}
+
+	.perform-admin-monitor__table tbody td::before {
+		content: attr(data-label);
+		color: var(--perform-color-text-muted);
+		font-size: 11px;
+		font-weight: 600;
+		text-transform: uppercase;
+	}
+
+	.perform-admin-monitor__table tbody tr > :last-child {
+		border-bottom: 0;
 	}
 
 	.perform-database-audit__heading .components-button {

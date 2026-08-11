@@ -948,6 +948,12 @@ class Helpers {
 					'description' => esc_html__( 'Settings for advanced configurations.', 'perform' ),
 					'fields'      => [
 						[
+							'id'   => 'enable_admin_performance_monitor',
+							'type' => 'toggle',
+							'name' => esc_html__( 'Admin Performance Monitor', 'perform' ),
+							'desc' => esc_html__( 'Collect bounded, private aggregate timing, memory, and query-count diagnostics for WordPress admin requests.', 'perform' ),
+						],
+						[
 							'id'        => 'remove_data_on_uninstall',
 							'type'      => 'toggle',
 							'name'      => esc_html__( 'Remove Data on Uninstall', 'perform' ),
