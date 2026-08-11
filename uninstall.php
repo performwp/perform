@@ -34,6 +34,7 @@ function perform_handle_plugin_uninstall() {
 		'perform_site_inventory',
 		'perform_admin_performance_monitor',
 		'perform_cron_pressure_audit',
+		'perform_admin_asset_audit',
 	];
 
 	$remove_data_on_uninstall = false;

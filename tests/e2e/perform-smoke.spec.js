@@ -60,7 +60,7 @@ test( 'settings save, Assets Manager, and page cache smoke paths work', async ( 
 	await expect( page.getByRole( 'button', { name: 'Save Settings' } ) ).toBeVisible();
 	await expect( page ).toHaveURL( /[?&]tab=general(?:&|$)/ );
 
-	await page.getByRole( 'tab', { name: 'Assets' } ).click();
+	await page.getByRole( 'tab', { name: 'Assets', exact: true } ).click();
 	await page.getByRole( 'checkbox', { name: 'Enable Assets Manager' } ).check();
 	await page.getByRole( 'textbox', { name: 'Preconnect' } ).fill( `//ci-${ Date.now() }.example.com` );
 
@@ -216,6 +216,49 @@ test( 'Admin Performance Monitor is opt-in, bounded, private, clearable, and res
 	await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
 } );
 
+test( 'Admin asset audit is opt-in, bounded, private, clearable, and responsive', async ( { page } ) => {
+	await login( page );
+	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=advanced' );
+
+	const auditToggle = page.getByRole( 'checkbox', { name: 'Admin Asset Audit' } );
+	if ( ! ( await auditToggle.isChecked() ) ) {
+		await auditToggle.check();
+	}
+	await page.getByRole( 'button', { name: 'Save Settings' } ).click();
+	await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
+
+	await page.goto( '/wp-admin/index.php' );
+	await page.goto( '/wp-admin/edit.php' );
+	await page.goto( '/wp-admin/plugins.php' );
+	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=admin-assets' );
+
+	await expect( page.getByRole( 'tab', { name: 'Admin Assets' } ) ).toHaveAttribute( 'aria-selected', 'true' );
+	await expect( page.getByText( 'Inventory only — nothing is disabled' ) ).toBeVisible();
+	await expect( page.getByText( /URLs, query strings, nonces, and user data are not stored/ ) ).toBeVisible();
+	await expect( page.getByText( 'Repeated across admin screens' ) ).toBeVisible();
+	await expect( page.getByText( /not proof that an asset is unnecessary/ ) ).toBeVisible();
+	await expect( page.getByRole( 'button', { name: 'Save Settings' } ) ).toHaveCount( 0 );
+
+	await mkdir( 'test-results/proof', { recursive: true } );
+	await page.screenshot( { path: 'test-results/proof/admin-asset-audit-desktop.png', fullPage: true } );
+	await page.setViewportSize( { width: 390, height: 844 } );
+	await page.screenshot( { path: 'test-results/proof/admin-asset-audit-mobile.png', fullPage: true } );
+	const hasHorizontalOverflow = await page.evaluate(
+		() => document.documentElement.scrollWidth > document.documentElement.clientWidth
+	);
+	expect( hasHorizontalOverflow ).toBeFalsy();
+
+	page.once( 'dialog', ( dialog ) => dialog.accept() );
+	await page.getByRole( 'button', { name: 'Clear audit' } ).click();
+	await expect( page.getByRole( 'status' ) ).toContainText( 'Admin asset audit cleared.' );
+	await expect( page.getByText( 'Visit a few admin screens' ) ).toBeVisible();
+
+	await page.getByRole( 'tab', { name: 'Advanced' } ).click();
+	await page.getByRole( 'checkbox', { name: 'Admin Asset Audit' } ).uncheck();
+	await page.getByRole( 'button', { name: 'Save Settings' } ).click();
+	await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
+} );
+
 test( 'Cache Stats tab preserves legacy routing, actions, and keyboard access', async ( { page } ) => {
 	await login( page );
 
@@ -341,4 +384,13 @@ test( 'lower-privilege users cannot access the legacy or canonical Cache Stats r
 	} );
 	expect( cronAuditResponse.status() ).toBe( 403 );
 	expect( await cronAuditResponse.json() ).toMatchObject( { success: false } );
+
+	const adminAssetResponse = await page.request.post( '/wp-admin/admin-ajax.php', {
+		form: {
+			action: 'perform_clear_admin_asset_audit',
+			nonce: 'invalid-for-editor-capability-check',
+		},
+	} );
+	expect( adminAssetResponse.status() ).toBe( 403 );
+	expect( await adminAssetResponse.json() ).toMatchObject( { success: false } );
 } );

@@ -55,6 +55,7 @@ final class Plugin {
 		new Settings\AutoloadOptionsAuditController();
 		new Settings\SiteInventoryController();
 		new Settings\AdminPerformanceMonitorController();
+		new Settings\AdminAssetAuditController();
 		new Settings\CronPressureAuditController();
 		new Admin\Actions();
 		new Admin\Filters();
@@ -69,6 +70,7 @@ final class Plugin {
 		$settings = Helpers::get_settings();
 		$settings = is_array( $settings ) ? $settings : [];
 		new Settings\AdminPerformanceMonitor( $settings );
+		new Settings\AdminAssetAudit( $settings );
 
 		$loader = new Modules\Loader( $settings );
 
