@@ -1,21 +1,33 @@
 .perform-settings-page {
 	--perform-color-brand: #0046d1;
+	--perform-color-primary: #0046d1;
 	--perform-color-brand-hover: #0037a8;
 	--perform-color-focus: #2271b1;
 	--perform-color-text: #1d2327;
 	--perform-color-text-muted: #50575e;
 	--perform-color-border: #dcdcde;
 	--perform-color-surface: #fff;
+	--perform-color-surface-subtle: #f7f8fa;
+	--perform-color-surface-accent: #f3f7ff;
 	--perform-color-canvas: #f0f0f1;
 	--perform-color-success: #008a20;
 	--perform-color-warning: #996800;
 	--perform-color-danger: #b32d2e;
+	--perform-radius-card: 10px;
+	--perform-shadow-card: 0 1px 2px rgba(16, 24, 40, 0.05), 0 1px 3px rgba(16, 24, 40, 0.08);
 	display: flex;
 	flex-direction: column;
 	min-height: calc(100vh - 32px);
 	margin-left: -20px;
 	color: var(--perform-color-text);
 	background: var(--perform-color-surface);
+}
+
+.perform-settings-page .perform-ui-icon {
+	flex: 0 0 auto;
+	width: 20px;
+	height: 20px;
+	stroke-width: 1.75;
 }
 
 .perform-settings-page *,
@@ -87,8 +99,8 @@
 	min-height: 48px;
 	padding: 0 16px;
 	color: var(--perform-color-text-muted);
-	font-size: 14px;
-	font-weight: 600;
+	font-size: 13px;
+	font-weight: 500;
 	line-height: 1.4;
 }
 
@@ -98,6 +110,7 @@
 
 .perform-settings-tab-panel .components-tab-panel__tabs-item[aria-selected='true'] {
 	color: var(--perform-color-brand);
+	font-weight: 600;
 }
 
 .perform-settings-tab-panel .components-tab-panel__tabs-item[aria-selected='true']::after {
@@ -109,6 +122,48 @@
 	border-radius: 3px 3px 0 0;
 	background: var(--perform-color-brand);
 	content: '';
+}
+
+.perform-diagnostic-tabs {
+	display: flex;
+	gap: 4px;
+	overflow-x: auto;
+	padding: 12px clamp(20px, 3vw, 44px);
+	border-bottom: 1px solid var(--perform-color-border);
+	background: var(--perform-color-surface-subtle);
+	scrollbar-width: thin;
+}
+
+.perform-diagnostic-tabs__item {
+	flex: 0 0 auto;
+	min-height: 36px;
+	padding: 7px 12px;
+	border: 1px solid transparent;
+	border-radius: 7px;
+	color: var(--perform-color-text-muted);
+	background: transparent;
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 1.4;
+	cursor: pointer;
+}
+
+.perform-diagnostic-tabs__item:hover {
+	color: var(--perform-color-text);
+	background: rgba(255, 255, 255, 0.72);
+}
+
+.perform-diagnostic-tabs__item[aria-selected='true'] {
+	border-color: var(--perform-color-border);
+	color: var(--perform-color-brand);
+	background: var(--perform-color-surface);
+	box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06);
+	font-weight: 600;
+}
+
+.perform-diagnostic-tabs__item:focus-visible {
+	outline: 2px solid var(--perform-color-focus);
+	outline-offset: 1px;
 }
 
 .perform-settings-tab-panel .components-tab-panel__tabs-item:focus-visible,
@@ -278,6 +333,8 @@
 
 .perform-savebar .components-button {
 	min-height: 40px;
+	font-size: 13px;
+	font-weight: 600;
 }
 
 .perform-cache-stats-container {
@@ -445,6 +502,19 @@
 	min-width: 0;
 }
 
+.perform-dashboard .components-card,
+.perform-database-audit .components-card,
+.perform-site-inventory .components-card,
+.perform-admin-monitor .components-card,
+.perform-cron-pressure .components-card,
+.perform-admin-assets .components-card,
+.perform-plugin-impact .components-card,
+.perform-action-scheduler .components-card {
+	border: 1px solid var(--perform-color-border);
+	border-radius: var(--perform-radius-card);
+	box-shadow: var(--perform-shadow-card);
+}
+
 .perform-dashboard-overview {
 	display: flex;
 	align-items: flex-start;
@@ -512,26 +582,68 @@
 	background: #f6f7f7;
 }
 
+.perform-dashboard-stats .perform-dashboard-stat {
+	display: grid;
+	grid-template-columns: 42px minmax(0, 1fr);
+	align-items: center;
+	gap: 14px;
+	min-height: 104px;
+	padding: 16px;
+	border: 1px solid var(--perform-color-border);
+	border-left: 1px solid var(--perform-color-border);
+	border-radius: var(--perform-radius-card);
+	background: var(--perform-color-surface);
+	box-shadow: var(--perform-shadow-card);
+}
+
+.perform-dashboard-stat__icon {
+	display: inline-flex !important;
+	align-items: center;
+	justify-content: center;
+	width: 42px;
+	height: 42px;
+	border-radius: 10px;
+	color: var(--perform-color-brand) !important;
+	background: var(--perform-color-surface-accent);
+}
+
+.perform-dashboard-stat__icon[data-status='ready'] {
+	color: var(--perform-color-success) !important;
+	background: #edf8ef;
+}
+
+.perform-dashboard-stat__icon[data-status='review'] {
+	color: var(--perform-color-warning) !important;
+	background: #fff8e5;
+}
+
+.perform-dashboard-stat__content {
+	min-width: 0;
+}
+
 .perform-health-grid {
 	grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .perform-health-card {
-	border-radius: 0;
-	border-left: 4px solid var(--perform-color-border);
-	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+	--perform-health-status: var(--perform-color-text-muted);
+	--perform-health-status-bg: #f1f2f3;
+	border-left: 1px solid var(--perform-color-border) !important;
 }
 
 .perform-health-card[data-status='ready'] {
-	border-left-color: var(--perform-color-success);
+	--perform-health-status: var(--perform-color-success);
+	--perform-health-status-bg: #edf8ef;
 }
 
 .perform-health-card[data-status='review'] {
-	border-left-color: var(--perform-color-warning);
+	--perform-health-status: var(--perform-color-warning);
+	--perform-health-status-bg: #fff8e5;
 }
 
 .perform-health-card[data-status='observe'] {
-	border-left-color: var(--perform-color-brand);
+	--perform-health-status: var(--perform-color-brand);
+	--perform-health-status-bg: var(--perform-color-surface-accent);
 }
 
 .perform-health-card__heading {
@@ -547,18 +659,47 @@
 	line-height: 1.35;
 }
 
-.perform-health-card__heading span {
+.perform-health-card__title {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-width: 0;
+}
+
+.perform-health-card__icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 34px;
+	height: 34px;
+	border-radius: 8px;
+	color: var(--perform-health-status);
+	background: var(--perform-health-status-bg);
+}
+
+.perform-health-card__icon .perform-ui-icon {
+	width: 19px;
+	height: 19px;
+}
+
+.perform-health-card__status {
 	display: inline-flex;
 	flex-shrink: 0;
 	align-items: center;
+	gap: 5px;
 	min-height: 24px;
 	padding: 2px 8px;
 	border: 1px solid var(--perform-color-border);
 	border-radius: 12px;
-	background: #f6f7f7;
-	color: var(--perform-color-text-muted);
+	background: var(--perform-health-status-bg);
+	color: var(--perform-health-status);
 	font-size: 11px;
 	font-weight: 600;
+}
+
+.perform-health-card__status .perform-ui-icon {
+	width: 14px;
+	height: 14px;
 }
 
 .perform-health-card p {
@@ -569,9 +710,18 @@
 }
 
 .perform-dashboard-measurement-note {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
 	padding: 16px 20px;
-	border-left: 4px solid var(--perform-color-brand);
-	background: #f6f7f7;
+	border: 1px solid #c9d9ff;
+	border-radius: var(--perform-radius-card);
+	background: var(--perform-color-surface-accent);
+}
+
+.perform-dashboard-measurement-note > .perform-ui-icon {
+	margin-top: 1px;
+	color: var(--perform-color-brand);
 }
 
 .perform-dashboard-measurement-note p {
@@ -607,6 +757,17 @@
 
 .perform-dashboard-list li {
 	margin-bottom: 8px;
+}
+
+.perform-card-heading {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+}
+
+.perform-card-heading > .perform-ui-icon {
+	margin-top: 1px;
+	color: var(--perform-color-brand);
 }
 
 .perform-database-audit {
@@ -1688,6 +1849,7 @@
 	}
 
 	.perform-settings-tab-panel .components-tab-panel__tabs,
+	.perform-diagnostic-tabs,
 	.perform-settings-content,
 	.perform-savebar {
 		padding-right: 16px;

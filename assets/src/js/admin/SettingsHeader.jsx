@@ -14,7 +14,7 @@ const SettingsHeader = () => (
 				href={ DOCS_URL }
 				target="_blank"
 				rel="noopener noreferrer"
-				icon={ <ArrowTopRightOnSquareIcon aria-hidden="true" /> }
+				icon={ <ArrowTopRightOnSquareIcon className="perform-ui-icon" aria-hidden="true" /> }
 				iconPosition="right"
 			>
 				View Documentation

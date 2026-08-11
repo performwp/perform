@@ -1,6 +1,7 @@
 import { Button, Card, CardBody, CardHeader } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
 
 const SETTINGS = window.performwpSettings || {};
 
@@ -81,7 +82,13 @@ const DatabaseAuditPanel = ( { initialAudit = SETTINGS.databaseAudit || {} } ) =
 						) }
 					</p>
 				</div>
-				<Button variant="primary" onClick={ refreshAudit } disabled={ refreshing } isBusy={ refreshing }>
+				<Button
+					variant="primary"
+					onClick={ refreshAudit }
+					disabled={ refreshing }
+					isBusy={ refreshing }
+					icon={ refreshing ? undefined : <ArrowPathIcon className="perform-ui-icon" aria-hidden="true" /> }
+				>
 					{ refreshLabel }
 				</Button>
 			</div>

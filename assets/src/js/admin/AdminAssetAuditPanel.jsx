@@ -1,6 +1,7 @@
 import { Button, Card, CardBody, CardHeader } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { AdjustmentsHorizontalIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 const SETTINGS = window.performwpSettings || {};
 
@@ -69,11 +70,16 @@ const AdminAssetAuditPanel = ( { initialSnapshot = SETTINGS.adminAssetAudit || {
 						onClick={ clearAudit }
 						disabled={ clearing || ! screens.length }
 						isBusy={ clearing }
+						icon={ clearing ? undefined : <TrashIcon className="perform-ui-icon" aria-hidden="true" /> }
 					>
 						{ clearing ? __( 'Clearing…', 'perform' ) : __( 'Clear audit', 'perform' ) }
 					</Button>
 				) : (
-					<Button variant="primary" onClick={ () => onNavigate?.( 'advanced' ) }>
+					<Button
+						variant="primary"
+						onClick={ () => onNavigate?.( 'advanced' ) }
+						icon={ <AdjustmentsHorizontalIcon className="perform-ui-icon" aria-hidden="true" /> }
+					>
 						{ __( 'Enable in Advanced', 'perform' ) }
 					</Button>
 				) }

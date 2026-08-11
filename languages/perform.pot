@@ -165,7 +165,7 @@ msgid "Remove unnecessary frontend scripts and tags that add extra requests or b
 msgstr ""
 
 #: src/Includes/Helpers.php:347
-msgid "Disable Emoji's"
+msgid "Disable Emojis"
 msgstr ""
 
 #: src/Includes/Helpers.php:348

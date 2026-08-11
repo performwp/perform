@@ -128,7 +128,7 @@ const SettingsFieldRow = ( { field, value, onChange } ) => {
 							className="perform-settings-field__learn-more"
 						>
 							Learn more
-							<ArrowTopRightOnSquareIcon aria-hidden="true" />
+							<ArrowTopRightOnSquareIcon className="perform-ui-icon" aria-hidden="true" />
 						</a>
 					) }
 				</div>
