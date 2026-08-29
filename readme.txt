@@ -3,7 +3,7 @@ Contributors: performwp, mehul0810, ankur0812
 Tags: performance, caching, cdn, assets, optimize
 Donate link: https://www.buymeacoffee.com/mehulgohil
 Requires at least: 4.8
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.4
 Stable tag: 1.7.0
 License: GPLv3
@@ -66,6 +66,9 @@ For help and troubleshooting, use our WordPress.org support forum: https://wordp
 Contributions and bug reports welcome on GitHub: https://github.com/performwp/perform
 
 == Changelog ==
+
+= 1.8.0 =
+- Confirmed compatibility with WordPress 7.1.
 
 = 1.7.0 - 2026-07-26 =
 - Added a dashboard overview for faster at-a-glance site status.
