@@ -25,7 +25,7 @@ describe( 'SettingsNav', () => {
 		await act( async () => {
 			fireEvent.click( screen.getByRole( 'tab', { name: 'Diagnostics' } ) );
 		} );
-		const reportSelector = screen.getByRole( 'combobox', { name: 'Diagnostic report' } );
+		const reportSelector = screen.getByRole( 'combobox', { name: 'Current report' } );
 		expect( reportSelector ).toHaveValue( 'inventory' );
 		expect( screen.getByText( 'Private, local reports for this WordPress site' ) ).toBeInTheDocument();
 		expect( screen.queryByRole( 'tablist', { name: 'Diagnostic tools' } ) ).not.toBeInTheDocument();

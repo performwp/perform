@@ -669,7 +669,7 @@
 }
 
 .perform-health-card[data-status='ready'] {
-	--perform-health-status: var(--perform-color-success);
+	--perform-health-status: #006b1b;
 	--perform-health-status-bg: #edf8ef;
 }
 

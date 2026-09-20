@@ -1,6 +1,7 @@
 import { TabPanel } from '@wordpress/components';
 import { WrenchScrewdriverIcon } from '@heroicons/react/24/outline';
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import CacheStatsPanel from './CacheStatsPanel';
 import AdminPerformanceMonitorPanel from './AdminPerformanceMonitorPanel';
 import DashboardPanel from './DashboardPanel';
@@ -84,7 +85,7 @@ const SettingsNav = ( {
 				if ( 'dashboard' === slug ) {
 					title = 'Dashboard';
 				} else if ( 'diagnostics' === slug ) {
-					title = 'Diagnostics';
+					title = __( 'Diagnostics', 'perform' );
 				}
 				return { name: slug, title };
 			} ),
@@ -187,24 +188,28 @@ const SettingsNav = ( {
 					return (
 						<>
 							{ diagnosticTabKeys.includes( selectedTabName ) && (
-								<section className="perform-diagnostic-switcher" aria-label="Diagnostics workspace">
+								<section
+									className="perform-diagnostic-switcher"
+									aria-label={ __( 'Diagnostics workspace', 'perform' ) }
+								>
 									<div className="perform-diagnostic-switcher__context">
 										<span className="perform-diagnostic-switcher__icon" aria-hidden="true">
 											<WrenchScrewdriverIcon className="perform-ui-icon" />
 										</span>
 										<span>
-											<strong>Diagnostics workspace</strong>
-											<small>Private, local reports for this WordPress site</small>
+											<strong>{ __( 'Diagnostics workspace', 'perform' ) }</strong>
+											<small>
+												{ __( 'Private, local reports for this WordPress site', 'perform' ) }
+											</small>
 										</span>
 									</div>
 									<label
 										className="perform-diagnostic-switcher__control"
 										htmlFor="perform-diagnostic-report"
 									>
-										<span>Current report</span>
+										<span>{ __( 'Current report', 'perform' ) }</span>
 										<select
 											id="perform-diagnostic-report"
-											aria-label="Diagnostic report"
 											value={ selectedTabName }
 											onChange={ ( event ) => onTabChange( event.target.value ) }
 										>
