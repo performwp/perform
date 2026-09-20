@@ -1,5 +1,6 @@
 import { Button, Card, CardBody, CardHeader } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { ArrowRightIcon } from '@heroicons/react/24/outline';
 
 const SETTINGS = window.performwpSettings || {};
 
@@ -8,19 +9,34 @@ const PluginImpactPanel = ( { report = SETTINGS.pluginImpact || {}, onNavigate }
 	const audit = report.adminAssetAudit || {};
 	const inventoryReady = 'ready' === report.status;
 	let primaryAction = (
-		<Button variant="secondary" onClick={ () => onNavigate?.( 'admin-assets' ) }>
+		<Button
+			variant="secondary"
+			onClick={ () => onNavigate?.( 'admin-assets' ) }
+			icon={ <ArrowRightIcon className="perform-ui-icon" aria-hidden="true" /> }
+			iconPosition="right"
+		>
 			{ __( 'View admin asset evidence', 'perform' ) }
 		</Button>
 	);
 	if ( ! inventoryReady ) {
 		primaryAction = (
-			<Button variant="primary" onClick={ () => onNavigate?.( 'inventory' ) }>
+			<Button
+				variant="primary"
+				onClick={ () => onNavigate?.( 'inventory' ) }
+				icon={ <ArrowRightIcon className="perform-ui-icon" aria-hidden="true" /> }
+				iconPosition="right"
+			>
 				{ __( 'Generate site inventory', 'perform' ) }
 			</Button>
 		);
 	} else if ( ! audit.enabled ) {
 		primaryAction = (
-			<Button variant="primary" onClick={ () => onNavigate?.( 'advanced' ) }>
+			<Button
+				variant="primary"
+				onClick={ () => onNavigate?.( 'advanced' ) }
+				icon={ <ArrowRightIcon className="perform-ui-icon" aria-hidden="true" /> }
+				iconPosition="right"
+			>
 				{ __( 'Enable admin asset audit', 'perform' ) }
 			</Button>
 		);

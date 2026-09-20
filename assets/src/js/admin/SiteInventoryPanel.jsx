@@ -1,6 +1,7 @@
 import { Button, Card, CardBody, CardHeader } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import SystemHealthPanel from './SystemHealthPanel';
 
 const SETTINGS = window.performwpSettings || {};
@@ -105,7 +106,13 @@ const SiteInventoryPanel = ( {
 						) }
 					</p>
 				</div>
-				<Button variant="primary" onClick={ refreshInventory } disabled={ refreshing } isBusy={ refreshing }>
+				<Button
+					variant="primary"
+					onClick={ refreshInventory }
+					disabled={ refreshing }
+					isBusy={ refreshing }
+					icon={ refreshing ? undefined : <ArrowPathIcon className="perform-ui-icon" aria-hidden="true" /> }
+				>
 					{ refreshLabel }
 				</Button>
 			</div>

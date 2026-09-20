@@ -1,4 +1,5 @@
 import { TabPanel } from '@wordpress/components';
+import { WrenchScrewdriverIcon } from '@heroicons/react/24/outline';
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import CacheStatsPanel from './CacheStatsPanel';
 import AdminPerformanceMonitorPanel from './AdminPerformanceMonitorPanel';
@@ -12,6 +13,16 @@ import ActionSchedulerPanel from './ActionSchedulerPanel';
 import SettingsFieldRow from './settings/SettingsFieldRow';
 
 const SETTINGS = window.performwpSettings || {};
+const DIAGNOSTIC_TAB_KEYS = [
+	'inventory',
+	'database',
+	'admin-monitor',
+	'admin-assets',
+	'plugin-impact',
+	'scheduled-tasks',
+	'action-scheduler',
+	'cache-stats',
+];
 
 const SettingsNav = ( {
 	tabs: propTabs,
@@ -33,9 +44,23 @@ const SettingsNav = ( {
 } ) => {
 	const tabs = useMemo( () => propTabs || SETTINGS.tabs || {}, [ propTabs ] );
 	const fields = useMemo( () => propFields || SETTINGS.fields || {}, [ propFields ] );
-	const tabKeys = useMemo( () => [ 'dashboard', ...Object.keys( tabs ) ], [ tabs ] );
+	const diagnosticTabKeys = useMemo(
+		() => DIAGNOSTIC_TAB_KEYS.filter( ( slug ) => Object.prototype.hasOwnProperty.call( tabs, slug ) ),
+		[ tabs ]
+	);
+	const tabKeys = useMemo( () => {
+		const keys = [
+			'dashboard',
+			...Object.keys( tabs ).filter( ( slug ) => ! DIAGNOSTIC_TAB_KEYS.includes( slug ) ),
+		];
+		if ( diagnosticTabKeys.length > 0 ) {
+			keys.push( 'diagnostics' );
+		}
+		return keys;
+	}, [ tabs, diagnosticTabKeys ] );
 	const [ internalActiveTab, setInternalActiveTab ] = useState( tabKeys[ 0 ] || '' );
 	const activeTab = propActiveTab ?? internalActiveTab;
+	const activePrimaryTab = diagnosticTabKeys.includes( activeTab ) ? 'diagnostics' : activeTab;
 	const onTabChange = propOnTabChange ?? setInternalActiveTab;
 	const [ internalFieldValues, setInternalFieldValues ] = useState( {} );
 	const fieldValues = propFieldValues ?? internalFieldValues;
@@ -47,18 +72,22 @@ const SettingsNav = ( {
 				[ id ]: value,
 			} ) ) );
 	const tabPanelRef = useRef( null );
-
 	useEffect( () => {
 		const selectedTab = tabPanelRef.current?.querySelector( '[role="tab"][aria-selected="true"]' );
-		selectedTab?.scrollIntoView( { block: 'nearest', inline: 'nearest' } );
+		selectedTab?.scrollIntoView?.( { block: 'nearest', inline: 'nearest' } );
 	}, [ activeTab ] );
 
 	const tabPanelTabs = useMemo(
 		() =>
-			tabKeys.map( ( slug ) => ( {
-				name: slug,
-				title: 'dashboard' === slug ? 'Dashboard' : tabs[ slug ],
-			} ) ),
+			tabKeys.map( ( slug ) => {
+				let title = tabs[ slug ];
+				if ( 'dashboard' === slug ) {
+					title = 'Dashboard';
+				} else if ( 'diagnostics' === slug ) {
+					title = 'Diagnostics';
+				}
+				return { name: slug, title };
+			} ),
 		[ tabKeys, tabs ]
 	);
 
@@ -69,18 +98,25 @@ const SettingsNav = ( {
 	return (
 		<div ref={ tabPanelRef }>
 			<TabPanel
-				key={ activeTab }
+				key={ activePrimaryTab }
 				className="perform-settings-tab-panel"
 				tabs={ tabPanelTabs }
-				initialTabName={ activeTab }
+				initialTabName={ activePrimaryTab }
 				onSelect={ ( tabName ) => {
-					if ( tabName !== activeTab ) {
-						onTabChange( tabName );
+					let nextTab = tabName;
+					if ( 'diagnostics' === tabName ) {
+						nextTab = diagnosticTabKeys.includes( activeTab ) ? activeTab : diagnosticTabKeys[ 0 ];
+					}
+					if ( nextTab && nextTab !== activeTab ) {
+						onTabChange( nextTab );
 					}
 				} }
 			>
 				{ ( selectedTab ) => {
-					const selectedTabName = selectedTab?.name || activeTab;
+					let selectedTabName = selectedTab?.name || activeTab;
+					if ( 'diagnostics' === selectedTab?.name ) {
+						selectedTabName = diagnosticTabKeys.includes( activeTab ) ? activeTab : diagnosticTabKeys[ 0 ];
+					}
 					const sections = fields[ selectedTabName ] || [];
 					let content = (
 						<div className="perform-settings-sections">
@@ -148,7 +184,42 @@ const SettingsNav = ( {
 						content = <CacheStatsPanel />;
 					}
 
-					return <div className="perform-settings-content">{ content }</div>;
+					return (
+						<>
+							{ diagnosticTabKeys.includes( selectedTabName ) && (
+								<section className="perform-diagnostic-switcher" aria-label="Diagnostics workspace">
+									<div className="perform-diagnostic-switcher__context">
+										<span className="perform-diagnostic-switcher__icon" aria-hidden="true">
+											<WrenchScrewdriverIcon className="perform-ui-icon" />
+										</span>
+										<span>
+											<strong>Diagnostics workspace</strong>
+											<small>Private, local reports for this WordPress site</small>
+										</span>
+									</div>
+									<label
+										className="perform-diagnostic-switcher__control"
+										htmlFor="perform-diagnostic-report"
+									>
+										<span>Current report</span>
+										<select
+											id="perform-diagnostic-report"
+											aria-label="Diagnostic report"
+											value={ selectedTabName }
+											onChange={ ( event ) => onTabChange( event.target.value ) }
+										>
+											{ diagnosticTabKeys.map( ( slug ) => (
+												<option key={ slug } value={ slug }>
+													{ tabs[ slug ] }
+												</option>
+											) ) }
+										</select>
+									</label>
+								</section>
+							) }
+							<div className="perform-settings-content">{ content }</div>
+						</>
+					);
 				} }
 			</TabPanel>
 		</div>

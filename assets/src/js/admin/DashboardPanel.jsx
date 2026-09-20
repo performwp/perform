@@ -1,11 +1,43 @@
 import { Button, Card, CardBody, CardHeader } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import {
+	ArrowTopRightOnSquareIcon,
+	BoltIcon,
+	CheckCircleIcon,
+	CircleStackIcon,
+	CodeBracketSquareIcon,
+	CpuChipIcon,
+	DocumentTextIcon,
+	EyeIcon,
+	ExclamationTriangleIcon,
+	InformationCircleIcon,
+	MinusCircleIcon,
+	ServerStackIcon,
+	ShoppingCartIcon,
+	Squares2X2Icon,
+} from '@heroicons/react/24/outline';
 
 const STATUS_LABELS = {
 	ready: __( 'Ready', 'perform' ),
 	review: __( 'Review', 'perform' ),
 	observe: __( 'Observing', 'perform' ),
 	'not-measured': __( 'Not measured', 'perform' ),
+};
+
+const STATUS_ICONS = {
+	ready: CheckCircleIcon,
+	review: ExclamationTriangleIcon,
+	observe: EyeIcon,
+	'not-measured': MinusCircleIcon,
+};
+
+const HEALTH_CARD_ICONS = {
+	inventory: Squares2X2Icon,
+	database: CircleStackIcon,
+	runtime: CpuChipIcon,
+	cache: BoltIcon,
+	server: ServerStackIcon,
+	store: ShoppingCartIcon,
 };
 
 const formatBytes = ( bytes ) => {
@@ -187,28 +219,48 @@ const buildHealthCards = ( { dashboard, diagnostics, databaseAudit, siteInventor
 	return cards;
 };
 
-const HealthCard = ( { card, onAction } ) => (
-	<Card className="perform-health-card" data-status={ card.status }>
-		<CardBody>
-			<div className="perform-health-card__heading">
-				<h3>{ card.title }</h3>
-				<span>{ STATUS_LABELS[ card.status ] || STATUS_LABELS[ 'not-measured' ] }</span>
-			</div>
-			<p>{ card.description }</p>
-			{ card.action && (
-				<Button variant="link" onClick={ () => onAction( card.action ) }>
-					{ card.action.label }
-				</Button>
-			) }
-		</CardBody>
-	</Card>
-);
+const HealthCard = ( { card, onAction } ) => {
+	const CardIcon = HEALTH_CARD_ICONS[ card.id ] || CpuChipIcon;
+	const StatusIcon = STATUS_ICONS[ card.status ] || STATUS_ICONS[ 'not-measured' ];
 
-const StatCard = ( { label, value, description } ) => (
+	return (
+		<Card className="perform-health-card" data-status={ card.status }>
+			<CardBody>
+				<div className="perform-health-card__heading">
+					<div className="perform-health-card__title">
+						<span className="perform-health-card__icon" aria-hidden="true">
+							<CardIcon className="perform-ui-icon" />
+						</span>
+						<h3>{ card.title }</h3>
+					</div>
+					<span className="perform-health-card__status">
+						<StatusIcon className="perform-ui-icon" aria-hidden="true" />
+						{ STATUS_LABELS[ card.status ] || STATUS_LABELS[ 'not-measured' ] }
+					</span>
+				</div>
+				<p>{ card.description }</p>
+				{ card.action && (
+					<Button variant="link" onClick={ () => onAction( card.action ) }>
+						{ card.action.label }
+					</Button>
+				) }
+			</CardBody>
+		</Card>
+	);
+};
+
+const StatCard = ( { label, value, description, icon: Icon, status } ) => (
 	<div className="perform-dashboard-stat">
-		<span>{ label }</span>
-		<strong>{ value }</strong>
-		{ description && <p>{ description }</p> }
+		{ Icon && (
+			<span className="perform-dashboard-stat__icon" data-status={ status } aria-hidden="true">
+				<Icon className="perform-ui-icon" />
+			</span>
+		) }
+		<div className="perform-dashboard-stat__content">
+			<span>{ label }</span>
+			<strong>{ value }</strong>
+			{ description && <p>{ description }</p> }
+		</div>
 	</div>
 );
 
@@ -258,10 +310,24 @@ const DashboardPanel = ( { dashboard, diagnostics, databaseAudit, siteInventory,
 					</p>
 				</div>
 				<div className="perform-dashboard-actions">
-					<Button variant="primary" href={ links.docs || '#' } target="_blank" rel="noopener noreferrer">
+					<Button
+						variant="primary"
+						href={ links.docs || '#' }
+						target="_blank"
+						rel="noopener noreferrer"
+						icon={ <ArrowTopRightOnSquareIcon className="perform-ui-icon" aria-hidden="true" /> }
+						iconPosition="right"
+					>
 						{ __( 'View documentation', 'perform' ) }
 					</Button>
-					<Button variant="secondary" href={ links.support || '#' } target="_blank" rel="noopener noreferrer">
+					<Button
+						variant="secondary"
+						href={ links.support || '#' }
+						target="_blank"
+						rel="noopener noreferrer"
+						icon={ <ArrowTopRightOnSquareIcon className="perform-ui-icon" aria-hidden="true" /> }
+						iconPosition="right"
+					>
 						{ __( 'Get support', 'perform' ) }
 					</Button>
 				</div>
@@ -272,16 +338,22 @@ const DashboardPanel = ( { dashboard, diagnostics, databaseAudit, siteInventory,
 					label={ __( 'Ready', 'perform' ) }
 					value={ readyCount }
 					description={ __( 'Measured local areas', 'perform' ) }
+					icon={ CheckCircleIcon }
+					status="ready"
 				/>
 				<StatCard
 					label={ __( 'Review', 'perform' ) }
 					value={ reviewCount }
 					description={ __( 'Actions worth checking', 'perform' ) }
+					icon={ ExclamationTriangleIcon }
+					status="review"
 				/>
 				<StatCard
 					label={ __( 'Not measured', 'perform' ) }
 					value={ notMeasuredCount }
 					description={ __( 'Diagnostics still available', 'perform' ) }
+					icon={ MinusCircleIcon }
+					status="not-measured"
 				/>
 			</div>
 
@@ -292,23 +364,32 @@ const DashboardPanel = ( { dashboard, diagnostics, databaseAudit, siteInventory,
 			</div>
 
 			<div className="perform-dashboard-measurement-note">
-				<strong>{ __( 'Core Web Vitals need a separate test', 'perform' ) }</strong>
-				<p>
-					{ __(
-						'Local WordPress diagnostics cannot prove real-user LCP, INP, or CLS. Field data and lab testing remain separate evidence sources.',
-						'perform'
-					) }
-				</p>
+				<InformationCircleIcon className="perform-ui-icon" aria-hidden="true" />
+				<div>
+					<strong>{ __( 'Core Web Vitals need a separate test', 'perform' ) }</strong>
+					<p>
+						{ __(
+							'Local WordPress diagnostics cannot prove real-user LCP, INP, or CLS. Field data and lab testing remain separate evidence sources.',
+							'perform'
+						) }
+					</p>
+				</div>
 			</div>
 
 			<div className="perform-dashboard-grid">
 				<Card>
 					<CardHeader>
-						<div>
-							<h3 className="perform-card-title">{ __( 'Cache value observed', 'perform' ) }</h3>
-							<p className="perform-card-description">
-								{ __( 'Measured requests from this site, without estimated time savings.', 'perform' ) }
-							</p>
+						<div className="perform-card-heading">
+							<BoltIcon className="perform-ui-icon" aria-hidden="true" />
+							<div>
+								<h3 className="perform-card-title">{ __( 'Cache value observed', 'perform' ) }</h3>
+								<p className="perform-card-description">
+									{ __(
+										'Measured requests from this site, without estimated time savings.',
+										'perform'
+									) }
+								</p>
+							</div>
 						</div>
 					</CardHeader>
 					<CardBody>
@@ -335,11 +416,17 @@ const DashboardPanel = ( { dashboard, diagnostics, databaseAudit, siteInventory,
 
 				<Card>
 					<CardHeader>
-						<div>
-							<h3 className="perform-card-title">{ __( 'Configured asset coverage', 'perform' ) }</h3>
-							<p className="perform-card-description">
-								{ __( 'Configured rules only; no historical byte savings are claimed.', 'perform' ) }
-							</p>
+						<div className="perform-card-heading">
+							<CodeBracketSquareIcon className="perform-ui-icon" aria-hidden="true" />
+							<div>
+								<h3 className="perform-card-title">{ __( 'Configured asset coverage', 'perform' ) }</h3>
+								<p className="perform-card-description">
+									{ __(
+										'Configured rules only; no historical byte savings are claimed.',
+										'perform'
+									) }
+								</p>
+							</div>
 						</div>
 					</CardHeader>
 					<CardBody>
@@ -370,11 +457,14 @@ const DashboardPanel = ( { dashboard, diagnostics, databaseAudit, siteInventory,
 
 			<Card>
 				<CardHeader>
-					<div>
-						<h3 className="perform-card-title">{ __( 'What this build includes', 'perform' ) }</h3>
-						<p className="perform-card-description">
-							{ __( 'Evidence-bound product updates included in the current code.', 'perform' ) }
-						</p>
+					<div className="perform-card-heading">
+						<DocumentTextIcon className="perform-ui-icon" aria-hidden="true" />
+						<div>
+							<h3 className="perform-card-title">{ __( 'What this build includes', 'perform' ) }</h3>
+							<p className="perform-card-description">
+								{ __( 'Evidence-bound product updates included in the current code.', 'perform' ) }
+							</p>
+						</div>
 					</div>
 				</CardHeader>
 				<CardBody>

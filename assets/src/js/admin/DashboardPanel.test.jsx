@@ -53,7 +53,7 @@ describe( 'DashboardPanel', () => {
 	} );
 
 	it( 'uses measured local evidence for status and avoids an invented score', () => {
-		render(
+		const { container } = render(
 			<DashboardPanel
 				dashboard={ dashboard }
 				diagnostics={ diagnostics }
@@ -71,6 +71,7 @@ describe( 'DashboardPanel', () => {
 		expect( screen.getByText( 'Core Web Vitals need a separate test' ) ).toBeInTheDocument();
 		expect( screen.getByText( /never turns these checks into an unverified speed score/i ) ).toBeInTheDocument();
 		expect( screen.getByText( /Response compression: needs a separate response test/ ) ).toBeInTheDocument();
+		expect( container.querySelectorAll( 'svg.perform-ui-icon[aria-hidden="true"]' ).length ).toBeGreaterThan( 8 );
 	} );
 
 	it( 'shows store-safety guidance only when a store pattern is measured', () => {
