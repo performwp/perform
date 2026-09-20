@@ -5,7 +5,7 @@ Donate link: https://www.buymeacoffee.com/mehulgohil
 Requires at least: 4.8
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.7.0
+Stable tag: 1.8.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -15,7 +15,7 @@ Optimize WordPress performance with asset controls, page caching, CDN rewriting,
 
 Perform helps site owners reduce unnecessary frontend work in WordPress. It combines asset controls, cache features, CDN rewriting, and small cleanup modules in one settings area.
 
-Version 1.7.0 focuses on safer, easier-to-understand controls for real sites: a dashboard overview, dashboard-only runtime diagnostics, page cache exclusion and lifecycle controls, an Assets Manager reset action, consistent settings layouts, and Cache Stats integrated into the main settings tabs.
+Version 1.8.0 adds privacy-conscious diagnostics for overloaded WordPress admin environments, clearer performance guidance, and a calmer settings navigation hierarchy.
 
 Key capabilities:
 
@@ -56,8 +56,8 @@ Menu Cache is designed for classic themes that render menus through `wp_nav_menu
 = Does Assets Manager scan the whole site? =
 Assets Manager scans the current frontend page while you are logged in as an administrator. Use it page by page for safer asset decisions, then test important templates before applying broad changes.
 
-= Are settings preserved when updating to 1.7.0? =
-Yes. Perform 1.7.0 preserves existing public option keys and migrates legacy settings into the current settings shape where needed.
+= Are settings preserved when updating to 1.8.0? =
+Yes. Perform 1.8.0 preserves existing public option keys and migrates legacy settings into the current settings shape where needed.
 
 == Support ==
 
@@ -68,6 +68,12 @@ Contributions and bug reports welcome on GitHub: https://github.com/performwp/pe
 == Changelog ==
 
 = 1.8.0 =
+- Added privacy-conscious site inventory and system-health guidance for performance troubleshooting.
+- Added bounded diagnostics for autoloaded options, object cache status, slow admin screens, scheduled tasks, admin assets, plugin impact, and Action Scheduler queues.
+- Added a performance health dashboard that reports observed evidence without claiming unmeasured savings.
+- Reduced classic Menu Cache key cardinality and hardened purge tracking.
+- Simplified settings navigation by grouping advanced reports under Diagnostics while preserving existing report URLs.
+- Refined dashboard hierarchy, status visuals, responsive layouts, and keyboard navigation.
 - Confirmed compatibility with WordPress 7.1.
 
 = 1.7.0 - 2026-07-26 =
@@ -129,8 +135,8 @@ Contributions and bug reports welcome on GitHub: https://github.com/performwp/pe
 
 == Upgrade Notice ==
 
-= 1.7.0 =
-Review Assets Manager, cache exclusions, Cache Stats, and runtime diagnostics after updating. Cache Stats now appears under Settings > Perform, and its export and clear actions report progress and results.
+= 1.8.0 =
+Review the new diagnostics and dashboard guidance after updating. Perform 1.8.0 keeps existing settings and report URLs while adding read-only evidence for troubleshooting overloaded WordPress admin environments.
 
 == Screenshots ==
 
