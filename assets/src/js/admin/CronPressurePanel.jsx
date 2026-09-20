@@ -1,6 +1,7 @@
 import { Button, Card, CardBody, CardHeader } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { ArrowPathIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 const SETTINGS = window.performwpSettings || {};
 
@@ -87,11 +88,25 @@ const CronPressurePanel = ( { initialAudit = SETTINGS.cronPressure || {} } ) => 
 						onClick={ () => request( 'perform_refresh_cron_pressure_audit' ) }
 						disabled={ Boolean( working ) }
 						isBusy={ 'refresh' === working }
+						icon={
+							'refresh' === working ? undefined : (
+								<ArrowPathIcon className="perform-ui-icon" aria-hidden="true" />
+							)
+						}
 					>
 						{ refreshLabel }
 					</Button>
 					{ hasAudit && (
-						<Button variant="tertiary" onClick={ clearAudit } disabled={ Boolean( working ) }>
+						<Button
+							variant="tertiary"
+							onClick={ clearAudit }
+							disabled={ Boolean( working ) }
+							icon={
+								'clear' === working ? undefined : (
+									<TrashIcon className="perform-ui-icon" aria-hidden="true" />
+								)
+							}
+						>
 							{ 'clear' === working ? __( 'Clearing…', 'perform' ) : __( 'Clear snapshot', 'perform' ) }
 						</Button>
 					) }

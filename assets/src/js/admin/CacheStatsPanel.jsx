@@ -138,7 +138,13 @@ const CacheStatsPanel = ( { onClearSuccess = ( redirect ) => window.location.ass
 					<Button
 						variant="link"
 						className="perform-cache-activity-actions__export"
-						icon={ 'export' === activeAction ? <Spinner /> : <ArrowDownTrayIcon aria-hidden="true" /> }
+						icon={
+							'export' === activeAction ? (
+								<Spinner />
+							) : (
+								<ArrowDownTrayIcon className="perform-ui-icon" aria-hidden="true" />
+							)
+						}
 						disabled={ isBusy }
 						onClick={ exportActivity }
 					>
@@ -149,7 +155,13 @@ const CacheStatsPanel = ( { onClearSuccess = ( redirect ) => window.location.ass
 					<Button
 						variant="secondary"
 						isDestructive
-						icon={ 'clear' === activeAction ? <Spinner /> : <TrashIcon aria-hidden="true" /> }
+						icon={
+							'clear' === activeAction ? (
+								<Spinner />
+							) : (
+								<TrashIcon className="perform-ui-icon" aria-hidden="true" />
+							)
+						}
 						disabled={ isBusy }
 						onClick={ clearActivity }
 					>
