@@ -218,7 +218,7 @@ class Menu {
 					continue;
 				}
 
-				$this->send_invalid_payload_error();
+				$this->send_list_limit_error();
 			}
 
 			switch ( $field_def['type'] ) {
@@ -293,6 +293,20 @@ class Menu {
 			[
 				'type'    => 'error',
 				'message' => esc_html__( 'Settings data is invalid. Please try again.', 'perform' ),
+			]
+		);
+	}
+
+	/**
+	 * Send a generic, actionable error when a submitted list exceeds its limit.
+	 *
+	 * @return void
+	 */
+	private function send_list_limit_error() {
+		wp_send_json_error(
+			[
+				'type'    => 'error',
+				'message' => esc_html__( 'List settings are limited to 100 entries. Please reduce the list and try again.', 'perform' ),
 			]
 		);
 	}

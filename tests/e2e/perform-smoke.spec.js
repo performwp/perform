@@ -90,6 +90,21 @@ test( 'settings save, Assets Manager, and page cache smoke paths work', async ( 
 	await anonymous.dispose();
 } );
 
+test( 'settings rejects oversized bypass lists with a visible actionable error', async ( { page } ) => {
+	await login( page );
+	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=cache' );
+
+	const bypassPaths = Array.from( { length: 300 }, ( _, index ) => `/private-${ index + 1 }` ).join( '\n' );
+	const textarea = page.getByRole( 'textbox', { name: 'Bypass Exact Paths' } );
+	await textarea.fill( bypassPaths );
+	await page.getByRole( 'button', { name: 'Save Settings' } ).click();
+
+	await expect( page.getByRole( 'alert' ) ).toHaveText(
+		'List settings are limited to 100 entries. Please reduce the list and try again.'
+	);
+	await expect( textarea ).toHaveValue( bypassPaths );
+} );
+
 test( 'settings field rows stack beneath their descriptions at narrow widths', async ( { page } ) => {
 	await page.setViewportSize( { width: 390, height: 844 } );
 	await login( page );

@@ -225,7 +225,7 @@ final class Tests_Settings_Menu extends TestCase {
 			),
 		];
 
-		$this->assert_invalid_save();
+		$this->assert_invalid_save( 'List settings are limited to 100 entries. Please reduce the list and try again.' );
 
 		$this->assertSame( [ '/existing' ], $GLOBALS['perform_test_options']['perform_settings']['cache_bypass_exact_paths'] );
 	}
@@ -351,14 +351,14 @@ final class Tests_Settings_Menu extends TestCase {
 		}
 	}
 
-	private function assert_invalid_save() {
+	private function assert_invalid_save( $expected_message = 'Settings data is invalid. Please try again.' ) {
 		try {
 			( new Menu() )->save_settings();
 			$this->fail( 'Expected the JSON response to end the request.' );
 		} catch ( RuntimeException $exception ) {
 			$this->assertSame( 'perform_test_json_response', $exception->getMessage() );
 			$this->assertFalse( $GLOBALS['perform_test_json_response']['success'] );
-			$this->assertSame( 'Settings data is invalid. Please try again.', $GLOBALS['perform_test_json_response']['data']['message'] );
+			$this->assertSame( $expected_message, $GLOBALS['perform_test_json_response']['data']['message'] );
 		}
 	}
 

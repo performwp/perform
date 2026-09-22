@@ -130,9 +130,9 @@ const SettingsApp = () => {
 		}
 	}, [ message, fieldValues ] );
 
-	// Auto-dismiss message after 5 seconds
+	// Keep errors visible until the next save attempt so rejected input is actionable.
 	useEffect( () => {
-		if ( ! message || ! message.text ) {
+		if ( ! message || ! message.text || 'error' === message.type ) {
 			return;
 		}
 		// Clear previous timer
