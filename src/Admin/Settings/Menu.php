@@ -16,6 +16,41 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Menu {
 	/**
+	 * Maximum accepted JSON payload size for a settings save.
+	 *
+	 * @var int
+	 */
+	private const MAX_SETTINGS_PAYLOAD_BYTES = 262144;
+
+	/**
+	 * Maximum number of entries stored in a multiline setting.
+	 *
+	 * @var int
+	 */
+	private const MAX_LIST_ITEMS = 100;
+
+	/**
+	 * Maximum length of a single list entry.
+	 *
+	 * @var int
+	 */
+	private const MAX_LIST_ITEM_LENGTH = 2048;
+
+	/**
+	 * Maximum length of a scalar setting value.
+	 *
+	 * @var int
+	 */
+	private const MAX_SCALAR_LENGTH = 2048;
+
+	/**
+	 * Maximum length of a textarea setting value before normalization.
+	 *
+	 * @var int
+	 */
+	private const MAX_TEXTAREA_LENGTH = 16384;
+
+	/**
 	 * Constructor
 	 *
 	 * @since 2.0.0
@@ -122,17 +157,20 @@ class Menu {
 			);
 		}
 
-		// If the JS sent a JSON payload in `data`, decode it. Otherwise fall back to regular POST fields.
+		// If the JS sent a JSON payload in `data`, require a valid object payload.
 		$posted_data = [];
 		if ( isset( $_POST['data'] ) ) {
-			$raw     = sanitize_textarea_field( wp_unslash( $_POST['data'] ) );
-			$decoded = json_decode( $raw, true );
-			if ( is_array( $decoded ) ) {
-				$posted_data = $decoded;
-			} else {
-				// Fallback: clean the entire $_POST array.
-				$posted_data = Helpers::clean( wp_unslash( $_POST ) );
+			$raw = wp_unslash( $_POST['data'] );
+			if ( ! is_string( $raw ) || strlen( $raw ) > self::MAX_SETTINGS_PAYLOAD_BYTES ) {
+				$this->send_invalid_payload_error();
 			}
+
+			$decoded = json_decode( $raw, true );
+			if ( JSON_ERROR_NONE !== json_last_error() || ! is_array( $decoded ) || array_is_list( $decoded ) ) {
+				$this->send_invalid_payload_error();
+			}
+
+			$posted_data = $decoded;
 		} else {
 			$posted_data = Helpers::clean( wp_unslash( $_POST ) );
 		}
@@ -146,18 +184,28 @@ class Menu {
 				continue;
 			}
 
+			if ( ! is_string( $key ) ) {
+				continue;
+			}
+
 			$field_def = Helpers::find_field_by_id( $key );
+			if ( ! is_array( $field_def ) || empty( $field_def['type'] ) ) {
+				// Only declared fields may be persisted through this endpoint.
+				continue;
+			}
 
 			if ( is_array( $val ) ) {
-				if ( $field_def && isset( $field_def['type'] ) && 'textarea' === $field_def['type'] ) {
-					$raw_val = implode( "\n", array_map( 'strval', $val ) );
-				} else {
-					// If value is an array, recursively clean it for list-type fields.
-					$sanitized_post[ $key ] = Helpers::clean( $val );
+				if ( 'textarea' !== $field_def['type'] || ! $this->is_scalar_list( $val ) ) {
 					continue;
 				}
+
+				$raw_val = implode( "\n", array_map( 'strval', $val ) );
 			} else {
-				$raw_val = is_scalar( $val ) ? wp_unslash( $val ) : '';
+				if ( ! is_scalar( $val ) ) {
+					continue;
+				}
+
+				$raw_val = wp_unslash( $val );
 			}
 
 			// Keep existing secrets when UI sends masked placeholder.
@@ -165,43 +213,38 @@ class Menu {
 				continue;
 			}
 
-			if ( $field_def && isset( $field_def['type'] ) ) {
-				switch ( $field_def['type'] ) {
-					case 'toggle':
-						// Normalize truthy values to 1, else 0.
-						$sanitized_post[ $key ] = ! empty( $raw_val ) && '0' !== $raw_val ? 1 : 0;
-						break;
-					case 'textarea':
-						$sanitized_post[ $key ] = sanitize_textarea_field( $raw_val );
-						break;
-					case 'url':
-						$sanitized_post[ $key ] = esc_url_raw( $raw_val );
-						break;
-					case 'select':
-						// Ensure value is one of allowed options when provided.
-						$opts  = $field_def['options'] ?? [];
-						$is_ok = false;
-						if ( is_array( $opts ) && ! empty( $opts ) ) {
-							// If associative array (value=>label) check keys, otherwise check values.
-							$keys = array_keys( $opts );
-							$vals = array_values( $opts );
-							if ( array_diff_key( $opts, array_values( $opts ) ) ) {
-								$is_ok = in_array( $raw_val, $keys, true );
-							} else {
-								$is_ok = in_array( $raw_val, $vals, true );
-							}
+			switch ( $field_def['type'] ) {
+				case 'toggle':
+					// Normalize truthy values to 1, else 0.
+					$sanitized_post[ $key ] = ! empty( $raw_val ) && '0' !== $raw_val ? 1 : 0;
+					break;
+				case 'textarea':
+					$sanitized_post[ $key ] = sanitize_textarea_field( substr( (string) $raw_val, 0, self::MAX_TEXTAREA_LENGTH ) );
+					break;
+				case 'url':
+					$sanitized_post[ $key ] = esc_url_raw( substr( (string) $raw_val, 0, self::MAX_SCALAR_LENGTH ) );
+					break;
+				case 'select':
+					// Ensure value is one of allowed options when provided.
+					$opts  = $field_def['options'] ?? [];
+					$is_ok = false;
+					if ( is_array( $opts ) && ! empty( $opts ) ) {
+						// If associative array (value=>label) check keys, otherwise check values.
+						$keys = array_keys( $opts );
+						$vals = array_values( $opts );
+						if ( array_diff_key( $opts, array_values( $opts ) ) ) {
+							$is_ok = in_array( $raw_val, $keys, true );
+						} else {
+							$is_ok = in_array( $raw_val, $vals, true );
 						}
-						$sanitized_post[ $key ] = $is_ok ? sanitize_text_field( $raw_val ) : '';
-						break;
-					case 'number':
-						$sanitized_post[ $key ] = is_numeric( $raw_val ) ? intval( $raw_val ) : 0;
-						break;
-					default:
-						$sanitized_post[ $key ] = sanitize_text_field( $raw_val );
-				}
-			} else {
-				// No field definition found; fall back to a safe cleaning.
-				$sanitized_post[ $key ] = is_scalar( $raw_val ) ? sanitize_text_field( $raw_val ) : Helpers::clean( $raw_val );
+					}
+					$sanitized_post[ $key ] = $is_ok ? sanitize_text_field( substr( (string) $raw_val, 0, self::MAX_SCALAR_LENGTH ) ) : '';
+					break;
+				case 'number':
+					$sanitized_post[ $key ] = is_numeric( $raw_val ) ? intval( $raw_val ) : 0;
+					break;
+				default:
+					$sanitized_post[ $key ] = sanitize_text_field( substr( (string) $raw_val, 0, self::MAX_SCALAR_LENGTH ) );
 			}
 		}
 
@@ -240,6 +283,37 @@ class Menu {
 	}
 
 	/**
+	 * Send a generic error for malformed settings data without reflecting input.
+	 *
+	 * @return void
+	 */
+	private function send_invalid_payload_error() {
+		wp_send_json_error(
+			[
+				'type'    => 'error',
+				'message' => esc_html__( 'Settings data is invalid. Please try again.', 'perform' ),
+			]
+		);
+	}
+
+	/**
+	 * Determine whether a submitted list contains only scalar entries.
+	 *
+	 * @param array<mixed> $values Submitted values.
+	 *
+	 * @return bool
+	 */
+	private function is_scalar_list( array $values ) {
+		foreach ( $values as $value ) {
+			if ( ! is_scalar( $value ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
 	 * Normalize a textarea setting to the stored newline-list shape.
 	 *
 	 * @param mixed $value Textarea value.
@@ -258,7 +332,7 @@ class Menu {
 		$lines = array_filter(
 			array_map(
 				static function ( $line ) {
-					return sanitize_text_field( wp_unslash( $line ) );
+					return is_scalar( $line ) ? sanitize_text_field( substr( (string) wp_unslash( $line ), 0, self::MAX_LIST_ITEM_LENGTH ) ) : '';
 				},
 				$lines
 			),
@@ -267,7 +341,7 @@ class Menu {
 			}
 		);
 
-		return array_values( $lines );
+		return array_values( array_slice( $lines, 0, self::MAX_LIST_ITEMS ) );
 	}
 
 	/**
@@ -289,7 +363,7 @@ class Menu {
 		$items = array_filter(
 			array_map(
 				static function ( $item ) {
-					return is_scalar( $item ) ? sanitize_text_field( wp_unslash( $item ) ) : '';
+					return is_scalar( $item ) ? sanitize_text_field( substr( (string) wp_unslash( $item ), 0, self::MAX_LIST_ITEM_LENGTH ) ) : '';
 				},
 				$items
 			),
@@ -305,7 +379,7 @@ class Menu {
 			$items
 		);
 
-		return array_values( array_unique( $items ) );
+		return array_values( array_slice( array_unique( $items ), 0, self::MAX_LIST_ITEMS ) );
 	}
 
 	/**
