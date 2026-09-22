@@ -75,15 +75,9 @@ final class Tests_Settings_Menu extends TestCase {
 
 		$this->assertSame(
 			[
-				'enable_ssl'                   => 1,
-				'preconnect'                   => [ 'https://one.example.com', 'https://two.example.com' ],
-				'custom_keep'                  => 'preserved',
-				'dns_prefetch'                 => '',
-				'cache_bypass_exact_paths'     => [],
-				'cache_bypass_path_prefixes'   => [],
-				'cache_bypass_query_params'    => [],
-				'cache_bypass_cookie_names'    => [],
-				'cache_bypass_cookie_prefixes' => [],
+				'enable_ssl'  => 1,
+				'preconnect'  => [ 'https://one.example.com', 'https://two.example.com' ],
+				'custom_keep' => 'preserved',
 			],
 			$GLOBALS['perform_test_options']['perform_settings']
 		);
@@ -171,21 +165,22 @@ final class Tests_Settings_Menu extends TestCase {
 			),
 		];
 
-		$this->save_settings();
+		$this->assert_invalid_save();
 
 		$this->assertSame( [ 'https://existing.example.com' ], $GLOBALS['perform_test_options']['perform_settings']['preconnect'] );
 	}
 
 	public function test_settings_save_rejects_invalid_select_value() {
-		$GLOBALS['perform_test_nonce_valid'] = true;
-		$_POST                               = [
+		$GLOBALS['perform_test_options']['perform_settings'] = [ 'page_cache_ttl' => '3600' ];
+		$GLOBALS['perform_test_nonce_valid']                 = true;
+		$_POST = [
 			'nonce' => 'valid',
 			'data'  => wp_json_encode( [ 'page_cache_ttl' => 'never' ] ),
 		];
 
-		$this->save_settings();
+		$this->assert_invalid_save();
 
-		$this->assertSame( '', $GLOBALS['perform_test_options']['perform_settings']['page_cache_ttl'] );
+		$this->assertSame( [ 'page_cache_ttl' => '3600' ], $GLOBALS['perform_test_options']['perform_settings'] );
 	}
 
 	public function test_settings_save_rejects_malformed_json_without_reflecting_input() {
@@ -210,8 +205,11 @@ final class Tests_Settings_Menu extends TestCase {
 	}
 
 	public function test_settings_save_bounds_oversized_cache_bypass_list() {
-		$GLOBALS['perform_test_nonce_valid'] = true;
-		$_POST                               = [
+		$GLOBALS['perform_test_options']['perform_settings'] = [
+			'cache_bypass_exact_paths' => [ '/existing' ],
+		];
+		$GLOBALS['perform_test_nonce_valid']                 = true;
+		$_POST = [
 			'nonce' => 'valid',
 			'data'  => wp_json_encode(
 				[
@@ -225,10 +223,51 @@ final class Tests_Settings_Menu extends TestCase {
 			),
 		];
 
+		$this->assert_invalid_save();
+
+		$this->assertSame( [ '/existing' ], $GLOBALS['perform_test_options']['perform_settings']['cache_bypass_exact_paths'] );
+	}
+
+	public function test_settings_save_preserves_unsubmitted_oversized_existing_lists() {
+		$existing_list = array_map(
+			static function ( $index ) {
+				return '/existing-' . $index;
+			},
+			range( 1, 101 )
+		);
+
+		$GLOBALS['perform_test_options']['perform_settings'] = [
+			'enable_ssl'                   => 0,
+			'cache_bypass_exact_paths'     => $existing_list,
+			'dns_prefetch'                 => $existing_list,
+			'cache_bypass_path_prefixes'   => [],
+			'cache_bypass_query_params'    => [],
+			'cache_bypass_cookie_names'    => [],
+			'cache_bypass_cookie_prefixes' => [],
+		];
+		$GLOBALS['perform_test_nonce_valid']                 = true;
+		$_POST = [
+			'nonce' => 'valid',
+			'data'  => wp_json_encode( [ 'enable_ssl' => true ] ),
+		];
+
 		$this->save_settings();
 
-		$this->assertCount( 100, $GLOBALS['perform_test_options']['perform_settings']['cache_bypass_exact_paths'] );
-		$this->assertSame( '/private-100', $GLOBALS['perform_test_options']['perform_settings']['cache_bypass_exact_paths'][99] );
+		$this->assertSame( $existing_list, $GLOBALS['perform_test_options']['perform_settings']['cache_bypass_exact_paths'] );
+		$this->assertSame( $existing_list, $GLOBALS['perform_test_options']['perform_settings']['dns_prefetch'] );
+	}
+
+	public function test_settings_save_persists_valid_cache_ttl() {
+		$GLOBALS['perform_test_options']['perform_settings'] = [ 'page_cache_ttl' => '300' ];
+		$GLOBALS['perform_test_nonce_valid']                 = true;
+		$_POST = [
+			'nonce' => 'valid',
+			'data'  => wp_json_encode( [ 'page_cache_ttl' => '3600' ] ),
+		];
+
+		$this->save_settings();
+
+		$this->assertSame( '3600', $GLOBALS['perform_test_options']['perform_settings']['page_cache_ttl'] );
 	}
 
 	public function test_settings_save_preserves_masked_cloudflare_secret_and_valid_values() {
@@ -264,6 +303,17 @@ final class Tests_Settings_Menu extends TestCase {
 		} catch ( RuntimeException $exception ) {
 			$this->assertSame( 'perform_test_json_response', $exception->getMessage() );
 			$this->assertTrue( $GLOBALS['perform_test_json_response']['success'] );
+		}
+	}
+
+	private function assert_invalid_save() {
+		try {
+			( new Menu() )->save_settings();
+			$this->fail( 'Expected the JSON response to end the request.' );
+		} catch ( RuntimeException $exception ) {
+			$this->assertSame( 'perform_test_json_response', $exception->getMessage() );
+			$this->assertFalse( $GLOBALS['perform_test_json_response']['success'] );
+			$this->assertSame( 'Settings data is invalid. Please try again.', $GLOBALS['perform_test_json_response']['data']['message'] );
 		}
 	}
 }

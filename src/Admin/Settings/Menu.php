@@ -196,7 +196,7 @@ class Menu {
 
 			if ( is_array( $val ) ) {
 				if ( 'textarea' !== $field_def['type'] || ! $this->is_scalar_list( $val ) ) {
-					continue;
+					$this->send_invalid_payload_error();
 				}
 
 				$raw_val = implode( "\n", array_map( 'strval', $val ) );
@@ -213,6 +213,10 @@ class Menu {
 				continue;
 			}
 
+			if ( 'textarea' === $field_def['type'] && $this->is_list_setting_key( $key ) && $this->get_list_item_count( $raw_val, $key ) > self::MAX_LIST_ITEMS ) {
+				$this->send_invalid_payload_error();
+			}
+
 			switch ( $field_def['type'] ) {
 				case 'toggle':
 					// Normalize truthy values to 1, else 0.
@@ -225,20 +229,11 @@ class Menu {
 					$sanitized_post[ $key ] = esc_url_raw( substr( (string) $raw_val, 0, self::MAX_SCALAR_LENGTH ) );
 					break;
 				case 'select':
-					// Ensure value is one of allowed options when provided.
-					$opts  = $field_def['options'] ?? [];
-					$is_ok = false;
-					if ( is_array( $opts ) && ! empty( $opts ) ) {
-						// If associative array (value=>label) check keys, otherwise check values.
-						$keys = array_keys( $opts );
-						$vals = array_values( $opts );
-						if ( array_diff_key( $opts, array_values( $opts ) ) ) {
-							$is_ok = in_array( $raw_val, $keys, true );
-						} else {
-							$is_ok = in_array( $raw_val, $vals, true );
-						}
+					if ( ! $this->is_valid_select_value( $raw_val, $field_def ) ) {
+						$this->send_invalid_payload_error();
 					}
-					$sanitized_post[ $key ] = $is_ok ? sanitize_text_field( substr( (string) $raw_val, 0, self::MAX_SCALAR_LENGTH ) ) : '';
+
+					$sanitized_post[ $key ] = sanitize_text_field( substr( (string) $raw_val, 0, self::MAX_SCALAR_LENGTH ) );
 					break;
 				case 'number':
 					$sanitized_post[ $key ] = is_numeric( $raw_val ) ? intval( $raw_val ) : 0;
@@ -251,12 +246,14 @@ class Menu {
 		// Merge sanitized values with existing settings to preserve missing keys.
 		$new_settings = wp_parse_args( $sanitized_post, is_array( $settings ) ? $settings : [] );
 
-		// Handle newline-separated lists.
-		$new_settings['dns_prefetch'] = $this->normalize_multiline_setting( $new_settings['dns_prefetch'] ?? '' );
-		$new_settings['preconnect']   = $this->normalize_multiline_setting( $new_settings['preconnect'] ?? '' );
-
-		foreach ( $this->get_cache_bypass_list_setting_keys() as $setting_key ) {
-			$new_settings[ $setting_key ] = $this->normalize_rule_list_setting( $new_settings[ $setting_key ] ?? '' );
+		// Normalize list values only when this request submitted them. Existing values
+		// remain untouched when administrators save an unrelated setting.
+		foreach ( array_keys( $sanitized_post ) as $setting_key ) {
+			if ( in_array( $setting_key, [ 'dns_prefetch', 'preconnect' ], true ) ) {
+				$new_settings[ $setting_key ] = $this->normalize_multiline_setting( $sanitized_post[ $setting_key ] );
+			} elseif ( in_array( $setting_key, $this->get_cache_bypass_list_setting_keys(), true ) ) {
+				$new_settings[ $setting_key ] = $this->normalize_rule_list_setting( $sanitized_post[ $setting_key ] );
+			}
 		}
 
 		$is_saved = update_option( 'perform_settings', $new_settings, false );
@@ -314,6 +311,56 @@ class Menu {
 	}
 
 	/**
+	 * Determine whether a submitted field stores a normalized list.
+	 *
+	 * @param string $key Settings field identifier.
+	 *
+	 * @return bool
+	 */
+	private function is_list_setting_key( $key ) {
+		return in_array( $key, [ 'dns_prefetch', 'preconnect' ], true ) || in_array( $key, $this->get_cache_bypass_list_setting_keys(), true );
+	}
+
+	/**
+	 * Count list entries before normalization so oversized input is rejected.
+	 *
+	 * @param mixed  $value Submitted list value.
+	 * @param string $key   Settings field identifier.
+	 *
+	 * @return int
+	 */
+	private function get_list_item_count( $value, $key ) {
+		if ( ! is_scalar( $value ) || '' === (string) $value ) {
+			return 0;
+		}
+
+		$pattern = in_array( $key, $this->get_cache_bypass_list_setting_keys(), true ) ? '/[\r\n,]+/' : '/\r\n|\r|\n/';
+		$items   = preg_split( $pattern, (string) $value );
+
+		return is_array( $items ) ? count( $items ) : 0;
+	}
+
+	/**
+	 * Determine whether a submitted select value is one of its declared values.
+	 *
+	 * @param mixed               $value     Submitted value.
+	 * @param array<string, mixed> $field_def Settings field definition.
+	 *
+	 * @return bool
+	 */
+	private function is_valid_select_value( $value, array $field_def ) {
+		$options = $field_def['options'] ?? [];
+		if ( ! is_array( $options ) || empty( $options ) || ! is_scalar( $value ) ) {
+			return false;
+		}
+
+		$allowed_values = array_is_list( $options ) ? $options : array_keys( $options );
+		$allowed_values = array_map( 'strval', $allowed_values );
+
+		return in_array( (string) $value, $allowed_values, true );
+	}
+
+	/**
 	 * Normalize a textarea setting to the stored newline-list shape.
 	 *
 	 * @param mixed $value Textarea value.
@@ -341,7 +388,7 @@ class Menu {
 			}
 		);
 
-		return array_values( array_slice( $lines, 0, self::MAX_LIST_ITEMS ) );
+		return array_values( $lines );
 	}
 
 	/**
@@ -379,7 +426,7 @@ class Menu {
 			$items
 		);
 
-		return array_values( array_slice( array_unique( $items ), 0, self::MAX_LIST_ITEMS ) );
+		return array_values( array_unique( $items ) );
 	}
 
 	/**
