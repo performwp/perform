@@ -32,7 +32,15 @@ const SettingsApp = () => {
 					if ( typeof savedVal !== 'undefined' ) {
 						values[ f.id ] = savedVal;
 					} else {
-						values[ f.id ] = f.default ?? ( f.type === 'toggle' ? false : '' );
+						if ( typeof f.default !== 'undefined' ) {
+							values[ f.id ] = f.default;
+						} else if ( 'toggle' === f.type ) {
+							values[ f.id ] = false;
+						} else if ( 'select' === f.type ) {
+							values[ f.id ] = Object.keys( f.options || {} )[ 0 ] || '';
+						} else {
+							values[ f.id ] = '';
+						}
 					}
 				} );
 			} );

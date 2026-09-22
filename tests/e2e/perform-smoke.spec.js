@@ -62,12 +62,15 @@ test( 'settings save, Assets Manager, and page cache smoke paths work', async ( 
 
 	await page.getByRole( 'tab', { name: 'Cache', exact: true } ).click();
 	await page.getByRole( 'checkbox', { name: 'Enable Full-Page Cache' } ).check();
+	await page.getByLabel( 'Cache TTL' ).selectOption( '3600' );
 
 	const saveButton = page.getByRole( 'button', { name: 'Save Settings' } );
 	await expect( saveButton ).toBeEnabled();
 	await saveButton.click();
 	await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
 	await expect( page ).toHaveURL( /[?&]tab=cache(?:&|$)/ );
+	await page.reload();
+	await expect( page.getByLabel( 'Cache TTL' ) ).toHaveValue( '3600' );
 
 	await page.goto( '/?perform' );
 	await expect( page.locator( '#perform-assets-manager' ) ).toBeVisible();
