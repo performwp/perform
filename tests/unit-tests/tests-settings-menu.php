@@ -1,7 +1,9 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use Perform\Admin\Settings\ClientPayload;
 use Perform\Admin\Settings\Menu;
+use Perform\Includes\Helpers;
 
 final class Tests_Settings_Menu extends TestCase {
 	protected function setUp(): void {
@@ -257,6 +259,49 @@ final class Tests_Settings_Menu extends TestCase {
 		$this->assertSame( $existing_list, $GLOBALS['perform_test_options']['perform_settings']['dns_prefetch'] );
 	}
 
+	public function test_full_client_payload_preserves_unchanged_oversized_legacy_list() {
+		$existing_list = array_map(
+			static function ( $index ) {
+				return '/existing-' . $index;
+			},
+			range( 1, 101 )
+		);
+		$settings      = [
+			'enable_ssl'               => 0,
+			'cache_bypass_exact_paths' => $existing_list,
+		];
+
+		$GLOBALS['perform_test_options']['perform_settings'] = $settings;
+		$GLOBALS['perform_test_nonce_valid']                 = true;
+		$payload               = $this->build_full_client_payload( $settings );
+		$payload['enable_ssl'] = true;
+		$_POST                 = [
+			'nonce' => 'valid',
+			'data'  => wp_json_encode( $payload ),
+		];
+
+		$this->save_settings();
+
+		$this->assertSame( 1, $GLOBALS['perform_test_options']['perform_settings']['enable_ssl'] );
+		$this->assertSame( $existing_list, $GLOBALS['perform_test_options']['perform_settings']['cache_bypass_exact_paths'] );
+	}
+
+	public function test_fresh_full_client_save_persists_runtime_select_defaults() {
+		$GLOBALS['perform_test_nonce_valid'] = true;
+		$payload                             = $this->build_full_client_payload( [] );
+		$payload['enable_ssl']               = true;
+		$_POST                               = [
+			'nonce' => 'valid',
+			'data'  => wp_json_encode( $payload ),
+		];
+
+		$this->save_settings();
+
+		$this->assertSame( '3600', $GLOBALS['perform_test_options']['perform_settings']['page_cache_ttl'] );
+		$this->assertSame( '21600', $GLOBALS['perform_test_options']['perform_settings']['page_cache_swr_ttl'] );
+		$this->assertSame( '1200', $GLOBALS['perform_test_options']['perform_settings']['cache_slow_request_threshold_ms'] );
+	}
+
 	public function test_settings_save_persists_valid_cache_ttl() {
 		$GLOBALS['perform_test_options']['perform_settings'] = [ 'page_cache_ttl' => '300' ];
 		$GLOBALS['perform_test_nonce_valid']                 = true;
@@ -315,5 +360,38 @@ final class Tests_Settings_Menu extends TestCase {
 			$this->assertFalse( $GLOBALS['perform_test_json_response']['success'] );
 			$this->assertSame( 'Settings data is invalid. Please try again.', $GLOBALS['perform_test_json_response']['data']['message'] );
 		}
+	}
+
+	/**
+	 * Build the values React sends for every registered field.
+	 *
+	 * @param array<string, mixed> $settings Stored settings.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function build_full_client_payload( array $settings ) {
+		$payload = ClientPayload::sanitize_for_client( $settings );
+
+		foreach ( Helpers::get_settings_fields() as $cards ) {
+			foreach ( $cards as $card ) {
+				foreach ( $card['fields'] ?? [] as $field ) {
+					if ( empty( $field['id'] ) || array_key_exists( $field['id'], $payload ) ) {
+						continue;
+					}
+
+					if ( array_key_exists( 'default', $field ) ) {
+						$payload[ $field['id'] ] = $field['default'];
+					} elseif ( 'toggle' === ( $field['type'] ?? '' ) ) {
+						$payload[ $field['id'] ] = false;
+					} elseif ( 'select' === ( $field['type'] ?? '' ) ) {
+						$payload[ $field['id'] ] = (string) ( array_key_first( $field['options'] ?? [] ) ?? '' );
+					} else {
+						$payload[ $field['id'] ] = '';
+					}
+				}
+			}
+		}
+
+		return $payload;
 	}
 }

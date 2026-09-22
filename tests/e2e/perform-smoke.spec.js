@@ -62,7 +62,6 @@ test( 'settings save, Assets Manager, and page cache smoke paths work', async ( 
 
 	await page.getByRole( 'tab', { name: 'Cache', exact: true } ).click();
 	await page.getByRole( 'checkbox', { name: 'Enable Full-Page Cache' } ).check();
-	await page.getByLabel( 'Cache TTL' ).selectOption( '3600' );
 
 	const saveButton = page.getByRole( 'button', { name: 'Save Settings' } );
 	await expect( saveButton ).toBeEnabled();
@@ -71,6 +70,8 @@ test( 'settings save, Assets Manager, and page cache smoke paths work', async ( 
 	await expect( page ).toHaveURL( /[?&]tab=cache(?:&|$)/ );
 	await page.reload();
 	await expect( page.getByLabel( 'Cache TTL' ) ).toHaveValue( '3600' );
+	await expect( page.getByLabel( 'Stale Revalidate Window' ) ).toHaveValue( '21600' );
+	await expect( page.getByLabel( 'Slow Request Threshold' ) ).toHaveValue( '1200' );
 
 	await page.goto( '/?perform' );
 	await expect( page.locator( '#perform-assets-manager' ) ).toBeVisible();

@@ -214,6 +214,10 @@ class Menu {
 			}
 
 			if ( 'textarea' === $field_def['type'] && $this->is_list_setting_key( $key ) && $this->get_list_item_count( $raw_val, $key ) > self::MAX_LIST_ITEMS ) {
+				if ( $this->is_unchanged_client_list_value( $key, $raw_val, $settings ) ) {
+					continue;
+				}
+
 				$this->send_invalid_payload_error();
 			}
 
@@ -338,6 +342,32 @@ class Menu {
 		$items   = preg_split( $pattern, (string) $value );
 
 		return is_array( $items ) ? count( $items ) : 0;
+	}
+
+	/**
+	 * Determine whether an oversized list is the unchanged value sent by the UI.
+	 *
+	 * Legacy installs can contain oversized lists. The React client sends every
+	 * registered field, so preserve an exact client payload match without
+	 * rewriting its stored array shape during an unrelated save.
+	 *
+	 * @param string               $key      Settings field identifier.
+	 * @param mixed                $value    Submitted value.
+	 * @param array<string, mixed> $settings Stored settings.
+	 *
+	 * @return bool
+	 */
+	private function is_unchanged_client_list_value( $key, $value, array $settings ) {
+		if ( ! is_scalar( $value ) || ! array_key_exists( $key, $settings ) ) {
+			return false;
+		}
+
+		$client_settings = ClientPayload::sanitize_for_client( $settings );
+		if ( ! array_key_exists( $key, $client_settings ) || ! is_scalar( $client_settings[ $key ] ) ) {
+			return false;
+		}
+
+		return (string) $value === (string) $client_settings[ $key ];
 	}
 
 	/**
