@@ -31,8 +31,14 @@ const SettingsApp = () => {
 							: undefined;
 					if ( typeof savedVal !== 'undefined' ) {
 						values[ f.id ] = savedVal;
+					} else if ( typeof f.default !== 'undefined' ) {
+						values[ f.id ] = f.default;
+					} else if ( 'toggle' === f.type ) {
+						values[ f.id ] = false;
+					} else if ( 'select' === f.type ) {
+						values[ f.id ] = Object.keys( f.options || {} )[ 0 ] || '';
 					} else {
-						values[ f.id ] = f.default ?? ( f.type === 'toggle' ? false : '' );
+						values[ f.id ] = '';
 					}
 				} );
 			} );
@@ -124,9 +130,9 @@ const SettingsApp = () => {
 		}
 	}, [ message, fieldValues ] );
 
-	// Auto-dismiss message after 5 seconds
+	// Keep errors visible until the next save attempt so rejected input is actionable.
 	useEffect( () => {
-		if ( ! message || ! message.text ) {
+		if ( ! message || ! message.text || 'error' === message.type ) {
 			return;
 		}
 		// Clear previous timer
