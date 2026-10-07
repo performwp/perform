@@ -833,7 +833,7 @@ class PageCache implements ModuleInterface {
 				<?php submit_button( esc_html__( 'Purge Site Page Cache', 'perform' ), 'secondary', 'submit', false ); ?>
 			</form>
 			<?php if ( $cloudflare['pending'] || $cloudflare['retryable_failed'] || $cloudflare['credential_residuals'] || $residual ) : ?>
-				<div class="notice notice-<?php echo $cloudflare['retryable_failed'] || $cloudflare['credential_residuals'] || $residual ? 'error' : 'warning'; ?>"><p><?php echo esc_html( sprintf( __( 'Cloudflare cleanup: %1$d pending, %2$d retryable failures, %3$d old-credential residuals.', 'perform' ), $cloudflare['pending'], $cloudflare['retryable_failed'], max( $cloudflare['credential_residuals'], $residual ) ) ); ?></p></div>
+				<div class="notice notice-<?php echo $cloudflare['retryable_failed'] || $cloudflare['credential_residuals'] || $residual ? 'error' : 'warning'; ?>"><p><?php echo esc_html( sprintf( /* translators: 1: Pending cleanup count, 2: Retryable failure count, 3: Old-credential residual count. */ __( 'Cloudflare cleanup: %1$d pending, %2$d retryable failures, %3$d old-credential residuals.', 'perform' ), $cloudflare['pending'], $cloudflare['retryable_failed'], max( $cloudflare['credential_residuals'], $residual ) ) ); ?></p></div>
 			<?php endif; ?>
 			<?php if ( $cloudflare['retryable_failed'] ) : ?>
 				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">

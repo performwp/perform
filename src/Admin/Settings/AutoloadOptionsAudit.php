@@ -52,7 +52,7 @@ final class AutoloadOptionsAudit {
 		global $wpdb;
 
 		if ( ! is_object( $wpdb ) || empty( $wpdb->options ) ) {
-			throw new RuntimeException( __( 'The options table is unavailable.', 'perform' ) );
+			throw new RuntimeException( esc_html__( 'The options table is unavailable.', 'perform' ) );
 		}
 
 		$autoload_values = self::get_autoload_values();
@@ -78,7 +78,7 @@ final class AutoloadOptionsAudit {
 		$options = $wpdb->get_results( $options_query, ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Prepared above; manual diagnostic persisted below.
 
 		if ( ! is_array( $summary ) || ! is_array( $options ) || ! empty( $wpdb->last_error ) ) {
-			throw new RuntimeException( __( 'The options audit could not be completed.', 'perform' ) );
+			throw new RuntimeException( esc_html__( 'The options audit could not be completed.', 'perform' ) );
 		}
 
 		$generated_at = time();
@@ -104,7 +104,7 @@ final class AutoloadOptionsAudit {
 
 		$is_saved = update_option( self::OPTION_NAME, $snapshot, false );
 		if ( ! $is_saved && get_option( self::OPTION_NAME ) !== $snapshot ) {
-			throw new RuntimeException( __( 'The audit result could not be saved.', 'perform' ) );
+			throw new RuntimeException( esc_html__( 'The audit result could not be saved.', 'perform' ) );
 		}
 
 		return $snapshot;

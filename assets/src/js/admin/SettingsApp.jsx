@@ -37,10 +37,14 @@ const SettingsApp = () => {
 						SAVED_SETTINGS && Object.prototype.hasOwnProperty.call( SAVED_SETTINGS, f.id )
 							? SAVED_SETTINGS[ f.id ]
 							: undefined;
-					if ( typeof savedVal !== 'undefined' ) {
+					if ( typeof savedVal !== 'undefined' && ! ( 'select' === f.type && '' === savedVal ) ) {
 						values[ f.id ] = savedVal;
+					} else if ( typeof f.default !== 'undefined' ) {
+						values[ f.id ] = f.default;
+					} else if ( 'select' === f.type ) {
+						values[ f.id ] = Object.keys( f.options || {} )[ 0 ] || '';
 					} else {
-						values[ f.id ] = f.default ?? ( f.type === 'toggle' ? false : '' );
+						values[ f.id ] = f.type === 'toggle' ? false : '';
 					}
 				} );
 			} );
@@ -49,6 +53,7 @@ const SettingsApp = () => {
 	}, [ fields ] );
 
 	const [ fieldValues, setFieldValues ] = useState( initialValues );
+	const [ savedSnapshot, setSavedSnapshot ] = useState( initialValues );
 	const [ saving, setSaving ] = useState( false );
 	const [ message, setMessage ] = useState( null );
 	const [ diagnostics, setDiagnostics ] = useState( INITIAL_DIAGNOSTICS );
@@ -75,6 +80,7 @@ const SettingsApp = () => {
 	};
 
 	const handleSave = async () => {
+		const submittedSnapshot = { ...fieldValues };
 		setSaving( true );
 		setMessage( null );
 		try {
@@ -86,20 +92,17 @@ const SettingsApp = () => {
 				body: new URLSearchParams( {
 					action: 'perform_save_settings',
 					nonce: SETTINGS.nonce || '',
-					data: JSON.stringify( fieldValues ),
+					data: JSON.stringify( submittedSnapshot ),
 				} ),
 			} );
 			const json = await res.json();
 			if ( json && json.success ) {
+				// Later edits remain dirty until their own submission is acknowledged.
+				setSavedSnapshot( submittedSnapshot );
 				setMessage( { text: json.data?.message || 'Settings saved.', type: 'success' } );
 				if ( json.data?.diagnostics ) {
 					setDiagnostics( json.data.diagnostics );
 				}
-				// update initialValues snapshot
-				// mutate initialValues object won't update memo, so reset by rebuild: setFieldValues equals current, but we need to reset initialValues - simplest approach: set initial snapshot to current by resetting via a state.
-				// We'll set the initialValues by replacing the state used for comparison: emulate by setting all initialValues to current values via a ref - but here we'll just clear dirty by resetting initialValues via resetting fieldValues baseline.
-				// For simplicity, update initialValues by assigning to window.performwpSettings._initial = fieldValues (not ideal), but we can update local initialValues via a small trick: setFieldValues to same and update a savedSnapshot state.
-				// Implement savedSnapshot state instead.
 			} else {
 				setMessage( { text: ( json && json.data && json.data.message ) || 'Save failed.', type: 'error' } );
 			}
@@ -109,9 +112,6 @@ const SettingsApp = () => {
 			setSaving( false );
 		}
 	};
-
-	// Add a savedSnapshot state to serve as baseline for dirty calculation
-	const [ savedSnapshot, setSavedSnapshot ] = useState( initialValues );
 
 	useEffect( () => {
 		// when initialValues changes (first render) set snapshot
@@ -124,13 +124,6 @@ const SettingsApp = () => {
 	const isDirty = useMemo( () => {
 		return Object.keys( fieldValues ).some( ( k ) => fieldValues[ k ] !== savedSnapshot[ k ] );
 	}, [ fieldValues, savedSnapshot ] );
-
-	// update savedSnapshot on successful save by watching message success
-	useEffect( () => {
-		if ( message && message.type === 'success' ) {
-			setSavedSnapshot( fieldValues );
-		}
-	}, [ message, fieldValues ] );
 
 	// Auto-dismiss message after 5 seconds
 	useEffect( () => {
