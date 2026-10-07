@@ -25,6 +25,9 @@ class PageCache implements ModuleInterface {
 	 */
 	private const CACHE_POLICY_VERSION = 2;
 
+	/** @var bool */
+	private $cache_retirement_blocked = false;
+
 	/**
 	 * Cache directory.
 	 *
@@ -165,7 +168,9 @@ class PageCache implements ModuleInterface {
 		$this->url_normalizer = new UrlNormalizer();
 
 		add_filter( 'cron_schedules', [ $this, 'register_cron_schedule' ] );
+		add_action( 'init', [ $this, 'retire_legacy_cache_bodies' ], 0 );
 		add_action( 'init', [ $this, 'maybe_schedule_events' ] );
+		add_action( 'upgrader_process_complete', [ $this, 'reset_cache_body_policy_after_upgrade' ], 10, 2 );
 
 		add_action( 'template_redirect', [ $this, 'maybe_serve_cache' ], 0 );
 		add_action( 'template_redirect', [ $this, 'start_output_buffer' ], 9999 );
@@ -2033,7 +2038,87 @@ class PageCache implements ModuleInterface {
 
 	/** Whether frontend cache reads and writes are enabled. */
 	private function page_cache_enabled(): bool {
-		return ! empty( Helpers::get_option( 'enable_page_cache', 'perform_settings', false ) );
+		return ! $this->cache_retirement_blocked && ! empty( Helpers::get_option( 'enable_page_cache', 'perform_settings', false ) );
+	}
+
+	/**
+	 * Remove previously written HTML before the upgraded plugin can serve requests.
+	 *
+	 * This one-time privacy migration must finish rather than leave publicly
+	 * addressable bodies for cron. Metadata remains for bounded CDN inventory.
+	 */
+	public function retire_legacy_cache_bodies(): void {
+		$option = 'perform_cache_body_policy_' . $this->get_blog_id();
+		if ( self::CACHE_POLICY_VERSION === (int) get_option( $option, 0 ) ) {
+			return;
+		}
+		$this->purge_site_cache();
+		try {
+			$complete = $this->remove_old_cache_bodies();
+		} catch ( \UnexpectedValueException $error ) {
+			$complete = false;
+		}
+		if ( $complete ) {
+			update_option( $option, self::CACHE_POLICY_VERSION, false );
+		} else {
+			$this->cache_retirement_blocked = true;
+			add_action( 'admin_notices', [ $this, 'render_cache_retirement_notice' ] );
+		}
+	}
+
+	/** Delete only owned body files without following directory or file symlinks. */
+	private function remove_old_cache_bodies(): bool {
+		$directories = [ $this->cache_dir ];
+		$site_dir    = $this->cache_dir . 'site-' . $this->get_blog_id() . '/';
+		$complete    = ! is_link( rtrim( $this->cache_dir, '/\\' ) ) && ! is_link( rtrim( $site_dir, '/\\' ) );
+		if ( $complete ) {
+			$this->queue_cloudflare_tracked_urls();
+		}
+		if ( is_dir( $site_dir ) && $complete ) {
+			foreach ( new \DirectoryIterator( $site_dir ) as $directory ) {
+				if ( $directory->isLink() && preg_match( '/^generation-[0-9]+$/', $directory->getFilename() ) ) {
+					$complete = false;
+				}
+				if ( ! $directory->isDot() && $directory->isDir() && ! $directory->isLink() && preg_match( '/^generation-[0-9]+$/', $directory->getFilename() ) ) {
+					$directories[] = $directory->getPathname();
+					$this->queue_cloudflare_tracked_urls( null, (int) substr( $directory->getFilename(), 11 ) );
+				}
+			}
+		}
+		foreach ( $directories as $directory ) {
+			if ( ! is_dir( $directory ) || is_link( rtrim( $directory, '/\\' ) ) ) {
+				continue;
+			}
+			foreach ( new \DirectoryIterator( $directory ) as $file ) {
+				if ( $file->isDot() || ! preg_match( '/^[a-f0-9]{32}\.html$/', $file->getFilename() ) ) {
+					continue;
+				}
+				if ( $file->isFile() && ! $file->isLink() ) {
+					wp_delete_file( $file->getPathname() );
+				}
+				if ( file_exists( $file->getPathname() ) || is_link( $file->getPathname() ) ) {
+					$complete = false;
+				}
+			}
+		}
+		return $complete;
+	}
+
+	/**
+	 * @param mixed               $upgrader Upgrader instance.
+	 * @param array<string,mixed> $details Upgrade details.
+	 */
+	public function reset_cache_body_policy_after_upgrade( $upgrader, array $details ): void {
+		if ( 'plugin' === ( $details['type'] ?? '' ) ) {
+			delete_option( 'perform_cache_body_policy_' . $this->get_blog_id() );
+		}
+	}
+
+	/** Report a filesystem blocker without exposing cache paths or content. */
+	public function render_cache_retirement_notice(): void {
+		if ( current_user_can( 'manage_options' ) ) {
+			echo '<div class="notice notice-error"><p>' . esc_html__( 'Perform could not remove older page-cache files. Ask your site administrator to remove the old Perform page cache before relying on the upgraded cache.', 'perform' ) . '</p></div>';
+		}
 	}
 
 	/** Schedule bounded cleanup of retired local generations. */
