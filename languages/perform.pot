@@ -7,7 +7,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language-Team: PerformWP <hello@performwp.com>\n"
-"POT-Creation-Date: 2026-10-07 11:28+0000\n"
+"POT-Creation-Date: 2026-10-07 11:53+0000\n"
 "Report-Msgid-Bugs-To: https://github.com/performwp/perform/issues/new\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
@@ -1100,6 +1100,7 @@ msgstr ""
 msgid "Review memory pressure and hosting limits before increasing this value."
 msgstr ""
 
+#. translators: %d: Maximum execution time in seconds.
 #: src/Admin/Settings/SystemHealth.php:141, src/Admin/Settings/SystemHealth.php:149
 msgid "Maximum execution time"
 msgstr ""
@@ -1427,6 +1428,7 @@ msgstr ""
 msgid "Purge Site Page Cache"
 msgstr ""
 
+#. translators: 1: Pending cleanup count, 2: Retryable failure count, 3: Old-credential residual count.
 #: src/Modules/Cache/PageCache.php:836
 msgid "Cloudflare cleanup: %1$d pending, %2$d retryable failures, %3$d old-credential residuals."
 msgstr ""

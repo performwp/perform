@@ -484,6 +484,26 @@ test( 'lower-privilege users cannot access the legacy or canonical Cache Stats r
 	expect( adminAssetResponse.status() ).toBe( 403 );
 	expect( await adminAssetResponse.json() ).toMatchObject( { success: false } );
 } );
+test( 'Database report stays within a 320px viewport and its table scrolls by keyboard', async ( { page } ) => {
+	await page.setViewportSize( { width: 320, height: 900 } );
+	await login( page );
+	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=database' );
+	await page.getByRole( 'button', { name: /Run audit|Refresh audit/ } ).click();
+	await expect( page.getByRole( 'status' ) ).toContainText( 'Database audit refreshed.' );
+	const tableRegion = page.getByRole( 'region', { name: 'Largest autoloaded options' } );
+	await expect( tableRegion ).toBeVisible();
+	const bounds = await page.evaluate( () => ( {
+		viewport: document.documentElement.clientWidth,
+		document: document.documentElement.scrollWidth,
+		table: document.querySelector( '.perform-database-audit__table' ).getBoundingClientRect().width,
+	} ) );
+	expect( bounds.document ).toBeLessThanOrEqual( bounds.viewport );
+	expect( bounds.table ).toBeGreaterThanOrEqual( 560 );
+	await tableRegion.focus();
+	await page.keyboard.press( 'ArrowRight' );
+	await expect.poll( () => tableRegion.evaluate( ( element ) => element.scrollLeft ) ).toBeGreaterThan( 0 );
+} );
+
 test( 'settings retain edits during pending saves, success notices, and interrupted retries', async ( {
 	page,
 } ) => {

@@ -175,7 +175,12 @@ const DatabaseAuditPanel = ( { initialAudit = SETTINGS.databaseAudit || {} } ) =
 							</div>
 						</CardHeader>
 						<CardBody>
-							<div className="perform-database-audit__table-wrap">
+							<div
+								className="perform-database-audit__table-wrap"
+								role="region"
+								aria-label={ __( 'Largest autoloaded options', 'perform' ) }
+								tabIndex={ 0 }
+							>
 								<table className="perform-database-audit__table">
 									<thead>
 										<tr>
