@@ -19,6 +19,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class PageCache implements ModuleInterface {
 	/**
+	 * Isolate entries from older request policies, including writes during an upgrade.
+	 *
+	 * @var int
+	 */
+	private const CACHE_POLICY_VERSION = 2;
+
+	/**
 	 * Cache directory.
 	 *
 	 * @var string
@@ -1915,7 +1922,7 @@ class PageCache implements ModuleInterface {
 	 */
 	private function get_cache_key_for_url( $normalized_url ) {
 		$service = $this->get_url_normalizer();
-		return $service->key_for_url( $normalized_url );
+		return $service->key_for_url( 'policy-' . self::CACHE_POLICY_VERSION . ':' . $normalized_url );
 	}
 
 	/**

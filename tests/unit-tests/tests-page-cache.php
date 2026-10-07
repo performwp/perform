@@ -322,6 +322,33 @@ final class Tests_Page_Cache extends TestCase {
 		$this->assertSame( [], $GLOBALS['perform_test_scheduled_single_events'] );
 	}
 
+	public function test_legacy_policy_cache_body_is_not_reused_after_upgrade() {
+		$page_cache = new PageCache();
+		$cache_dir  = $this->temporary_cache_dir();
+		$this->set_private_property( $page_cache, 'cache_dir', $cache_dir );
+		$url         = 'https://example.com/password-protected/';
+		$legacy_key  = md5( $url );
+		$legacy_path = $this->invoke_private_with_argument( $page_cache, 'get_body_file_path', $legacy_key );
+		mkdir( dirname( $legacy_path ), 0777, true );
+		file_put_contents( $legacy_path, 'legacy private fixture' );
+
+		try {
+			$current_key = $this->invoke_private_with_argument( $page_cache, 'get_cache_key_for_url', $url );
+			$this->assertNull( $this->invoke_private_with_argument( $page_cache, 'read_cache_body', $current_key ) );
+			$this->assertFileExists( $legacy_path );
+			$this->write_cached_url( $page_cache, $url );
+			$this->assertSame( 'cached', $this->invoke_private_with_argument( $page_cache, 'read_cache_body', $current_key ) );
+			$this->assertSame( 'legacy private fixture', file_get_contents( $legacy_path ) );
+		} finally {
+			foreach ( glob( dirname( $legacy_path ) . '/*' ) as $path ) {
+				unlink( $path );
+			}
+			rmdir( dirname( $legacy_path ) );
+			rmdir( dirname( $legacy_path, 2 ) );
+			rmdir( $cache_dir );
+		}
+	}
+
 	public function test_targeted_purge_removes_old_post_url_but_keeps_unaffected_cache_entry() {
 		$page_cache = new PageCache();
 		$cache_dir  = $this->temporary_cache_dir();
