@@ -37,6 +37,7 @@
 .nvmrc
 .node-version
 .wp-env.json
+.wp-env.override.json
 
 AGENTS.md
 DESIGN.md
