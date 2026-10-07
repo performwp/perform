@@ -150,7 +150,7 @@ final class CronPressureAudit {
 
 		$is_saved = update_option( self::OPTION_NAME, $snapshot, false );
 		if ( ! $is_saved && get_option( self::OPTION_NAME ) !== $snapshot ) {
-			throw new RuntimeException( __( 'The scheduled-task diagnostic could not be saved.', 'perform' ) );
+			throw new RuntimeException( esc_html__( 'The scheduled-task diagnostic could not be saved.', 'perform' ) );
 		}
 
 		return $snapshot;
