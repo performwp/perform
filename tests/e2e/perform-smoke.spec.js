@@ -484,3 +484,67 @@ test( 'lower-privilege users cannot access the legacy or canonical Cache Stats r
 	expect( adminAssetResponse.status() ).toBe( 403 );
 	expect( await adminAssetResponse.json() ).toMatchObject( { success: false } );
 } );
+test( 'settings retain edits during pending saves, success notices, and interrupted retries', async ( {
+	page,
+} ) => {
+	await login( page );
+	await openAdminPage(
+		page,
+		'/wp-admin/options-general.php?page=perform_settings&tab=assets'
+	);
+	const preconnect = page.getByRole( 'textbox', { name: 'Preconnect' } );
+	const saveButton = page.getByRole( 'button', { name: 'Save Settings' } );
+	const submitted = `//submitted-${ Date.now() }.example.test`;
+	const later = `//later-${ Date.now() }.example.test`;
+	let releaseRequest;
+	const pending = new Promise( ( resolve ) => {
+		releaseRequest = resolve;
+	} );
+	let requestStarted;
+	const started = new Promise( ( resolve ) => {
+		requestStarted = resolve;
+	} );
+	await page.route( '**/admin-ajax.php', async ( route ) => {
+		if (
+			route
+				.request()
+				.postData()
+				?.includes( 'action=perform_save_settings' )
+		) {
+			requestStarted();
+			await pending;
+		}
+		await route.continue();
+	} );
+	await preconnect.fill( submitted );
+	await saveButton.click();
+	await started;
+	await preconnect.fill( later );
+	releaseRequest();
+	await expect( page.getByRole( 'status' ) ).toContainText(
+		'Settings saved'
+	);
+	await expect( saveButton ).toBeEnabled();
+	await page.unroute( '**/admin-ajax.php' );
+	await saveButton.focus();
+	await page.keyboard.press( 'Enter' );
+	await expect( saveButton ).toBeDisabled();
+	await preconnect.fill( `${ later }\n//notice.example.test` );
+	await expect( saveButton ).toBeEnabled();
+	await page.route( '**/admin-ajax.php', ( route ) =>
+		route.abort( 'failed' )
+	);
+	await saveButton.click();
+	await expect( page.getByRole( 'alert' ) ).toBeVisible();
+	await expect( saveButton ).toBeEnabled();
+	await page.unroute( '**/admin-ajax.php' );
+	await saveButton.click();
+	await expect( page.getByRole( 'status' ) ).toContainText(
+		'Settings saved'
+	);
+	await expect( saveButton ).toBeDisabled();
+	await page.reload();
+	await expect( preconnect ).toHaveValue(
+		`${ later }\n//notice.example.test`
+	);
+} );

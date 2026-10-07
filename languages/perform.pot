@@ -7,7 +7,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language-Team: PerformWP <hello@performwp.com>\n"
-"POT-Creation-Date: 2026-08-11 05:16+0000\n"
+"POT-Creation-Date: 2026-10-07 11:28+0000\n"
 "Report-Msgid-Bugs-To: https://github.com/performwp/perform/issues/new\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
@@ -384,7 +384,7 @@ msgstr ""
 msgid "4 Minutes"
 msgstr ""
 
-#: src/Includes/Helpers.php:612, src/Includes/Helpers.php:747
+#: src/Includes/Helpers.php:612, src/Includes/Helpers.php:748
 msgid "5 Minutes"
 msgstr ""
 
@@ -480,219 +480,219 @@ msgstr ""
 msgid "Caches full HTML responses for anonymous visitors."
 msgstr ""
 
-#: src/Includes/Helpers.php:745
+#: src/Includes/Helpers.php:746
 msgid "Cache TTL"
 msgstr ""
 
-#: src/Includes/Helpers.php:748, src/Includes/Helpers.php:767
+#: src/Includes/Helpers.php:749, src/Includes/Helpers.php:769
 msgid "15 Minutes"
 msgstr ""
 
-#: src/Includes/Helpers.php:749, src/Includes/Helpers.php:768
+#: src/Includes/Helpers.php:750, src/Includes/Helpers.php:770
 msgid "30 Minutes"
 msgstr ""
 
-#: src/Includes/Helpers.php:750, src/Includes/Helpers.php:769
+#: src/Includes/Helpers.php:751, src/Includes/Helpers.php:771
 msgid "1 Hour"
 msgstr ""
 
-#: src/Includes/Helpers.php:751, src/Includes/Helpers.php:770
+#: src/Includes/Helpers.php:752, src/Includes/Helpers.php:772
 msgid "6 Hours"
 msgstr ""
 
-#: src/Includes/Helpers.php:752, src/Includes/Helpers.php:772
+#: src/Includes/Helpers.php:753, src/Includes/Helpers.php:774
 msgid "24 Hours"
 msgstr ""
 
-#: src/Includes/Helpers.php:754
+#: src/Includes/Helpers.php:755
 msgid "How long a page remains fresh before becoming stale."
 msgstr ""
 
-#: src/Includes/Helpers.php:765
+#: src/Includes/Helpers.php:767
 msgid "Stale Revalidate Window"
 msgstr ""
 
-#: src/Includes/Helpers.php:771
+#: src/Includes/Helpers.php:773
 msgid "12 Hours"
 msgstr ""
 
-#: src/Includes/Helpers.php:774
+#: src/Includes/Helpers.php:776
 msgid "Serve stale pages while refreshing them in the background."
 msgstr ""
 
-#: src/Includes/Helpers.php:785
+#: src/Includes/Helpers.php:787
 msgid "Separate Query Params"
 msgstr ""
 
-#: src/Includes/Helpers.php:786
+#: src/Includes/Helpers.php:788
 msgid "Comma-separated query keys that should generate separate cache entries. Tracking params are ignored automatically."
 msgstr ""
 
-#: src/Includes/Helpers.php:797
+#: src/Includes/Helpers.php:799
 msgid "Bypass Exact Paths"
 msgstr ""
 
-#: src/Includes/Helpers.php:798
+#: src/Includes/Helpers.php:800
 msgid "One URL path per line that should bypass full-page cache exactly, such as /account/dashboard."
 msgstr ""
 
-#: src/Includes/Helpers.php:811
+#: src/Includes/Helpers.php:813
 msgid "Bypass Path Prefixes"
 msgstr ""
 
-#: src/Includes/Helpers.php:812
+#: src/Includes/Helpers.php:814
 msgid "One URL path prefix per line that should bypass full-page cache, such as /checkout or /private."
 msgstr ""
 
-#: src/Includes/Helpers.php:825
+#: src/Includes/Helpers.php:827
 msgid "Bypass Query Keys"
 msgstr ""
 
-#: src/Includes/Helpers.php:826
+#: src/Includes/Helpers.php:828
 msgid "Query keys that should bypass cache reads and writes entirely. This is separate from query keys that create separate cache entries."
 msgstr ""
 
-#: src/Includes/Helpers.php:839
+#: src/Includes/Helpers.php:841
 msgid "Bypass Cookie Names"
 msgstr ""
 
-#: src/Includes/Helpers.php:840
+#: src/Includes/Helpers.php:842
 msgid "Cookie names that should bypass cache reads and writes. Cookie values are never needed for matching."
 msgstr ""
 
-#: src/Includes/Helpers.php:853
+#: src/Includes/Helpers.php:855
 msgid "Bypass Cookie Prefixes"
 msgstr ""
 
-#: src/Includes/Helpers.php:854
+#: src/Includes/Helpers.php:856
 msgid "Cookie name prefixes that should bypass cache reads and writes, such as wp-postpass_ or custom_session_."
 msgstr ""
 
-#: src/Includes/Helpers.php:867
+#: src/Includes/Helpers.php:869
 msgid "Preload and Observability"
 msgstr ""
 
-#: src/Includes/Helpers.php:868
+#: src/Includes/Helpers.php:870
 msgid "Warm cache from sitemaps and monitor cache effectiveness."
 msgstr ""
 
-#: src/Includes/Helpers.php:873
+#: src/Includes/Helpers.php:875
 msgid "Enable Adaptive Preloader"
 msgstr ""
 
-#: src/Includes/Helpers.php:874
+#: src/Includes/Helpers.php:876
 msgid "Preloads cache from sitemap and high-miss URLs using adaptive request rate."
 msgstr ""
 
-#: src/Includes/Helpers.php:885
+#: src/Includes/Helpers.php:888
 msgid "Slow Request Threshold"
 msgstr ""
 
-#: src/Includes/Helpers.php:887
+#: src/Includes/Helpers.php:890
 msgid "500ms"
 msgstr ""
 
-#: src/Includes/Helpers.php:888
+#: src/Includes/Helpers.php:891
 msgid "800ms"
 msgstr ""
 
-#: src/Includes/Helpers.php:889
+#: src/Includes/Helpers.php:892
 msgid "1200ms"
 msgstr ""
 
-#: src/Includes/Helpers.php:890
+#: src/Includes/Helpers.php:893
 msgid "2000ms"
 msgstr ""
 
-#: src/Includes/Helpers.php:892
+#: src/Includes/Helpers.php:895
 msgid "Tracks uncached requests slower than this value in observability stats."
 msgstr ""
 
-#: src/Includes/Helpers.php:903
+#: src/Includes/Helpers.php:906
 msgid "Cloudflare"
 msgstr ""
 
-#: src/Includes/Helpers.php:904
+#: src/Includes/Helpers.php:907
 msgid "Sync local cache purge events to Cloudflare (free-tier friendly)."
 msgstr ""
 
-#: src/Includes/Helpers.php:909
+#: src/Includes/Helpers.php:912
 msgid "Enable Cloudflare Cache Sync"
 msgstr ""
 
-#: src/Includes/Helpers.php:910
+#: src/Includes/Helpers.php:913
 msgid "Purge Cloudflare URLs when Perform purges local cache."
 msgstr ""
 
-#: src/Includes/Helpers.php:921
+#: src/Includes/Helpers.php:924
 msgid "Cloudflare Zone ID"
 msgstr ""
 
-#: src/Includes/Helpers.php:922
+#: src/Includes/Helpers.php:925
 msgid "Your Cloudflare Zone ID."
 msgstr ""
 
-#: src/Includes/Helpers.php:933
+#: src/Includes/Helpers.php:936
 msgid "Cloudflare API Token"
 msgstr ""
 
-#: src/Includes/Helpers.php:934
+#: src/Includes/Helpers.php:937
 msgid "API token with Zone:Cache Purge permission."
 msgstr ""
 
-#: src/Includes/Helpers.php:947
+#: src/Includes/Helpers.php:950
 msgid "Advanced Settings"
 msgstr ""
 
-#: src/Includes/Helpers.php:948
+#: src/Includes/Helpers.php:951
 msgid "Settings for advanced configurations."
 msgstr ""
 
-#: src/Includes/Helpers.php:953
+#: src/Includes/Helpers.php:956
 msgid "Admin Performance Monitor"
 msgstr ""
 
-#: src/Includes/Helpers.php:954
+#: src/Includes/Helpers.php:957
 msgid "Collect bounded, private aggregate timing, memory, and query-count diagnostics for WordPress admin requests."
 msgstr ""
 
-#: src/Includes/Helpers.php:959
+#: src/Includes/Helpers.php:962
 msgid "Admin Asset Audit"
 msgstr ""
 
-#: src/Includes/Helpers.php:960
+#: src/Includes/Helpers.php:963
 msgid "Temporarily inventory script and style handles across sampled WordPress admin screens without disabling anything."
 msgstr ""
 
-#: src/Includes/Helpers.php:965
+#: src/Includes/Helpers.php:968
 msgid "Remove Data on Uninstall"
 msgstr ""
 
-#: src/Includes/Helpers.php:966
+#: src/Includes/Helpers.php:969
 msgid "Enabling this will remove all plugin data upon uninstallation."
 msgstr ""
 
-#: src/Includes/Helpers.php:979
+#: src/Includes/Helpers.php:982
 msgid "WooCommerce Settings"
 msgstr ""
 
-#: src/Includes/Helpers.php:980
+#: src/Includes/Helpers.php:983
 msgid "Settings specific to WooCommerce."
 msgstr ""
 
-#: src/Includes/Helpers.php:985
+#: src/Includes/Helpers.php:988
 msgid "Enable WooCommerce Manager"
 msgstr ""
 
-#: src/Includes/Helpers.php:986
+#: src/Includes/Helpers.php:989
 msgid "Enabling this will allow you to manage WooCommerce specific settings."
 msgstr ""
 
-#: src/Includes/Helpers.php:997
+#: src/Includes/Helpers.php:1000
 msgid "Enable WooCommerce Cache"
 msgstr ""
 
-#: src/Includes/Helpers.php:998
+#: src/Includes/Helpers.php:1001
 msgid "Enabling this will cache WooCommerce pages for better performance."
 msgstr ""
 
@@ -880,11 +880,15 @@ msgstr ""
 msgid "Cache Stats"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:243
+#: src/Admin/Settings/Menu.php:199
+msgid "Settings data is invalid. Please try again."
+msgstr ""
+
+#: src/Admin/Settings/Menu.php:245
 msgid "Unable to save the settings. Please try again."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:235
+#: src/Admin/Settings/Menu.php:237
 msgid "Settings saved successfully."
 msgstr ""
 

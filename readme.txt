@@ -68,6 +68,8 @@ Contributions and bug reports welcome on GitHub: https://github.com/performwp/pe
 == Changelog ==
 
 = 1.8.0 =
+- Preserved unsaved settings edits during saving and success notifications.
+- Preserved numeric cache settings and their established defaults when saving the whole form.
 - Added privacy-conscious site inventory and system-health guidance for performance troubleshooting.
 - Added bounded diagnostics for autoloaded options, object cache status, slow admin screens, scheduled tasks, admin assets, plugin impact, and Action Scheduler queues.
 - Added a performance health dashboard that reports observed evidence without claiming unmeasured savings.
