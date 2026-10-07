@@ -10,7 +10,7 @@
 	],
 	"require": {
 		"composer/installers": "^2.3",
-		"freemius/wordpress-sdk": "^2.13"
+		"freemius/wordpress-sdk": "^2.13.5"
 	},
 	"require-dev": {
 		"dealerdirect/phpcodesniffer-composer-installer": "^1.2.1",
@@ -67,8 +67,32 @@
 			"dealerdirect/phpcodesniffer-composer-installer": true,
 			"phpstan/extension-installer": true
 		}
-	}
-	,
+	},
 	"minimum-stability": "stable",
-	"prefer-stable": true
+	"prefer-stable": true,
+	"repositories": [
+		{
+			"type": "package",
+			"package": {
+				"name": "freemius/wordpress-sdk",
+				"version": "2.13.5",
+				"type": "library",
+				"description": "Freemius WordPress SDK",
+				"license": "GPL-3.0-only",
+				"require": {
+					"php": ">=5.6"
+				},
+				"autoload": {
+					"files": [
+						"start.php"
+					]
+				},
+				"dist": {
+					"type": "zip",
+					"url": "dependencies/freemius-wordpress-sdk-2.13.5.zip",
+					"shasum": "c65f483c5acc2751c4807904abb18066f94633c8"
+				}
+			}
+		}
+	]
 }
