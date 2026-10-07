@@ -1549,7 +1549,7 @@ class PageCache implements ModuleInterface {
 			}
 		}
 
-		if ( isset( $_GET['add-to-cart'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only cache bypass signal.
+		if ( isset( $_GET['add-to-cart'] ) || isset( $_GET['wc-ajax'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only cache bypass signals.
 			return 'default_query';
 		}
 
@@ -1565,6 +1565,7 @@ class PageCache implements ModuleInterface {
 			'comment_author_',
 			'wordpress_logged_in_',
 			'wordpress_sec_',
+			'wp-postpass_',
 		];
 		foreach ( $cookies as $cookie_name => $cookie_value ) {
 			foreach ( $bypass_cookies as $prefix ) {

@@ -1,6 +1,6 @@
 import { TabPanel } from '@wordpress/components';
 import { WrenchScrewdriverIcon } from '@heroicons/react/24/outline';
-import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
+import { useLayoutEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import CacheStatsPanel from './CacheStatsPanel';
 import AdminPerformanceMonitorPanel from './AdminPerformanceMonitorPanel';
@@ -73,8 +73,13 @@ const SettingsNav = ( {
 				[ id ]: value,
 			} ) ) );
 	const tabPanelRef = useRef( null );
-	useEffect( () => {
+	const restoreTabFocusRef = useRef( false );
+	useLayoutEffect( () => {
 		const selectedTab = tabPanelRef.current?.querySelector( '[role="tab"][aria-selected="true"]' );
+		if ( restoreTabFocusRef.current ) {
+			selectedTab?.focus( { preventScroll: true } );
+			restoreTabFocusRef.current = false;
+		}
 		selectedTab?.scrollIntoView?.( { block: 'nearest', inline: 'nearest' } );
 	}, [ activeTab ] );
 
@@ -109,6 +114,10 @@ const SettingsNav = ( {
 						nextTab = diagnosticTabKeys.includes( activeTab ) ? activeTab : diagnosticTabKeys[ 0 ];
 					}
 					if ( nextTab && nextTab !== activeTab ) {
+						const focusedElement = tabPanelRef.current?.ownerDocument.activeElement;
+						restoreTabFocusRef.current =
+							'tab' === focusedElement?.getAttribute( 'role' ) &&
+							tabPanelRef.current.contains( focusedElement );
 						onTabChange( nextTab );
 					}
 				} }

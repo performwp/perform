@@ -235,6 +235,22 @@ final class Tests_Page_Cache extends TestCase {
 		$this->assertSame( 'query_key', $this->get_private_property( $page_cache, 'current_bypass_reason' ) );
 	}
 
+	public function test_commerce_ajax_query_bypasses_cache_by_default() {
+		$_GET['wc-ajax'] = 'get_refreshed_fragments';
+		$page_cache      = new PageCache();
+
+		$this->assertFalse( $this->invoke_is_cacheable_request( $page_cache ) );
+		$this->assertSame( 'default_query', $this->get_private_property( $page_cache, 'current_bypass_reason' ) );
+	}
+
+	public function test_wordpress_password_cookie_bypasses_cache_by_default() {
+		$_COOKIE['wp-postpass_fixture'] = 'fixture';
+		$page_cache                     = new PageCache();
+
+		$this->assertFalse( $this->invoke_is_cacheable_request( $page_cache ) );
+		$this->assertSame( 'default_cookie', $this->get_private_property( $page_cache, 'current_bypass_reason' ) );
+	}
+
 	public function test_configured_cookie_name_and_prefix_bypass_cache() {
 		$GLOBALS['perform_test_options'] = [
 			'perform_settings' => [

@@ -7,7 +7,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language-Team: PerformWP <hello@performwp.com>\n"
-"POT-Creation-Date: 2026-10-07 11:53+0000\n"
+"POT-Creation-Date: 2026-10-07 12:29+0000\n"
 "Report-Msgid-Bugs-To: https://github.com/performwp/perform/issues/new\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
@@ -525,7 +525,7 @@ msgid "Separate Query Params"
 msgstr ""
 
 #: src/Includes/Helpers.php:788
-msgid "Comma-separated query keys that should generate separate cache entries. Tracking params are ignored automatically."
+msgid "Comma-separated query keys that should generate separate cache entries. When this list is set, other query keys share the same cache entry. Use query bypass rules for dynamic requests. Tracking params are ignored automatically."
 msgstr ""
 
 #: src/Includes/Helpers.php:799

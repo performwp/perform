@@ -87,6 +87,14 @@ test( 'settings save, Assets Manager, and page cache smoke paths work', async ( 
 	await anonymous.get( '/' );
 	const cachedResponse = await anonymous.get( '/' );
 	expect( cachedResponse.headers()[ 'x-perform-cache' ] ).toMatch( /HIT|STALE/ );
+	for ( let attempt = 0; attempt < 2; attempt++ ) {
+		const passwordResponse = await anonymous.get( '/', {
+			headers: { Cookie: 'wp-postpass_fixture=fixture' },
+		} );
+		expect( passwordResponse.headers()[ 'x-perform-cache' ] || '' ).not.toMatch( /HIT|STALE/ );
+		const commerceResponse = await anonymous.get( '/?wc-ajax=get_refreshed_fragments' );
+		expect( commerceResponse.headers()[ 'x-perform-cache' ] || '' ).not.toMatch( /HIT|STALE/ );
+	}
 	await anonymous.dispose();
 } );
 
@@ -484,6 +492,21 @@ test( 'lower-privilege users cannot access the legacy or canonical Cache Stats r
 	expect( adminAssetResponse.status() ).toBe( 403 );
 	expect( await adminAssetResponse.json() ).toMatchObject( { success: false } );
 } );
+test( 'primary tabs retain focus through consecutive keyboard navigation', async ( { page } ) => {
+	await login( page );
+	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=general' );
+	await page.getByRole( 'tab', { name: 'General', exact: true } ).focus();
+	await page.keyboard.press( 'ArrowRight' );
+	await expect( page.getByRole( 'tab', { name: 'Bloat', exact: true } ) ).toBeFocused();
+	await page.keyboard.press( 'ArrowRight' );
+	await expect( page.getByRole( 'tab', { name: 'Assets', exact: true } ) ).toBeFocused();
+	await page.keyboard.press( 'ArrowLeft' );
+	await expect( page.getByRole( 'tab', { name: 'Bloat', exact: true } ) ).toBeFocused();
+	await page.keyboard.press( 'End' );
+	await expect( page.getByRole( 'tab', { name: 'Diagnostics', exact: true } ) ).toBeFocused();
+	await expect( page.getByLabel( 'Current report' ) ).toBeVisible();
+} );
+
 test( 'Database report stays within a 320px viewport and its table scrolls by keyboard', async ( { page } ) => {
 	await page.setViewportSize( { width: 320, height: 900 } );
 	await login( page );

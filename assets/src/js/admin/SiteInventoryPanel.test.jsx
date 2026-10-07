@@ -114,4 +114,19 @@ describe( 'SiteInventoryPanel', () => {
 		expect( await screen.findByRole( 'alert' ) ).toHaveTextContent( 'Synthetic inventory failure.' );
 		expect( screen.getByRole( 'button', { name: 'Refresh inventory' } ) ).toBeEnabled();
 	} );
+
+	it( 'bounds oversized REST error feedback and permits a successful retry', async () => {
+		global.fetch = jest
+			.fn()
+			.mockResolvedValueOnce( { ok: false, json: async () => ( { message: 'x'.repeat( 16000 ) } ) } )
+			.mockResolvedValueOnce( { ok: true, json: async () => ( { inventory: readyInventory } ) } );
+		render( <SiteInventoryPanel initialInventory={ readyInventory } /> );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Refresh inventory' } ) );
+		const alert = await screen.findByRole( 'alert' );
+		expect( alert.textContent.length ).toBeLessThanOrEqual( 500 );
+		const retry = screen.getByRole( 'button', { name: 'Refresh inventory' } );
+		expect( retry ).toBeEnabled();
+		fireEvent.click( retry );
+		await waitFor( () => expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Site inventory refreshed.' ) );
+	} );
 } );
