@@ -76,7 +76,7 @@ Contributions and bug reports welcome on GitHub: https://github.com/performwp/pe
 - Preserved tab focus during keyboard navigation between settings sections.
 - Bypassed the page cache for WordPress password cookies and commerce AJAX requests.
 - Isolated page-cache entries from earlier request policies when upgrading.
-- Removed older generated page-cache HTML during upgrades while retaining metadata for CDN cleanup.
+- Removed older generated page-cache HTML and interrupted-write copies across site cache folders during upgrades while retaining metadata for CDN cleanup.
 - Updated the Freemius WordPress SDK to 2.13.5.
 - Added privacy-conscious site inventory and system-health guidance for performance troubleshooting.
 - Added bounded diagnostics for autoloaded options, object cache status, slow admin screens, scheduled tasks, admin assets, plugin impact, and Action Scheduler queues.

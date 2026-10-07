@@ -353,30 +353,31 @@ final class Tests_Page_Cache extends TestCase {
 		$page_cache = new PageCache();
 		$cache_dir  = $this->temporary_cache_dir();
 		$this->set_private_property( $page_cache, 'cache_dir', $cache_dir );
-		$directories = [ $cache_dir, $cache_dir . 'site-1/generation-1/', $cache_dir . 'site-1/generation-2/' ];
+		$directories    = [ $cache_dir, $cache_dir . 'site-1/generation-1/', $cache_dir . 'site-1/generation-2/', $cache_dir . 'site-2/generation-1/' ];
+		$temporary_name = str_repeat( 'a', 32 ) . '.html.' . uniqid( 'tmp-', true );
 		foreach ( $directories as $directory ) {
 			if ( ! is_dir( $directory ) ) {
 				mkdir( $directory, 0777, true );
 			}
 			file_put_contents( $directory . str_repeat( 'a', 32 ) . '.html', 'private fixture' );
+			file_put_contents( $directory . $temporary_name, 'interrupted private fixture' );
 			file_put_contents( $directory . str_repeat( 'a', 32 ) . '.meta.json', '{}' );
 			file_put_contents( $directory . 'keep.txt', 'unrelated fixture' );
 		}
-		mkdir( $cache_dir . 'site-2/generation-1/', 0777, true );
-		$other_site = $cache_dir . 'site-2/generation-1/' . str_repeat( 'b', 32 ) . '.html';
-		file_put_contents( $other_site, 'other site fixture' );
-		$GLOBALS['perform_test_options']['perform_settings'] = [ 'extension_value' => 'retained' ];
+		$GLOBALS['perform_test_options']['perform_settings']            = [ 'extension_value' => 'retained' ];
+		$GLOBALS['perform_test_options']['perform_cache_body_policy_1'] = 2;
 
 		$page_cache->retire_legacy_cache_bodies();
 
 		foreach ( $directories as $directory ) {
 			$this->assertFileDoesNotExist( $directory . str_repeat( 'a', 32 ) . '.html' );
+			$this->assertFileDoesNotExist( $directory . $temporary_name );
 			$this->assertFileExists( $directory . str_repeat( 'a', 32 ) . '.meta.json' );
 			$this->assertSame( 'unrelated fixture', file_get_contents( $directory . 'keep.txt' ) );
 		}
-		$this->assertFileExists( $other_site );
 		$this->assertSame( [ 'extension_value' => 'retained' ], $GLOBALS['perform_test_options']['perform_settings'] );
-		$this->assertSame( 2, $GLOBALS['perform_test_options']['perform_cache_body_policy_1'] );
+		$this->assertSame( 3, $GLOBALS['perform_test_options']['perform_cache_body_policy'] );
+		$this->assertSame( 3, $GLOBALS['perform_test_options']['perform_cache_metadata_policy_1'] );
 	}
 
 	public function test_retirement_keeps_metadata_available_for_bounded_cloudflare_inventory() {
@@ -387,6 +388,10 @@ final class Tests_Page_Cache extends TestCase {
 		mkdir( $directory, 0777, true );
 		file_put_contents( $directory . str_repeat( 'a', 32 ) . '.html', 'private fixture' );
 		file_put_contents( $directory . str_repeat( 'a', 32 ) . '.meta.json', wp_json_encode( [ 'url' => 'https://example.com/protected/' ] ) );
+		$other_directory = $cache_dir . 'site-2/generation-1/';
+		mkdir( $other_directory, 0777, true );
+		file_put_contents( $other_directory . str_repeat( 'b', 32 ) . '.meta.json', wp_json_encode( [ 'url' => 'https://other.example.com/protected/' ] ) );
+		file_put_contents( $other_directory . str_repeat( 'b', 32 ) . '.html', 'other private fixture' );
 		$GLOBALS['perform_test_options']['perform_settings'] = [
 			'enable_cloudflare_cache_sync' => true,
 			'cloudflare_zone_id'           => 'zone',
@@ -401,6 +406,24 @@ final class Tests_Page_Cache extends TestCase {
 		$this->assertSame( [ 'https://example.com/protected/' ], $work['urls'] );
 		$this->assertTrue( $work['complete'] );
 		$this->assertStringNotContainsString( 'fixture-token', wp_json_encode( $record ) );
+		$this->assertFileDoesNotExist( $other_directory . str_repeat( 'b', 32 ) . '.html' );
+		$this->assertFileExists( $other_directory . str_repeat( 'b', 32 ) . '.meta.json' );
+		$this->assertSame( [], $GLOBALS['perform_test_remote_post_calls'] );
+	}
+
+	public function test_each_blog_queues_its_metadata_without_repeating_shared_body_retirement() {
+		$page_cache = new PageCache();
+		$cache_dir  = $this->temporary_cache_dir();
+		$this->set_private_property( $page_cache, 'cache_dir', $cache_dir );
+		$page_cache->retire_legacy_cache_bodies();
+		$this->write_cached_url( $page_cache, 'https://example.com/public/' );
+		$GLOBALS['perform_test_blog_id'] = 2;
+		$other_cache                     = new PageCache();
+		$this->set_private_property( $other_cache, 'cache_dir', $cache_dir );
+		$other_cache->retire_legacy_cache_bodies();
+		$this->assertSame( 3, $GLOBALS['perform_test_options']['perform_cache_metadata_policy_2'] );
+		$GLOBALS['perform_test_blog_id'] = 1;
+		$this->assertTrue( $this->cache_file_exists( $page_cache, 'https://example.com/public/' ) );
 	}
 
 	public function test_retirement_is_once_per_upgrade_and_preserves_new_cache_until_next_plugin_upgrade() {
@@ -412,7 +435,7 @@ final class Tests_Page_Cache extends TestCase {
 		$page_cache->retire_legacy_cache_bodies();
 		$this->assertTrue( $this->cache_file_exists( $page_cache, 'https://example.com/public/' ) );
 		$page_cache->reset_cache_body_policy_after_upgrade( null, [ 'type' => 'theme' ] );
-		$this->assertSame( 2, $GLOBALS['perform_test_options']['perform_cache_body_policy_1'] );
+		$this->assertSame( 3, $GLOBALS['perform_test_options']['perform_cache_body_policy'] );
 		$page_cache->reset_cache_body_policy_after_upgrade( null, [ 'type' => 'plugin' ] );
 		$page_cache->retire_legacy_cache_bodies();
 		$this->assertFalse( $this->cache_file_exists( $page_cache, 'https://example.com/public/' ) );
@@ -432,7 +455,7 @@ final class Tests_Page_Cache extends TestCase {
 
 		$this->assertSame( 'unrelated fixture', file_get_contents( $target ) );
 		$this->assertTrue( is_link( $link ) );
-		$this->assertArrayNotHasKey( 'perform_cache_body_policy_1', $GLOBALS['perform_test_options'] );
+		$this->assertArrayNotHasKey( 'perform_cache_body_policy', $GLOBALS['perform_test_options'] );
 		$this->assertFalse( $this->invoke_private( $page_cache, 'page_cache_enabled' ) );
 		$this->assertContains( 'admin_notices', array_column( $GLOBALS['perform_test_actions'], 'hook' ) );
 	}

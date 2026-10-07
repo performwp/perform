@@ -87,6 +87,24 @@ if ( ! function_exists( 'delete_option' ) ) {
 	}
 }
 
+if ( ! function_exists( 'get_site_option' ) ) {
+	function get_site_option( $name, $default_value = false ) {
+		return get_option( $name, $default_value );
+	}
+}
+
+if ( ! function_exists( 'update_site_option' ) ) {
+	function update_site_option( $name, $value ) {
+		return update_option( $name, $value, false );
+	}
+}
+
+if ( ! function_exists( 'delete_site_option' ) ) {
+	function delete_site_option( $name ) {
+		return delete_option( $name );
+	}
+}
+
 if ( ! function_exists( 'get_transient' ) ) {
 	function get_transient( $transient ) {
 		$store = isset( $GLOBALS['perform_test_transients'] ) && is_array( $GLOBALS['perform_test_transients'] ) ? $GLOBALS['perform_test_transients'] : [];

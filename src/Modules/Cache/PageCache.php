@@ -23,7 +23,7 @@ class PageCache implements ModuleInterface {
 	 *
 	 * @var int
 	 */
-	private const CACHE_POLICY_VERSION = 2;
+	private const CACHE_POLICY_VERSION = 3;
 
 	/** @var bool */
 	private $cache_retirement_blocked = false;
@@ -2048,17 +2048,25 @@ class PageCache implements ModuleInterface {
 	 * addressable bodies for cron. Metadata remains for bounded CDN inventory.
 	 */
 	public function retire_legacy_cache_bodies(): void {
-		$option = 'perform_cache_body_policy_' . $this->get_blog_id();
-		if ( self::CACHE_POLICY_VERSION === (int) get_option( $option, 0 ) ) {
+		$option       = 'perform_cache_metadata_policy_' . $this->get_blog_id();
+		$bodies_ready = self::CACHE_POLICY_VERSION === (int) get_site_option( 'perform_cache_body_policy', 0 );
+		if ( $bodies_ready && self::CACHE_POLICY_VERSION === (int) get_option( $option, 0 ) ) {
 			return;
 		}
-		$this->purge_site_cache();
 		try {
-			$complete = $this->remove_old_cache_bodies();
+			$site_dir = $this->cache_dir . 'site-' . $this->get_blog_id();
+			if ( is_link( rtrim( $this->cache_dir, '/\\' ) ) || is_link( $site_dir ) ) {
+				$complete = false;
+			} else {
+				$this->purge_site_cache();
+				$this->queue_existing_site_metadata();
+				$complete = $bodies_ready || $this->remove_old_cache_bodies();
+			}
 		} catch ( \UnexpectedValueException $error ) {
 			$complete = false;
 		}
 		if ( $complete ) {
+			update_site_option( 'perform_cache_body_policy', self::CACHE_POLICY_VERSION );
 			update_option( $option, self::CACHE_POLICY_VERSION, false );
 		} else {
 			$this->cache_retirement_blocked = true;
@@ -2066,22 +2074,43 @@ class PageCache implements ModuleInterface {
 		}
 	}
 
-	/** Delete only owned body files without following directory or file symlinks. */
+	/** Keep each site's CDN inventory scoped to its own credentials and generations. */
+	private function queue_existing_site_metadata(): void {
+		$site_dir = $this->cache_dir . 'site-' . $this->get_blog_id() . '/';
+		if ( is_dir( $site_dir ) && ! is_link( rtrim( $site_dir, '/\\' ) ) ) {
+			foreach ( new \DirectoryIterator( $site_dir ) as $directory ) {
+				if ( ! $directory->isDot() && $directory->isDir() && ! $directory->isLink() && preg_match( '/^generation-[1-9][0-9]*$/', $directory->getFilename() ) ) {
+					$this->queue_cloudflare_tracked_urls( null, (int) substr( $directory->getFilename(), 11 ) );
+				}
+			}
+		}
+	}
+
+	/** Retire body copies across the shared cache without following symlinks. */
 	private function remove_old_cache_bodies(): bool {
 		$directories = [ $this->cache_dir ];
-		$site_dir    = $this->cache_dir . 'site-' . $this->get_blog_id() . '/';
-		$complete    = ! is_link( rtrim( $this->cache_dir, '/\\' ) ) && ! is_link( rtrim( $site_dir, '/\\' ) );
-		if ( $complete ) {
-			$this->queue_cloudflare_tracked_urls();
-		}
-		if ( is_dir( $site_dir ) && $complete ) {
-			foreach ( new \DirectoryIterator( $site_dir ) as $directory ) {
-				if ( $directory->isLink() && preg_match( '/^generation-[0-9]+$/', $directory->getFilename() ) ) {
-					$complete = false;
+		$complete    = ! is_link( rtrim( $this->cache_dir, '/\\' ) );
+		if ( is_dir( $this->cache_dir ) && $complete ) {
+			foreach ( new \DirectoryIterator( $this->cache_dir ) as $site ) {
+				if ( $site->isDot() || ! preg_match( '/^site-[1-9][0-9]*$/', $site->getFilename() ) ) {
+					continue;
 				}
-				if ( ! $directory->isDot() && $directory->isDir() && ! $directory->isLink() && preg_match( '/^generation-[0-9]+$/', $directory->getFilename() ) ) {
-					$directories[] = $directory->getPathname();
-					$this->queue_cloudflare_tracked_urls( null, (int) substr( $directory->getFilename(), 11 ) );
+				if ( $site->isLink() ) {
+					$complete = false;
+					continue;
+				}
+				if ( ! $site->isDir() ) {
+					continue;
+				}
+				foreach ( new \DirectoryIterator( $site->getPathname() ) as $generation ) {
+					if ( $generation->isDot() || ! preg_match( '/^generation-[1-9][0-9]*$/', $generation->getFilename() ) ) {
+						continue;
+					}
+					if ( $generation->isLink() ) {
+						$complete = false;
+					} elseif ( $generation->isDir() ) {
+						$directories[] = $generation->getPathname();
+					}
 				}
 			}
 		}
@@ -2090,7 +2119,7 @@ class PageCache implements ModuleInterface {
 				continue;
 			}
 			foreach ( new \DirectoryIterator( $directory ) as $file ) {
-				if ( $file->isDot() || ! preg_match( '/^[a-f0-9]{32}\.html$/', $file->getFilename() ) ) {
+				if ( $file->isDot() || ! preg_match( '/^[a-f0-9]{32}\.html(?:\.tmp-[a-f0-9]{13,16}\.[0-9]{8})?$/', $file->getFilename() ) ) {
 					continue;
 				}
 				if ( $file->isFile() && ! $file->isLink() ) {
@@ -2110,7 +2139,8 @@ class PageCache implements ModuleInterface {
 	 */
 	public function reset_cache_body_policy_after_upgrade( $upgrader, array $details ): void {
 		if ( 'plugin' === ( $details['type'] ?? '' ) ) {
-			delete_option( 'perform_cache_body_policy_' . $this->get_blog_id() );
+			delete_site_option( 'perform_cache_body_policy' );
+			delete_option( 'perform_cache_metadata_policy_' . $this->get_blog_id() );
 		}
 	}
 
