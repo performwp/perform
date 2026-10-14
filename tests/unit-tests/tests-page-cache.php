@@ -800,8 +800,25 @@ final class Tests_Page_Cache extends TestCase {
 		$this->set_private_property( $page_cache, 'cloudflare_metadata_scan_limit', 2 );
 		$directory = $cache_dir . 'site-1/generation-1/';
 		mkdir( $directory, 0777, true );
-		file_put_contents( $directory . str_repeat( 'a', 32 ) . '.meta.json', wp_json_encode( [ 'url' => 'https://example.com/kept/' ] ) );
-		file_put_contents( $directory . 'operator-note.txt', 'unrelated' );
+		$metadata_name = str_repeat( 'a', 32 ) . '.meta.json';
+		file_put_contents( $directory . $metadata_name, wp_json_encode( [ 'url' => 'https://example.com/kept/' ] ) );
+		$noise_name = '';
+		for ( $attempt = 0; $attempt < 64; $attempt++ ) {
+			$candidate = 'z-operator-note-' . $attempt . '.txt';
+			file_put_contents( $directory . $candidate, 'unrelated' );
+			$entries = [];
+			foreach ( new DirectoryIterator( $directory ) as $entry ) {
+				if ( ! $entry->isDot() ) {
+					$entries[] = $entry->getFilename();
+				}
+			}
+			if ( [ $metadata_name, $candidate ] === $entries ) {
+				$noise_name = $candidate;
+				break;
+			}
+			wp_delete_file( $directory . $candidate );
+		}
+		$this->assertNotSame( '', $noise_name, 'The fixture must place metadata before unrelated content in iterator order.' );
 		$record = [
 			'source'     => 'metadata',
 			'generation' => 1,
@@ -926,12 +943,15 @@ final class Tests_Page_Cache extends TestCase {
 		$directory = $cache_dir . 'site-1/generation-1/';
 		mkdir( $directory, 0777, true );
 		$metadata_temporary = $directory . str_repeat( 'a', 32 ) . '.meta.json.' . uniqid( 'tmp-', true );
+		$metadata_temporary_dotted = $directory . str_repeat( 'b', 32 ) . '.meta.json.tmp.' . uniqid( '', true );
 		file_put_contents( $metadata_temporary, '{"url":"https://example.com/unfinished/"}' );
+		file_put_contents( $metadata_temporary_dotted, '{"url":"https://example.com/unfinished-dotted/"}' );
 		file_put_contents( $directory . 'operator-note.txt', 'keep this file' );
 
 		$page_cache->cleanup_obsolete_generations();
 
 		$this->assertFileDoesNotExist( $metadata_temporary );
+		$this->assertFileDoesNotExist( $metadata_temporary_dotted );
 		$this->assertSame( 'keep this file', file_get_contents( $directory . 'operator-note.txt' ) );
 	}
 
