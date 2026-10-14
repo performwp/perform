@@ -353,14 +353,19 @@ final class Tests_Page_Cache extends TestCase {
 		$page_cache = new PageCache();
 		$cache_dir  = $this->temporary_cache_dir();
 		$this->set_private_property( $page_cache, 'cache_dir', $cache_dir );
-		$directories    = [ $cache_dir, $cache_dir . 'site-1/generation-1/', $cache_dir . 'site-1/generation-2/', $cache_dir . 'site-2/generation-1/' ];
-		$temporary_name = str_repeat( 'a', 32 ) . '.html.' . uniqid( 'tmp-', true );
+		$directories     = [ $cache_dir, $cache_dir . 'site-1/generation-1/', $cache_dir . 'site-1/generation-2/', $cache_dir . 'site-2/generation-1/' ];
+		$temporary_names = [
+			str_repeat( 'a', 32 ) . '.html.' . uniqid( 'tmp-', true ),
+			str_repeat( 'a', 32 ) . '.html.tmp.' . uniqid( '', true ),
+		];
 		foreach ( $directories as $directory ) {
 			if ( ! is_dir( $directory ) ) {
 				mkdir( $directory, 0777, true );
 			}
 			file_put_contents( $directory . str_repeat( 'a', 32 ) . '.html', 'private fixture' );
-			file_put_contents( $directory . $temporary_name, 'interrupted private fixture' );
+			foreach ( $temporary_names as $temporary_name ) {
+				file_put_contents( $directory . $temporary_name, 'interrupted private fixture' );
+			}
 			file_put_contents( $directory . str_repeat( 'a', 32 ) . '.meta.json', '{}' );
 			file_put_contents( $directory . 'keep.txt', 'unrelated fixture' );
 		}
@@ -371,7 +376,9 @@ final class Tests_Page_Cache extends TestCase {
 
 		foreach ( $directories as $directory ) {
 			$this->assertFileDoesNotExist( $directory . str_repeat( 'a', 32 ) . '.html' );
-			$this->assertFileDoesNotExist( $directory . $temporary_name );
+			foreach ( $temporary_names as $temporary_name ) {
+				$this->assertFileDoesNotExist( $directory . $temporary_name );
+			}
 			$this->assertFileExists( $directory . str_repeat( 'a', 32 ) . '.meta.json' );
 			$this->assertSame( 'unrelated fixture', file_get_contents( $directory . 'keep.txt' ) );
 		}
@@ -383,6 +390,7 @@ final class Tests_Page_Cache extends TestCase {
 	public function test_retirement_keeps_metadata_available_for_bounded_cloudflare_inventory() {
 		$page_cache = new PageCache();
 		$cache_dir  = $this->temporary_cache_dir();
+		delete_site_option( 'perform_cache_body_policy' );
 		$this->set_private_property( $page_cache, 'cache_dir', $cache_dir );
 		$directory = $cache_dir . 'site-1/generation-1/';
 		mkdir( $directory, 0777, true );
@@ -530,8 +538,8 @@ final class Tests_Page_Cache extends TestCase {
 		$this->set_private_property( $page_cache, 'cleanup_batch_size', 1 );
 		$GLOBALS['perform_test_options']['perform_cache_generation_1'] = 2;
 		mkdir( $cache_dir . 'site-1/generation-1/', 0777, true );
-		file_put_contents( $cache_dir . 'site-1/generation-1/one.html', 'one' );
-		file_put_contents( $cache_dir . 'site-1/generation-1/two.html', 'two' );
+		file_put_contents( $cache_dir . 'site-1/generation-1/' . str_repeat( '1', 32 ) . '.html', 'one' );
+		file_put_contents( $cache_dir . 'site-1/generation-1/' . str_repeat( '2', 32 ) . '.html', 'two' );
 
 		$page_cache->cleanup_obsolete_generations();
 
@@ -834,7 +842,8 @@ final class Tests_Page_Cache extends TestCase {
 		$this->set_private_property( $page_cache, 'cache_dir', $cache_dir );
 		$GLOBALS['perform_test_options']['perform_cache_generation_1'] = 2;
 		mkdir( $cache_dir . 'site-1/generation-1/', 0777, true );
-		file_put_contents( $cache_dir . 'site-1/generation-1/retired.meta.json', '{}' );
+		$metadata_path = $cache_dir . 'site-1/generation-1/' . str_repeat( 'a', 32 ) . '.meta.json';
+		file_put_contents( $metadata_path, '{}' );
 		$GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'] = [
 			[
 				'source'     => 'metadata',
@@ -845,12 +854,12 @@ final class Tests_Page_Cache extends TestCase {
 		];
 
 		$page_cache->cleanup_obsolete_generations();
-		$this->assertFileExists( $cache_dir . 'site-1/generation-1/retired.meta.json' );
+		$this->assertFileExists( $metadata_path );
 		$this->assertSame( 'perform_cache_cleanup_event', $GLOBALS['perform_test_scheduled_single_events'][0]['hook'] );
 
 		$GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'] = [];
 		$page_cache->cleanup_obsolete_generations();
-		$this->assertFileDoesNotExist( $cache_dir . 'site-1/generation-1/retired.meta.json' );
+		$this->assertFileDoesNotExist( $metadata_path );
 	}
 
 	public function test_cleanup_schedules_again_when_legacy_files_exactly_exhaust_budget() {
@@ -861,11 +870,28 @@ final class Tests_Page_Cache extends TestCase {
 		$GLOBALS['perform_test_options']['perform_cache_generation_1'] = 2;
 		file_put_contents( $cache_dir . str_repeat( 'a', 32 ) . '.html', 'legacy' );
 		mkdir( $cache_dir . 'site-1/generation-1/', 0777, true );
-		file_put_contents( $cache_dir . 'site-1/generation-1/retired.html', 'retired' );
+		file_put_contents( $cache_dir . 'site-1/generation-1/' . str_repeat( 'b', 32 ) . '.html', 'retired' );
+		file_put_contents( $cache_dir . 'site-1/generation-1/operator-note.txt', 'keep' );
 
 		$page_cache->cleanup_obsolete_generations();
-		$this->assertFileExists( $cache_dir . 'site-1/generation-1/retired.html' );
+		$this->assertFileExists( $cache_dir . 'site-1/generation-1/' . str_repeat( 'b', 32 ) . '.html' );
 		$this->assertSame( 'perform_cache_cleanup_event', $GLOBALS['perform_test_scheduled_single_events'][0]['hook'] );
+	}
+
+	public function test_retired_generation_cleanup_preserves_unrelated_files() {
+		$page_cache = new PageCache();
+		$cache_dir  = $this->temporary_cache_dir();
+		$this->set_private_property( $page_cache, 'cache_dir', $cache_dir );
+		$GLOBALS['perform_test_options']['perform_cache_generation_1'] = 2;
+		$directory = $cache_dir . 'site-1/generation-1/';
+		mkdir( $directory, 0777, true );
+		file_put_contents( $directory . str_repeat( 'a', 32 ) . '.html', 'retired body' );
+		file_put_contents( $directory . 'operator-note.txt', 'keep this file' );
+
+		$page_cache->cleanup_obsolete_generations();
+
+		$this->assertFileDoesNotExist( $directory . str_repeat( 'a', 32 ) . '.html' );
+		$this->assertSame( 'keep this file', file_get_contents( $directory . 'operator-note.txt' ) );
 	}
 
 	public function test_empty_metadata_source_is_retired_without_rescheduling() {

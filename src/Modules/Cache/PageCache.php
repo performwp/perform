@@ -2119,7 +2119,7 @@ class PageCache implements ModuleInterface {
 				continue;
 			}
 			foreach ( new \DirectoryIterator( $directory ) as $file ) {
-				if ( $file->isDot() || ! preg_match( '/^[a-f0-9]{32}\.html(?:\.tmp-[a-f0-9]{13,16}\.[0-9]{8})?$/', $file->getFilename() ) ) {
+				if ( $file->isDot() || ! $this->is_owned_cache_body( $file->getFilename() ) ) {
 					continue;
 				}
 				if ( $file->isFile() && ! $file->isLink() ) {
@@ -2198,7 +2198,7 @@ class PageCache implements ModuleInterface {
 				continue;
 			}
 			$name = $file->getFilename();
-			if ( $legacy_root && ! preg_match( '/^[a-f0-9]{32}(?:\.html|\.meta\.json)$/', $name ) ) {
+			if ( ! $this->is_owned_cache_file( $name, $legacy_root ) ) {
 				continue;
 			}
 			if ( $remaining <= 0 ) {
@@ -2208,6 +2208,19 @@ class PageCache implements ModuleInterface {
 			--$remaining;
 		}
 		return $remaining <= 0 && $this->directory_has_files( $directory, $legacy_root );
+	}
+
+	/** Identify Perform cache artifacts without treating unrelated files as disposable. */
+	private function is_owned_cache_file( string $name, bool $legacy_root ): bool {
+		if ( $this->is_owned_cache_body( $name ) ) {
+			return true;
+		}
+		return (bool) preg_match( '/^[a-f0-9]{32}\.meta\.json$/', $name );
+	}
+
+	/** Identify a generated HTML body or an interrupted atomic body write. */
+	private function is_owned_cache_body( string $name ): bool {
+		return (bool) preg_match( '/^[a-f0-9]{32}\.html(?:\.tmp(?:-|\.)[a-f0-9]{13,16}\.[0-9]{8})?$/', $name );
 	}
 
 	private function directory_has_files( string $directory, bool $legacy_root = false ): bool {
