@@ -793,6 +793,28 @@ final class Tests_Page_Cache extends TestCase {
 		$this->assertSame( [], $GLOBALS['perform_test_remote_post_calls'] );
 	}
 
+	public function test_metadata_inventory_keeps_urls_found_before_scan_budget_hits_unrelated_files() {
+		$page_cache = new PageCache();
+		$cache_dir  = $this->temporary_cache_dir();
+		$this->set_private_property( $page_cache, 'cache_dir', $cache_dir );
+		$this->set_private_property( $page_cache, 'cloudflare_metadata_scan_limit', 2 );
+		$directory = $cache_dir . 'site-1/generation-1/';
+		mkdir( $directory, 0777, true );
+		file_put_contents( $directory . str_repeat( 'a', 32 ) . '.meta.json', wp_json_encode( [ 'url' => 'https://example.com/kept/' ] ) );
+		file_put_contents( $directory . 'operator-note.txt', 'unrelated' );
+		$record = [
+			'source'     => 'metadata',
+			'generation' => 1,
+			'cursor'     => 0,
+		];
+
+		$work = $this->invoke_private_with_argument( $page_cache, 'get_cloudflare_metadata_urls', $record );
+
+		$this->assertSame( [ 'https://example.com/kept/' ], $work['urls'] );
+		$this->assertSame( 2, $work['cursor'] );
+		$this->assertFalse( $work['complete'] );
+	}
+
 	public function test_targeted_cloudflare_failure_queues_a_token_free_retry() {
 		$page_cache = new PageCache();
 		$GLOBALS['perform_test_options']['perform_settings'] = [
@@ -882,6 +904,7 @@ final class Tests_Page_Cache extends TestCase {
 		$page_cache = new PageCache();
 		$cache_dir  = $this->temporary_cache_dir();
 		$this->set_private_property( $page_cache, 'cache_dir', $cache_dir );
+		$this->set_private_property( $page_cache, 'cleanup_batch_size', 1 );
 		$GLOBALS['perform_test_options']['perform_cache_generation_1'] = 2;
 		$directory = $cache_dir . 'site-1/generation-1/';
 		mkdir( $directory, 0777, true );
@@ -891,6 +914,24 @@ final class Tests_Page_Cache extends TestCase {
 		$page_cache->cleanup_obsolete_generations();
 
 		$this->assertFileDoesNotExist( $directory . str_repeat( 'a', 32 ) . '.html' );
+		$this->assertSame( 'keep this file', file_get_contents( $directory . 'operator-note.txt' ) );
+		$this->assertSame( [], $GLOBALS['perform_test_scheduled_single_events'] );
+	}
+
+	public function test_retired_generation_cleanup_removes_interrupted_metadata_file_but_preserves_unrelated_files() {
+		$page_cache = new PageCache();
+		$cache_dir  = $this->temporary_cache_dir();
+		$this->set_private_property( $page_cache, 'cache_dir', $cache_dir );
+		$GLOBALS['perform_test_options']['perform_cache_generation_1'] = 2;
+		$directory = $cache_dir . 'site-1/generation-1/';
+		mkdir( $directory, 0777, true );
+		$metadata_temporary = $directory . str_repeat( 'a', 32 ) . '.meta.json.' . uniqid( 'tmp-', true );
+		file_put_contents( $metadata_temporary, '{"url":"https://example.com/unfinished/"}' );
+		file_put_contents( $directory . 'operator-note.txt', 'keep this file' );
+
+		$page_cache->cleanup_obsolete_generations();
+
+		$this->assertFileDoesNotExist( $metadata_temporary );
 		$this->assertSame( 'keep this file', file_get_contents( $directory . 'operator-note.txt' ) );
 	}
 

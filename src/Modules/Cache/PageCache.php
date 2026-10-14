@@ -2167,14 +2167,18 @@ class PageCache implements ModuleInterface {
 			$this->schedule_cleanup();
 			return;
 		}
-		$has_more = $this->cleanup_directory_files( $this->cache_dir, $remaining, true );
+		$has_more = $this->cleanup_directory_files( $this->cache_dir, $remaining );
 		$current  = $this->get_generation_dir( $this->get_cache_generation() );
-		if ( $remaining > 0 && is_dir( $site_dir ) ) {
+		if ( is_dir( $site_dir ) ) {
 			foreach ( new \DirectoryIterator( $site_dir ) as $directory ) {
-				if ( $directory->isDot() || ! $directory->isDir() || 0 !== strpos( $directory->getFilename(), 'generation-' ) || trailingslashit( $directory->getPathname() ) === $current ) {
+				if ( $directory->isDot() || $directory->isLink() || ! $directory->isDir() || 0 !== strpos( $directory->getFilename(), 'generation-' ) || trailingslashit( $directory->getPathname() ) === $current ) {
 					continue;
 				}
-				if ( $this->cleanup_directory_files( $directory->getPathname(), $remaining, false ) ) {
+				if ( 0 < $remaining && $this->cleanup_directory_files( $directory->getPathname(), $remaining ) ) {
+					$has_more = true;
+					break;
+				}
+				if ( 0 >= $remaining && $this->directory_has_owned_cache_files( $directory->getPathname() ) ) {
 					$has_more = true;
 					break;
 				}
@@ -2184,13 +2188,13 @@ class PageCache implements ModuleInterface {
 			}
 		}
 
-		if ( $has_more || $remaining <= 0 ) {
+		if ( $has_more ) {
 			wp_schedule_single_event( time() + 30, 'perform_cache_cleanup_event' );
 		}
 	}
 
-	private function cleanup_directory_files( string $directory, int &$remaining, bool $legacy_root ): bool {
-		if ( ! is_dir( $directory ) ) {
+	private function cleanup_directory_files( string $directory, int &$remaining ): bool {
+		if ( ! is_dir( $directory ) || is_link( rtrim( $directory, '/\\' ) ) ) {
 			return false;
 		}
 		foreach ( new \DirectoryIterator( $directory ) as $file ) {
@@ -2198,7 +2202,7 @@ class PageCache implements ModuleInterface {
 				continue;
 			}
 			$name = $file->getFilename();
-			if ( ! $this->is_owned_cache_file( $name, $legacy_root ) ) {
+			if ( ! $this->is_owned_cache_file( $name ) ) {
 				continue;
 			}
 			if ( $remaining <= 0 ) {
@@ -2207,15 +2211,15 @@ class PageCache implements ModuleInterface {
 			wp_delete_file( $file->getPathname() );
 			--$remaining;
 		}
-		return $remaining <= 0 && $this->directory_has_files( $directory, $legacy_root );
+		return $remaining <= 0 && $this->directory_has_owned_cache_files( $directory );
 	}
 
 	/** Identify Perform cache artifacts without treating unrelated files as disposable. */
-	private function is_owned_cache_file( string $name, bool $legacy_root ): bool {
+	private function is_owned_cache_file( string $name ): bool {
 		if ( $this->is_owned_cache_body( $name ) ) {
 			return true;
 		}
-		return (bool) preg_match( '/^[a-f0-9]{32}\.meta\.json$/', $name );
+		return (bool) preg_match( '/^[a-f0-9]{32}\.meta\.json(?:\.tmp(?:-|\.)[a-f0-9]{13,16}\.[0-9]{8})?$/', $name );
 	}
 
 	/** Identify a generated HTML body or an interrupted atomic body write. */
@@ -2223,12 +2227,22 @@ class PageCache implements ModuleInterface {
 		return (bool) preg_match( '/^[a-f0-9]{32}\.html(?:\.tmp(?:-|\.)[a-f0-9]{13,16}\.[0-9]{8})?$/', $name );
 	}
 
-	private function directory_has_files( string $directory, bool $legacy_root = false ): bool {
+	private function directory_has_files( string $directory ): bool {
 		foreach ( new \DirectoryIterator( $directory ) as $file ) {
 			if ( $file->isDot() || ! $file->isFile() ) {
 				continue;
 			}
-			if ( ! $legacy_root || preg_match( '/^[a-f0-9]{32}(?:\.html|\.meta\.json)$/', $file->getFilename() ) ) {
+			return true;
+		}
+		return false;
+	}
+
+	private function directory_has_owned_cache_files( string $directory ): bool {
+		if ( ! is_dir( $directory ) || is_link( rtrim( $directory, '/\\' ) ) ) {
+			return false;
+		}
+		foreach ( new \DirectoryIterator( $directory ) as $file ) {
+			if ( ! $file->isDot() && $file->isFile() && $this->is_owned_cache_file( $file->getFilename() ) ) {
 				return true;
 			}
 		}
@@ -2462,7 +2476,7 @@ class PageCache implements ModuleInterface {
 			if ( ! $file->isFile() || '.meta.json' !== substr( $file->getFilename(), -10 ) ) {
 				if ( $scanned >= $budget ) {
 					return [
-						'urls'     => [],
+						'urls'     => array_values( array_unique( $urls ) ),
 						'cursor'   => $index,
 						'complete' => false,
 					];
