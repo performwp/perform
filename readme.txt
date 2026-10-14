@@ -77,6 +77,8 @@ Contributions and bug reports welcome on GitHub: https://github.com/performwp/pe
 - Bypassed the page cache for WordPress password cookies and commerce AJAX requests.
 - Isolated page-cache entries from earlier request policies when upgrading.
 - Removed older generated page-cache HTML and interrupted-write copies across site cache folders during upgrades while retaining metadata for CDN cleanup.
+- Preserved page-cache warmup requests with expiring worker claims, made CDN queue writes concurrency-safe, and retained shared-root CDN metadata during multisite cleanup.
+- Kept CDN metadata inventory pagination stable when earlier files are removed during a scan.
 - Updated the Freemius WordPress SDK to 2.13.5.
 - Added privacy-conscious site inventory and system-health guidance for performance troubleshooting.
 - Added bounded diagnostics for autoloaded options, object cache status, slow admin screens, scheduled tasks, admin assets, plugin impact, and Action Scheduler queues.

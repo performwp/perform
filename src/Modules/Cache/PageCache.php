@@ -146,6 +146,9 @@ class PageCache implements ModuleInterface {
 	 */
 	private $preload_sitemap_url_cap = 500;
 
+	/** @var int */
+	private $preload_claim_lease = 300;
+
 	/**
 	 * Determine whether this module should be loaded.
 	 *
@@ -716,22 +719,61 @@ class PageCache implements ModuleInterface {
 			return;
 		}
 
-		$queue = get_option( 'perform_cache_preload_queue', [] );
-		if ( ! is_array( $queue ) || empty( $queue ) ) {
+		$batch_size = $this->get_adaptive_preload_batch_size();
+		$claimed    = [];
+		$retry_at   = 0;
+		$mutation   = $this->mutate_preload_queue(
+			function ( array $current ) use ( $batch_size, &$claimed, &$retry_at ): array {
+				$claimed  = [];
+				$retry_at = 0;
+				$now      = time();
+				$lease    = max( $this->preload_claim_lease, 20 + ( $batch_size * 10 ) );
+				$queued   = [];
+				foreach ( $current as $entry ) {
+					$url = is_string( $entry ) ? $entry : ( is_array( $entry ) ? ( $entry['url'] ?? '' ) : '' );
+					if ( ! is_string( $url ) || '' === $url || ! $this->is_site_url( $url ) ) {
+						continue;
+					}
+					$entry = is_array( $entry ) ? $entry : [ 'url' => esc_url_raw( $url ) ];
+					$url   = esc_url_raw( $url );
+					if ( ! empty( $entry['claim_id'] ) && (int) ( $entry['claim_until'] ?? 0 ) > $now ) {
+						$retry_at = 0 === $retry_at ? (int) $entry['claim_until'] : min( $retry_at, (int) $entry['claim_until'] );
+						$queued[] = $entry;
+						continue;
+					}
+					if ( count( $claimed ) < $batch_size ) {
+						$claim_id  = wp_generate_uuid4();
+						$entry     = [
+							'url'         => $url,
+							'claim_id'    => $claim_id,
+							'claim_until' => $now + $lease,
+						];
+						$claimed[] = [
+							'url'      => $url,
+							'claim_id' => $claim_id,
+						];
+						$retry_at  = 0 === $retry_at ? $now + $lease : min( $retry_at, $now + $lease );
+					} else {
+						unset( $entry['claim_id'], $entry['claim_until'], $entry['requeue'] );
+						$entry = $url;
+					}
+					$queued[] = $entry;
+				}
+				return [
+					'queue' => $queued,
+					'value' => count( $queued ),
+				];
+			}
+		);
+		if ( ! $mutation['success'] ) {
+			wp_schedule_single_event( time() + 30, 'perform_cache_preload_event' );
 			return;
 		}
+		$this->set_stat_value( 'preload_queue_size', (int) $mutation['value'] );
 
-		$batch_size = $this->get_adaptive_preload_batch_size();
-		$processed  = 0;
-
-		while ( $processed < $batch_size && ! empty( $queue ) ) {
-			$url = array_shift( $queue );
-			if ( ! is_string( $url ) || '' === $url || ! $this->is_site_url( $url ) ) {
-				continue;
-			}
-
+		foreach ( $claimed as $claim ) {
 			wp_remote_get(
-				esc_url_raw( $url ),
+				$claim['url'],
 				[
 					'timeout'   => 8,
 					'blocking'  => true,
@@ -742,12 +784,47 @@ class PageCache implements ModuleInterface {
 				]
 			);
 
-			++$processed;
 			$this->increment_stat( 'preload_requests' );
+			$ack = $this->acknowledge_preload_claim( $claim['url'], $claim['claim_id'] );
+			if ( ! $ack['success'] ) {
+				wp_schedule_single_event( time() + 30, 'perform_cache_preload_event' );
+			} else {
+				$this->set_stat_value( 'preload_queue_size', (int) $ack['value'] );
+			}
 		}
+		if ( 0 === count( $claimed ) && 0 < $retry_at ) {
+			wp_schedule_single_event( max( time() + 1, $retry_at ), 'perform_cache_preload_event' );
+		} elseif ( ! empty( $mutation['value'] ) ) {
+			wp_schedule_single_event( time() + 30, 'perform_cache_preload_event' );
+		}
+	}
 
-		update_option( 'perform_cache_preload_queue', array_values( $queue ), false );
-		$this->set_stat_value( 'preload_queue_size', count( $queue ) );
+	/**
+	 * Acknowledge only the matching lease; expired or superseded workers cannot remove work.
+	 *
+	 * @return array{success:bool,value:mixed}
+	 */
+	private function acknowledge_preload_claim( string $url, string $claim_id ): array {
+		return $this->mutate_preload_queue(
+			static function ( array $queue ) use ( $url, $claim_id ): array {
+				$updated = [];
+				$requeue = false;
+				foreach ( $queue as $entry ) {
+					if ( ! is_array( $entry ) || ( $entry['url'] ?? '' ) !== $url || ( $entry['claim_id'] ?? '' ) !== $claim_id ) {
+						$updated[] = $entry;
+						continue;
+					}
+					$requeue = ! empty( $entry['requeue'] );
+				}
+				if ( $requeue ) {
+					$updated[] = $url;
+				}
+				return [
+					'queue' => $updated,
+					'value' => count( $updated ),
+				];
+			}
+		);
 	}
 
 	/** Register the retired URL as a hidden, capability-checked compatibility route. */
@@ -1162,17 +1239,24 @@ class PageCache implements ModuleInterface {
 
 	/** Retire only records that cannot use the current credentials. */
 	private function acknowledge_cloudflare_credential_residuals(): void {
-		$key     = 'perform_cache_cloudflare_queue_' . $this->get_blog_id();
-		$records = $this->get_cloudflare_queue_records( get_option( $key, [] ) );
-		$records = array_values(
-			array_filter(
-				$records,
-				static function ( $record ) {
-					return empty( $record['credential_residual'] );
-				}
-			)
+		$key      = 'perform_cache_cloudflare_queue_' . $this->get_blog_id();
+		$mutation = $this->mutate_option_array(
+			$key,
+			function ( array $records ): array {
+				$records = array_values(
+					array_filter(
+						$this->get_cloudflare_queue_records( $records ),
+						static function ( $record ) {
+							return empty( $record['credential_residual'] );
+						}
+					)
+				);
+				return [ 'queue' => $records ];
+			}
 		);
-		update_option( $key, $records, false );
+		if ( ! $mutation['success'] ) {
+			return;
+		}
 		delete_option( 'perform_cache_cloudflare_credential_residual_' . $this->get_blog_id() );
 	}
 
@@ -1183,25 +1267,34 @@ class PageCache implements ModuleInterface {
 			return 0;
 		}
 		$key         = 'perform_cache_cloudflare_queue_' . $this->get_blog_id();
-		$records     = $this->get_cloudflare_queue_records( get_option( $key, [] ) );
 		$fingerprint = $this->cloudflare_settings_key( $settings );
 		$retries     = 0;
-		foreach ( $records as &$record ) {
-			if ( empty( $record['failed'] ) || ! empty( $record['credential_residual'] ) || ( $record['fingerprint'] ?? '' ) !== $fingerprint ) {
-				continue;
+		$mutation    = $this->mutate_option_array(
+			$key,
+			function ( array $records ) use ( $fingerprint, &$retries ): array {
+				$retries = 0;
+				$records = $this->get_cloudflare_queue_records( $records );
+				foreach ( $records as &$record ) {
+					if ( empty( $record['failed'] ) || ! empty( $record['credential_residual'] ) || ( $record['fingerprint'] ?? '' ) !== $fingerprint ) {
+						continue;
+					}
+					$record['failed']   = false;
+					$record['attempts'] = 0;
+					++$retries;
+				}
+				unset( $record );
+				return [
+					'queue' => $records,
+					'value' => $retries,
+				];
 			}
-			$record['failed']   = false;
-			$record['attempts'] = 0;
-			++$retries;
-		}
-		unset( $record );
-		if ( $retries ) {
-			update_option( $key, $records, false );
+		);
+		if ( $mutation['success'] && 0 < (int) $mutation['value'] ) {
 			if ( ! wp_next_scheduled( 'perform_cache_cloudflare_purge_event' ) ) {
 				wp_schedule_single_event( time() + 10, 'perform_cache_cloudflare_purge_event' );
 			}
 		}
-		return $retries;
+		return $mutation['success'] ? (int) $mutation['value'] : 0;
 	}
 
 	/** Confirm the administrator capability and nonce before retrying current Cloudflare cleanup. */
@@ -1222,23 +1315,202 @@ class PageCache implements ModuleInterface {
 	 * @return void
 	 */
 	private function queue_urls_for_preload( $urls ) {
-		$queue = get_option( 'perform_cache_preload_queue', [] );
-		if ( ! is_array( $queue ) ) {
-			$queue = [];
+		$urls     = is_array( $urls ) ? $urls : [];
+		$mutation = $this->mutate_preload_queue(
+			function ( array $queue ) use ( $urls ): array {
+				$normalized = [];
+				$indexes    = [];
+				foreach ( $queue as $entry ) {
+					$url = is_string( $entry ) ? $entry : ( is_array( $entry ) ? ( $entry['url'] ?? '' ) : '' );
+					if ( ! is_string( $url ) || '' === $url ) {
+						continue;
+					}
+					$indexes[ $url ] = count( $normalized );
+					$normalized[]    = $entry;
+				}
+				foreach ( $urls as $url ) {
+					if ( is_string( $url ) && '' !== $url && $this->is_site_url( $url ) ) {
+						$url = esc_url_raw( $url );
+						if ( isset( $indexes[ $url ] ) ) {
+							$index = $indexes[ $url ];
+							if ( is_array( $normalized[ $index ] ) && ! empty( $normalized[ $index ]['claim_id'] ) ) {
+								$normalized[ $index ]['requeue'] = true;
+							}
+							continue;
+						}
+						$indexes[ $url ] = count( $normalized );
+						$normalized[]    = $url;
+					}
+				}
+				$normalized = array_slice( $normalized, 0, 2000 );
+				return [
+					'queue' => $normalized,
+					'value' => count( $normalized ),
+				];
+			}
+		);
+		if ( $mutation['success'] ) {
+			$this->set_stat_value( 'preload_queue_size', (int) $mutation['value'] );
+		} else {
+			// Do not claim acceptance when the bounded atomic update could not be committed.
+			error_log( 'Perform page-cache preload queue update failed after bounded database retries.' );
+		}
+	}
+
+	/**
+	 * Apply a preload-queue mutation with a database compare-and-swap.
+	 *
+	 * The HTTP request must remain outside this mutation so concurrent producers
+	 * can update the queue while a warmup request is in flight.
+	 *
+	 * @param callable $mutator Receives the current queue and returns queue/value.
+	 * @return array{success:bool,value:mixed}
+	 */
+	private function mutate_preload_queue( callable $mutator ): array {
+		return $this->mutate_option_array( 'perform_cache_preload_queue', $mutator );
+	}
+
+	/**
+	 * Apply an array-option mutation with an insert-if-absent or compare-and-swap write.
+	 *
+	 * @param string   $option_name Option name.
+	 * @param callable $mutator Receives the current array and returns queue/value.
+	 * @return array{success:bool,value:mixed}
+	 */
+	private function mutate_option_array( string $option_name, callable $mutator ): array {
+		global $wpdb;
+
+		if ( ! is_object( $wpdb ) || ! isset( $wpdb->options ) || ! method_exists( $wpdb, 'get_var' ) || ! method_exists( $wpdb, 'query' ) ) {
+			return [
+				'success' => false,
+				'value'   => null,
+			];
 		}
 
-		foreach ( $urls as $url ) {
-			if ( ! is_string( $url ) || '' === $url || ! $this->is_site_url( $url ) ) {
+		for ( $attempt = 0; $attempt < 10; ++$attempt ) {
+			$stored = $wpdb->get_var( $wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s LIMIT 1", $option_name ) );
+			if ( null === $stored ) {
+				$result = call_user_func( $mutator, [] );
+				if ( ! is_array( $result ) || ! isset( $result['queue'] ) || ! is_array( $result['queue'] ) ) {
+					return [
+						'success' => false,
+						'value'   => null,
+					];
+				}
+				if ( [] === $result['queue'] ) {
+					return [
+						'success' => true,
+						'value'   => $result['value'] ?? null,
+					];
+				}
+				$inserted = $wpdb->query(
+					$wpdb->prepare(
+						"INSERT IGNORE INTO {$wpdb->options} (option_name, option_value, autoload) VALUES (%s, %s, %s)",
+						$option_name,
+						maybe_serialize( $result['queue'] ),
+						'no'
+					)
+				);
+				if ( 1 === (int) $inserted ) {
+					$this->clear_option_caches( $option_name );
+					return [
+						'success' => true,
+						'value'   => $result['value'] ?? null,
+					];
+				}
 				continue;
 			}
-			$queue[] = esc_url_raw( $url );
+
+			$current = maybe_unserialize( $stored );
+			$result  = call_user_func( $mutator, is_array( $current ) ? $current : [] );
+			if ( ! is_array( $result ) || ! isset( $result['queue'] ) || ! is_array( $result['queue'] ) ) {
+				return [
+					'success' => false,
+					'value'   => null,
+				];
+			}
+			$serialized = maybe_serialize( $result['queue'] );
+			if ( $serialized === $stored ) {
+				$this->clear_option_caches( $option_name );
+				return [
+					'success' => true,
+					'value'   => $result['value'] ?? null,
+				];
+			}
+
+			$updated = $wpdb->query(
+				$wpdb->prepare(
+					"UPDATE {$wpdb->options} SET option_value = %s WHERE option_name = %s AND BINARY option_value = BINARY %s",
+					$serialized,
+					$option_name,
+					$stored
+				)
+			);
+			if ( 1 === (int) $updated ) {
+				$this->clear_option_caches( $option_name );
+				return [
+					'success' => true,
+					'value'   => $result['value'] ?? null,
+				];
+			}
 		}
 
-		$queue = array_values( array_unique( array_filter( $queue ) ) );
-		$queue = array_slice( $queue, 0, 2000 );
+		return [
+			'success' => false,
+			'value'   => null,
+		];
+	}
 
-		update_option( 'perform_cache_preload_queue', $queue, false );
-		$this->set_stat_value( 'preload_queue_size', count( $queue ) );
+	/** Clear the option caches after a compare-and-swap update. */
+	private function clear_option_caches( string $option_name ): void {
+		wp_cache_delete( $option_name, 'options' );
+		wp_cache_delete( 'alloptions', 'options' );
+		wp_cache_delete( 'notoptions', 'options' );
+	}
+
+	/**
+	 * Commit a queue snapshot only if no concurrent producer or consumer changed it.
+	 *
+	 * @param string|null $expected Original serialized option value.
+	 * @param array<int, array<string, mixed>> $value Replacement queue.
+	 */
+	private function commit_option_snapshot( string $option_name, $expected, array $value ): bool {
+		global $wpdb;
+		if ( ! is_object( $wpdb ) || ! isset( $wpdb->options ) || ! method_exists( $wpdb, 'prepare' ) || ! method_exists( $wpdb, 'query' ) ) {
+			return false;
+		}
+		$serialized = maybe_serialize( $value );
+		if ( null !== $expected && $serialized === $expected ) {
+			$this->clear_option_caches( $option_name );
+			return true;
+		}
+		if ( null === $expected ) {
+			if ( [] === $value ) {
+				return true;
+			}
+			$updated = $wpdb->query(
+				$wpdb->prepare(
+					"INSERT IGNORE INTO {$wpdb->options} (option_name, option_value, autoload) VALUES (%s, %s, %s)",
+					$option_name,
+					$serialized,
+					'no'
+				)
+			);
+		} else {
+			$updated = $wpdb->query(
+				$wpdb->prepare(
+					"UPDATE {$wpdb->options} SET option_value = %s WHERE option_name = %s AND BINARY option_value = BINARY %s",
+					$serialized,
+					$option_name,
+					$expected
+				)
+			);
+		}
+		if ( 1 !== (int) $updated ) {
+			return false;
+		}
+		$this->clear_option_caches( $option_name );
+		return true;
 	}
 
 	/**
@@ -2167,7 +2439,7 @@ class PageCache implements ModuleInterface {
 			$this->schedule_cleanup();
 			return;
 		}
-		$has_more = $this->cleanup_directory_files( $this->cache_dir, $remaining );
+		$has_more = $this->cleanup_directory_files( $this->cache_dir, $remaining, is_multisite() );
 		$current  = $this->get_generation_dir( $this->get_cache_generation() );
 		if ( is_dir( $site_dir ) ) {
 			foreach ( new \DirectoryIterator( $site_dir ) as $directory ) {
@@ -2193,7 +2465,7 @@ class PageCache implements ModuleInterface {
 		}
 	}
 
-	private function cleanup_directory_files( string $directory, int &$remaining ): bool {
+	private function cleanup_directory_files( string $directory, int &$remaining, bool $preserve_metadata = false ): bool {
 		if ( ! is_dir( $directory ) || is_link( rtrim( $directory, '/\\' ) ) ) {
 			return false;
 		}
@@ -2205,13 +2477,16 @@ class PageCache implements ModuleInterface {
 			if ( ! $this->is_owned_cache_file( $name ) ) {
 				continue;
 			}
+			if ( $preserve_metadata && $this->is_owned_cache_metadata( $name ) ) {
+				continue;
+			}
 			if ( $remaining <= 0 ) {
 				return true;
 			}
 			wp_delete_file( $file->getPathname() );
 			--$remaining;
 		}
-		return $remaining <= 0 && $this->directory_has_owned_cache_files( $directory );
+		return $remaining <= 0 && $this->directory_has_owned_cache_files( $directory, $preserve_metadata );
 	}
 
 	/** Identify Perform cache artifacts without treating unrelated files as disposable. */
@@ -2219,12 +2494,17 @@ class PageCache implements ModuleInterface {
 		if ( $this->is_owned_cache_body( $name ) ) {
 			return true;
 		}
-		return (bool) preg_match( '/^[a-f0-9]{32}\.meta\.json(?:\.tmp(?:-|\.)[a-f0-9]{13,16}\.[0-9]{8})?$/', $name );
+		return $this->is_owned_cache_metadata( $name );
+	}
+
+	/** Identify metadata retained for CDN cleanup. */
+	private function is_owned_cache_metadata( string $name ): bool {
+		return (bool) preg_match( '/^[a-f0-9]{32}\.meta\.json(?:\.tmp(?:-|\.)[a-f0-9]{13,32}\.[0-9]{8})?$/', $name );
 	}
 
 	/** Identify a generated HTML body or an interrupted atomic body write. */
 	private function is_owned_cache_body( string $name ): bool {
-		return (bool) preg_match( '/^[a-f0-9]{32}\.html(?:\.tmp(?:-|\.)[a-f0-9]{13,16}\.[0-9]{8})?$/', $name );
+		return (bool) preg_match( '/^[a-f0-9]{32}\.html(?:\.tmp(?:-|\.)[a-f0-9]{13,32}\.[0-9]{8})?$/', $name );
 	}
 
 	private function directory_has_files( string $directory ): bool {
@@ -2237,12 +2517,12 @@ class PageCache implements ModuleInterface {
 		return false;
 	}
 
-	private function directory_has_owned_cache_files( string $directory ): bool {
+	private function directory_has_owned_cache_files( string $directory, bool $preserve_metadata = false ): bool {
 		if ( ! is_dir( $directory ) || is_link( rtrim( $directory, '/\\' ) ) ) {
 			return false;
 		}
 		foreach ( new \DirectoryIterator( $directory ) as $file ) {
-			if ( ! $file->isDot() && $file->isFile() && $this->is_owned_cache_file( $file->getFilename() ) ) {
+			if ( ! $file->isDot() && $file->isFile() && $this->is_owned_cache_file( $file->getFilename() ) && ( ! $preserve_metadata || ! $this->is_owned_cache_metadata( $file->getFilename() ) ) ) {
 				return true;
 			}
 		}
@@ -2259,16 +2539,24 @@ class PageCache implements ModuleInterface {
 		$blog_id    = $this->get_blog_id();
 		$generation = null === $generation ? $this->get_cache_generation() : $generation;
 		$key        = 'perform_cache_cloudflare_queue_' . $blog_id;
-		$records    = $this->get_cloudflare_queue_records( get_option( $key, [] ) );
-		$records    = $this->queue_cloudflare_source( $records, 'metadata', $generation, $settings );
-		if ( $this->has_legacy_metadata_files() ) {
-			$records = $this->queue_cloudflare_source( $records, 'legacy_metadata', null, $settings );
+		$mutation   = $this->mutate_option_array(
+			$key,
+			function ( array $records ) use ( $settings, $generation, $blog_id ): array {
+				$records = $this->queue_cloudflare_source( $this->get_cloudflare_queue_records( $records ), 'metadata', $generation, $settings );
+				if ( $this->has_legacy_metadata_files() ) {
+					$records = $this->queue_cloudflare_source( $records, 'legacy_metadata', null, $settings );
+				}
+				$legacy = get_option( 'perform_cache_urls_' . $blog_id, [] );
+				if ( is_array( $legacy ) && ! empty( $legacy ) ) {
+					$records = $this->queue_cloudflare_source( $records, 'legacy_option', null, $settings );
+				}
+				return [ 'queue' => $records ];
+			}
+		);
+		if ( ! $mutation['success'] ) {
+			error_log( 'Perform page-cache CDN inventory queue update failed after bounded database retries.' );
+			return;
 		}
-		$legacy = get_option( 'perform_cache_urls_' . $blog_id, [] );
-		if ( is_array( $legacy ) && ! empty( $legacy ) ) {
-			$records = $this->queue_cloudflare_source( $records, 'legacy_option', null, $settings );
-		}
-		update_option( $key, $records, false );
 		if ( ! wp_next_scheduled( 'perform_cache_cloudflare_purge_event' ) ) {
 			wp_schedule_single_event( time() + 10, 'perform_cache_cloudflare_purge_event' );
 		}
@@ -2301,6 +2589,8 @@ class PageCache implements ModuleInterface {
 				$record['failed']   = false;
 				$record['attempts'] = 0;
 			}
+			unset( $record['cursor'], $record['cursor_filename'], $record['offset'], $record['inventory_complete'], $record['done'] );
+			$record['_revision'] = wp_generate_uuid4();
 			unset( $record );
 			return $records;
 		}
@@ -2314,6 +2604,7 @@ class PageCache implements ModuleInterface {
 			'enabled'     => ! empty( $settings['enable_cloudflare_cache_sync'] ),
 			'attempts'    => 0,
 			'failed'      => false,
+			'_revision'   => wp_generate_uuid4(),
 		];
 		return $records;
 	}
@@ -2329,32 +2620,47 @@ class PageCache implements ModuleInterface {
 			return;
 		}
 		$key         = 'perform_cache_cloudflare_queue_' . $this->get_blog_id();
-		$records     = $this->get_cloudflare_queue_records( get_option( $key, [] ) );
 		$limit       = max( 1, (int) $this->cloudflare_batch_size );
 		$fingerprint = $this->cloudflare_settings_key( $settings );
-		foreach ( $records as &$record ) {
-			if ( ! empty( $record['source'] ) || ! in_array( $fingerprint, [ $record['fingerprint'] ?? '' ], true ) || ! empty( $record['failed'] ) ) {
-				continue;
+		$mutation    = $this->mutate_option_array(
+			$key,
+			function ( array $records ) use ( $urls, $limit, $fingerprint, $settings ): array {
+				$pending = $urls;
+				$records = $this->get_cloudflare_queue_records( $records );
+				foreach ( $records as &$record ) {
+					if ( empty( $pending ) ) {
+						break;
+					}
+					if ( ! empty( $record['source'] ) || ! in_array( $fingerprint, [ $record['fingerprint'] ?? '' ], true ) || ! empty( $record['failed'] ) ) {
+						continue;
+					}
+					$current  = isset( $record['urls'] ) && is_array( $record['urls'] ) ? $record['urls'] : [];
+					$capacity = $limit - count( $current );
+					if ( $capacity <= 0 ) {
+						continue;
+					}
+					$record['urls']      = array_values( array_unique( array_merge( $current, array_splice( $pending, 0, $capacity ) ) ) );
+					$record['_revision'] = wp_generate_uuid4();
+				}
+				unset( $record );
+				while ( ! empty( $pending ) ) {
+					$records[] = [
+						'urls'        => array_splice( $pending, 0, $limit ),
+						'zone_id'     => (string) $settings['cloudflare_zone_id'],
+						'fingerprint' => $fingerprint,
+						'enabled'     => true,
+						'attempts'    => 0,
+						'failed'      => false,
+						'_revision'   => wp_generate_uuid4(),
+					];
+				}
+				return [ 'queue' => $records ];
 			}
-			$current  = isset( $record['urls'] ) && is_array( $record['urls'] ) ? $record['urls'] : [];
-			$capacity = $limit - count( $current );
-			if ( $capacity <= 0 ) {
-				continue;
-			}
-			$record['urls'] = array_values( array_unique( array_merge( $current, array_splice( $urls, 0, $capacity ) ) ) );
+		);
+		if ( ! $mutation['success'] ) {
+			error_log( 'Perform page-cache CDN URL queue update failed after bounded database retries.' );
+			return;
 		}
-		unset( $record );
-		while ( ! empty( $urls ) ) {
-			$records[] = [
-				'urls'        => array_splice( $urls, 0, $limit ),
-				'zone_id'     => (string) $settings['cloudflare_zone_id'],
-				'fingerprint' => $fingerprint,
-				'enabled'     => true,
-				'attempts'    => 0,
-				'failed'      => false,
-			];
-		}
-		update_option( $key, $records, false );
 		if ( ! wp_next_scheduled( 'perform_cache_cloudflare_purge_event' ) ) {
 			wp_schedule_single_event( time() + 10, 'perform_cache_cloudflare_purge_event' );
 		}
@@ -2362,11 +2668,18 @@ class PageCache implements ModuleInterface {
 
 	/** Purge a bounded batch of tracked URLs from Cloudflare, with retries. */
 	public function run_cloudflare_purge_batch(): void {
-		$key     = 'perform_cache_cloudflare_queue_' . $this->get_blog_id();
-		$records = $this->get_cloudflare_queue_records( get_option( $key, [] ) );
+		global $wpdb;
+
+		$key = 'perform_cache_cloudflare_queue_' . $this->get_blog_id();
+		if ( ! is_object( $wpdb ) || ! isset( $wpdb->options ) || ! method_exists( $wpdb, 'get_var' ) ) {
+			return;
+		}
+		$expected = $wpdb->get_var( $wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s LIMIT 1", $key ) );
+		$records  = $this->get_cloudflare_queue_records( null === $expected ? [] : maybe_unserialize( $expected ) );
 		if ( empty( $records ) ) {
 			return;
 		}
+		$credential_residual_count = null;
 		foreach ( $records as $index => &$record ) {
 			if ( ! empty( $record['failed'] ) ) {
 				continue;
@@ -2374,8 +2687,9 @@ class PageCache implements ModuleInterface {
 			$work  = $this->get_cloudflare_record_work( $record );
 			$batch = $work['urls'];
 			if ( empty( $batch ) ) {
-				if ( isset( $work['cursor'] ) && empty( $work['complete'] ) ) {
-					$record['cursor'] = $work['cursor'];
+				if ( isset( $work['cursor_filename'] ) && empty( $work['complete'] ) ) {
+					$record['cursor_filename'] = $work['cursor_filename'];
+					unset( $record['cursor'] );
 					break;
 				}
 				$this->retire_cloudflare_record( $record );
@@ -2386,12 +2700,13 @@ class PageCache implements ModuleInterface {
 			if ( ! is_array( $settings ) || ( $record['fingerprint'] ?? '' ) !== $this->cloudflare_settings_key( $settings ) ) {
 				$record['failed']              = true;
 				$record['credential_residual'] = true;
-				update_option( 'perform_cache_cloudflare_credential_residual_' . $this->get_blog_id(), $this->get_cloudflare_residual_count( $record, $batch ), false );
+				$credential_residual_count     = $this->get_cloudflare_residual_count( $record, $batch );
 			} else {
 				$settings['enable_cloudflare_cache_sync'] = array_key_exists( 'enabled', $record ) ? ! empty( $record['enabled'] ) : true;
 				if ( $this->purge_cloudflare_urls( $batch, $settings ) ) {
-					if ( isset( $work['cursor'] ) ) {
-						$record['cursor'] = $work['cursor'];
+					if ( isset( $work['cursor_filename'] ) ) {
+						$record['cursor_filename'] = $work['cursor_filename'];
+						unset( $record['cursor'] );
 						if ( ! empty( $work['complete'] ) ) {
 							$record['inventory_complete'] = true;
 						}
@@ -2416,7 +2731,13 @@ class PageCache implements ModuleInterface {
 				}
 			)
 		);
-		update_option( $key, $records, false );
+		if ( ! $this->commit_option_snapshot( $key, $expected, $records ) ) {
+			wp_schedule_single_event( time() + 30, 'perform_cache_cloudflare_purge_event' );
+			return;
+		}
+		if ( null !== $credential_residual_count ) {
+			update_option( 'perform_cache_cloudflare_credential_residual_' . $this->get_blog_id(), $credential_residual_count, false );
+		}
 		$active = array_filter(
 			$records,
 			static function ( $record ) {
@@ -2430,7 +2751,7 @@ class PageCache implements ModuleInterface {
 
 	/**
 	 * @param array<string, mixed> $record Record.
-	 * @return array{urls: array<int, string>, cursor?: int, complete?: bool}
+	 * @return array{urls: array<int, string>, cursor_filename?: string, complete?: bool}
 	 */
 	private function get_cloudflare_record_work( array $record ): array {
 		if ( isset( $record['source'] ) && 'legacy_option' === $record['source'] ) {
@@ -2446,61 +2767,91 @@ class PageCache implements ModuleInterface {
 
 	/**
 	 * @param array<string, mixed> $record
-	 * @return array{urls: array<int, string>, cursor: int, complete: bool}
+	 * @return array{urls: array<int, string>, cursor_filename: string, complete: bool}
 	 */
 	private function get_cloudflare_metadata_urls( array $record ): array {
 		$directory = 'metadata' === $record['source'] ? $this->get_generation_dir( (int) $record['generation'] ) : $this->cache_dir;
 		if ( ! is_dir( $directory ) ) {
 			return [
-				'urls'     => [],
-				'cursor'   => (int) ( $record['cursor'] ?? 0 ),
-				'complete' => true,
+				'urls'            => [],
+				'cursor_filename' => (string) ( $record['cursor_filename'] ?? '' ),
+				'complete'        => true,
 			];
 		}
 
-		$cursor  = max( 0, (int) ( $record['cursor'] ?? 0 ) );
-		$index   = 0;
+		$cursor  = isset( $record['cursor_filename'] ) ? (string) $record['cursor_filename'] : '';
 		$urls    = [];
 		$limit   = max( 1, (int) $this->cloudflare_batch_size );
 		$budget  = max( 1, (int) apply_filters( 'perform_cache_cloudflare_metadata_scan_limit', $this->cloudflare_metadata_scan_limit ) );
 		$scanned = 0;
-		$files   = new \DirectoryIterator( $directory );
-		foreach ( $files as $file ) {
+		/** @var array<int, string> $names */
+		$names          = [];
+		$eligible_count = 0;
+		foreach ( new \DirectoryIterator( $directory ) as $file ) {
 			if ( $file->isDot() ) {
 				continue;
 			}
-			if ( $index++ < $cursor ) {
+			$name = $file->getFilename();
+			if ( '' !== $cursor && strcmp( $name, $cursor ) <= 0 ) {
 				continue;
 			}
-			++$scanned;
-			if ( ! $file->isFile() || '.meta.json' !== substr( $file->getFilename(), -10 ) ) {
-				if ( $scanned >= $budget ) {
+			++$eligible_count;
+			$low  = 0;
+			$high = count( $names );
+			while ( $low < $high ) {
+				$middle = intdiv( $low + $high, 2 );
+				if ( strcmp( $names[ $middle ], $name ) < 0 ) {
+					$low = $middle + 1;
+				} else {
+					$high = $middle;
+				}
+			}
+			if ( $low < $budget ) {
+				array_splice( $names, $low, 0, [ $name ] );
+				if ( count( $names ) > $budget ) {
+					array_pop( $names );
+				}
+			}
+		}
+		$has_more  = $eligible_count > count( $names );
+		$last_name = $cursor;
+		if ( ! empty( $names ) ) {
+			foreach ( $names as $name ) {
+				if ( '' !== $cursor && strcmp( $name, $cursor ) <= 0 ) {
+					continue;
+				}
+				$last_name = $name;
+				++$scanned;
+				$path = $directory . $name;
+				if ( is_link( $path ) || ! is_file( $path ) || '.meta.json' !== substr( $name, -10 ) ) {
+					if ( $scanned >= $budget ) {
+						return [
+							'urls'            => array_values( array_unique( $urls ) ),
+							'cursor_filename' => $last_name,
+							'complete'        => false,
+						];
+					}
+					continue;
+				}
+				$raw  = file_get_contents( $path );
+				$data = false === $raw ? null : json_decode( $raw, true );
+				$url  = is_array( $data ) && isset( $data['url'] ) ? esc_url_raw( (string) $data['url'] ) : '';
+				if ( '' !== $url && $this->is_site_url( $url ) ) {
+					$urls[] = $url;
+				}
+				if ( count( $urls ) >= $limit || $scanned >= $budget ) {
 					return [
-						'urls'     => array_values( array_unique( $urls ) ),
-						'cursor'   => $index,
-						'complete' => false,
+						'urls'            => array_values( array_unique( $urls ) ),
+						'cursor_filename' => $last_name,
+						'complete'        => false,
 					];
 				}
-				continue;
-			}
-			$raw  = file_get_contents( $file->getPathname() );
-			$data = false === $raw ? null : json_decode( $raw, true );
-			$url  = is_array( $data ) && isset( $data['url'] ) ? esc_url_raw( (string) $data['url'] ) : '';
-			if ( '' !== $url && $this->is_site_url( $url ) ) {
-				$urls[] = $url;
-			}
-			if ( count( $urls ) >= $limit || $scanned >= $budget ) {
-				return [
-					'urls'     => array_values( array_unique( $urls ) ),
-					'cursor'   => $index,
-					'complete' => false,
-				];
 			}
 		}
 		return [
-			'urls'     => array_values( array_unique( $urls ) ),
-			'cursor'   => $index,
-			'complete' => true,
+			'urls'            => array_values( array_unique( $urls ) ),
+			'cursor_filename' => $last_name,
+			'complete'        => ! $has_more,
 		];
 	}
 
