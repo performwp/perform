@@ -942,7 +942,7 @@ final class Tests_Page_Cache extends TestCase {
 		$GLOBALS['perform_test_options']['perform_cache_generation_1'] = 2;
 		$directory = $cache_dir . 'site-1/generation-1/';
 		mkdir( $directory, 0777, true );
-		$metadata_temporary = $directory . str_repeat( 'a', 32 ) . '.meta.json.' . uniqid( 'tmp-', true );
+		$metadata_temporary        = $directory . str_repeat( 'a', 32 ) . '.meta.json.' . uniqid( 'tmp-', true );
 		$metadata_temporary_dotted = $directory . str_repeat( 'b', 32 ) . '.meta.json.tmp.' . uniqid( '', true );
 		file_put_contents( $metadata_temporary, '{"url":"https://example.com/unfinished/"}' );
 		file_put_contents( $metadata_temporary_dotted, '{"url":"https://example.com/unfinished-dotted/"}' );
