@@ -52,6 +52,12 @@ final class Plugin {
 
 		// Load Admin Files.
 		new Settings\Menu();
+		new Settings\AutoloadOptionsAuditController();
+		new Settings\SiteInventoryController();
+		new Settings\AdminPerformanceMonitorController();
+		new Settings\AdminAssetAuditController();
+		new Settings\CronPressureAuditController();
+		new Settings\ActionSchedulerAuditController();
 		new Admin\Actions();
 		new Admin\Filters();
 
@@ -64,6 +70,8 @@ final class Plugin {
 		// supporting new modules implementing ModuleInterface.
 		$settings = Helpers::get_settings();
 		$settings = is_array( $settings ) ? $settings : [];
+		new Settings\AdminPerformanceMonitor( $settings );
+		new Settings\AdminAssetAudit( $settings );
 
 		$loader = new Modules\Loader( $settings );
 
