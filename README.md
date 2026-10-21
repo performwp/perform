@@ -6,18 +6,18 @@
 
 👉 Not a developer? Running WordPress? [Download PerformWP](https://wordpress.org/plugins/perform/) on WordPress.org.
 
-![WordPress version](https://img.shields.io/wordpress/plugin/v/perform.svg) ![WordPress Rating](https://img.shields.io/wordpress/plugin/r/perform.svg) ![WordPress Downloads](https://img.shields.io/wordpress/plugin/dt/perform.svg) [![License](https://img.shields.io/badge/license-GPL--2.0%2B-green.svg)](https://github.com/mehul0810/perform-for-wp/blob/master/license.txt) 
+![WordPress version](https://img.shields.io/wordpress/plugin/v/perform.svg) ![WordPress Rating](https://img.shields.io/wordpress/plugin/r/perform.svg) ![WordPress Downloads](https://img.shields.io/wordpress/plugin/dt/perform.svg) [![License](https://img.shields.io/badge/license-GPL--3.0%2B-green.svg)](https://github.com/performwp/perform/blob/develop/license.txt)
 
 Welcome to the Perform GitHub repository. This is the code source and the center of active development. Here you can browse the source, look at open issues, and contribute to the project.
  
 ## Getting Started 
 
-If you're looking to contribute or actively develop on Perform then skip ahead to the [Local Development](https://github.com/mehul0810/perform/#local-development) section below. The following is if you're looking to actively use the plugin on your WordPress site.
+If you're looking to contribute or actively develop on Perform then skip ahead to the [Local Development](#local-development) section below. The following is if you're looking to actively use the plugin on your WordPress site.
 
 ### Minimum Requirements
 
-* WordPress 5.1 or greater
-* PHP version 7.0 or greater
+* WordPress 4.8 or greater
+* PHP version 7.4 or greater
 * MySQL version 5.6 or greater
 
 ### Automatic installation
@@ -35,6 +35,7 @@ The manual installation method involves downloading our donation plugin and uplo
 This repository is not suitable for support. Please don't use GitHub issues for support requests. To get support please use the following channels:
 
 * [WP.org Support Forums](https://wordpress.org/support/plugin/perform) - for all users
+* [PerformWP](https://performwp.com/) - product site and release updates
 
 ## Local Development 
 
@@ -57,6 +58,15 @@ To get started developing on the Perform WordPress Plugin you will need to perfo
 8. Activate the plugin in WordPress
 
 That's it. You're now ready to start development.
+
+### Runtime vs Tooling Baselines
+
+The published plugin currently targets WordPress `4.8+`, PHP `7.4+`, and is tested through WordPress `7.0`, matching the public plugin readme and current released plugin metadata.
+
+Local contributor tooling intentionally uses newer runtimes for build and validation work:
+
+* Node.js `24.x` for npm, `@wordpress/scripts`, and Playwright tasks
+* Composer platform PHP `8.1` for local dependency resolution and static analysis consistency
 
 ### NPM Commands
 
@@ -98,4 +108,4 @@ Use these commands before opening a pull request:
     ```
 * Commit the `package.lock` file. Read more about why [here](https://docs.npmjs.com/files/package-lock.json). 
 * Your editor should recognize the `.eslintrc` and `.editorconfig` files within the Repo's root directory. Please only submit PRs following those coding style rulesets. 
-* Read [CONTRIBUTING.md](https://github.com/mehul0810/perform/blob/master/CONTRIBUTING.md) - it contains more about contributing to Perform.
+* Use the [GitHub issue tracker](https://github.com/performwp/perform/issues) for validated bugs and feature proposals, and open pull requests against the current repository when contributing code.

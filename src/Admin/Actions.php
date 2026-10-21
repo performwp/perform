@@ -12,6 +12,17 @@ namespace Perform\Admin;
 
 use Perform\Includes\Helpers;
 use Perform\Admin\Settings\ClientPayload;
+use Perform\Admin\Settings\AutoloadOptionsAudit;
+use Perform\Admin\Settings\AdminPerformanceMonitor;
+use Perform\Admin\Settings\AdminAssetAudit;
+use Perform\Admin\Settings\DashboardPayload;
+use Perform\Admin\Settings\Menu;
+use Perform\Admin\Settings\RuntimeDiagnostics;
+use Perform\Admin\Settings\SiteInventory;
+use Perform\Admin\Settings\SystemHealth;
+use Perform\Admin\Settings\CronPressureAudit;
+use Perform\Admin\Settings\PluginImpactReport;
+use Perform\Admin\Settings\ActionSchedulerAudit;
 
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -59,15 +70,50 @@ class Actions {
 				'perform-admin',
 				'performwpSettings',
 				[
-					'version'           => defined( 'PERFORM_VERSION' ) ? PERFORM_VERSION : '',
-					'docsUrl'           => defined( 'PERFORM_PLUGIN_DOCS_URL' ) ? PERFORM_PLUGIN_DOCS_URL : 'https://performwp.com/docs/',
-					'logoUrl'           => plugins_url( 'assets/dist/images/logo.png', PERFORM_PLUGIN_FILE ),
-					'nonce'             => wp_create_nonce( 'perform_save_settings' ),
-					'saved'             => ClientPayload::sanitize_for_client( (array) \Perform\Includes\Helpers::get_settings() ),
-					'sensitiveKeys'     => ClientPayload::get_sensitive_keys(),
-					'maskedSecretValue' => ClientPayload::MASKED_SECRET,
-					'tabs'              => \Perform\Includes\Helpers::get_settings_tabs(),
-					'fields'            => \Perform\Includes\Helpers::get_settings_fields(), // Expose fields to JS
+					'version'              => defined( 'PERFORM_VERSION' ) ? PERFORM_VERSION : '',
+					'docsUrl'              => defined( 'PERFORM_PLUGIN_DOCS_URL' ) ? PERFORM_PLUGIN_DOCS_URL : 'https://performwp.com/docs/',
+					'logoUrl'              => plugins_url( 'assets/dist/images/logo.png', PERFORM_PLUGIN_FILE ),
+					'nonce'                => wp_create_nonce( 'perform_save_settings' ),
+					'saved'                => ClientPayload::sanitize_for_client( (array) \Perform\Includes\Helpers::get_settings() ),
+					'dashboard'            => DashboardPayload::get_data(),
+					'diagnostics'          => RuntimeDiagnostics::get_results(),
+					'databaseAudit'        => AutoloadOptionsAudit::get_cached_snapshot(),
+					'adminPerformance'     => AdminPerformanceMonitor::get_snapshot(),
+					'adminMonitorNonce'    => wp_create_nonce( 'perform_clear_admin_performance_monitor' ),
+					'adminAssetAudit'      => AdminAssetAudit::get_snapshot(),
+					'adminAssetAuditNonce' => wp_create_nonce( 'perform_clear_admin_asset_audit' ),
+					'pluginImpact'         => PluginImpactReport::get_data(),
+					'databaseAuditNonce'   => wp_create_nonce( 'perform_refresh_autoload_options_audit' ),
+					'siteInventory'        => SiteInventory::get_cached_snapshot(),
+					'siteInventoryUrl'     => esc_url_raw( rest_url( 'perform/v1/site-inventory' ) ),
+					'systemHealth'         => SystemHealth::get_data(),
+					'cronPressure'         => CronPressureAudit::get_cached_snapshot(),
+					'cronPressureNonce'    => wp_create_nonce( 'perform_cron_pressure_audit' ),
+					'actionScheduler'      => ActionSchedulerAudit::get_cached_snapshot(),
+					'actionSchedulerNonce' => wp_create_nonce( 'perform_action_scheduler_audit' ),
+					'restNonce'            => wp_create_nonce( 'wp_rest' ),
+					'sensitiveKeys'        => ClientPayload::get_sensitive_keys(),
+					'maskedSecretValue'    => ClientPayload::MASKED_SECRET,
+					'tabs'                 => Menu::get_navigation_tabs(),
+					'activeTab'            => Menu::get_requested_tab(),
+					'fields'               => \Perform\Includes\Helpers::get_settings_fields(), // Expose fields to JS
+					'cacheActivity'        => [
+						'actionUrl'         => admin_url( 'admin-post.php' ),
+						'exportNonce'       => wp_create_nonce( 'perform_export_cache_activity' ),
+						'clearNonce'        => wp_create_nonce( 'perform_clear_cache_activity' ),
+						'downloadName'      => 'perform-cache-activity-' . gmdate( 'Y-m-d' ) . '.csv',
+						'heading'           => esc_html__( 'Activity actions', 'perform' ),
+						'description'       => esc_html__( 'Export cache activity for review or clear the collected metrics.', 'perform' ),
+						'exportLabel'       => esc_html__( 'Export CSV', 'perform' ),
+						'exporting'         => esc_html__( 'Exporting…', 'perform' ),
+						'exportSuccess'     => esc_html__( 'Cache activity exported.', 'perform' ),
+						'exportError'       => esc_html__( 'Cache activity could not be exported.', 'perform' ),
+						'clearLabel'        => esc_html__( 'Clear activity', 'perform' ),
+						'clearing'          => esc_html__( 'Clearing…', 'perform' ),
+						'clearConfirmation' => esc_html__( 'Clear all collected cache activity? This does not clear cached pages.', 'perform' ),
+						'clearSuccess'      => esc_html__( 'Cache activity cleared.', 'perform' ),
+						'clearError'        => esc_html__( 'Cache activity could not be cleared.', 'perform' ),
+					],
 				]
 			);
 	}
