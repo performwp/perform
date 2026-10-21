@@ -22,7 +22,7 @@ jobs:
           tools: composer
 
       - name: Install composer dependencies
-        uses: ramsey/composer-install@v3
+        uses: ramsey/composer-install@v4
         with:
           composer-options: '--no-dev --prefer-dist --optimize-autoloader'
 
