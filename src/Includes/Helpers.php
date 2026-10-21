@@ -344,7 +344,7 @@ class Helpers {
 						[
 							'id'        => 'disable_emojis',
 							'type'      => 'toggle',
-							'name'      => __( 'Disable Emoji\'s', 'perform' ),
+							'name'      => __( 'Disable Emojis', 'perform' ),
 							'desc'      => __( 'Prevents WordPress from loading the emoji detection script and related styles, reducing one extra HTTP request.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
@@ -742,6 +742,7 @@ class Helpers {
 						[
 							'id'        => 'page_cache_ttl',
 							'type'      => 'select',
+							'default'   => '3600',
 							'name'      => esc_html__( 'Cache TTL', 'perform' ),
 							'options'   => [
 								'300'   => esc_html__( '5 Minutes', 'perform' ),
@@ -762,6 +763,7 @@ class Helpers {
 						[
 							'id'        => 'page_cache_swr_ttl',
 							'type'      => 'select',
+							'default'   => '21600',
 							'name'      => esc_html__( 'Stale Revalidate Window', 'perform' ),
 							'options'   => [
 								'900'   => esc_html__( '15 Minutes', 'perform' ),
@@ -791,6 +793,76 @@ class Helpers {
 								)
 							),
 						],
+						[
+							'id'          => 'cache_bypass_exact_paths',
+							'type'        => 'textarea',
+							'name'        => esc_html__( 'Bypass Exact Paths', 'perform' ),
+							'desc'        => esc_html__( 'One URL path per line that should bypass full-page cache exactly, such as /account/dashboard.', 'perform' ),
+							'placeholder' => "/account/dashboard\n/members-only",
+							'rows'        => 4,
+							'help_link'   => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/page-cache-exclusions'
+								)
+							),
+						],
+						[
+							'id'          => 'cache_bypass_path_prefixes',
+							'type'        => 'textarea',
+							'name'        => esc_html__( 'Bypass Path Prefixes', 'perform' ),
+							'desc'        => esc_html__( 'One URL path prefix per line that should bypass full-page cache, such as /checkout or /private.', 'perform' ),
+							'placeholder' => "/checkout\n/private",
+							'rows'        => 4,
+							'help_link'   => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/page-cache-exclusions'
+								)
+							),
+						],
+						[
+							'id'          => 'cache_bypass_query_params',
+							'type'        => 'textarea',
+							'name'        => esc_html__( 'Bypass Query Keys', 'perform' ),
+							'desc'        => esc_html__( 'Query keys that should bypass cache reads and writes entirely. This is separate from query keys that create separate cache entries.', 'perform' ),
+							'placeholder' => "preview_token\nab_variant",
+							'rows'        => 4,
+							'help_link'   => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/page-cache-exclusions'
+								)
+							),
+						],
+						[
+							'id'          => 'cache_bypass_cookie_names',
+							'type'        => 'textarea',
+							'name'        => esc_html__( 'Bypass Cookie Names', 'perform' ),
+							'desc'        => esc_html__( 'Cookie names that should bypass cache reads and writes. Cookie values are never needed for matching.', 'perform' ),
+							'placeholder' => "membership_session\nexperiment_override",
+							'rows'        => 4,
+							'help_link'   => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/page-cache-exclusions'
+								)
+							),
+						],
+						[
+							'id'          => 'cache_bypass_cookie_prefixes',
+							'type'        => 'textarea',
+							'name'        => esc_html__( 'Bypass Cookie Prefixes', 'perform' ),
+							'desc'        => esc_html__( 'Cookie name prefixes that should bypass cache reads and writes, such as wp-postpass_ or custom_session_.', 'perform' ),
+							'placeholder' => "wp-postpass_\ncustom_session_",
+							'rows'        => 4,
+							'help_link'   => esc_url(
+								add_query_arg(
+									$utm_args,
+									'https://performwp.com/docs/page-cache-exclusions'
+								)
+							),
+						],
 					],
 				],
 				[
@@ -812,6 +884,7 @@ class Helpers {
 						[
 							'id'        => 'cache_slow_request_threshold_ms',
 							'type'      => 'select',
+							'default'   => '1200',
 							'name'      => esc_html__( 'Slow Request Threshold', 'perform' ),
 							'options'   => [
 								'500'  => esc_html__( '500ms', 'perform' ),
@@ -877,6 +950,18 @@ class Helpers {
 					'title'       => esc_html__( 'Advanced Settings', 'perform' ),
 					'description' => esc_html__( 'Settings for advanced configurations.', 'perform' ),
 					'fields'      => [
+						[
+							'id'   => 'enable_admin_performance_monitor',
+							'type' => 'toggle',
+							'name' => esc_html__( 'Admin Performance Monitor', 'perform' ),
+							'desc' => esc_html__( 'Collect bounded, private aggregate timing, memory, and query-count diagnostics for WordPress admin requests.', 'perform' ),
+						],
+						[
+							'id'   => 'enable_admin_asset_audit',
+							'type' => 'toggle',
+							'name' => esc_html__( 'Admin Asset Audit', 'perform' ),
+							'desc' => esc_html__( 'Temporarily inventory script and style handles across sampled WordPress admin screens without disabling anything.', 'perform' ),
+						],
 						[
 							'id'        => 'remove_data_on_uninstall',
 							'type'      => 'toggle',
