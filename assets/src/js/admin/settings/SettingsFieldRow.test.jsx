@@ -1,4 +1,4 @@
-/* eslint-env jest */
+/* eslint-disable no-undef */
 
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
