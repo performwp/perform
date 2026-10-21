@@ -24,6 +24,16 @@ class Loader {
 	 */
 	private $settings = [];
 
+	/**
+	 * Module classes registered by this loader instance.
+	 *
+	 * The module contract promises idempotent registration. Tracking successful
+	 * registrations here protects legacy modules that attach hooks directly.
+	 *
+	 * @var array<string, bool>
+	 */
+	private $registered_modules = [];
+
 	public function __construct( array $settings = [] ) {
 		$stored_settings = Helpers::get_settings();
 		$this->settings  = ! empty( $settings ) ? $settings : ( is_array( $stored_settings ) ? $stored_settings : [] );
@@ -38,7 +48,7 @@ class Loader {
 	 */
 	public function register_modules( array $modules ) {
 		foreach ( $modules as $module_class ) {
-			if ( ! class_exists( $module_class ) ) {
+			if ( ! is_string( $module_class ) || isset( $this->registered_modules[ $module_class ] ) || ! class_exists( $module_class ) ) {
 				continue;
 			}
 
@@ -69,6 +79,7 @@ class Loader {
 
 			if ( $module->should_load() ) {
 				$module->register();
+				$this->registered_modules[ $module_class ] = true;
 			}
 		}
 	}

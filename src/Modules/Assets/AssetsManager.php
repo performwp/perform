@@ -52,6 +52,44 @@ class AssetsManager implements ModuleInterface {
 	public $selected_options;
 
 	/**
+	 * Cleaned query data for the current request.
+	 *
+	 * @var array<string, mixed>|null
+	 */
+	private $request_query_data = null;
+
+	/**
+	 * Cached current object ID for this request.
+	 *
+	 * @var int|null
+	 */
+	private $current_object_id = null;
+
+	/**
+	 * Parsed source group cache keyed by asset source URL.
+	 *
+	 * @var array<string, array{category:string, group:string}>
+	 */
+	private $asset_source_groups = [];
+
+	/**
+	 * Assets Manager rule persistence.
+	 *
+	 * @var AssetRulesRepository|null
+	 */
+	private $rules_repository;
+
+	/**
+	 * Accept a repository for focused tests while preserving no-argument
+	 * construction through the module loader.
+	 *
+	 * @param AssetRulesRepository|null $rules_repository Rule repository.
+	 */
+	public function __construct( ?AssetRulesRepository $rules_repository = null ) {
+		$this->rules_repository = $rules_repository ?? new AssetRulesRepository();
+	}
+
+	/**
 	 * Constructor
 	 *
 	 * @since  1.1.0
@@ -75,7 +113,7 @@ class AssetsManager implements ModuleInterface {
 	 * @return void
 	 */
 	public function register(): void {
-		$this->selected_options = get_option( 'perform_assets_manager_options' );
+		$this->selected_options = $this->get_assets_manager_options();
 
 		add_action( 'template_redirect', [ $this, 'save_assets_manager_settings' ], 10, 2 );
 
@@ -94,13 +132,51 @@ class AssetsManager implements ModuleInterface {
 	 * @return int
 	 */
 	private function get_current_object_id() {
+		if ( null !== $this->current_object_id ) {
+			return $this->current_object_id;
+		}
+
 		$current_id = (int) get_queried_object_id();
 
 		if ( 0 >= $current_id ) {
 			$current_id = (int) get_the_ID();
 		}
 
-		return max( 0, $current_id );
+		$this->current_object_id = max( 0, $current_id );
+
+		return $this->current_object_id;
+	}
+
+	/**
+	 * Get selected Assets Manager options once per request.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function get_assets_manager_options() {
+		if ( is_array( $this->selected_options ) ) {
+			return $this->selected_options;
+		}
+
+		$this->selected_options = $this->rules_repository->get();
+
+		return $this->selected_options;
+	}
+
+	/**
+	 * Get cleaned query data once per request.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function get_request_query_data() {
+		if ( null !== $this->request_query_data ) {
+			return $this->request_query_data;
+		}
+
+		$query_data               = filter_input_array( INPUT_GET );
+		$query_data               = is_array( $query_data ) ? Helpers::clean( $query_data ) : [];
+		$this->request_query_data = is_array( $query_data ) ? $query_data : [];
+
+		return $this->request_query_data;
 	}
 
 	/**
@@ -183,6 +259,9 @@ class AssetsManager implements ModuleInterface {
 					</div>
 					<div class="perform-assets-manager-header-actions">
 						<a class="perform-assets-manager-button perform-assets-manager-button--secondary" href="<?php echo esc_url( remove_query_arg( 'perform' ) ); ?>"><?php esc_html_e( 'Close', 'perform' ); ?></a>
+						<button class="perform-assets-manager-button perform-assets-manager-button--reset" type="submit" name="perform_assets_manager_reset" value="1" onclick="return window.confirm('<?php esc_attr_e( 'This will reset all Assets Manager settings for this site. Continue?', 'perform' ); ?>');">
+							<?php esc_html_e( 'Reset', 'perform' ); ?>
+						</button>
 						<input class="perform-assets-manager-button perform-assets-manager-button--primary" type="submit" name="perform_assets_manager" value="<?php esc_attr_e( 'Save changes', 'perform' ); ?>" />
 					</div>
 				</div>
@@ -498,8 +577,39 @@ class AssetsManager implements ModuleInterface {
 	 * @return bool
 	 */
 	private function is_rule_disabled( $type, $handle ) {
-		return ! empty( $this->selected_options['disabled'][ $type ][ $handle ] )
-			&& is_array( $this->selected_options['disabled'][ $type ][ $handle ] );
+		$options = $this->get_assets_manager_options();
+
+		return ! empty( $options['disabled'][ $type ][ $handle ] )
+			&& is_array( $options['disabled'][ $type ][ $handle ] );
+	}
+
+	/**
+	 * Parse category and group from a registered asset source.
+	 *
+	 * @param string $src Asset source URL.
+	 *
+	 * @return array{category:string, group:string}
+	 */
+	private function get_asset_source_group( $src ) {
+		if ( isset( $this->asset_source_groups[ $src ] ) ) {
+			return $this->asset_source_groups[ $src ];
+		}
+
+		$source_group    = [
+			'category' => '',
+			'group'    => '',
+		];
+		$content_dirname = preg_quote( Helpers::get_content_dir_name(), '/' );
+
+		if ( preg_match( "/\/{$content_dirname}\/(.*?\/.*?)\//", (string) $src, $match ) && ! empty( $match[1] ) ) {
+			$parts                    = explode( '/', $match[1] );
+			$source_group['category'] = isset( $parts[0] ) ? (string) $parts[0] : '';
+			$source_group['group']    = isset( $parts[1] ) ? (string) $parts[1] : '';
+		}
+
+		$this->asset_source_groups[ $src ] = $source_group;
+
+		return $source_group;
 	}
 
 	/**
@@ -873,12 +983,20 @@ class AssetsManager implements ModuleInterface {
 
 		if (
 			isset( $get_data['perform'] ) &&
+			! empty( $post_data['perform_assets_manager_reset'] )
+		) {
+			wp_safe_redirect( $this->reset_assets_manager_settings() );
+			exit;
+		}
+
+		if (
+			isset( $get_data['perform'] ) &&
 			! empty( $post_data['perform_assets_manager'] )
 		) {
 
 			$current_id = $this->get_current_object_id();
 			$filters    = [ 'js', 'css', 'plugins', 'themes' ];
-			$options    = get_option( 'perform_assets_manager_options' );
+			$options    = $this->rules_repository->get();
 			$settings   = get_option( 'perform_assets_manager_settings' );
 
 			if ( ! is_array( $options ) ) {
@@ -1082,8 +1200,30 @@ class AssetsManager implements ModuleInterface {
 			}
 
 			// Save assets manager settings to DB.
-			update_option( 'perform_assets_manager_options', $options, false );
+			$this->rules_repository->save( $options );
 		}
+	}
+
+	/**
+	 * Reset saved Assets Manager options and return the scanner close URL.
+	 *
+	 * @return string Redirect URL.
+	 */
+	private function reset_assets_manager_settings(): string {
+		$this->rules_repository->reset();
+
+		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+		if ( '' === $request_uri ) {
+			$request_uri = home_url( add_query_arg( [] ) );
+		}
+
+		return esc_url_raw(
+			add_query_arg(
+				'perform_reset',
+				'1',
+				remove_query_arg( 'perform', $request_uri )
+			)
+		);
 	}
 
 	/**
@@ -1103,24 +1243,17 @@ class AssetsManager implements ModuleInterface {
 			return $src;
 		}
 
-		$get_data = Helpers::clean( filter_input_array( INPUT_GET ) );
+		$get_data = $this->get_request_query_data();
 
 		// Get assets type.
 		$type = current_filter() === 'script_loader_src' ? 'js' : 'css';
 
 		// Load Assets Manager settings.
-		$options         = get_option( 'perform_assets_manager_options' );
+		$options         = $this->get_assets_manager_options();
 		$current_id      = $this->get_current_object_id();
-		$content_dirname = Helpers::get_content_dir_name();
-
-		// Get category + group from src.
-		preg_match( "/\/{$content_dirname}\/(.*?\/.*?)\//", $src, $match );
-
-		if ( ! empty( $match[1] ) ) {
-			$match    = explode( '/', $match[1] );
-			$category = $match[0];
-			$group    = $match[1];
-		}
+		$source_group    = $this->get_asset_source_group( (string) $src );
+		$category        = $source_group['category'];
+		$group           = $source_group['group'];
 
 		// Check for group disable settings and override.
 		if ( ! empty( $category ) && ! empty( $group ) && isset( $options['disabled'][ $category ][ $group ] ) ) {
