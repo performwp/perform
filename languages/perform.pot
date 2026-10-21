@@ -7,7 +7,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language-Team: PerformWP <hello@performwp.com>\n"
-"POT-Creation-Date: 2026-07-26 06:25+0000\n"
+"POT-Creation-Date: 2026-10-07 11:28+0000\n"
 "Report-Msgid-Bugs-To: https://github.com/performwp/perform/issues/new\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
@@ -16,63 +16,63 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/Admin/Actions.php:82
+#: src/Admin/Actions.php:105
 msgid "Activity actions"
 msgstr ""
 
-#: src/Admin/Actions.php:83
+#: src/Admin/Actions.php:106
 msgid "Export cache activity for review or clear the collected metrics."
 msgstr ""
 
-#: src/Admin/Actions.php:84
+#: src/Admin/Actions.php:107
 msgid "Export CSV"
 msgstr ""
 
-#: src/Admin/Actions.php:85
+#: src/Admin/Actions.php:108
 msgid "Exporting…"
 msgstr ""
 
-#: src/Admin/Actions.php:86
+#: src/Admin/Actions.php:109
 msgid "Cache activity exported."
 msgstr ""
 
-#: src/Admin/Actions.php:87
+#: src/Admin/Actions.php:110
 msgid "Cache activity could not be exported."
 msgstr ""
 
-#: src/Admin/Actions.php:88
+#: src/Admin/Actions.php:111
 msgid "Clear activity"
 msgstr ""
 
-#: src/Admin/Actions.php:89
+#: src/Admin/Actions.php:112
 msgid "Clearing…"
 msgstr ""
 
-#: src/Admin/Actions.php:90
+#: src/Admin/Actions.php:113
 msgid "Clear all collected cache activity? This does not clear cached pages."
 msgstr ""
 
-#: src/Admin/Actions.php:91, src/Modules/Cache/PageCache.php:828, src/Modules/Cache/PageCache.php:1090
+#: src/Admin/Actions.php:114, src/Modules/Cache/PageCache.php:828, src/Modules/Cache/PageCache.php:1090
 msgid "Cache activity cleared."
 msgstr ""
 
-#: src/Admin/Actions.php:92
+#: src/Admin/Actions.php:115
 msgid "Cache activity could not be cleared."
 msgstr ""
 
-#: src/Admin/Actions.php:121
+#: src/Admin/Actions.php:144
 msgid "Close Assets Manager"
 msgstr ""
 
-#: src/Admin/Actions.php:118, src/Modules/Assets/AssetsManager.php:274
+#: src/Admin/Actions.php:141, src/Modules/Assets/AssetsManager.php:274
 msgid "Assets Manager"
 msgstr ""
 
-#: src/Admin/Actions.php:128, src/Admin/Settings/Menu.php:40, src/Admin/Settings/Menu.php:41, src/Modules/Assets/AssetsManager.php:254
+#: src/Admin/Actions.php:151, src/Admin/Settings/Menu.php:40, src/Admin/Settings/Menu.php:41, src/Modules/Assets/AssetsManager.php:254
 msgid "Perform"
 msgstr ""
 
-#: src/Admin/Actions.php:148
+#: src/Admin/Actions.php:171
 msgid "Support Forum"
 msgstr ""
 
@@ -165,7 +165,7 @@ msgid "Remove unnecessary frontend scripts and tags that add extra requests or b
 msgstr ""
 
 #: src/Includes/Helpers.php:347
-msgid "Disable Emoji's"
+msgid "Disable Emojis"
 msgstr ""
 
 #: src/Includes/Helpers.php:348
@@ -384,7 +384,7 @@ msgstr ""
 msgid "4 Minutes"
 msgstr ""
 
-#: src/Includes/Helpers.php:612, src/Includes/Helpers.php:747
+#: src/Includes/Helpers.php:612, src/Includes/Helpers.php:748
 msgid "5 Minutes"
 msgstr ""
 
@@ -480,204 +480,268 @@ msgstr ""
 msgid "Caches full HTML responses for anonymous visitors."
 msgstr ""
 
-#: src/Includes/Helpers.php:745
+#: src/Includes/Helpers.php:746
 msgid "Cache TTL"
 msgstr ""
 
-#: src/Includes/Helpers.php:748, src/Includes/Helpers.php:767
+#: src/Includes/Helpers.php:749, src/Includes/Helpers.php:769
 msgid "15 Minutes"
 msgstr ""
 
-#: src/Includes/Helpers.php:749, src/Includes/Helpers.php:768
+#: src/Includes/Helpers.php:750, src/Includes/Helpers.php:770
 msgid "30 Minutes"
 msgstr ""
 
-#: src/Includes/Helpers.php:750, src/Includes/Helpers.php:769
+#: src/Includes/Helpers.php:751, src/Includes/Helpers.php:771
 msgid "1 Hour"
 msgstr ""
 
-#: src/Includes/Helpers.php:751, src/Includes/Helpers.php:770
+#: src/Includes/Helpers.php:752, src/Includes/Helpers.php:772
 msgid "6 Hours"
 msgstr ""
 
-#: src/Includes/Helpers.php:752, src/Includes/Helpers.php:772
+#: src/Includes/Helpers.php:753, src/Includes/Helpers.php:774
 msgid "24 Hours"
 msgstr ""
 
-#: src/Includes/Helpers.php:754
+#: src/Includes/Helpers.php:755
 msgid "How long a page remains fresh before becoming stale."
 msgstr ""
 
-#: src/Includes/Helpers.php:765
+#: src/Includes/Helpers.php:767
 msgid "Stale Revalidate Window"
 msgstr ""
 
-#: src/Includes/Helpers.php:771
+#: src/Includes/Helpers.php:773
 msgid "12 Hours"
 msgstr ""
 
-#: src/Includes/Helpers.php:774
+#: src/Includes/Helpers.php:776
 msgid "Serve stale pages while refreshing them in the background."
 msgstr ""
 
-#: src/Includes/Helpers.php:785
+#: src/Includes/Helpers.php:787
 msgid "Separate Query Params"
 msgstr ""
 
-#: src/Includes/Helpers.php:786
+#: src/Includes/Helpers.php:788
 msgid "Comma-separated query keys that should generate separate cache entries. Tracking params are ignored automatically."
 msgstr ""
 
-#: src/Includes/Helpers.php:797
+#: src/Includes/Helpers.php:799
 msgid "Bypass Exact Paths"
 msgstr ""
 
-#: src/Includes/Helpers.php:798
+#: src/Includes/Helpers.php:800
 msgid "One URL path per line that should bypass full-page cache exactly, such as /account/dashboard."
 msgstr ""
 
-#: src/Includes/Helpers.php:811
+#: src/Includes/Helpers.php:813
 msgid "Bypass Path Prefixes"
 msgstr ""
 
-#: src/Includes/Helpers.php:812
+#: src/Includes/Helpers.php:814
 msgid "One URL path prefix per line that should bypass full-page cache, such as /checkout or /private."
 msgstr ""
 
-#: src/Includes/Helpers.php:825
+#: src/Includes/Helpers.php:827
 msgid "Bypass Query Keys"
 msgstr ""
 
-#: src/Includes/Helpers.php:826
+#: src/Includes/Helpers.php:828
 msgid "Query keys that should bypass cache reads and writes entirely. This is separate from query keys that create separate cache entries."
 msgstr ""
 
-#: src/Includes/Helpers.php:839
+#: src/Includes/Helpers.php:841
 msgid "Bypass Cookie Names"
 msgstr ""
 
-#: src/Includes/Helpers.php:840
+#: src/Includes/Helpers.php:842
 msgid "Cookie names that should bypass cache reads and writes. Cookie values are never needed for matching."
 msgstr ""
 
-#: src/Includes/Helpers.php:853
+#: src/Includes/Helpers.php:855
 msgid "Bypass Cookie Prefixes"
 msgstr ""
 
-#: src/Includes/Helpers.php:854
+#: src/Includes/Helpers.php:856
 msgid "Cookie name prefixes that should bypass cache reads and writes, such as wp-postpass_ or custom_session_."
 msgstr ""
 
-#: src/Includes/Helpers.php:867
+#: src/Includes/Helpers.php:869
 msgid "Preload and Observability"
 msgstr ""
 
-#: src/Includes/Helpers.php:868
+#: src/Includes/Helpers.php:870
 msgid "Warm cache from sitemaps and monitor cache effectiveness."
 msgstr ""
 
-#: src/Includes/Helpers.php:873
+#: src/Includes/Helpers.php:875
 msgid "Enable Adaptive Preloader"
 msgstr ""
 
-#: src/Includes/Helpers.php:874
+#: src/Includes/Helpers.php:876
 msgid "Preloads cache from sitemap and high-miss URLs using adaptive request rate."
 msgstr ""
 
-#: src/Includes/Helpers.php:885
+#: src/Includes/Helpers.php:888
 msgid "Slow Request Threshold"
 msgstr ""
 
-#: src/Includes/Helpers.php:887
+#: src/Includes/Helpers.php:890
 msgid "500ms"
 msgstr ""
 
-#: src/Includes/Helpers.php:888
+#: src/Includes/Helpers.php:891
 msgid "800ms"
 msgstr ""
 
-#: src/Includes/Helpers.php:889
+#: src/Includes/Helpers.php:892
 msgid "1200ms"
 msgstr ""
 
-#: src/Includes/Helpers.php:890
+#: src/Includes/Helpers.php:893
 msgid "2000ms"
 msgstr ""
 
-#: src/Includes/Helpers.php:892
+#: src/Includes/Helpers.php:895
 msgid "Tracks uncached requests slower than this value in observability stats."
 msgstr ""
 
-#: src/Includes/Helpers.php:903
+#: src/Includes/Helpers.php:906
 msgid "Cloudflare"
 msgstr ""
 
-#: src/Includes/Helpers.php:904
+#: src/Includes/Helpers.php:907
 msgid "Sync local cache purge events to Cloudflare (free-tier friendly)."
 msgstr ""
 
-#: src/Includes/Helpers.php:909
+#: src/Includes/Helpers.php:912
 msgid "Enable Cloudflare Cache Sync"
 msgstr ""
 
-#: src/Includes/Helpers.php:910
+#: src/Includes/Helpers.php:913
 msgid "Purge Cloudflare URLs when Perform purges local cache."
 msgstr ""
 
-#: src/Includes/Helpers.php:921
+#: src/Includes/Helpers.php:924
 msgid "Cloudflare Zone ID"
 msgstr ""
 
-#: src/Includes/Helpers.php:922
+#: src/Includes/Helpers.php:925
 msgid "Your Cloudflare Zone ID."
 msgstr ""
 
-#: src/Includes/Helpers.php:933
+#: src/Includes/Helpers.php:936
 msgid "Cloudflare API Token"
 msgstr ""
 
-#: src/Includes/Helpers.php:934
+#: src/Includes/Helpers.php:937
 msgid "API token with Zone:Cache Purge permission."
 msgstr ""
 
-#: src/Includes/Helpers.php:947
+#: src/Includes/Helpers.php:950
 msgid "Advanced Settings"
 msgstr ""
 
-#: src/Includes/Helpers.php:948
+#: src/Includes/Helpers.php:951
 msgid "Settings for advanced configurations."
 msgstr ""
 
-#: src/Includes/Helpers.php:953
-msgid "Remove Data on Uninstall"
+#: src/Includes/Helpers.php:956
+msgid "Admin Performance Monitor"
 msgstr ""
 
-#: src/Includes/Helpers.php:954
-msgid "Enabling this will remove all plugin data upon uninstallation."
+#: src/Includes/Helpers.php:957
+msgid "Collect bounded, private aggregate timing, memory, and query-count diagnostics for WordPress admin requests."
 msgstr ""
 
-#: src/Includes/Helpers.php:967
-msgid "WooCommerce Settings"
+#: src/Includes/Helpers.php:962
+msgid "Admin Asset Audit"
+msgstr ""
+
+#: src/Includes/Helpers.php:963
+msgid "Temporarily inventory script and style handles across sampled WordPress admin screens without disabling anything."
 msgstr ""
 
 #: src/Includes/Helpers.php:968
+msgid "Remove Data on Uninstall"
+msgstr ""
+
+#: src/Includes/Helpers.php:969
+msgid "Enabling this will remove all plugin data upon uninstallation."
+msgstr ""
+
+#: src/Includes/Helpers.php:982
+msgid "WooCommerce Settings"
+msgstr ""
+
+#: src/Includes/Helpers.php:983
 msgid "Settings specific to WooCommerce."
 msgstr ""
 
-#: src/Includes/Helpers.php:973
+#: src/Includes/Helpers.php:988
 msgid "Enable WooCommerce Manager"
 msgstr ""
 
-#: src/Includes/Helpers.php:974
+#: src/Includes/Helpers.php:989
 msgid "Enabling this will allow you to manage WooCommerce specific settings."
 msgstr ""
 
-#: src/Includes/Helpers.php:985
+#: src/Includes/Helpers.php:1000
 msgid "Enable WooCommerce Cache"
 msgstr ""
 
-#: src/Includes/Helpers.php:986
+#: src/Includes/Helpers.php:1001
 msgid "Enabling this will cache WooCommerce pages for better performance."
+msgstr ""
+
+#: src/Admin/Settings/ActionSchedulerAudit.php:53
+msgid "The database is unavailable."
+msgstr ""
+
+#: src/Admin/Settings/ActionSchedulerAudit.php:104
+msgid "The Action Scheduler diagnostic could not be completed."
+msgstr ""
+
+#: src/Admin/Settings/ActionSchedulerAudit.php:281
+msgid "The Action Scheduler diagnostic could not be saved."
+msgstr ""
+
+#: src/Admin/Settings/ActionSchedulerAuditController.php:31
+msgid "The Action Scheduler diagnostic could not be refreshed. Please try again."
+msgstr ""
+
+#: src/Admin/Settings/ActionSchedulerAuditController.php:35
+msgid "Action Scheduler diagnostic refreshed."
+msgstr ""
+
+#: src/Admin/Settings/ActionSchedulerAuditController.php:47
+msgid "Action Scheduler diagnostic cleared."
+msgstr ""
+
+#: src/Admin/Settings/ActionSchedulerAuditController.php:56, src/Admin/Settings/AutoloadOptionsAuditController.php:38, src/Admin/Settings/CronPressureAuditController.php:79, src/Admin/Settings/Menu.php:116, src/Admin/Settings/SiteInventoryController.php:59
+msgid "Insufficient permissions."
+msgstr ""
+
+#: src/Admin/Settings/ActionSchedulerAuditController.php:60, src/Admin/Settings/AdminAssetAuditController.php:29, src/Admin/Settings/AdminPerformanceMonitorController.php:36, src/Admin/Settings/AutoloadOptionsAuditController.php:48, src/Admin/Settings/CronPressureAuditController.php:84, src/Admin/Settings/Menu.php:127
+msgid "Security check failed."
+msgstr ""
+
+#: src/Admin/Settings/AdminAssetAuditController.php:24
+msgid "You are not allowed to clear admin asset audit data."
+msgstr ""
+
+#: src/Admin/Settings/AdminAssetAuditController.php:35
+msgid "Admin asset audit cleared."
+msgstr ""
+
+#: src/Admin/Settings/AdminPerformanceMonitorController.php:31
+msgid "You are not allowed to clear admin performance data."
+msgstr ""
+
+#: src/Admin/Settings/AdminPerformanceMonitorController.php:42
+msgid "Admin performance data cleared."
 msgstr ""
 
 #: src/Admin/Settings/Api.php:48
@@ -692,184 +756,472 @@ msgstr ""
 msgid "Learn more"
 msgstr ""
 
-#: src/Admin/Settings/DashboardPayload.php:105
-msgid "Dashboard, diagnostics, cache, and Assets Manager work in 1.7.0 remains release-candidate content until the owner approves publication."
+#: src/Admin/Settings/AutoloadOptionsAudit.php:55
+msgid "The options table is unavailable."
 msgstr ""
 
-#: src/Admin/Settings/DashboardPayload.php:106
-msgid "Runtime diagnostics summarize cache, CDN, menu cache, and dynamic request prerequisites without writing new tracking data."
+#: src/Admin/Settings/AutoloadOptionsAudit.php:81
+msgid "The options audit could not be completed."
 msgstr ""
 
-#: src/Admin/Settings/DashboardPayload.php:107
-msgid "Assets Manager summary reports configured rule coverage, not historical byte savings."
+#: src/Admin/Settings/AutoloadOptionsAudit.php:107
+msgid "The audit result could not be saved."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsAudit.php:180
+msgid "Unknown"
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsAuditController.php:59
+msgid "The database audit could not be refreshed. Please try again."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsAuditController.php:67
+msgid "Database audit refreshed."
+msgstr ""
+
+#: src/Admin/Settings/CronPressureAudit.php:153
+msgid "The scheduled-task diagnostic could not be saved."
+msgstr ""
+
+#: src/Admin/Settings/CronPressureAudit.php:223
+msgid "Large schedule detected"
+msgstr ""
+
+#: src/Admin/Settings/CronPressureAudit.php:224
+msgid "The bounded scan reached its event limit. Review the most frequent hooks with their extension owners."
+msgstr ""
+
+#: src/Admin/Settings/CronPressureAudit.php:231
+msgid "Scheduled-task pressure needs review"
+msgstr ""
+
+#: src/Admin/Settings/CronPressureAudit.php:232
+msgid "Repeated overdue work or a dense upcoming cluster can add request latency. Confirm the responsible hooks and runner configuration before changing schedules."
+msgstr ""
+
+#: src/Admin/Settings/CronPressureAudit.php:239
+msgid "Some scheduled work needs review"
+msgstr ""
+
+#: src/Admin/Settings/CronPressureAudit.php:240
+msgid "A small amount of due or clustered work can be normal. Refresh later and compare repeated snapshots before acting."
+msgstr ""
+
+#: src/Admin/Settings/CronPressureAudit.php:246
+msgid "No immediate schedule pressure detected"
+msgstr ""
+
+#: src/Admin/Settings/CronPressureAudit.php:247
+msgid "The bounded local snapshot does not show overdue or densely clustered work."
+msgstr ""
+
+#: src/Admin/Settings/CronPressureAudit.php:285
+msgid "Run the first scheduled-task check"
+msgstr ""
+
+#: src/Admin/Settings/CronPressureAudit.php:286
+msgid "The check runs only when requested and does not change scheduled events."
+msgstr ""
+
+#: src/Admin/Settings/CronPressureAuditController.php:42
+msgid "The scheduled-task diagnostic could not be refreshed. Please try again."
+msgstr ""
+
+#: src/Admin/Settings/CronPressureAuditController.php:49
+msgid "Scheduled-task diagnostic refreshed."
+msgstr ""
+
+#: src/Admin/Settings/CronPressureAuditController.php:66
+msgid "Scheduled-task diagnostic cleared."
+msgstr ""
+
+#: src/Admin/Settings/DashboardPayload.php:174
+msgid "Perform 1.7.0 introduced the dashboard, runtime diagnostics, cache activity reporting, and the redesigned settings experience."
+msgstr ""
+
+#: src/Admin/Settings/DashboardPayload.php:175
+msgid "The 1.8.0 diagnostic foundation adds bounded database and site-inventory evidence for safer recommendations."
+msgstr ""
+
+#: src/Admin/Settings/DashboardPayload.php:176
+msgid "Configured rules and cache activity are reported without claiming unmeasured byte or Core Web Vitals savings."
 msgstr ""
 
 #: src/Admin/Settings/Menu.php:55
+msgid "Site Inventory"
+msgstr ""
+
+#: src/Admin/Settings/Menu.php:56
+msgid "Database"
+msgstr ""
+
+#: src/Admin/Settings/Menu.php:57
+msgid "Admin Monitor"
+msgstr ""
+
+#: src/Admin/Settings/Menu.php:58
+msgid "Admin Assets"
+msgstr ""
+
+#: src/Admin/Settings/Menu.php:59
+msgid "Plugin Impact"
+msgstr ""
+
+#: src/Admin/Settings/Menu.php:60
+msgid "Scheduled Tasks"
+msgstr ""
+
+#: src/Admin/Settings/Menu.php:61
+msgid "Action Scheduler"
+msgstr ""
+
+#: src/Admin/Settings/Menu.php:62
 msgid "Cache Stats"
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:109
-msgid "Insufficient permissions."
+#: src/Admin/Settings/Menu.php:199
+msgid "Settings data is invalid. Please try again."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:120
-msgid "Security check failed."
-msgstr ""
-
-#: src/Admin/Settings/Menu.php:236
+#: src/Admin/Settings/Menu.php:245
 msgid "Unable to save the settings. Please try again."
 msgstr ""
 
-#: src/Admin/Settings/Menu.php:228
+#: src/Admin/Settings/Menu.php:237
 msgid "Settings saved successfully."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:69, src/Admin/Settings/RuntimeDiagnostics.php:82
+#: src/Admin/Settings/RuntimeDiagnostics.php:70, src/Admin/Settings/RuntimeDiagnostics.php:84
 msgid "Page cache storage"
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:70
+#: src/Admin/Settings/RuntimeDiagnostics.php:71
 msgid "Page cache is disabled, so no cache storage is required yet."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:71
+#: src/Admin/Settings/RuntimeDiagnostics.php:72
 msgid "Enable full-page cache when you are ready to test storage prerequisites."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:84
+#: src/Admin/Settings/RuntimeDiagnostics.php:86
 msgid "Perform can use the cache storage location for generated HTML files."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:85
+#: src/Admin/Settings/RuntimeDiagnostics.php:87
 msgid "Perform cannot confirm writable cache storage for generated HTML files."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:87, src/Admin/Settings/RuntimeDiagnostics.php:108, src/Admin/Settings/RuntimeDiagnostics.php:138, src/Admin/Settings/RuntimeDiagnostics.php:205
+#: src/Admin/Settings/RuntimeDiagnostics.php:89, src/Admin/Settings/RuntimeDiagnostics.php:111, src/Admin/Settings/RuntimeDiagnostics.php:143, src/Admin/Settings/RuntimeDiagnostics.php:214
 msgid "No action needed."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:88
+#: src/Admin/Settings/RuntimeDiagnostics.php:90
 msgid "Ask your host to allow WordPress to write to its cache directory before relying on full-page cache."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:102
+#: src/Admin/Settings/RuntimeDiagnostics.php:105
 msgid "Page cache drop-in"
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:104
+#: src/Admin/Settings/RuntimeDiagnostics.php:107
 msgid "A page-cache drop-in is present, so another cache layer may already be active."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:105
+#: src/Admin/Settings/RuntimeDiagnostics.php:108
 msgid "No page-cache drop-in was detected."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:107
+#: src/Admin/Settings/RuntimeDiagnostics.php:110
 msgid "Review host or plugin-level page caching before enabling overlapping cache behavior."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:123, src/Admin/Settings/RuntimeDiagnostics.php:133
+#: src/Admin/Settings/RuntimeDiagnostics.php:127, src/Admin/Settings/RuntimeDiagnostics.php:138
 msgid "Cache preload schedule"
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:124
+#: src/Admin/Settings/RuntimeDiagnostics.php:128
 msgid "Adaptive cache preload is disabled."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:125
+#: src/Admin/Settings/RuntimeDiagnostics.php:129
 msgid "Enable preload only after page cache is working reliably."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:135
+#: src/Admin/Settings/RuntimeDiagnostics.php:140
 msgid "The cache preload event is scheduled."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:136
+#: src/Admin/Settings/RuntimeDiagnostics.php:141
 msgid "The cache preload event is not scheduled yet."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:139
+#: src/Admin/Settings/RuntimeDiagnostics.php:144
 msgid "Save settings again or confirm WordPress cron is running on this site."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:154, src/Admin/Settings/RuntimeDiagnostics.php:168
+#: src/Admin/Settings/RuntimeDiagnostics.php:160, src/Admin/Settings/RuntimeDiagnostics.php:175
 msgid "Dynamic request exclusions"
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:155
+#: src/Admin/Settings/RuntimeDiagnostics.php:161
 msgid "Page cache is disabled, so dynamic request exclusions are not required yet."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:156
+#: src/Admin/Settings/RuntimeDiagnostics.php:162
 msgid "Add exclusions before enabling page cache on sites with member areas, custom checkouts, or preview tokens."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:170
+#: src/Admin/Settings/RuntimeDiagnostics.php:177
 msgid "Site-specific cache bypass rules are configured."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:171
+#: src/Admin/Settings/RuntimeDiagnostics.php:178
 msgid "No site-specific cache bypass rules are configured."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:173
+#: src/Admin/Settings/RuntimeDiagnostics.php:180
 msgid "Review bypass rules after adding new dynamic workflows."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:174
+#: src/Admin/Settings/RuntimeDiagnostics.php:181
 msgid "Add path, query, or cookie exclusions for dynamic workflows before broad cache rollout."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:189, src/Admin/Settings/RuntimeDiagnostics.php:200
+#: src/Admin/Settings/RuntimeDiagnostics.php:197, src/Admin/Settings/RuntimeDiagnostics.php:209
 msgid "Menu cache theme support"
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:190
+#: src/Admin/Settings/RuntimeDiagnostics.php:198
 msgid "Menu cache is disabled."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:191
+#: src/Admin/Settings/RuntimeDiagnostics.php:199
 msgid "Use menu cache primarily with classic themes that render menus through wp_nav_menu()."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:202
+#: src/Admin/Settings/RuntimeDiagnostics.php:211
 msgid "The active theme is eligible for menu cache."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:203
+#: src/Admin/Settings/RuntimeDiagnostics.php:212
 msgid "The active block theme is not expected to benefit from menu cache by default."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:206
+#: src/Admin/Settings/RuntimeDiagnostics.php:215
 msgid "Leave menu cache disabled unless custom theme code opts in through the compatibility filter."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:221, src/Admin/Settings/RuntimeDiagnostics.php:234
+#: src/Admin/Settings/RuntimeDiagnostics.php:231, src/Admin/Settings/RuntimeDiagnostics.php:245
 msgid "CDN configuration"
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:222
+#: src/Admin/Settings/RuntimeDiagnostics.php:232
 msgid "CDN rewriting is disabled."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:223
+#: src/Admin/Settings/RuntimeDiagnostics.php:233
 msgid "Enable CDN rewriting only after confirming the CDN origin URL and included directories."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:236
+#: src/Admin/Settings/RuntimeDiagnostics.php:247
 msgid "CDN rewriting has a valid CDN URL."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:237
+#: src/Admin/Settings/RuntimeDiagnostics.php:248
 msgid "CDN rewriting is enabled but the CDN URL is missing or invalid."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:239
+#: src/Admin/Settings/RuntimeDiagnostics.php:250
 msgid "Confirm included directories and exclusions before broad rollout."
 msgstr ""
 
-#: src/Admin/Settings/RuntimeDiagnostics.php:240
+#: src/Admin/Settings/RuntimeDiagnostics.php:251
 msgid "Enter a full CDN URL with http or https before enabling CDN rewriting."
+msgstr ""
+
+#: src/Admin/Settings/SiteInventory.php:88
+msgid "The site inventory could not be saved."
+msgstr ""
+
+#: src/Admin/Settings/SiteInventory.php:173
+msgid "Installed extension"
+msgstr ""
+
+#: src/Admin/Settings/SiteInventory.php:214
+msgid "Active theme"
+msgstr ""
+
+#: src/Admin/Settings/SiteInventory.php:276
+msgid "Custom or extension"
+msgstr ""
+
+#: src/Admin/Settings/SiteInventoryController.php:75
+msgid "The site inventory could not be refreshed. Please try again."
+msgstr ""
+
+#: src/Admin/Settings/SiteInventoryController.php:81
+msgid "Site inventory refreshed."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:107
+msgid "This runtime is newer than Perform’s current automated PHP test matrix; verify compatibility before rollout."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:105
+msgid "Review a supported PHP upgrade with your host before changing production."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:103
+msgid "This runtime matches Perform’s actively tested PHP range."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:110
+msgid "PHP version"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:122, src/Admin/Settings/SystemHealth.php:130
+msgid "WordPress memory limit"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:122, src/Admin/Settings/SystemHealth.php:171, src/Admin/Settings/SystemHealth.php:216, src/Admin/Settings/SystemHealth.php:247, src/Admin/Settings/SystemHealth.php:257
+msgid "Unavailable"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:122
+msgid "Confirm the effective WordPress memory limit with your host."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:127
+msgid "The configured limit provides reasonable headroom for typical administration."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:128
+msgid "Review memory pressure and hosting limits before increasing this value."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:141, src/Admin/Settings/SystemHealth.php:149
+msgid "Maximum execution time"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:141
+msgid "Unlimited"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:141
+msgid "PHP does not impose a request execution-time limit."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:146
+msgid "The limit supports ordinary WordPress maintenance tasks."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:147
+msgid "Short limits can interrupt imports, updates, or maintenance; review with your host."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:149
+msgid "%d seconds"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:171
+msgid "The runtime did not expose OPcache status."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:177, src/Admin/Settings/SystemHealth.php:284
+msgid "Enabled"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:177, src/Modules/Assets/AssetsManager.php:242
+msgid "Disabled"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:179
+msgid "Compiled PHP code is cached by the runtime."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:179
+msgid "Ask your host whether OPcache can be enabled safely."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:193
+msgid "Persistent object cache"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:194
+msgid "Detected"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:194
+msgid "Not detected"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:196
+msgid "WordPress is using an external object cache."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:196
+msgid "Busy or database-heavy sites may benefit; confirm support with your host first."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:215
+msgid "Database version"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:218
+msgid "Version detected locally; compatibility still depends on the database family and host."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:218
+msgid "Confirm the database version with your host."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:247
+msgid "HTTP and server"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:247
+msgid "This is a local runtime hint, not a public response-performance test."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:257, src/Admin/Settings/SystemHealth.php:266
+msgid "Uploads directory"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:257
+msgid "WordPress did not expose upload-directory status."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:267
+msgid "Writable"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:267
+msgid "Needs review"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:269
+msgid "WordPress reports that media storage is writable."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:269
+msgid "Review media storage permissions with your host; the filesystem path is intentionally hidden."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:283
+msgid "Debug logging"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:284
+msgid "Not enabled"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:286
+msgid "Confirm logging is intentional and monitor its size on production sites."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:286
+msgid "Perform does not expose or read any debug-log path or contents."
 msgstr ""
 
 #: src/Modules/Assets/AssetsManager.php:233
@@ -906,10 +1258,6 @@ msgstr ""
 
 #: src/Modules/Assets/AssetsManager.php:241, src/Modules/Assets/AssetsManager.php:292
 msgid "CSS"
-msgstr ""
-
-#: src/Modules/Assets/AssetsManager.php:242
-msgid "Disabled"
 msgstr ""
 
 #: src/Modules/Assets/AssetsManager.php:256
