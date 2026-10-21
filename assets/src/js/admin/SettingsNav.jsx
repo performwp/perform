@@ -1,165 +1,43 @@
-import {
-	TabPanel,
-	Card,
-	CardHeader,
-	CardBody,
-	ToggleControl,
-	TextControl,
-	SelectControl,
-	TextareaControl,
-} from '@wordpress/components';
-import { useState, useMemo } from '@wordpress/element';
+import { TabPanel } from '@wordpress/components';
+import { WrenchScrewdriverIcon } from '@heroicons/react/24/outline';
+import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import CacheStatsPanel from './CacheStatsPanel';
+import AdminPerformanceMonitorPanel from './AdminPerformanceMonitorPanel';
+import DashboardPanel from './DashboardPanel';
+import DatabaseAuditPanel from './DatabaseAuditPanel';
+import SiteInventoryPanel from './SiteInventoryPanel';
+import CronPressurePanel from './CronPressurePanel';
+import AdminAssetAuditPanel from './AdminAssetAuditPanel';
+import PluginImpactPanel from './PluginImpactPanel';
+import ActionSchedulerPanel from './ActionSchedulerPanel';
+import SettingsFieldRow from './settings/SettingsFieldRow';
 
-const FIELD_COMPONENTS = {
-	toggle: ToggleControl,
-	text: TextControl,
-	textarea: TextareaControl,
-	select: SelectControl,
-};
-
-const normalizeOptions = ( options ) => {
-	if ( ! options ) {
-		return [];
-	}
-	if ( Array.isArray( options ) ) {
-		if ( options.length === 0 ) {
-			return [];
-		}
-		if (
-			typeof options[ 0 ] === 'object' &&
-			( options[ 0 ].label !== undefined || options[ 0 ].value !== undefined )
-		) {
-			return options.map( ( opt ) => ( {
-				label: opt.label ?? String( opt.value ),
-				value: opt.value ?? opt.label,
-			} ) );
-		}
-		return options.map( ( opt ) => ( { label: String( opt ), value: opt } ) );
-	}
-	if ( typeof options === 'object' ) {
-		return Object.keys( options ).map( ( key ) => ( { label: options[ key ], value: key } ) );
-	}
-	return [];
-};
-
-const SENSITIVE_KEYS = window.performwpSettings?.sensitiveKeys || [];
-const MASKED_SECRET_VALUE = window.performwpSettings?.maskedSecretValue || '__PERFORM_MASKED_SECRET__';
 const SETTINGS = window.performwpSettings || {};
-
-const isSensitiveField = ( fieldId ) => SENSITIVE_KEYS.includes( fieldId );
-
-const renderField = ( field, value, onChange ) => {
-	const {
-		type = 'text',
-		id,
-		name,
-		desc,
-		help_link: helpLink,
-		options,
-		placeholder,
-		style: fieldStyle,
-		className: fieldClass,
-		...rest
-	} = field;
-	const Component = FIELD_COMPONENTS[ type ] || null;
-	if ( ! Component ) {
-		return <div key={ id }>Unsupported field type: { type }</div>;
-	}
-
-	const common = {
-		// key moved to wrapper
-		label: name,
-		// Render description with optional "Learn more" link when provided
-		help: (
-			<span>
-				{ desc }
-				{ helpLink && (
-					<>
-						{ ' ' }
-						<a href={ helpLink } target="_blank" rel="noopener noreferrer" className="perform-help-link">
-							Learn more <span className="perform-help-icon">→</span>
-						</a>
-					</>
-				) }
-			</span>
-		),
-		...rest,
-	};
-
-	if ( type === 'toggle' ) {
-		return <ToggleControl { ...common } checked={ !! value } onChange={ ( checked ) => onChange( id, checked ) } />;
-	}
-
-	if ( type === 'text' ) {
-		const sensitive = isSensitiveField( id );
-		const shownValue = sensitive && value === MASKED_SECRET_VALUE ? '' : value ?? '';
-		const enhancedHelp = sensitive ? (
-			<span>
-				{ desc }{ ' ' }
-				<em>
-					{ value === MASKED_SECRET_VALUE
-						? 'Existing secret is saved. Enter a new value only if you want to replace it.'
-						: '' }
-				</em>
-				{ helpLink && (
-					<>
-						{ ' ' }
-						<a href={ helpLink } target="_blank" rel="noopener noreferrer" className="perform-help-link">
-							Learn more <span className="perform-help-icon">→</span>
-						</a>
-					</>
-				) }
-			</span>
-		) : (
-			common.help
-		);
-
-		return (
-			<TextControl
-				{ ...common }
-				type={ sensitive ? 'password' : 'text' }
-				autoComplete={ sensitive ? 'new-password' : undefined }
-				help={ enhancedHelp }
-				value={ shownValue }
-				placeholder={ placeholder }
-				onChange={ ( val ) => onChange( id, val ) }
-			/>
-		);
-	}
-
-	if ( type === 'textarea' ) {
-		// allow optional rows property on the field definition
-		const rows = field.rows ?? 5;
-		return (
-			<TextareaControl
-				{ ...common }
-				value={ value ?? '' }
-				placeholder={ placeholder }
-				rows={ rows }
-				onChange={ ( val ) => onChange( id, val ) }
-			/>
-		);
-	}
-
-	if ( type === 'select' ) {
-		const opts = normalizeOptions( options );
-		return (
-			<SelectControl
-				{ ...common }
-				className={ fieldClass ?? 'perform-select-control' }
-				value={ value ?? ( opts[ 0 ] ? opts[ 0 ].value : '' ) }
-				options={ opts }
-				onChange={ ( val ) => onChange( id, val ) }
-			/>
-		);
-	}
-
-	return <Component { ...common } value={ value } onChange={ ( val ) => onChange( id, val ) } />;
-};
+const DIAGNOSTIC_TAB_KEYS = [
+	'inventory',
+	'database',
+	'admin-monitor',
+	'admin-assets',
+	'plugin-impact',
+	'scheduled-tasks',
+	'action-scheduler',
+	'cache-stats',
+];
 
 const SettingsNav = ( {
 	tabs: propTabs,
 	fields: propFields,
+	dashboard,
+	diagnostics,
+	databaseAudit,
+	siteInventory,
+	systemHealth,
+	adminPerformance,
+	cronPressure,
+	adminAssetAudit,
+	pluginImpact,
+	actionScheduler,
 	activeTab: propActiveTab,
 	onTabChange: propOnTabChange,
 	fieldValues: propFieldValues,
@@ -167,71 +45,189 @@ const SettingsNav = ( {
 } ) => {
 	const tabs = useMemo( () => propTabs || SETTINGS.tabs || {}, [ propTabs ] );
 	const fields = useMemo( () => propFields || SETTINGS.fields || {}, [ propFields ] );
-	const tabKeys = useMemo( () => Object.keys( tabs ), [ tabs ] );
-
+	const diagnosticTabKeys = useMemo(
+		() => DIAGNOSTIC_TAB_KEYS.filter( ( slug ) => Object.prototype.hasOwnProperty.call( tabs, slug ) ),
+		[ tabs ]
+	);
+	const tabKeys = useMemo( () => {
+		const keys = [
+			'dashboard',
+			...Object.keys( tabs ).filter( ( slug ) => ! DIAGNOSTIC_TAB_KEYS.includes( slug ) ),
+		];
+		if ( diagnosticTabKeys.length > 0 ) {
+			keys.push( 'diagnostics' );
+		}
+		return keys;
+	}, [ tabs, diagnosticTabKeys ] );
 	const [ internalActiveTab, setInternalActiveTab ] = useState( tabKeys[ 0 ] || '' );
 	const activeTab = propActiveTab ?? internalActiveTab;
+	const activePrimaryTab = diagnosticTabKeys.includes( activeTab ) ? 'diagnostics' : activeTab;
 	const onTabChange = propOnTabChange ?? setInternalActiveTab;
-
 	const [ internalFieldValues, setInternalFieldValues ] = useState( {} );
 	const fieldValues = propFieldValues ?? internalFieldValues;
 	const onFieldChange =
-		propOnFieldChange ?? ( ( id, val ) => setInternalFieldValues( ( p ) => ( { ...p, [ id ]: val } ) ) );
+		propOnFieldChange ??
+		( ( id, value ) =>
+			setInternalFieldValues( ( previous ) => ( {
+				...previous,
+				[ id ]: value,
+			} ) ) );
+	const tabPanelRef = useRef( null );
+	useEffect( () => {
+		const selectedTab = tabPanelRef.current?.querySelector( '[role="tab"][aria-selected="true"]' );
+		selectedTab?.scrollIntoView?.( { block: 'nearest', inline: 'nearest' } );
+	}, [ activeTab ] );
 
 	const tabPanelTabs = useMemo(
 		() =>
-			tabKeys.map( ( slug ) => ( {
-				name: slug,
-				title: tabs[ slug ],
-			} ) ),
+			tabKeys.map( ( slug ) => {
+				let title = tabs[ slug ];
+				if ( 'dashboard' === slug ) {
+					title = 'Dashboard';
+				} else if ( 'diagnostics' === slug ) {
+					title = __( 'Diagnostics', 'perform' );
+				}
+				return { name: slug, title };
+			} ),
 		[ tabKeys, tabs ]
 	);
-
-	const cards = useMemo( () => fields[ activeTab ] || [], [ fields, activeTab ] );
 
 	if ( ! tabKeys.length ) {
 		return null;
 	}
 
 	return (
-		<>
-			<div className="perform-settings-content">
-				<TabPanel
-					className="perform-settings-tab-panel"
-					tabs={ tabPanelTabs }
-					initialTabName={ activeTab }
-					onSelect={ onTabChange }
-				>
-					{ () => null }
-				</TabPanel>
-				<div className="perform-settings-cards">
-					{ cards.map( ( card, idx ) => (
-						<Card
-							key={ idx }
-							style={ {
-								marginBottom: '24px',
-								boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
-								borderRadius: 0,
-							} }
-						>
-							<CardHeader style={ { alignItems: 'flex-start', flexDirection: 'column' } }>
-								<h3 className="perform-card-title">{ card.title }</h3>
-								{ card.description && <p className="perform-card-description">{ card.description }</p> }
-							</CardHeader>
-							{ card.fields && card.fields.length > 0 && (
-								<CardBody>
-									{ card.fields.map( ( field ) => (
-										<div key={ field.id } className="perform-field" style={ { marginBottom: 16 } }>
-											{ renderField( field, fieldValues[ field.id ], onFieldChange ) }
+		<div ref={ tabPanelRef }>
+			<TabPanel
+				key={ activePrimaryTab }
+				className="perform-settings-tab-panel"
+				tabs={ tabPanelTabs }
+				initialTabName={ activePrimaryTab }
+				onSelect={ ( tabName ) => {
+					let nextTab = tabName;
+					if ( 'diagnostics' === tabName ) {
+						nextTab = diagnosticTabKeys.includes( activeTab ) ? activeTab : diagnosticTabKeys[ 0 ];
+					}
+					if ( nextTab && nextTab !== activeTab ) {
+						onTabChange( nextTab );
+					}
+				} }
+			>
+				{ ( selectedTab ) => {
+					let selectedTabName = selectedTab?.name || activeTab;
+					if ( 'diagnostics' === selectedTab?.name ) {
+						selectedTabName = diagnosticTabKeys.includes( activeTab ) ? activeTab : diagnosticTabKeys[ 0 ];
+					}
+					const sections = fields[ selectedTabName ] || [];
+					let content = (
+						<div className="perform-settings-sections">
+							{ sections.map( ( section, index ) => (
+								<section
+									key={ `${ selectedTabName }-${ index }` }
+									className="perform-settings-section"
+									aria-labelledby={ `${ selectedTabName }-section-${ index }` }
+								>
+									<header className="perform-settings-section__header">
+										<h2 id={ `${ selectedTabName }-section-${ index }` }>{ section.title }</h2>
+										{ section.description && <p>{ section.description }</p> }
+									</header>
+									{ section.fields?.length > 0 && (
+										<div className="perform-settings-section__fields">
+											{ section.fields.map( ( field ) => (
+												<SettingsFieldRow
+													key={ field.id }
+													field={ field }
+													value={ fieldValues[ field.id ] }
+													onChange={ onFieldChange }
+												/>
+											) ) }
 										</div>
-									) ) }
-								</CardBody>
+									) }
+								</section>
+							) ) }
+						</div>
+					);
+
+					if ( 'dashboard' === selectedTabName ) {
+						content = (
+							<DashboardPanel
+								dashboard={ dashboard }
+								diagnostics={ diagnostics }
+								databaseAudit={ databaseAudit }
+								siteInventory={ siteInventory }
+								onNavigate={ onTabChange }
+							/>
+						);
+					} else if ( 'database' === selectedTabName ) {
+						content = <DatabaseAuditPanel initialAudit={ databaseAudit } />;
+					} else if ( 'inventory' === selectedTabName ) {
+						content = (
+							<SiteInventoryPanel initialInventory={ siteInventory } systemHealth={ systemHealth } />
+						);
+					} else if ( 'admin-monitor' === selectedTabName ) {
+						content = (
+							<AdminPerformanceMonitorPanel
+								initialSnapshot={ adminPerformance }
+								onNavigate={ onTabChange }
+							/>
+						);
+					} else if ( 'scheduled-tasks' === selectedTabName ) {
+						content = <CronPressurePanel initialAudit={ cronPressure } />;
+					} else if ( 'admin-assets' === selectedTabName ) {
+						content = (
+							<AdminAssetAuditPanel initialSnapshot={ adminAssetAudit } onNavigate={ onTabChange } />
+						);
+					} else if ( 'plugin-impact' === selectedTabName ) {
+						content = <PluginImpactPanel report={ pluginImpact } onNavigate={ onTabChange } />;
+					} else if ( 'action-scheduler' === selectedTabName ) {
+						content = <ActionSchedulerPanel initialAudit={ actionScheduler } />;
+					} else if ( 'cache-stats' === selectedTabName ) {
+						content = <CacheStatsPanel />;
+					}
+
+					return (
+						<>
+							{ diagnosticTabKeys.includes( selectedTabName ) && (
+								<section
+									className="perform-diagnostic-switcher"
+									aria-label={ __( 'Diagnostics workspace', 'perform' ) }
+								>
+									<div className="perform-diagnostic-switcher__context">
+										<span className="perform-diagnostic-switcher__icon" aria-hidden="true">
+											<WrenchScrewdriverIcon className="perform-ui-icon" />
+										</span>
+										<span>
+											<strong>{ __( 'Diagnostics workspace', 'perform' ) }</strong>
+											<small>
+												{ __( 'Private, local reports for this WordPress site', 'perform' ) }
+											</small>
+										</span>
+									</div>
+									<label
+										className="perform-diagnostic-switcher__control"
+										htmlFor="perform-diagnostic-report"
+									>
+										<span>{ __( 'Current report', 'perform' ) }</span>
+										<select
+											id="perform-diagnostic-report"
+											value={ selectedTabName }
+											onChange={ ( event ) => onTabChange( event.target.value ) }
+										>
+											{ diagnosticTabKeys.map( ( slug ) => (
+												<option key={ slug } value={ slug }>
+													{ tabs[ slug ] }
+												</option>
+											) ) }
+										</select>
+									</label>
+								</section>
 							) }
-						</Card>
-					) ) }
-				</div>
-			</div>
-		</>
+							<div className="perform-settings-content">{ content }</div>
+						</>
+					);
+				} }
+			</TabPanel>
+		</div>
 	);
 };
 

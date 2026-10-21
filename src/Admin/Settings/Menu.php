@@ -46,6 +46,37 @@ class Menu {
 	}
 
 	/**
+	 * Get tabs shown on the canonical settings screen.
+	 *
+	 * @return array<string, string>
+	 */
+	public static function get_navigation_tabs() {
+		$tabs                     = Helpers::get_settings_tabs();
+		$tabs['inventory']        = esc_html__( 'Site Inventory', 'perform' );
+		$tabs['database']         = esc_html__( 'Database', 'perform' );
+		$tabs['admin-monitor']    = esc_html__( 'Admin Monitor', 'perform' );
+		$tabs['admin-assets']     = esc_html__( 'Admin Assets', 'perform' );
+		$tabs['plugin-impact']    = esc_html__( 'Plugin Impact', 'perform' );
+		$tabs['scheduled-tasks']  = esc_html__( 'Scheduled Tasks', 'perform' );
+		$tabs['action-scheduler'] = esc_html__( 'Action Scheduler', 'perform' );
+		$tabs['cache-stats']      = esc_html__( 'Cache Stats', 'perform' );
+
+		return $tabs;
+	}
+
+	/**
+	 * Resolve the requested settings tab to a known tab slug.
+	 *
+	 * @return string
+	 */
+	public static function get_requested_tab() {
+		$requested_tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'dashboard'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only navigation state.
+		$valid_tabs    = array_merge( [ 'dashboard' ], array_keys( self::get_navigation_tabs() ) );
+
+		return in_array( $requested_tab, $valid_tabs, true ) ? $requested_tab : 'dashboard';
+	}
+
+	/**
 	 * Render Settings Page.
 	 *
 	 * @since  1.0.0
@@ -62,6 +93,9 @@ class Menu {
 		}
 		?>
 		<div id="perform-settings-page" class="perform-settings-page"></div>
+		<template id="perform-cache-stats-template">
+			<?php do_action( 'perform_settings_cache_stats_content' ); ?>
+		</template>
 		<?php
 	}
 
@@ -151,20 +185,22 @@ class Menu {
 						$sanitized_post[ $key ] = esc_url_raw( $raw_val );
 						break;
 					case 'select':
-						// Ensure value is one of allowed options when provided.
-						$opts  = $field_def['options'] ?? [];
-						$is_ok = false;
+						// PHP converts numeric option keys to integers; the browser posts strings.
+						$opts           = $field_def['options'] ?? [];
+						$allowed_values = [];
 						if ( is_array( $opts ) && ! empty( $opts ) ) {
-							// If associative array (value=>label) check keys, otherwise check values.
-							$keys = array_keys( $opts );
-							$vals = array_values( $opts );
-							if ( array_diff_key( $opts, array_values( $opts ) ) ) {
-								$is_ok = in_array( $raw_val, $keys, true );
-							} else {
-								$is_ok = in_array( $raw_val, $vals, true );
-							}
+							$is_list        = array_keys( $opts ) === range( 0, count( $opts ) - 1 );
+							$allowed_values = array_map( 'strval', $is_list ? $opts : array_keys( $opts ) );
 						}
-						$sanitized_post[ $key ] = $is_ok ? sanitize_text_field( $raw_val ) : '';
+						if ( ! in_array( (string) $raw_val, $allowed_values, true ) ) {
+							wp_send_json_error(
+								[
+									'type'    => 'error',
+									'message' => esc_html__( 'Settings data is invalid. Please try again.', 'perform' ),
+								]
+							);
+						}
+						$sanitized_post[ $key ] = sanitize_text_field( $raw_val );
 						break;
 					case 'number':
 						$sanitized_post[ $key ] = is_numeric( $raw_val ) ? intval( $raw_val ) : 0;
@@ -185,6 +221,10 @@ class Menu {
 		$new_settings['dns_prefetch'] = $this->normalize_multiline_setting( $new_settings['dns_prefetch'] ?? '' );
 		$new_settings['preconnect']   = $this->normalize_multiline_setting( $new_settings['preconnect'] ?? '' );
 
+		foreach ( $this->get_cache_bypass_list_setting_keys() as $setting_key ) {
+			$new_settings[ $setting_key ] = $this->normalize_rule_list_setting( $new_settings[ $setting_key ] ?? '' );
+		}
+
 		$is_saved = update_option( 'perform_settings', $new_settings, false );
 		if ( ! $is_saved && get_option( 'perform_settings' ) === $new_settings ) {
 			$is_saved = true;
@@ -193,8 +233,9 @@ class Menu {
 		if ( $is_saved ) {
 			wp_send_json_success(
 				[
-					'type'    => 'success',
-					'message' => esc_html__( 'Settings saved successfully.', 'perform' ),
+					'type'        => 'success',
+					'message'     => esc_html__( 'Settings saved successfully.', 'perform' ),
+					'diagnostics' => RuntimeDiagnostics::get_results(),
 				]
 			);
 		} else {
@@ -236,5 +277,58 @@ class Menu {
 		);
 
 		return array_values( $lines );
+	}
+
+	/**
+	 * Normalize a cache exclusion list setting to clean unique tokens.
+	 *
+	 * @param mixed $value List value.
+	 *
+	 * @return array<int, string>
+	 */
+	private function normalize_rule_list_setting( $value ) {
+		if ( is_array( $value ) ) {
+			$items = $value;
+		} elseif ( is_scalar( $value ) && '' !== (string) $value ) {
+			$items = preg_split( '/[\r\n,]+/', (string) $value );
+		} else {
+			return [];
+		}
+
+		$items = array_filter(
+			array_map(
+				static function ( $item ) {
+					return is_scalar( $item ) ? sanitize_text_field( wp_unslash( $item ) ) : '';
+				},
+				$items
+			),
+			static function ( $item ) {
+				return '' !== trim( (string) $item );
+			}
+		);
+
+		$items = array_map(
+			static function ( $item ) {
+				return trim( (string) $item );
+			},
+			$items
+		);
+
+		return array_values( array_unique( $items ) );
+	}
+
+	/**
+	 * Get cache bypass setting keys that store newline/comma lists.
+	 *
+	 * @return array<int, string>
+	 */
+	private function get_cache_bypass_list_setting_keys() {
+		return [
+			'cache_bypass_exact_paths',
+			'cache_bypass_path_prefixes',
+			'cache_bypass_query_params',
+			'cache_bypass_cookie_names',
+			'cache_bypass_cookie_prefixes',
+		];
 	}
 }
