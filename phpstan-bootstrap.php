@@ -17,7 +17,7 @@ if ( ! defined( 'WP_CONTENT_FOLDERNAME' ) ) {
 }
 
 if ( ! defined( 'PERFORM_VERSION' ) ) {
-	define( 'PERFORM_VERSION', '1.7.0' );
+	define( 'PERFORM_VERSION', '1.8.0' );
 }
 
 if ( ! defined( 'PERFORM_PLUGIN_FILE' ) ) {
