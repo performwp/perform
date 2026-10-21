@@ -344,7 +344,7 @@ class Helpers {
 						[
 							'id'        => 'disable_emojis',
 							'type'      => 'toggle',
-							'name'      => __( 'Disable Emoji\'s', 'perform' ),
+							'name'      => __( 'Disable Emojis', 'perform' ),
 							'desc'      => __( 'Prevents WordPress from loading the emoji detection script and related styles, reducing one extra HTTP request.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
@@ -742,6 +742,7 @@ class Helpers {
 						[
 							'id'        => 'page_cache_ttl',
 							'type'      => 'select',
+							'default'   => '3600',
 							'name'      => esc_html__( 'Cache TTL', 'perform' ),
 							'options'   => [
 								'300'   => esc_html__( '5 Minutes', 'perform' ),
@@ -762,6 +763,7 @@ class Helpers {
 						[
 							'id'        => 'page_cache_swr_ttl',
 							'type'      => 'select',
+							'default'   => '21600',
 							'name'      => esc_html__( 'Stale Revalidate Window', 'perform' ),
 							'options'   => [
 								'900'   => esc_html__( '15 Minutes', 'perform' ),
@@ -882,6 +884,7 @@ class Helpers {
 						[
 							'id'        => 'cache_slow_request_threshold_ms',
 							'type'      => 'select',
+							'default'   => '1200',
 							'name'      => esc_html__( 'Slow Request Threshold', 'perform' ),
 							'options'   => [
 								'500'  => esc_html__( '500ms', 'perform' ),
@@ -947,6 +950,18 @@ class Helpers {
 					'title'       => esc_html__( 'Advanced Settings', 'perform' ),
 					'description' => esc_html__( 'Settings for advanced configurations.', 'perform' ),
 					'fields'      => [
+						[
+							'id'   => 'enable_admin_performance_monitor',
+							'type' => 'toggle',
+							'name' => esc_html__( 'Admin Performance Monitor', 'perform' ),
+							'desc' => esc_html__( 'Collect bounded, private aggregate timing, memory, and query-count diagnostics for WordPress admin requests.', 'perform' ),
+						],
+						[
+							'id'   => 'enable_admin_asset_audit',
+							'type' => 'toggle',
+							'name' => esc_html__( 'Admin Asset Audit', 'perform' ),
+							'desc' => esc_html__( 'Temporarily inventory script and style handles across sampled WordPress admin screens without disabling anything.', 'perform' ),
+						],
 						[
 							'id'        => 'remove_data_on_uninstall',
 							'type'      => 'toggle',
