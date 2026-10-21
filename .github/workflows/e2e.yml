@@ -75,6 +75,14 @@ jobs:
       - name: Build frontend assets
         run: npm run build
 
+      - name: Install the packaged candidate into the test environment
+        run: |
+          npm run plugin-zip
+          node tests/package/validate-package.mjs
+          mkdir -p build/e2e
+          unzip -q perform.zip -d build/e2e
+          node -e 'require("fs").writeFileSync(".wp-env.override.json", JSON.stringify({plugins:["./build/e2e/perform"]}))'
+
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
 

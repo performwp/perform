@@ -742,6 +742,7 @@ class Helpers {
 						[
 							'id'        => 'page_cache_ttl',
 							'type'      => 'select',
+							'default'   => '3600',
 							'name'      => esc_html__( 'Cache TTL', 'perform' ),
 							'options'   => [
 								'300'   => esc_html__( '5 Minutes', 'perform' ),
@@ -762,6 +763,7 @@ class Helpers {
 						[
 							'id'        => 'page_cache_swr_ttl',
 							'type'      => 'select',
+							'default'   => '21600',
 							'name'      => esc_html__( 'Stale Revalidate Window', 'perform' ),
 							'options'   => [
 								'900'   => esc_html__( '15 Minutes', 'perform' ),
@@ -882,6 +884,7 @@ class Helpers {
 						[
 							'id'        => 'cache_slow_request_threshold_ms',
 							'type'      => 'select',
+							'default'   => '1200',
 							'name'      => esc_html__( 'Slow Request Threshold', 'perform' ),
 							'options'   => [
 								'500'  => esc_html__( '500ms', 'perform' ),

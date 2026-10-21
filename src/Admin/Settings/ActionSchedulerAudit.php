@@ -50,7 +50,7 @@ final class ActionSchedulerAudit {
 		global $wpdb;
 
 		if ( ! is_object( $wpdb ) || empty( $wpdb->prefix ) ) {
-			throw new RuntimeException( __( 'The database is unavailable.', 'perform' ) );
+			throw new RuntimeException( esc_html__( 'The database is unavailable.', 'perform' ) );
 		}
 
 		$actions_table = $wpdb->prefix . 'actionscheduler_actions';
@@ -101,7 +101,7 @@ final class ActionSchedulerAudit {
 		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		if ( ! is_array( $status_rows ) || ! is_array( $hook_rows ) || ! is_array( $group_rows ) || ! empty( $wpdb->last_error ) ) {
-			throw new RuntimeException( __( 'The Action Scheduler diagnostic could not be completed.', 'perform' ) );
+			throw new RuntimeException( esc_html__( 'The Action Scheduler diagnostic could not be completed.', 'perform' ) );
 		}
 
 		$counts = [
@@ -278,7 +278,7 @@ final class ActionSchedulerAudit {
 		$snapshot['isStale']     = false;
 		$is_saved                = update_option( self::OPTION_NAME, $snapshot, false );
 		if ( ! $is_saved && get_option( self::OPTION_NAME ) !== $snapshot ) {
-			throw new RuntimeException( __( 'The Action Scheduler diagnostic could not be saved.', 'perform' ) );
+			throw new RuntimeException( esc_html__( 'The Action Scheduler diagnostic could not be saved.', 'perform' ) );
 		}
 		return $snapshot;
 	}

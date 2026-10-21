@@ -185,20 +185,22 @@ class Menu {
 						$sanitized_post[ $key ] = esc_url_raw( $raw_val );
 						break;
 					case 'select':
-						// Ensure value is one of allowed options when provided.
-						$opts  = $field_def['options'] ?? [];
-						$is_ok = false;
+						// PHP converts numeric option keys to integers; the browser posts strings.
+						$opts           = $field_def['options'] ?? [];
+						$allowed_values = [];
 						if ( is_array( $opts ) && ! empty( $opts ) ) {
-							// If associative array (value=>label) check keys, otherwise check values.
-							$keys = array_keys( $opts );
-							$vals = array_values( $opts );
-							if ( array_diff_key( $opts, array_values( $opts ) ) ) {
-								$is_ok = in_array( $raw_val, $keys, true );
-							} else {
-								$is_ok = in_array( $raw_val, $vals, true );
-							}
+							$is_list        = array_keys( $opts ) === range( 0, count( $opts ) - 1 );
+							$allowed_values = array_map( 'strval', $is_list ? $opts : array_keys( $opts ) );
 						}
-						$sanitized_post[ $key ] = $is_ok ? sanitize_text_field( $raw_val ) : '';
+						if ( ! in_array( (string) $raw_val, $allowed_values, true ) ) {
+							wp_send_json_error(
+								[
+									'type'    => 'error',
+									'message' => esc_html__( 'Settings data is invalid. Please try again.', 'perform' ),
+								]
+							);
+						}
+						$sanitized_post[ $key ] = sanitize_text_field( $raw_val );
 						break;
 					case 'number':
 						$sanitized_post[ $key ] = is_numeric( $raw_val ) ? intval( $raw_val ) : 0;

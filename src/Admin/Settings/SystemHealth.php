@@ -146,7 +146,7 @@ final class SystemHealth {
 			? __( 'The limit supports ordinary WordPress maintenance tasks.', 'perform' )
 			: __( 'Short limits can interrupt imports, updates, or maintenance; review with your host.', 'perform' );
 
-		return self::signal( 'execution-time', __( 'Maximum execution time', 'perform' ), sprintf( __( '%d seconds', 'perform' ), $seconds ), $status, $copy );
+		return self::signal( 'execution-time', __( 'Maximum execution time', 'perform' ), sprintf( /* translators: %d: Maximum execution time in seconds. */ __( '%d seconds', 'perform' ), $seconds ), $status, $copy );
 	}
 
 	/**
