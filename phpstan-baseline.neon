@@ -429,7 +429,7 @@ parameters:
 		-
 			message: '#^Access to property \$menu on an unknown class Perform\\Modules\\MenuCache\\stdClass\.$#'
 			identifier: class.notFound
-			count: 7
+			count: 6
 			path: src/Modules/MenuCache/MenuCache.php
 
 		-

@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Define plugin version in SemVer format.
 if ( ! defined( 'PERFORM_VERSION' ) ) {
-	define( 'PERFORM_VERSION', '1.7.0' );
+	define( 'PERFORM_VERSION', '1.8.0' );
 }
 
 // Define plugin root File.
