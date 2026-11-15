@@ -5,15 +5,17 @@ use Perform\Modules\Cache\PageCache;
 
 final class Tests_Page_Cache extends TestCase {
 	protected function setUp(): void {
-		$GLOBALS['perform_test_transients']              = [
+		$GLOBALS['perform_test_transients']       = [
 			'perform_cache_lock_test' => 'expected-token',
 		];
-		$GLOBALS['perform_test_options']                 = [];
-		$GLOBALS['perform_test_filters']                 = [];
-		$GLOBALS['perform_test_home_url']                = 'https://example.com';
-		$GLOBALS['perform_test_remote_get_map']          = [];
-		$GLOBALS['perform_test_remote_get_calls']        = [];
-		$GLOBALS['perform_test_remote_post_calls']       = [];
+		$GLOBALS['perform_test_options']          = [];
+		$GLOBALS['perform_test_filters']          = [];
+		$GLOBALS['perform_test_home_url']         = 'https://example.com';
+		$GLOBALS['perform_test_remote_get_map']   = [];
+		$GLOBALS['perform_test_remote_get_calls'] = [];
+		unset( $GLOBALS['perform_test_remote_get_callback'] );
+		$GLOBALS['perform_test_remote_post_calls'] = [];
+		unset( $GLOBALS['perform_test_remote_post_callback'] );
 		$GLOBALS['perform_test_actions']                 = [];
 		$GLOBALS['perform_test_scheduled_events']        = [];
 		$GLOBALS['perform_test_scheduled_single_events'] = [];
@@ -26,6 +28,58 @@ final class Tests_Page_Cache extends TestCase {
 		$GLOBALS['perform_test_comments']                = [];
 		$GLOBALS['perform_test_term_object_ids']         = [];
 		$GLOBALS['perform_test_blog_id']                 = 1;
+		$GLOBALS['perform_test_is_multisite']            = false;
+		$GLOBALS['wpdb']                                 = new class() {
+			public $options          = 'wp_options';
+			public $conflict_once    = false;
+			public $fail_updates     = false;
+			public $insert_race_once = false;
+			public $last_update      = '';
+			public $query_count      = 0;
+
+			public function prepare( $query, ...$args ) {
+				return [ $query, $args ];
+			}
+
+			public function get_var( $prepared ) {
+				if ( ! is_array( $prepared ) || false === strpos( $prepared[0], 'SELECT option_value' ) ) {
+					return null;
+				}
+				$value = $GLOBALS['perform_test_options'][ $prepared[1][0] ] ?? null;
+				return null === $value ? null : maybe_serialize( $value );
+			}
+
+			public function query( $prepared ) {
+				list( $query, $args ) = $prepared;
+				$this->last_update    = $query;
+				++$this->query_count;
+				if ( $this->fail_updates ) {
+					return false;
+				}
+				if ( false !== strpos( $query, 'INSERT IGNORE' ) ) {
+					if ( $this->insert_race_once ) {
+						$this->insert_race_once                      = false;
+						$GLOBALS['perform_test_options'][ $args[0] ] = [ 'https://example.com/concurrent-insert' ];
+						return 0;
+					}
+					if ( array_key_exists( $args[0], $GLOBALS['perform_test_options'] ) ) {
+						return 0;
+					}
+					$GLOBALS['perform_test_options'][ $args[0] ] = maybe_unserialize( $args[1] );
+					return 1;
+				}
+				if ( $this->conflict_once ) {
+					$this->conflict_once                           = false;
+					$GLOBALS['perform_test_options'][ $args[1] ][] = 'https://example.com/concurrent-path';
+				}
+				$current = $GLOBALS['perform_test_options'][ $args[1] ] ?? null;
+				if ( null === $current || maybe_serialize( $current ) !== $args[2] ) {
+					return 0;
+				}
+				$GLOBALS['perform_test_options'][ $args[1] ] = maybe_unserialize( $args[0] );
+				return 1;
+			}
+		};
 		$_COOKIE                   = [];
 		$_GET                      = [];
 		$_POST                     = [];
@@ -40,11 +94,13 @@ final class Tests_Page_Cache extends TestCase {
 			$GLOBALS['perform_test_home_url'],
 			$GLOBALS['perform_test_options'],
 			$GLOBALS['perform_test_remote_get_calls'],
+			$GLOBALS['perform_test_remote_get_callback'],
 			$GLOBALS['perform_test_remote_get_map'],
 			$GLOBALS['perform_test_remote_post_response'],
 			$GLOBALS['perform_test_transients'],
 			$GLOBALS['perform_test_actions'],
 			$GLOBALS['perform_test_remote_post_calls'],
+			$GLOBALS['perform_test_remote_post_callback'],
 			$GLOBALS['perform_test_scheduled_events'],
 			$GLOBALS['perform_test_scheduled_single_events'],
 			$GLOBALS['perform_test_permalinks'],
@@ -56,6 +112,8 @@ final class Tests_Page_Cache extends TestCase {
 			$GLOBALS['perform_test_comments'],
 			$GLOBALS['perform_test_term_object_ids'],
 			$GLOBALS['perform_test_blog_id'],
+			$GLOBALS['perform_test_is_multisite'],
+			$GLOBALS['wpdb'],
 			$GLOBALS['perform_test_current_user_can'],
 			$GLOBALS['perform_test_nonce_valid'],
 			$_SERVER['REQUEST_METHOD'],
@@ -185,6 +243,204 @@ final class Tests_Page_Cache extends TestCase {
 		);
 	}
 
+	public function test_preload_batch_preserves_urls_queued_during_a_blocking_request() {
+		$first_url                       = 'https://example.com/slow-page';
+		$second_url                      = 'https://example.com/next-page';
+		$new_url                         = 'https://example.com/newly-invalidated';
+		$GLOBALS['perform_test_options'] = [
+			'perform_settings'            => [
+				'enable_page_cache'    => true,
+				'enable_cache_preload' => true,
+			],
+			'perform_cache_preload_queue' => [ $first_url, $second_url ],
+		];
+		$GLOBALS['perform_test_filters']['perform_cache_preload_batch_size'] = 1;
+		$page_cache = new PageCache();
+		$method     = new ReflectionMethod( $page_cache, 'queue_urls_for_preload' );
+		$method->setAccessible( true );
+		$GLOBALS['perform_test_remote_get_callback'] = static function ( $url ) use ( $method, $page_cache, $new_url, $first_url ): void {
+			if ( 'https://example.com/slow-page' === $url ) {
+				$method->invoke( $page_cache, [ $new_url, $first_url ] );
+			}
+		};
+
+		$page_cache->run_preload_batch();
+
+		$this->assertSame( [ $second_url, $new_url, $first_url ], $GLOBALS['perform_test_options']['perform_cache_preload_queue'] );
+	}
+
+	public function test_preload_active_claim_prevents_a_second_worker_from_processing_the_same_url() {
+		$url                             = 'https://example.com/claimed-page';
+		$GLOBALS['perform_test_options'] = [
+			'perform_settings'            => [
+				'enable_page_cache'    => true,
+				'enable_cache_preload' => true,
+			],
+			'perform_cache_preload_queue' => [ $url ],
+		];
+		$page_cache                      = new PageCache();
+		$GLOBALS['perform_test_remote_get_callback'] = static function () use ( $page_cache ): void {
+			unset( $GLOBALS['perform_test_remote_get_callback'] );
+			$page_cache->run_preload_batch();
+		};
+
+		$page_cache->run_preload_batch();
+
+		$this->assertCount( 1, $GLOBALS['perform_test_remote_get_calls'] );
+		$this->assertSame( [], $GLOBALS['perform_test_options']['perform_cache_preload_queue'] );
+	}
+
+	public function test_preload_reclaims_expired_claim_after_interrupted_worker() {
+		$url                             = 'https://example.com/recovered-page';
+		$GLOBALS['perform_test_options'] = [
+			'perform_settings'            => [
+				'enable_page_cache'    => true,
+				'enable_cache_preload' => true,
+			],
+			'perform_cache_preload_queue' => [
+				[
+					'url'         => $url,
+					'claim_id'    => 'interrupted-worker',
+					'claim_until' => time() - 1,
+				],
+			],
+		];
+		$page_cache                      = new PageCache();
+
+		$page_cache->run_preload_batch();
+
+		$this->assertSame( [ $url ], array_column( $GLOBALS['perform_test_remote_get_calls'], 'url' ) );
+		$this->assertSame( [], $GLOBALS['perform_test_options']['perform_cache_preload_queue'] );
+	}
+
+	public function test_preload_stale_worker_ack_does_not_remove_a_reclaimed_claim() {
+		$url                             = 'https://example.com/reclaimed-page';
+		$GLOBALS['perform_test_options'] = [
+			'perform_settings'            => [
+				'enable_page_cache'    => true,
+				'enable_cache_preload' => true,
+			],
+			'perform_cache_preload_queue' => [ $url ],
+		];
+		$page_cache                      = new PageCache();
+		$GLOBALS['perform_test_remote_get_callback'] = static function () use ( $url ): void {
+			unset( $GLOBALS['perform_test_remote_get_callback'] );
+			$GLOBALS['perform_test_options']['perform_cache_preload_queue'][0] = [
+				'url'         => $url,
+				'claim_id'    => 'replacement-owner',
+				'claim_until' => time() + 300,
+			];
+		};
+
+		$page_cache->run_preload_batch();
+
+		$this->assertSame( 'replacement-owner', $GLOBALS['perform_test_options']['perform_cache_preload_queue'][0]['claim_id'] );
+		$this->assertSame( 1, count( $GLOBALS['perform_test_remote_get_calls'] ) );
+	}
+
+	public function test_preload_acknowledgement_retries_after_database_contention_and_lease_expiry() {
+		$url                             = 'https://example.com/ack-retry-page';
+		$GLOBALS['perform_test_options'] = [
+			'perform_settings'            => [
+				'enable_page_cache'    => true,
+				'enable_cache_preload' => true,
+			],
+			'perform_cache_preload_queue' => [ $url ],
+		];
+		$page_cache                      = new PageCache();
+		$GLOBALS['perform_test_remote_get_callback'] = static function () use ( $url ): void {
+			unset( $GLOBALS['perform_test_remote_get_callback'] );
+			$GLOBALS['wpdb']->fail_updates = true;
+		};
+
+		$page_cache->run_preload_batch();
+		$this->assertSame( $url, $GLOBALS['perform_test_options']['perform_cache_preload_queue'][0]['url'] );
+
+		$GLOBALS['wpdb']->fail_updates = false;
+		$GLOBALS['perform_test_options']['perform_cache_preload_queue'][0]['claim_until'] = time() - 1;
+		$page_cache->run_preload_batch();
+
+		$this->assertSame( [], $GLOBALS['perform_test_options']['perform_cache_preload_queue'] );
+		$this->assertCount( 2, $GLOBALS['perform_test_remote_get_calls'] );
+	}
+
+	public function test_preload_queue_discards_malformed_entries_and_stays_bounded() {
+		$GLOBALS['perform_test_options']['perform_cache_preload_queue'] = [
+			123,
+			[ 'unexpected' => 'shape' ],
+			'https://example.com/kept-page',
+		];
+		$page_cache = new PageCache();
+		$method     = new ReflectionMethod( $page_cache, 'queue_urls_for_preload' );
+		$method->setAccessible( true );
+		$method->invoke( $page_cache, [ 'https://example.com/new-page' ] );
+		$this->assertSame(
+			[ 'https://example.com/kept-page', 'https://example.com/new-page' ],
+			$GLOBALS['perform_test_options']['perform_cache_preload_queue']
+		);
+
+		$full_queue = [];
+		for ( $index = 0; $index < 2000; ++$index ) {
+			$full_queue[] = 'https://example.com/page-' . $index;
+		}
+		$GLOBALS['perform_test_options']['perform_cache_preload_queue'] = $full_queue;
+		$method->invoke( $page_cache, [ 'https://example.com/overflow-page' ] );
+		$this->assertCount( 2000, $GLOBALS['perform_test_options']['perform_cache_preload_queue'] );
+		$this->assertNotContains( 'https://example.com/overflow-page', $GLOBALS['perform_test_options']['perform_cache_preload_queue'] );
+	}
+
+	public function test_preload_queue_compare_and_swap_retries_after_concurrent_option_change() {
+		$GLOBALS['perform_test_options']['perform_cache_preload_queue'] = [ 'https://example.com/existing' ];
+		$GLOBALS['wpdb']->conflict_once                                 = true;
+		$page_cache = new PageCache();
+		$method     = new ReflectionMethod( $page_cache, 'queue_urls_for_preload' );
+		$method->setAccessible( true );
+
+		$method->invoke( $page_cache, [ 'https://example.com/new' ] );
+
+		$this->assertSame(
+			[ 'https://example.com/existing', 'https://example.com/concurrent-path', 'https://example.com/new' ],
+			$GLOBALS['perform_test_options']['perform_cache_preload_queue']
+		);
+		$this->assertStringContainsString( 'BINARY option_value = BINARY', $GLOBALS['wpdb']->last_update );
+	}
+
+	public function test_preload_queue_retries_option_insert_race_without_overwriting_new_queue() {
+		$GLOBALS['wpdb']->insert_race_once = true;
+		$page_cache                        = new PageCache();
+		$method                            = new ReflectionMethod( $page_cache, 'queue_urls_for_preload' );
+		$method->setAccessible( true );
+
+		$method->invoke( $page_cache, [ 'https://example.com/new' ] );
+
+		$this->assertSame(
+			[ 'https://example.com/concurrent-insert', 'https://example.com/new' ],
+			$GLOBALS['perform_test_options']['perform_cache_preload_queue']
+		);
+	}
+
+	public function test_preload_queue_mutation_reports_repeated_database_contention() {
+		$GLOBALS['perform_test_options']['perform_cache_preload_queue'] = [ 'https://example.com/existing' ];
+		$GLOBALS['wpdb']->fail_updates                                  = true;
+		$page_cache = new PageCache();
+		$method     = new ReflectionMethod( $page_cache, 'mutate_preload_queue' );
+		$method->setAccessible( true );
+		$result = $method->invoke(
+			$page_cache,
+			static function ( array $queue ): array {
+				$queue[] = 'https://example.com/new';
+				return [
+					'queue' => $queue,
+					'value' => count( $queue ),
+				];
+			}
+		);
+
+		$this->assertFalse( $result['success'] );
+		$this->assertSame( 10, $GLOBALS['wpdb']->query_count );
+		$this->assertSame( [ 'https://example.com/existing' ], $GLOBALS['perform_test_options']['perform_cache_preload_queue'] );
+	}
+
 	public function test_configured_exact_path_bypasses_cache_without_writes() {
 		$GLOBALS['perform_test_options'] = [
 			'perform_settings' => [
@@ -233,6 +489,22 @@ final class Tests_Page_Cache extends TestCase {
 		$_GET['preview_token'] = 'abc123';
 		$this->assertFalse( $this->invoke_is_cacheable_request( $page_cache ) );
 		$this->assertSame( 'query_key', $this->get_private_property( $page_cache, 'current_bypass_reason' ) );
+	}
+
+	public function test_commerce_ajax_query_bypasses_cache_by_default() {
+		$_GET['wc-ajax'] = 'get_refreshed_fragments';
+		$page_cache      = new PageCache();
+
+		$this->assertFalse( $this->invoke_is_cacheable_request( $page_cache ) );
+		$this->assertSame( 'default_query', $this->get_private_property( $page_cache, 'current_bypass_reason' ) );
+	}
+
+	public function test_wordpress_password_cookie_bypasses_cache_by_default() {
+		$_COOKIE['wp-postpass_fixture'] = 'fixture';
+		$page_cache                     = new PageCache();
+
+		$this->assertFalse( $this->invoke_is_cacheable_request( $page_cache ) );
+		$this->assertSame( 'default_cookie', $this->get_private_property( $page_cache, 'current_bypass_reason' ) );
 	}
 
 	public function test_configured_cookie_name_and_prefix_bypass_cache() {
@@ -306,6 +578,157 @@ final class Tests_Page_Cache extends TestCase {
 		$this->assertSame( [], $GLOBALS['perform_test_scheduled_single_events'] );
 	}
 
+	public function test_legacy_policy_cache_body_is_not_reused_after_upgrade() {
+		$page_cache = new PageCache();
+		$cache_dir  = $this->temporary_cache_dir();
+		$this->set_private_property( $page_cache, 'cache_dir', $cache_dir );
+		$url         = 'https://example.com/password-protected/';
+		$legacy_key  = md5( $url );
+		$legacy_path = $this->invoke_private_with_argument( $page_cache, 'get_body_file_path', $legacy_key );
+		mkdir( dirname( $legacy_path ), 0777, true );
+		file_put_contents( $legacy_path, 'legacy private fixture' );
+
+		try {
+			$current_key = $this->invoke_private_with_argument( $page_cache, 'get_cache_key_for_url', $url );
+			$this->assertNull( $this->invoke_private_with_argument( $page_cache, 'read_cache_body', $current_key ) );
+			$this->assertFileExists( $legacy_path );
+			$this->write_cached_url( $page_cache, $url );
+			$this->assertSame( 'cached', $this->invoke_private_with_argument( $page_cache, 'read_cache_body', $current_key ) );
+			$this->assertSame( 'legacy private fixture', file_get_contents( $legacy_path ) );
+		} finally {
+			foreach ( glob( dirname( $legacy_path ) . '/*' ) as $path ) {
+				unlink( $path );
+			}
+			rmdir( dirname( $legacy_path ) );
+			rmdir( dirname( $legacy_path, 2 ) );
+			rmdir( $cache_dir );
+		}
+	}
+
+	public function test_upgrade_removes_owned_cache_bodies_but_preserves_metadata_and_other_files() {
+		$page_cache = new PageCache();
+		$cache_dir  = $this->temporary_cache_dir();
+		$this->set_private_property( $page_cache, 'cache_dir', $cache_dir );
+		$directories              = [ $cache_dir, $cache_dir . 'site-1/generation-1/', $cache_dir . 'site-1/generation-2/', $cache_dir . 'site-2/generation-1/' ];
+		$temporary_names          = [
+			str_repeat( 'a', 32 ) . '.html.' . uniqid( 'tmp-', true ),
+			str_repeat( 'a', 32 ) . '.html.tmp.' . uniqid( '', true ),
+			str_repeat( 'a', 32 ) . '.html.tmp-' . str_repeat( '10', 13 ) . '.00000001',
+			str_repeat( 'a', 32 ) . '.html.tmp.' . str_repeat( '10', 13 ) . '.00000001',
+		];
+		$malformed_temporary_name = str_repeat( 'a', 32 ) . '.html.tmp-' . str_repeat( '10', 17 ) . '.00000001';
+		foreach ( $directories as $directory ) {
+			if ( ! is_dir( $directory ) ) {
+				mkdir( $directory, 0777, true );
+			}
+			file_put_contents( $directory . str_repeat( 'a', 32 ) . '.html', 'private fixture' );
+			foreach ( $temporary_names as $temporary_name ) {
+				file_put_contents( $directory . $temporary_name, 'interrupted private fixture' );
+			}
+			file_put_contents( $directory . $malformed_temporary_name, 'unrelated malformed fixture' );
+			file_put_contents( $directory . str_repeat( 'a', 32 ) . '.meta.json', '{}' );
+			file_put_contents( $directory . 'keep.txt', 'unrelated fixture' );
+		}
+		$GLOBALS['perform_test_options']['perform_settings']            = [ 'extension_value' => 'retained' ];
+		$GLOBALS['perform_test_options']['perform_cache_body_policy_1'] = 2;
+
+		$page_cache->retire_legacy_cache_bodies();
+
+		foreach ( $directories as $directory ) {
+			$this->assertFileDoesNotExist( $directory . str_repeat( 'a', 32 ) . '.html' );
+			foreach ( $temporary_names as $temporary_name ) {
+				$this->assertFileDoesNotExist( $directory . $temporary_name );
+			}
+			$this->assertSame( 'unrelated malformed fixture', file_get_contents( $directory . $malformed_temporary_name ) );
+			$this->assertFileExists( $directory . str_repeat( 'a', 32 ) . '.meta.json' );
+			$this->assertSame( 'unrelated fixture', file_get_contents( $directory . 'keep.txt' ) );
+		}
+		$this->assertSame( [ 'extension_value' => 'retained' ], $GLOBALS['perform_test_options']['perform_settings'] );
+		$this->assertSame( 3, $GLOBALS['perform_test_options']['perform_cache_body_policy'] );
+		$this->assertSame( 3, $GLOBALS['perform_test_options']['perform_cache_metadata_policy_1'] );
+	}
+
+	public function test_retirement_keeps_metadata_available_for_bounded_cloudflare_inventory() {
+		$page_cache = new PageCache();
+		$cache_dir  = $this->temporary_cache_dir();
+		delete_site_option( 'perform_cache_body_policy' );
+		$this->set_private_property( $page_cache, 'cache_dir', $cache_dir );
+		$directory = $cache_dir . 'site-1/generation-1/';
+		mkdir( $directory, 0777, true );
+		file_put_contents( $directory . str_repeat( 'a', 32 ) . '.html', 'private fixture' );
+		file_put_contents( $directory . str_repeat( 'a', 32 ) . '.meta.json', wp_json_encode( [ 'url' => 'https://example.com/protected/' ] ) );
+		$other_directory = $cache_dir . 'site-2/generation-1/';
+		mkdir( $other_directory, 0777, true );
+		file_put_contents( $other_directory . str_repeat( 'b', 32 ) . '.meta.json', wp_json_encode( [ 'url' => 'https://other.example.com/protected/' ] ) );
+		file_put_contents( $other_directory . str_repeat( 'b', 32 ) . '.html', 'other private fixture' );
+		$GLOBALS['perform_test_options']['perform_settings'] = [
+			'enable_cloudflare_cache_sync' => true,
+			'cloudflare_zone_id'           => 'zone',
+			'cloudflare_api_token'         => 'fixture-token',
+		];
+
+		$page_cache->retire_legacy_cache_bodies();
+
+		$this->assertFileDoesNotExist( $directory . str_repeat( 'a', 32 ) . '.html' );
+		$record = $GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'][0];
+		$work   = $this->invoke_private_with_argument( $page_cache, 'get_cloudflare_record_work', $record );
+		$this->assertSame( [ 'https://example.com/protected/' ], $work['urls'] );
+		$this->assertTrue( $work['complete'] );
+		$this->assertStringNotContainsString( 'fixture-token', wp_json_encode( $record ) );
+		$this->assertFileDoesNotExist( $other_directory . str_repeat( 'b', 32 ) . '.html' );
+		$this->assertFileExists( $other_directory . str_repeat( 'b', 32 ) . '.meta.json' );
+		$this->assertSame( [], $GLOBALS['perform_test_remote_post_calls'] );
+	}
+
+	public function test_each_blog_queues_its_metadata_without_repeating_shared_body_retirement() {
+		$page_cache = new PageCache();
+		$cache_dir  = $this->temporary_cache_dir();
+		$this->set_private_property( $page_cache, 'cache_dir', $cache_dir );
+		$page_cache->retire_legacy_cache_bodies();
+		$this->write_cached_url( $page_cache, 'https://example.com/public/' );
+		$GLOBALS['perform_test_blog_id'] = 2;
+		$other_cache                     = new PageCache();
+		$this->set_private_property( $other_cache, 'cache_dir', $cache_dir );
+		$other_cache->retire_legacy_cache_bodies();
+		$this->assertSame( 3, $GLOBALS['perform_test_options']['perform_cache_metadata_policy_2'] );
+		$GLOBALS['perform_test_blog_id'] = 1;
+		$this->assertTrue( $this->cache_file_exists( $page_cache, 'https://example.com/public/' ) );
+	}
+
+	public function test_retirement_is_once_per_upgrade_and_preserves_new_cache_until_next_plugin_upgrade() {
+		$page_cache = new PageCache();
+		$cache_dir  = $this->temporary_cache_dir();
+		$this->set_private_property( $page_cache, 'cache_dir', $cache_dir );
+		$page_cache->retire_legacy_cache_bodies();
+		$this->write_cached_url( $page_cache, 'https://example.com/public/' );
+		$page_cache->retire_legacy_cache_bodies();
+		$this->assertTrue( $this->cache_file_exists( $page_cache, 'https://example.com/public/' ) );
+		$page_cache->reset_cache_body_policy_after_upgrade( null, [ 'type' => 'theme' ] );
+		$this->assertSame( 3, $GLOBALS['perform_test_options']['perform_cache_body_policy'] );
+		$page_cache->reset_cache_body_policy_after_upgrade( null, [ 'type' => 'plugin' ] );
+		$page_cache->retire_legacy_cache_bodies();
+		$this->assertFalse( $this->cache_file_exists( $page_cache, 'https://example.com/public/' ) );
+	}
+
+	public function test_retirement_does_not_follow_cache_body_symlinks_and_does_not_claim_completion() {
+		$page_cache = new PageCache();
+		$cache_dir  = $this->temporary_cache_dir();
+		$this->set_private_property( $page_cache, 'cache_dir', $cache_dir );
+		$target = $cache_dir . 'keep.txt';
+		$link   = $cache_dir . str_repeat( 'a', 32 ) . '.html';
+		file_put_contents( $target, 'unrelated fixture' );
+		symlink( $target, $link );
+		$GLOBALS['perform_test_options']['perform_settings'] = [ 'enable_page_cache' => true ];
+
+		$page_cache->retire_legacy_cache_bodies();
+
+		$this->assertSame( 'unrelated fixture', file_get_contents( $target ) );
+		$this->assertTrue( is_link( $link ) );
+		$this->assertArrayNotHasKey( 'perform_cache_body_policy', $GLOBALS['perform_test_options'] );
+		$this->assertFalse( $this->invoke_private( $page_cache, 'page_cache_enabled' ) );
+		$this->assertContains( 'admin_notices', array_column( $GLOBALS['perform_test_actions'], 'hook' ) );
+	}
+
 	public function test_targeted_purge_removes_old_post_url_but_keeps_unaffected_cache_entry() {
 		$page_cache = new PageCache();
 		$cache_dir  = $this->temporary_cache_dir();
@@ -376,8 +799,8 @@ final class Tests_Page_Cache extends TestCase {
 		$this->set_private_property( $page_cache, 'cleanup_batch_size', 1 );
 		$GLOBALS['perform_test_options']['perform_cache_generation_1'] = 2;
 		mkdir( $cache_dir . 'site-1/generation-1/', 0777, true );
-		file_put_contents( $cache_dir . 'site-1/generation-1/one.html', 'one' );
-		file_put_contents( $cache_dir . 'site-1/generation-1/two.html', 'two' );
+		file_put_contents( $cache_dir . 'site-1/generation-1/' . str_repeat( '1', 32 ) . '.html', 'one' );
+		file_put_contents( $cache_dir . 'site-1/generation-1/' . str_repeat( '2', 32 ) . '.html', 'two' );
 
 		$page_cache->cleanup_obsolete_generations();
 
@@ -606,7 +1029,158 @@ final class Tests_Page_Cache extends TestCase {
 		$second = json_decode( $GLOBALS['perform_test_remote_post_calls'][1]['args']['body'], true )['files'];
 
 		$this->assertSame( $first, $second );
-		$this->assertGreaterThan( 0, $GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'][0]['cursor'] );
+		$this->assertSame( 'a.meta.json', $GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'][0]['cursor_filename'] );
+	}
+
+	public function test_cloudflare_batch_does_not_overwrite_a_concurrent_queue_producer() {
+		$page_cache                                   = new PageCache();
+		$settings                                     = [
+			'enable_cloudflare_cache_sync' => true,
+			'cloudflare_zone_id'           => 'zone',
+			'cloudflare_api_token'         => 'token',
+		];
+		$GLOBALS['perform_test_options']              = [
+			'perform_settings'                 => $settings,
+			'perform_cache_cloudflare_queue_1' => [
+				[
+					'urls'        => [ 'https://example.com/a/', 'https://example.com/b/' ],
+					'zone_id'     => 'zone',
+					'fingerprint' => md5( 'zone|token' ),
+					'enabled'     => true,
+					'attempts'    => 0,
+					'failed'      => false,
+				],
+			],
+		];
+		$GLOBALS['perform_test_remote_post_response'] = [
+			'response' => [ 'code' => 200 ],
+			'body'     => '{"success":true}',
+		];
+		$enqueue                                      = new ReflectionMethod( $page_cache, 'queue_cloudflare_inline_urls' );
+		$enqueue->setAccessible( true );
+		$GLOBALS['perform_test_remote_post_callback'] = static function () use ( $enqueue, $page_cache ): void {
+			$enqueue->invoke( $page_cache, [ 'https://example.com/c/' ] );
+		};
+
+		$page_cache->run_cloudflare_purge_batch();
+
+		$this->assertSame(
+			[ 'https://example.com/a/', 'https://example.com/b/', 'https://example.com/c/' ],
+			$GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'][0]['urls']
+		);
+		$this->assertNotEmpty( $GLOBALS['perform_test_scheduled_single_events'] );
+	}
+
+	public function test_cloudflare_batch_keeps_same_url_reenqueued_during_purge() {
+		$page_cache                                   = new PageCache();
+		$settings                                     = [
+			'enable_cloudflare_cache_sync' => true,
+			'cloudflare_zone_id'           => 'zone',
+			'cloudflare_api_token'         => 'token',
+		];
+		$GLOBALS['perform_test_options']              = [
+			'perform_settings'                 => $settings,
+			'perform_cache_cloudflare_queue_1' => [
+				[
+					'urls'        => [ 'https://example.com/a/' ],
+					'zone_id'     => 'zone',
+					'fingerprint' => md5( 'zone|token' ),
+					'enabled'     => true,
+					'attempts'    => 0,
+					'failed'      => false,
+				],
+			],
+		];
+		$GLOBALS['perform_test_remote_post_response'] = [
+			'response' => [ 'code' => 200 ],
+			'body'     => '{"success":true}',
+		];
+		$enqueue                                      = new ReflectionMethod( $page_cache, 'queue_cloudflare_inline_urls' );
+		$enqueue->setAccessible( true );
+		$GLOBALS['perform_test_remote_post_callback'] = static function () use ( $enqueue, $page_cache ): void {
+			$enqueue->invoke( $page_cache, [ 'https://example.com/a/' ] );
+		};
+
+		$page_cache->run_cloudflare_purge_batch();
+		$this->assertSame( [ 'https://example.com/a/' ], $GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'][0]['urls'] );
+		$this->assertNotEmpty( $GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'][0]['_revision'] );
+
+		unset( $GLOBALS['perform_test_remote_post_callback'] );
+		$page_cache->run_cloudflare_purge_batch();
+		$this->assertSame( [], $GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'][0]['urls'] );
+		$this->assertCount( 2, $GLOBALS['perform_test_remote_post_calls'] );
+		$page_cache->run_cloudflare_purge_batch();
+		$this->assertSame( [], $GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'] );
+	}
+
+	public function test_cloudflare_stale_consumer_preserves_record_recreated_after_queue_drain() {
+		$page_cache                                   = new PageCache();
+		$settings                                     = [
+			'enable_cloudflare_cache_sync' => true,
+			'cloudflare_zone_id'           => 'zone',
+			'cloudflare_api_token'         => 'token',
+		];
+		$GLOBALS['perform_test_options']              = [
+			'perform_settings'                 => $settings,
+			'perform_cache_cloudflare_queue_1' => [
+				[
+					'urls'        => [ 'https://example.com/a/' ],
+					'zone_id'     => 'zone',
+					'fingerprint' => md5( 'zone|token' ),
+					'enabled'     => true,
+					'attempts'    => 0,
+					'failed'      => false,
+					'_revision'   => 0,
+				],
+			],
+		];
+		$GLOBALS['perform_test_remote_post_response'] = [
+			'response' => [ 'code' => 200 ],
+			'body'     => '{"success":true}',
+		];
+		$enqueue                                      = new ReflectionMethod( $page_cache, 'queue_cloudflare_inline_urls' );
+		$enqueue->setAccessible( true );
+		$GLOBALS['perform_test_remote_post_callback'] = static function () use ( $enqueue, $page_cache ): void {
+			// Model another consumer draining the old record before a producer requeues the URL.
+			$GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'] = [];
+			$enqueue->invoke( $page_cache, [ 'https://example.com/a/' ] );
+		};
+
+		$page_cache->run_cloudflare_purge_batch();
+
+		$queue = $GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'];
+		$this->assertCount( 1, $queue );
+		$this->assertSame( [ 'https://example.com/a/' ], $queue[0]['urls'] );
+		$this->assertNotSame( 0, $queue[0]['_revision'] );
+		$this->assertSame( 2, $GLOBALS['wpdb']->query_count );
+	}
+
+	public function test_new_cloudflare_inventory_request_restarts_an_older_filename_cursor() {
+		$page_cache                      = new PageCache();
+		$settings                        = [
+			'enable_cloudflare_cache_sync' => true,
+			'cloudflare_zone_id'           => 'zone',
+			'cloudflare_api_token'         => 'token',
+		];
+		$GLOBALS['perform_test_options'] = [
+			'perform_settings'                 => $settings,
+			'perform_cache_cloudflare_queue_1' => [
+				[
+					'source'             => 'metadata',
+					'generation'         => 1,
+					'cursor_filename'    => 'z.meta.json',
+					'inventory_complete' => true,
+					'fingerprint'        => md5( 'zone|token' ),
+					'_revision'          => 'previous-scan',
+				],
+			],
+		];
+		$this->invoke_private_with_arguments( $page_cache, 'queue_cloudflare_tracked_urls', [ $settings, 1 ] );
+
+		$record = $GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'][0];
+		$this->assertArrayNotHasKey( 'cursor_filename', $record );
+		$this->assertArrayNotHasKey( 'inventory_complete', $record );
+		$this->assertNotSame( 'previous-scan', $record['_revision'] );
 	}
 
 	public function test_invalid_metadata_scan_advances_in_bounded_runs_without_retiring() {
@@ -627,8 +1201,89 @@ final class Tests_Page_Cache extends TestCase {
 
 		$page_cache->run_cloudflare_purge_batch();
 		$this->assertNotEmpty( $GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'] );
-		$this->assertGreaterThan( 0, $GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'][0]['cursor'] );
+		$this->assertNotEmpty( $GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'][0]['cursor_filename'] );
 		$this->assertSame( [], $GLOBALS['perform_test_remote_post_calls'] );
+	}
+
+	public function test_metadata_inventory_keeps_urls_found_before_scan_budget_hits_unrelated_files() {
+		$page_cache = new PageCache();
+		$cache_dir  = $this->temporary_cache_dir();
+		$this->set_private_property( $page_cache, 'cache_dir', $cache_dir );
+		$this->set_private_property( $page_cache, 'cloudflare_metadata_scan_limit', 2 );
+		$directory = $cache_dir . 'site-1/generation-1/';
+		mkdir( $directory, 0777, true );
+		$metadata_name = str_repeat( 'a', 32 ) . '.meta.json';
+		$noise_name    = 'z-operator-note.txt';
+		$later_name    = 'zz-later.meta.json';
+		// The scanner sorts names, so creation/DirectoryIterator order must not matter.
+		file_put_contents( $directory . $later_name, wp_json_encode( [ 'url' => 'https://example.com/later/' ] ) );
+		file_put_contents( $directory . $noise_name, 'unrelated' );
+		file_put_contents( $directory . $metadata_name, wp_json_encode( [ 'url' => 'https://example.com/kept/' ] ) );
+		$record = [
+			'source'          => 'metadata',
+			'generation'      => 1,
+			'cursor_filename' => '',
+		];
+
+		$work = $this->invoke_private_with_argument( $page_cache, 'get_cloudflare_metadata_urls', $record );
+
+		$this->assertSame( [ 'https://example.com/kept/' ], $work['urls'] );
+		$this->assertSame( $noise_name, $work['cursor_filename'] );
+		$this->assertFalse( $work['complete'] );
+
+		$record['cursor_filename'] = $work['cursor_filename'];
+		$next_work                 = $this->invoke_private_with_argument( $page_cache, 'get_cloudflare_metadata_urls', $record );
+		$this->assertSame( [ 'https://example.com/later/' ], $next_work['urls'] );
+		$this->assertSame( $later_name, $next_work['cursor_filename'] );
+		$this->assertTrue( $next_work['complete'] );
+	}
+
+	public function test_metadata_inventory_cursor_survives_removal_of_earlier_files() {
+		$page_cache = new PageCache();
+		$cache_dir  = $this->temporary_cache_dir();
+		$this->set_private_property( $page_cache, 'cache_dir', $cache_dir );
+		$this->set_private_property( $page_cache, 'cloudflare_batch_size', 1 );
+		$directory = $cache_dir . 'site-1/generation-1/';
+		mkdir( $directory, 0777, true );
+		foreach ( [ 'a', 'b', 'c' ] as $letter ) {
+			file_put_contents( $directory . $letter . '.meta.json', wp_json_encode( [ 'url' => 'https://example.com/' . $letter . '/' ] ) );
+		}
+		$record = [
+			'source'     => 'metadata',
+			'generation' => 1,
+		];
+		$first  = $this->invoke_private_with_argument( $page_cache, 'get_cloudflare_metadata_urls', $record );
+		wp_delete_file( $directory . 'a.meta.json' );
+		$second = $this->invoke_private_with_argument(
+			$page_cache,
+			'get_cloudflare_metadata_urls',
+			array_merge( $record, [ 'cursor_filename' => $first['cursor_filename'] ] )
+		);
+
+		$this->assertSame( [ 'https://example.com/a/' ], $first['urls'] );
+		$this->assertSame( [ 'https://example.com/b/' ], $second['urls'] );
+	}
+
+	public function test_legacy_numeric_metadata_cursor_restarts_from_the_beginning() {
+		$page_cache = new PageCache();
+		$cache_dir  = $this->temporary_cache_dir();
+		$this->set_private_property( $page_cache, 'cache_dir', $cache_dir );
+		$directory = $cache_dir . 'site-1/generation-1/';
+		mkdir( $directory, 0777, true );
+		file_put_contents( $directory . 'a.meta.json', wp_json_encode( [ 'url' => 'https://example.com/a/' ] ) );
+		file_put_contents( $directory . 'b.meta.json', wp_json_encode( [ 'url' => 'https://example.com/b/' ] ) );
+
+		$work = $this->invoke_private_with_argument(
+			$page_cache,
+			'get_cloudflare_metadata_urls',
+			[
+				'source'     => 'metadata',
+				'generation' => 1,
+				'cursor'     => 9,
+			]
+		);
+
+		$this->assertSame( 'https://example.com/a/', $work['urls'][0] );
 	}
 
 	public function test_targeted_cloudflare_failure_queues_a_token_free_retry() {
@@ -680,7 +1335,8 @@ final class Tests_Page_Cache extends TestCase {
 		$this->set_private_property( $page_cache, 'cache_dir', $cache_dir );
 		$GLOBALS['perform_test_options']['perform_cache_generation_1'] = 2;
 		mkdir( $cache_dir . 'site-1/generation-1/', 0777, true );
-		file_put_contents( $cache_dir . 'site-1/generation-1/retired.meta.json', '{}' );
+		$metadata_path = $cache_dir . 'site-1/generation-1/' . str_repeat( 'a', 32 ) . '.meta.json';
+		file_put_contents( $metadata_path, '{}' );
 		$GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'] = [
 			[
 				'source'     => 'metadata',
@@ -691,12 +1347,12 @@ final class Tests_Page_Cache extends TestCase {
 		];
 
 		$page_cache->cleanup_obsolete_generations();
-		$this->assertFileExists( $cache_dir . 'site-1/generation-1/retired.meta.json' );
+		$this->assertFileExists( $metadata_path );
 		$this->assertSame( 'perform_cache_cleanup_event', $GLOBALS['perform_test_scheduled_single_events'][0]['hook'] );
 
 		$GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'] = [];
 		$page_cache->cleanup_obsolete_generations();
-		$this->assertFileDoesNotExist( $cache_dir . 'site-1/generation-1/retired.meta.json' );
+		$this->assertFileDoesNotExist( $metadata_path );
 	}
 
 	public function test_cleanup_schedules_again_when_legacy_files_exactly_exhaust_budget() {
@@ -707,11 +1363,71 @@ final class Tests_Page_Cache extends TestCase {
 		$GLOBALS['perform_test_options']['perform_cache_generation_1'] = 2;
 		file_put_contents( $cache_dir . str_repeat( 'a', 32 ) . '.html', 'legacy' );
 		mkdir( $cache_dir . 'site-1/generation-1/', 0777, true );
-		file_put_contents( $cache_dir . 'site-1/generation-1/retired.html', 'retired' );
+		file_put_contents( $cache_dir . 'site-1/generation-1/' . str_repeat( 'b', 32 ) . '.html', 'retired' );
+		file_put_contents( $cache_dir . 'site-1/generation-1/operator-note.txt', 'keep' );
 
 		$page_cache->cleanup_obsolete_generations();
-		$this->assertFileExists( $cache_dir . 'site-1/generation-1/retired.html' );
+		$this->assertFileExists( $cache_dir . 'site-1/generation-1/' . str_repeat( 'b', 32 ) . '.html' );
 		$this->assertSame( 'perform_cache_cleanup_event', $GLOBALS['perform_test_scheduled_single_events'][0]['hook'] );
+	}
+
+	public function test_retired_generation_cleanup_preserves_unrelated_files() {
+		$page_cache = new PageCache();
+		$cache_dir  = $this->temporary_cache_dir();
+		$this->set_private_property( $page_cache, 'cache_dir', $cache_dir );
+		$this->set_private_property( $page_cache, 'cleanup_batch_size', 1 );
+		$GLOBALS['perform_test_options']['perform_cache_generation_1'] = 2;
+		$directory = $cache_dir . 'site-1/generation-1/';
+		mkdir( $directory, 0777, true );
+		file_put_contents( $directory . str_repeat( 'a', 32 ) . '.html', 'retired body' );
+		file_put_contents( $directory . 'operator-note.txt', 'keep this file' );
+
+		$page_cache->cleanup_obsolete_generations();
+
+		$this->assertFileDoesNotExist( $directory . str_repeat( 'a', 32 ) . '.html' );
+		$this->assertSame( 'keep this file', file_get_contents( $directory . 'operator-note.txt' ) );
+		$this->assertSame( [], $GLOBALS['perform_test_scheduled_single_events'] );
+	}
+
+	public function test_multisite_cleanup_retains_shared_root_metadata_for_other_blog_inventories() {
+		$page_cache = new PageCache();
+		$cache_dir  = $this->temporary_cache_dir();
+		$this->set_private_property( $page_cache, 'cache_dir', $cache_dir );
+		$GLOBALS['perform_test_is_multisite']                          = true;
+		$GLOBALS['perform_test_options']['perform_cache_generation_1'] = 2;
+		$body_path     = $cache_dir . str_repeat( 'a', 32 ) . '.html';
+		$metadata_path = $cache_dir . str_repeat( 'a', 32 ) . '.meta.json';
+		file_put_contents( $body_path, 'retired shared body' );
+		file_put_contents( $metadata_path, '{"url":"https://example.com/other-blog/"}' );
+
+		$page_cache->cleanup_obsolete_generations();
+
+		$this->assertFileDoesNotExist( $body_path );
+		$this->assertFileExists( $metadata_path );
+		$this->assertSame( [], $GLOBALS['perform_test_scheduled_single_events'] );
+	}
+
+	public function test_retired_generation_cleanup_removes_interrupted_metadata_file_but_preserves_unrelated_files() {
+		$page_cache = new PageCache();
+		$cache_dir  = $this->temporary_cache_dir();
+		$this->set_private_property( $page_cache, 'cache_dir', $cache_dir );
+		$GLOBALS['perform_test_options']['perform_cache_generation_1'] = 2;
+		$directory = $cache_dir . 'site-1/generation-1/';
+		mkdir( $directory, 0777, true );
+		$metadata_temporary        = $directory . str_repeat( 'a', 32 ) . '.meta.json.' . uniqid( 'tmp-', true );
+		$metadata_temporary_dotted = $directory . str_repeat( 'b', 32 ) . '.meta.json.tmp.' . uniqid( '', true );
+		$metadata_temporary_long   = $directory . str_repeat( 'c', 32 ) . '.meta.json.tmp.' . str_repeat( '10', 13 ) . '.00000001';
+		file_put_contents( $metadata_temporary, '{"url":"https://example.com/unfinished/"}' );
+		file_put_contents( $metadata_temporary_dotted, '{"url":"https://example.com/unfinished-dotted/"}' );
+		file_put_contents( $metadata_temporary_long, '{"url":"https://example.com/unfinished-long/"}' );
+		file_put_contents( $directory . 'operator-note.txt', 'keep this file' );
+
+		$page_cache->cleanup_obsolete_generations();
+
+		$this->assertFileDoesNotExist( $metadata_temporary );
+		$this->assertFileDoesNotExist( $metadata_temporary_dotted );
+		$this->assertFileDoesNotExist( $metadata_temporary_long );
+		$this->assertSame( 'keep this file', file_get_contents( $directory . 'operator-note.txt' ) );
 	}
 
 	public function test_empty_metadata_source_is_retired_without_rescheduling() {

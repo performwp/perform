@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 2.0.0
  */
 class RemoveJqueryMigrate extends AbstractModule {
-    protected static $option_key = 'remove_jquery_migrate';
+	protected static $option_key = 'remove_jquery_migrate';
 
 	/**
 	 * Register hooks and filters for this module.

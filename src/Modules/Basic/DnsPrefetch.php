@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 2.0.0
  */
 class DnsPrefetch extends AbstractModule {
-    protected static $option_key = 'dns_prefetch';
+	protected static $option_key = 'dns_prefetch';
 
 	/**
 	 * Register hooks and filters for this module.

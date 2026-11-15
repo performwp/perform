@@ -785,7 +785,7 @@ class Helpers {
 							'id'        => 'cache_separate_query_params',
 							'type'      => 'text',
 							'name'      => esc_html__( 'Separate Query Params', 'perform' ),
-							'desc'      => esc_html__( 'Comma-separated query keys that should generate separate cache entries. Tracking params are ignored automatically.', 'perform' ),
+							'desc'      => esc_html__( 'Comma-separated query keys that should generate separate cache entries. When this list is set, other query keys share the same cache entry. Use query bypass rules for dynamic requests. Tracking params are ignored automatically.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,

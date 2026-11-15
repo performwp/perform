@@ -8,6 +8,8 @@
 
 	<!-- Default tab width for indentation fixes and such. -->
 	<arg name="tab-width" value="4"/>
+	<!-- JavaScript is checked by wp-scripts, not PHP token rules. -->
+	<arg name="extensions" value="php"/>
 
 	<!-- Exclude directories we don't want checked. -->
 	<exclude-pattern>node_modules/*</exclude-pattern>

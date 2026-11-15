@@ -809,6 +809,7 @@
 
 .perform-database-audit {
 	display: grid;
+	grid-template-columns: minmax(0, 1fr);
 	gap: 24px;
 }
 
@@ -920,8 +921,14 @@
 	overflow-x: auto;
 }
 
+.perform-database-audit__table-wrap:focus-visible {
+	outline: 2px solid var(--perform-color-brand);
+	outline-offset: 2px;
+}
+
 .perform-database-audit__table {
 	width: 100%;
+	min-width: 560px;
 	border-collapse: collapse;
 	text-align: left;
 }

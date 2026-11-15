@@ -6,6 +6,11 @@ import SystemHealthPanel from './SystemHealthPanel';
 
 const SETTINGS = window.performwpSettings || {};
 
+const boundedFeedback = ( value, fallback ) => {
+	const text = typeof value === 'string' && value.trim() ? value.trim() : fallback;
+	return text.length > 500 ? `${ text.slice( 0, 499 ) }…` : text;
+};
+
 const STATE_LABELS = {
 	'measured-locally': __( 'Measured locally', 'perform' ),
 	'not-available': __( 'Not available', 'perform' ),
@@ -81,12 +86,15 @@ const SiteInventoryPanel = ( {
 			setInventory( result.inventory );
 			setMessage( {
 				type: 'success',
-				text: result.message || __( 'Site inventory refreshed.', 'perform' ),
+				text: boundedFeedback( result.message, __( 'Site inventory refreshed.', 'perform' ) ),
 			} );
 		} catch ( error ) {
 			setMessage( {
 				type: 'error',
-				text: error?.message || __( 'The site inventory could not be refreshed. Please try again.', 'perform' ),
+				text: boundedFeedback(
+					error?.message,
+					__( 'The site inventory could not be refreshed. Please try again.', 'perform' )
+				),
 			} );
 		} finally {
 			setRefreshing( false );

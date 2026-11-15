@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 2.0.0
  */
 class DisableRssFeeds extends AbstractModule {
-    protected static $option_key = 'disable_rss_feeds';
+	protected static $option_key = 'disable_rss_feeds';
 
 	/**
 	 * Register hooks and filters for this module.

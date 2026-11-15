@@ -10,7 +10,7 @@ const version = JSON.parse( readFileSync( 'package.json', 'utf8' ) ).version;
 
 for ( const path of entries ) {
 	assert.ok( path.startsWith( 'perform/' ) && ! path.split( '/' ).includes( '..' ), `Unexpected ZIP path: ${ path }` );
-	assert.ok( ! /^perform\/(?:tests|node_modules|build|\.git|\.github|assets\/src|vendor\/(?:bin|phpunit|phpstan))\//.test( path ), `Development content: ${ path }` );
+	assert.ok( ! /^perform\/(?:tests|node_modules|build|dependencies|\.git|\.github|assets\/src|vendor\/(?:bin|phpunit|phpstan))\//.test( path ), `Development content: ${ path }` );
 	assert.ok( ! /^perform\/\.wp-env/.test( path ), `Environment configuration: ${ path }` );
 }
 for ( const path of [
@@ -18,6 +18,7 @@ for ( const path of [
 	'assets/dist/js/admin.min.js', 'assets/dist/js/perform.min.js',
 	'assets/dist/css/admin.css', 'assets/dist/css/perform.css',
 	'vendor/autoload.php', 'vendor/freemius/wordpress-sdk/start.php',
+	'vendor/freemius/wordpress-sdk/LICENSE.txt',
 ] ) {
 	assert.ok( readEntry( path ).length > 0, `Missing or empty runtime file: ${ path }` );
 }
@@ -29,5 +30,7 @@ assert.equal( readEntry( 'readme.txt' ).match( /^Requires PHP:\s*(\S+)/m )[ 1 ],
 const dependencies = JSON.parse( readEntry( 'vendor/composer/installed.json' ) );
 assert.equal( dependencies.dev, false, 'Development Composer install was packaged' );
 assert.deepEqual( dependencies.packages.map( ( dependency ) => dependency.name ).sort(), [ 'composer/installers', 'freemius/wordpress-sdk' ] );
+assert.equal( dependencies.packages.find( ( dependency ) => dependency.name === 'freemius/wordpress-sdk' ).version, '2.13.5' );
+assert.equal( readEntry( 'vendor/freemius/wordpress-sdk/start.php' ).match( /\$this_sdk_version\s*=\s*'([^']+)'/ )[ 1 ], '2.13.5' );
 assert.ok( ! entries.some( ( path ) => path.startsWith( 'perform/vendor/composer/installers/' ) ), 'Build-only installer files were packaged' );
 console.log( JSON.stringify( { version, files: entries.length, sha256: createHash( 'sha256' ).update( readFileSync( zip ) ).digest( 'hex' ), result: 'pass' } ) );

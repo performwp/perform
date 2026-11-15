@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 2.0.0
  */
 class DisablePasswordStrengthMeter extends AbstractModule {
-    protected static $option_key = 'disable_password_strength_meter';
+	protected static $option_key = 'disable_password_strength_meter';
 
 	/**
 	 * Register hooks and filters for this module.

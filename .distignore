@@ -66,3 +66,5 @@ postcss.config.js
 webpack.config.js
 docker-compose.yml
 wp-textdomain.js
+
+/dependencies

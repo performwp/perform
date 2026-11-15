@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 2.0.0
  */
 class LimitPostRevisions extends AbstractModule {
-    protected static $option_key = 'limit_post_revisions';
+	protected static $option_key = 'limit_post_revisions';
 
 	/**
 	 * Register hooks and filters for this module.

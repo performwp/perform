@@ -72,6 +72,10 @@ test( 'settings save, Assets Manager, and page cache smoke paths work', async ( 
 	await saveButton.click();
 	await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
 	await expect( page ).toHaveURL( /[?&]tab=cache(?:&|$)/ );
+	await page.reload();
+	await expect( page.getByLabel( 'Cache TTL' ) ).toHaveValue( '3600' );
+	await expect( page.getByLabel( 'Stale Revalidate Window' ) ).toHaveValue( '21600' );
+	await expect( page.getByLabel( 'Slow Request Threshold' ) ).toHaveValue( '1200' );
 
 	await page.goto( '/?perform' );
 	await expect( page.locator( '#perform-assets-manager' ) ).toBeVisible();
@@ -87,7 +91,30 @@ test( 'settings save, Assets Manager, and page cache smoke paths work', async ( 
 	await anonymous.get( '/' );
 	const cachedResponse = await anonymous.get( '/' );
 	expect( cachedResponse.headers()[ 'x-perform-cache' ] ).toMatch( /HIT|STALE/ );
+	for ( let attempt = 0; attempt < 2; attempt++ ) {
+		const passwordResponse = await anonymous.get( '/', {
+			headers: { Cookie: 'wp-postpass_fixture=fixture' },
+		} );
+		expect( passwordResponse.headers()[ 'x-perform-cache' ] || '' ).not.toMatch( /HIT|STALE/ );
+		const commerceResponse = await anonymous.get( '/?wc-ajax=get_refreshed_fragments' );
+		expect( commerceResponse.headers()[ 'x-perform-cache' ] || '' ).not.toMatch( /HIT|STALE/ );
+	}
 	await anonymous.dispose();
+} );
+
+test( 'settings rejects oversized bypass lists with a visible actionable error', async ( { page } ) => {
+	await login( page );
+	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=cache' );
+
+	const bypassPaths = Array.from( { length: 300 }, ( _, index ) => `/private-${ index + 1 }` ).join( '\n' );
+	const textarea = page.getByRole( 'textbox', { name: 'Bypass Exact Paths' } );
+	await textarea.fill( bypassPaths );
+	await page.getByRole( 'button', { name: 'Save Settings' } ).click();
+
+	await expect( page.getByRole( 'alert' ) ).toHaveText(
+		'List settings are limited to 100 entries. Please reduce the list and try again.'
+	);
+	await expect( textarea ).toHaveValue( bypassPaths );
 } );
 
 test( 'settings field rows stack beneath their descriptions at narrow widths', async ( { page } ) => {
@@ -484,6 +511,41 @@ test( 'lower-privilege users cannot access the legacy or canonical Cache Stats r
 	expect( adminAssetResponse.status() ).toBe( 403 );
 	expect( await adminAssetResponse.json() ).toMatchObject( { success: false } );
 } );
+test( 'primary tabs retain focus through consecutive keyboard navigation', async ( { page } ) => {
+	await login( page );
+	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=general' );
+	await page.getByRole( 'tab', { name: 'General', exact: true } ).focus();
+	await page.keyboard.press( 'ArrowRight' );
+	await expect( page.getByRole( 'tab', { name: 'Bloat', exact: true } ) ).toBeFocused();
+	await page.keyboard.press( 'ArrowRight' );
+	await expect( page.getByRole( 'tab', { name: 'Assets', exact: true } ) ).toBeFocused();
+	await page.keyboard.press( 'ArrowLeft' );
+	await expect( page.getByRole( 'tab', { name: 'Bloat', exact: true } ) ).toBeFocused();
+	await page.keyboard.press( 'End' );
+	await expect( page.getByRole( 'tab', { name: 'Diagnostics', exact: true } ) ).toBeFocused();
+	await expect( page.getByLabel( 'Current report' ) ).toBeVisible();
+} );
+
+test( 'Database report stays within a 320px viewport and its table scrolls by keyboard', async ( { page } ) => {
+	await page.setViewportSize( { width: 320, height: 900 } );
+	await login( page );
+	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=database' );
+	await page.getByRole( 'button', { name: /Run audit|Refresh audit/ } ).click();
+	await expect( page.getByRole( 'status' ) ).toContainText( 'Database audit refreshed.' );
+	const tableRegion = page.getByRole( 'region', { name: 'Largest autoloaded options' } );
+	await expect( tableRegion ).toBeVisible();
+	const bounds = await page.evaluate( () => ( {
+		viewport: document.documentElement.clientWidth,
+		document: document.documentElement.scrollWidth,
+		table: document.querySelector( '.perform-database-audit__table' ).getBoundingClientRect().width,
+	} ) );
+	expect( bounds.document ).toBeLessThanOrEqual( bounds.viewport );
+	expect( bounds.table ).toBeGreaterThanOrEqual( 560 );
+	await tableRegion.focus();
+	await page.keyboard.press( 'ArrowRight' );
+	await expect.poll( () => tableRegion.evaluate( ( element ) => element.scrollLeft ) ).toBeGreaterThan( 0 );
+} );
+
 test( 'settings retain edits during pending saves, success notices, and interrupted retries', async ( {
 	page,
 } ) => {

@@ -11,26 +11,26 @@ namespace Perform\Modules;
 
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
-    exit;
+	exit;
 }
 
 interface ModuleInterface {
-    /**
-     * Determine whether the module should be loaded.
-     *
-     * Implementations should read settings/environment and return true
-     * only when the module needs to register its hooks.
-     *
-     * @return bool
-     */
-    public function should_load(): bool;
+	/**
+	 * Determine whether the module should be loaded.
+	 *
+	 * Implementations should read settings/environment and return true
+	 * only when the module needs to register its hooks.
+	 *
+	 * @return bool
+	 */
+	public function should_load(): bool;
 
-    /**
-     * Register hooks and filters for this module.
-     *
-     * This method should be idempotent and safe to call more than once.
-     *
-     * @return void
-     */
-    public function register(): void;
+	/**
+	 * Register hooks and filters for this module.
+	 *
+	 * This method should be idempotent and safe to call more than once.
+	 *
+	 * @return void
+	 */
+	public function register(): void;
 }
