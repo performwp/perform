@@ -1213,24 +1213,12 @@ final class Tests_Page_Cache extends TestCase {
 		$directory = $cache_dir . 'site-1/generation-1/';
 		mkdir( $directory, 0777, true );
 		$metadata_name = str_repeat( 'a', 32 ) . '.meta.json';
+		$noise_name    = 'z-operator-note.txt';
+		$later_name    = 'zz-later.meta.json';
+		// The scanner sorts names, so creation/DirectoryIterator order must not matter.
+		file_put_contents( $directory . $later_name, wp_json_encode( [ 'url' => 'https://example.com/later/' ] ) );
+		file_put_contents( $directory . $noise_name, 'unrelated' );
 		file_put_contents( $directory . $metadata_name, wp_json_encode( [ 'url' => 'https://example.com/kept/' ] ) );
-		$noise_name = '';
-		for ( $attempt = 0; $attempt < 64; $attempt++ ) {
-			$candidate = 'z-operator-note-' . $attempt . '.txt';
-			file_put_contents( $directory . $candidate, 'unrelated' );
-			$entries = [];
-			foreach ( new DirectoryIterator( $directory ) as $entry ) {
-				if ( ! $entry->isDot() ) {
-					$entries[] = $entry->getFilename();
-				}
-			}
-			if ( [ $metadata_name, $candidate ] === $entries ) {
-				$noise_name = $candidate;
-				break;
-			}
-			wp_delete_file( $directory . $candidate );
-		}
-		$this->assertNotSame( '', $noise_name, 'The fixture must place metadata before unrelated content in iterator order.' );
 		$record = [
 			'source'          => 'metadata',
 			'generation'      => 1,
@@ -1242,6 +1230,12 @@ final class Tests_Page_Cache extends TestCase {
 		$this->assertSame( [ 'https://example.com/kept/' ], $work['urls'] );
 		$this->assertSame( $noise_name, $work['cursor_filename'] );
 		$this->assertFalse( $work['complete'] );
+
+		$record['cursor_filename'] = $work['cursor_filename'];
+		$next_work                 = $this->invoke_private_with_argument( $page_cache, 'get_cloudflare_metadata_urls', $record );
+		$this->assertSame( [ 'https://example.com/later/' ], $next_work['urls'] );
+		$this->assertSame( $later_name, $next_work['cursor_filename'] );
+		$this->assertTrue( $next_work['complete'] );
 	}
 
 	public function test_metadata_inventory_cursor_survives_removal_of_earlier_files() {
