@@ -79,12 +79,6 @@ parameters:
 			path: src/Admin/Settings/Api.php
 
 		-
-			message: '#^Strict comparison using \!\=\= between ''0'' and mixed~\(0\|0\.0\|''''\|''0''\|array\{\}\|false\|null\) will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 1
-			path: src/Admin/Settings/Menu.php
-
-		-
 			message: '#^Call to new Perform\\Includes\\Filters\(\) on a separate line has no effect\.$#'
 			identifier: new.resultUnused
 			count: 1
@@ -283,7 +277,7 @@ parameters:
 			path: src/Modules/Basic/DisableEmoji.php
 
 		-
-			message: '#^Method Perform\\Modules\\Basic\\DisableEmoji\:\:disable_emojis_from_dns_prefetch\(\) has parameter \$relationType with no type specified\.$#'
+			message: '#^Method Perform\\Modules\\Basic\\DisableEmoji\:\:disable_emojis_from_dns_prefetch\(\) has parameter \$relation_type with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
 			path: src/Modules/Basic/DisableEmoji.php

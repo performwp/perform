@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 2.0.0
  */
 class Preconnect extends AbstractModule {
-    protected static $option_key = 'preconnect';
+	protected static $option_key = 'preconnect';
 
 	/**
 	 * Register hooks and filters for this module.

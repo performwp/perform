@@ -125,9 +125,9 @@ const SettingsApp = () => {
 		return Object.keys( fieldValues ).some( ( k ) => fieldValues[ k ] !== savedSnapshot[ k ] );
 	}, [ fieldValues, savedSnapshot ] );
 
-	// Auto-dismiss message after 5 seconds
+	// Keep errors visible until the next save attempt so rejected input is actionable.
 	useEffect( () => {
-		if ( ! message || ! message.text ) {
+		if ( ! message || ! message.text || 'error' === message.type ) {
 			return;
 		}
 		// Clear previous timer

@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 2.0.0
  */
 class RemoveShortlink extends AbstractModule {
-    protected static $option_key = 'remove_shortlink';
+	protected static $option_key = 'remove_shortlink';
 
 	/**
 	 * Register hooks and filters for this module.

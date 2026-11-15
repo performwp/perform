@@ -42,7 +42,7 @@ function getControlLabels( root ) {
 			...DEFAULT_CONTROL_LABELS,
 			...JSON.parse( root.dataset.labels ),
 		};
-	} catch ( error ) {
+	} catch {
 		return DEFAULT_CONTROL_LABELS;
 	}
 }

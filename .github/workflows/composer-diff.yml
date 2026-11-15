@@ -12,13 +12,13 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0 # Required to make it possible to compare with PR base branch
 
       - name: Generate composer diff
         id: composer_diff # To reference the output in comment
-        uses: IonBazan/composer-diff-action@v1
+        uses: IonBazan/composer-diff-action@v2
 
       - uses: marocchino/sticky-pull-request-comment@v3
         # An empty diff result will break this action.

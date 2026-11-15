@@ -39,7 +39,7 @@ final class UrlNormalizer {
 			parse_str( $parts['query'], $query_params );
 		}
 
-		$ignore_params = [
+		$ignore_params       = [
 			'fbclid',
 			'gclid',
 			'msclkid',

@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 2.0.0
  */
 class HideWpVersion extends AbstractModule {
-    protected static $option_key = 'hide_wp_version';
+	protected static $option_key = 'hide_wp_version';
 
 	/**
 	 * Register hooks and filters for this module.

@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 2.0.0
  */
 class RemoveRsdLink extends AbstractModule {
-    protected static $option_key = 'remove_rsd_link';
+	protected static $option_key = 'remove_rsd_link';
 
 	/**
 	 * Register hooks and filters for this module.
