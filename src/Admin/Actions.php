@@ -83,6 +83,7 @@ class Actions {
 					'adminAssetAudit'      => AdminAssetAudit::get_snapshot(),
 					'adminAssetAuditNonce' => wp_create_nonce( 'perform_clear_admin_asset_audit' ),
 					'pluginImpact'         => PluginImpactReport::get_data(),
+					'autoloadManagerNonce' => wp_create_nonce( 'perform_manage_autoload_options' ),
 					'databaseAuditNonce'   => wp_create_nonce( 'perform_refresh_autoload_options_audit' ),
 					'siteInventory'        => SiteInventory::get_cached_snapshot(),
 					'siteInventoryUrl'     => esc_url_raw( rest_url( 'perform/v1/site-inventory' ) ),

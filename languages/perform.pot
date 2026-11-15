@@ -7,7 +7,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language-Team: PerformWP <hello@performwp.com>\n"
-"POT-Creation-Date: 2026-11-15 10:47+0000\n"
+"POT-Creation-Date: 2026-11-15 18:02+0000\n"
 "Report-Msgid-Bugs-To: https://github.com/performwp/perform/issues/new\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
@@ -16,63 +16,63 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/Admin/Actions.php:105
+#: src/Admin/Actions.php:106
 msgid "Activity actions"
 msgstr ""
 
-#: src/Admin/Actions.php:106
+#: src/Admin/Actions.php:107
 msgid "Export cache activity for review or clear the collected metrics."
 msgstr ""
 
-#: src/Admin/Actions.php:107
+#: src/Admin/Actions.php:108
 msgid "Export CSV"
 msgstr ""
 
-#: src/Admin/Actions.php:108
+#: src/Admin/Actions.php:109
 msgid "Exporting…"
 msgstr ""
 
-#: src/Admin/Actions.php:109
+#: src/Admin/Actions.php:110
 msgid "Cache activity exported."
 msgstr ""
 
-#: src/Admin/Actions.php:110
+#: src/Admin/Actions.php:111
 msgid "Cache activity could not be exported."
 msgstr ""
 
-#: src/Admin/Actions.php:111
+#: src/Admin/Actions.php:112
 msgid "Clear activity"
 msgstr ""
 
-#: src/Admin/Actions.php:112
+#: src/Admin/Actions.php:113
 msgid "Clearing…"
 msgstr ""
 
-#: src/Admin/Actions.php:113
+#: src/Admin/Actions.php:114
 msgid "Clear all collected cache activity? This does not clear cached pages."
 msgstr ""
 
-#: src/Admin/Actions.php:114, src/Modules/Cache/PageCache.php:917, src/Modules/Cache/PageCache.php:1179
+#: src/Admin/Actions.php:115, src/Modules/Cache/PageCache.php:917, src/Modules/Cache/PageCache.php:1179
 msgid "Cache activity cleared."
 msgstr ""
 
-#: src/Admin/Actions.php:115
+#: src/Admin/Actions.php:116
 msgid "Cache activity could not be cleared."
 msgstr ""
 
-#: src/Admin/Actions.php:144
+#: src/Admin/Actions.php:145
 msgid "Close Assets Manager"
 msgstr ""
 
-#: src/Admin/Actions.php:141, src/Modules/Assets/AssetsManager.php:274
+#: src/Admin/Actions.php:142, src/Modules/Assets/AssetsManager.php:274
 msgid "Assets Manager"
 msgstr ""
 
-#: src/Admin/Actions.php:151, src/Admin/Settings/Menu.php:75, src/Admin/Settings/Menu.php:76, src/Modules/Assets/AssetsManager.php:254
+#: src/Admin/Actions.php:152, src/Admin/Settings/Menu.php:75, src/Admin/Settings/Menu.php:76, src/Modules/Assets/AssetsManager.php:254
 msgid "Perform"
 msgstr ""
 
-#: src/Admin/Actions.php:171
+#: src/Admin/Actions.php:172
 msgid "Support Forum"
 msgstr ""
 
@@ -778,6 +778,110 @@ msgstr ""
 
 #: src/Admin/Settings/AutoloadOptionsAuditController.php:67
 msgid "Database audit refreshed."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:21
+msgid "Autoload management requires WordPress 6.4 or newer."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:24
+msgid "Autoload management requires an InnoDB options table; this database remains read-only."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:27
+msgid "Autoload management requires a verified InnoDB options table."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:69
+msgid "The autoload change journal is unavailable. No change was made."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:73
+msgid "The autoload change journal is invalid. No change was made."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:105
+msgid "Options could not be listed. Please retry."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:117
+msgid "Critical WordPress or internal Perform option."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:117
+msgid "Unrecognized autoload policy."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:141
+msgid "This option cannot be changed."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:148
+msgid "The site autoload policy does not allow this change."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:154
+msgid "An atomic change could not be started."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:159
+msgid "The undo journal could not be created."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:166
+msgid "This option changed or the review expired. Refresh before trying again."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:169
+msgid "Unrecognized autoload policy. No change was made."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:183
+msgid "This option already has the requested policy. No change was made."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:186
+msgid "The undo journal is full. Undo an existing change before adding another."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:189
+msgid "This tracked option changed elsewhere. Its original undo record was preserved."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:174
+msgid "Undo is stale or unavailable. No change was made."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:178
+msgid "Invalid original policy. No change was made."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:202
+msgid "The option and undo record could not both be saved. No change was made."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:205
+msgid "The database did not confirm the change. Refresh to check its state."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:221
+msgid "Original autoload policy restored."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:221
+msgid "Autoload policy changed. The option value was not modified."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManagerController.php:23
+msgid "Permission or security check failed."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManagerController.php:38
+msgid "Options could not be loaded. Please retry."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManagerController.php:67
+msgid "The change could not be confirmed. Refresh before trying again."
 msgstr ""
 
 #: src/Admin/Settings/CronPressureAudit.php:153

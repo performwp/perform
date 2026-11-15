@@ -3,6 +3,8 @@ import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 
+import AutoloadOptionsManager from './AutoloadOptionsManager';
+
 const SETTINGS = window.performwpSettings || {};
 
 const formatBytes = ( value ) => {
@@ -77,7 +79,7 @@ const DatabaseAuditPanel = ( { initialAudit = SETTINGS.databaseAudit || {} } ) =
 					<h2>{ __( 'Autoloaded options audit', 'perform' ) }</h2>
 					<p>
 						{ __(
-							'Review how much option data WordPress loads on every request. Perform shows names and sizes, never stored values, and does not change third-party data.',
+							'This audit snapshot shows option names and sizes, never stored values. Refresh the audit to update its totals. Autoload changes below require explicit confirmation.',
 							'perform'
 						) }
 					</p>
@@ -231,6 +233,7 @@ const DatabaseAuditPanel = ( { initialAudit = SETTINGS.databaseAudit || {} } ) =
 					</p>
 				</>
 			) }
+			<AutoloadOptionsManager />
 		</div>
 	);
 };

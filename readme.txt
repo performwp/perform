@@ -5,7 +5,7 @@ Donate link: https://www.buymeacoffee.com/mehulgohil
 Requires at least: 4.8
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.8.0
+Stable tag: 1.8.0-beta.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -68,6 +68,16 @@ For help and troubleshooting, use our WordPress.org support forum: https://wordp
 Contributions and bug reports welcome on GitHub: https://github.com/performwp/perform
 
 == Changelog ==
+
+= 1.8.0-beta.2 =
+- Added explicitly confirmed, reversible per-site autoload controls with search, pagination, protected options, and measured byte changes. Requires WordPress 6.4+ and InnoDB.
+- Preserved exact original autoload policies for Undo, with stale-state protection and private option values.
+- Fixed outline icons being filled by WordPress button styles.
+- Beta for staging evaluation only; not a stable-channel release.
+
+= 1.8.0-beta.1 =
+- First 1.8.0 beta for staging evaluation. Not a stable-channel release.
+- Includes the reviewed 1.8.0 candidate features and fixes listed below.
 
 = 1.8.0 =
 - Preserved unsaved settings edits during saving and success notifications.
