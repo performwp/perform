@@ -23,7 +23,10 @@
 	background: var(--perform-color-surface);
 }
 
+/* WordPress buttons fill SVGs by default; these icons are stroke-based outlines. */
 .perform-settings-page .perform-ui-icon {
+	fill: none;
+	stroke: currentcolor;
 	flex: 0 0 auto;
 	width: 20px;
 	height: 20px;

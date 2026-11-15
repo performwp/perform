@@ -610,3 +610,30 @@ test( 'settings retain edits during pending saves, success notices, and interrup
 		`${ later }\n//notice.example.test`
 	);
 } );
+
+test( 'outline icons retain their strokes across settings and diagnostic screens', async ( { page } ) => {
+	test.setTimeout( 120000 );
+	await login( page );
+	const tabs = [
+		'dashboard', 'general', 'bloat', 'assets', 'cdn', 'cache', 'advanced',
+		'inventory', 'database', 'admin-monitor', 'admin-assets', 'plugin-impact',
+		'scheduled-tasks', 'action-scheduler', 'cache-stats',
+	];
+
+	for ( const width of [ 1440, 390 ] ) {
+		await page.setViewportSize( { width, height: 900 } );
+		for ( const tab of tabs ) {
+			await openAdminPage( page, `/wp-admin/options-general.php?page=perform_settings&tab=${ tab }` );
+			const icons = page.locator( '.perform-settings-page .perform-ui-icon' );
+			await expect( icons.first() ).toBeVisible();
+			const invalidIcons = await icons.evaluateAll( ( elements ) => elements.filter( ( icon ) => {
+				const style = getComputedStyle( icon );
+				return style.fill !== 'none' || style.stroke !== style.color;
+			} ).map( ( icon ) => icon.outerHTML ) );
+			expect( invalidIcons, `${ tab } at ${ width }px must retain outline SVG paint` ).toEqual( [] );
+		}
+	}
+
+	await page.emulateMedia( { forcedColors: 'active' } );
+	await expect( page.locator( '.perform-settings-header .perform-ui-icon' ) ).toHaveCSS( 'fill', 'none' );
+} );
