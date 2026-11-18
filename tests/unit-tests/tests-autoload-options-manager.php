@@ -15,11 +15,12 @@ final class Perform_Autoload_Test_DB {
 	public $options    = 'wp_options';
 	public $last_error = '';
 	public $row;
-	public $journal      = null;
-	public $fail_journal = false;
-	public $fail_cas     = false;
-	public $queries      = [];
-	private $prepared    = [];
+	public $journal       = null;
+	public $fail_journal  = false;
+	public $fail_cas      = false;
+	public $queries       = [];
+	public $listing_query = [];
+	private $prepared     = [];
 	private $snapshot;
 	public function prepare( $sql, ...$params ) {
 		$key                    = 'prepared-' . count( $this->prepared );
@@ -31,10 +32,11 @@ final class Perform_Autoload_Test_DB {
 		return 0 === strpos( $sql, 'SHOW TABLE' ) ? [ 'Engine' => 'InnoDB' ] : ( 0 === strcasecmp( $params[0], $this->row['option_name'] ) ? $this->row : null );
 	}
 	public function get_var( $key ) {
-		list( $sql ) = $this->prepared[ $key ];
+		list( $sql ) = $this->prepared[ $key ] ?? [ $key ];
 		return 0 === strpos( $sql, 'SELECT COUNT' ) ? 1 : $this->journal;
 	}
 	public function get_results( $key, $format ) {
+		$this->listing_query = $this->prepared[ $key ];
 		return [ $this->row ];
 	}
 	public function esc_like( $value ) {
@@ -306,6 +308,19 @@ final class Tests_Autoload_Options_Manager extends TestCase {
 		$list                                = AutoloadOptionsManager::listing();
 		$this->assertTrue( $list['items'][0]['protected'] );
 		$this->assertSame( '', $list['items'][0]['token'] );
+	}
+	public function test_listing_orders_autoloaded_rows_by_size_and_keeps_pages_bounded() {
+		$GLOBALS['perform_test_autoload_values'] = [ 'yes', 'auto-on' ];
+		AutoloadOptionsManager::listing( 'cache', 2 );
+		list( $sql, $params ) = $GLOBALS['wpdb']->listing_query;
+		$this->assertStringContainsString( 'autoload IN (%s,%s) ORDER BY size_bytes DESC, option_name ASC LIMIT 25 OFFSET %d', $sql );
+		$this->assertSame( [ 1, '%cache%', 'yes', 'auto-on', 25 ], $params );
+		AutoloadOptionsManager::change( 'third_party_cache', $this->token(), 'off' );
+		AutoloadOptionsManager::listing( '', 1, 'changed' );
+		list( $sql, $params ) = $GLOBALS['wpdb']->listing_query;
+		$this->assertStringContainsString( 'option_name IN (%s)', $sql );
+		$this->assertStringNotContainsString( 'autoload IN', $sql );
+		$this->assertSame( [ 1, 'third_party_cache', 0 ], $params );
 	}
 	public function test_journal_seed_acquires_write_lock_without_overwriting_existing_records() {
 		$existing                 = [

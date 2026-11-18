@@ -234,9 +234,34 @@ if ( ! function_exists( 'wp_enqueue_style' ) ) {
 	}
 }
 
+if ( ! function_exists( 'wp_register_style' ) ) {
+	function wp_register_style( $handle, $src = '', $deps = [], $ver = false, $media = 'all' ) {
+		return true;
+	}
+}
+
+if ( ! function_exists( 'wp_register_script' ) ) {
+	function wp_register_script( $handle, $src = '', $deps = [], $ver = false, $in_footer = false ) {
+		$GLOBALS['perform_test_registered_scripts'][ $handle ] = compact( 'src', 'deps' );
+		return true;
+	}
+}
+
+if ( ! function_exists( 'wp_set_script_translations' ) ) {
+	function wp_set_script_translations( $handle, $domain = 'default', $path = '' ) {
+		$GLOBALS['perform_test_script_translations'][] = compact( 'handle', 'domain', 'path' ) + [
+			'registered' => isset( $GLOBALS['perform_test_registered_scripts'][ $handle ] ),
+		];
+		return true;
+	}
+}
+
 if ( ! function_exists( 'wp_enqueue_script' ) ) {
 	function wp_enqueue_script( $handle, $src = '', $deps = [], $ver = false, $in_footer = false ) {
 		$GLOBALS['perform_test_enqueued_scripts'][] = $handle;
+		if ( ! empty( $GLOBALS['perform_test_stop_after_enqueue'] ) ) {
+			throw new RuntimeException( 'perform_test_stop_after_enqueue' );
+		}
 	}
 }
 

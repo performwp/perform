@@ -6,6 +6,40 @@ use Perform\Admin\Settings\Menu;
 use Perform\Includes\Helpers;
 
 final class Tests_Settings_Menu extends TestCase {
+	public function test_invalid_payloads_do_not_write_settings() {
+		$GLOBALS['perform_test_nonce_valid'] = true;
+		foreach ( [ '{broken', '[]', '{"enable_ssl":[1]}', '{"preconnect":[["bad"]]}' ] as $data ) {
+			$_POST = [
+				'nonce' => 'valid',
+				'data'  => $data,
+			];
+			try {
+				( new Menu() )->save_settings();
+				$this->fail( 'Expected the JSON response to end the request.' );
+			} catch ( RuntimeException $exception ) {
+				$this->assertSame( 'perform_test_json_response', $exception->getMessage() );
+				$this->assertFalse( $GLOBALS['perform_test_json_response']['success'] );
+			}
+			$this->assertArrayNotHasKey( 'perform_settings', $GLOBALS['perform_test_options'] );
+		}
+	}
+
+	public function test_unknown_posted_keys_are_ignored() {
+		$GLOBALS['perform_test_nonce_valid'] = true;
+		$_POST                               = [
+			'nonce' => 'valid',
+			'data'  => '{"unknown_setting":"value","enable_ssl":true}',
+		];
+		try {
+			( new Menu() )->save_settings();
+			$this->fail( 'Expected the JSON response to end the request.' );
+		} catch ( RuntimeException $exception ) {
+			$this->assertSame( 'perform_test_json_response', $exception->getMessage() );
+			$this->assertTrue( $GLOBALS['perform_test_json_response']['success'] );
+		}
+		$this->assertArrayNotHasKey( 'unknown_setting', $GLOBALS['perform_test_options']['perform_settings'] );
+		$this->assertSame( 1, $GLOBALS['perform_test_options']['perform_settings']['enable_ssl'] );
+	}
 	protected function setUp(): void {
 		$GLOBALS['perform_test_actions']          = [];
 		$GLOBALS['perform_test_options_pages']    = [];
@@ -44,9 +78,13 @@ final class Tests_Settings_Menu extends TestCase {
 		$this->assertArrayHasKey( 'cache-stats', Menu::get_navigation_tabs() );
 		$this->assertArrayHasKey( 'database', Menu::get_navigation_tabs() );
 		$this->assertArrayHasKey( 'inventory', Menu::get_navigation_tabs() );
+		$this->assertArrayHasKey( 'diagnostics', Menu::get_navigation_tabs() );
 
 		$_GET['tab'] = 'cache-stats';
 		$this->assertSame( 'cache-stats', Menu::get_requested_tab() );
+
+		$_GET['tab'] = 'diagnostics';
+		$this->assertSame( 'diagnostics', Menu::get_requested_tab() );
 
 		$_GET['tab'] = 'unknown<script>';
 		$this->assertSame( 'dashboard', Menu::get_requested_tab() );
@@ -172,6 +210,31 @@ final class Tests_Settings_Menu extends TestCase {
 			$this->assertFalse( $GLOBALS['perform_test_json_response']['success'] );
 		}
 		$this->assertSame( $settings, $GLOBALS['perform_test_options']['perform_settings'] );
+	}
+
+	public function test_numeric_select_option_keys_are_saved_as_valid_values() {
+		$GLOBALS['perform_test_options']['perform_settings'] = [
+			'page_cache_ttl' => '300',
+		];
+		$GLOBALS['perform_test_nonce_valid']                 = true;
+		$_POST = [
+			'nonce' => 'valid',
+			'data'  => wp_json_encode(
+				[
+					'page_cache_ttl' => '900',
+				]
+			),
+		];
+
+		try {
+			( new Menu() )->save_settings();
+			$this->fail( 'Expected the JSON response to end the request.' );
+		} catch ( RuntimeException $exception ) {
+			$this->assertSame( 'perform_test_json_response', $exception->getMessage() );
+			$this->assertTrue( $GLOBALS['perform_test_json_response']['success'] );
+		}
+
+		$this->assertSame( '900', $GLOBALS['perform_test_options']['perform_settings']['page_cache_ttl'] );
 	}
 
 	public function test_existing_multiline_arrays_keep_their_storage_shape() {

@@ -95,6 +95,7 @@ class Menu {
 		$tabs['scheduled-tasks']  = esc_html__( 'Scheduled Tasks', 'perform' );
 		$tabs['action-scheduler'] = esc_html__( 'Action Scheduler', 'perform' );
 		$tabs['cache-stats']      = esc_html__( 'Cache Stats', 'perform' );
+		$tabs['diagnostics']      = esc_html__( 'Runtime Diagnostics', 'perform' );
 
 		return $tabs;
 	}

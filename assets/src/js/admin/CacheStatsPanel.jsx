@@ -114,7 +114,7 @@ const CacheStatsPanel = ( { onClearSuccess = ( redirect ) => window.location.ass
 			} );
 			setActiveAction( '' );
 			onClearSuccess( redirect );
-		} catch ( error ) {
+		} catch {
 			setStatus( {
 				text: failureMessage,
 				type: 'error',

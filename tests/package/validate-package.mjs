@@ -15,7 +15,7 @@ for ( const path of entries ) {
 }
 for ( const path of [
 	'perform.php', 'readme.txt', 'config/constants.php', 'src/Plugin.php',
-	'assets/dist/js/admin.min.js', 'assets/dist/js/perform.min.js',
+	'assets/dist/js/perform-settings.js', 'assets/dist/js/perform.min.js',
 	'assets/dist/css/admin.css', 'assets/dist/css/perform.css',
 	'vendor/autoload.php', 'vendor/freemius/wordpress-sdk/start.php',
 	'vendor/freemius/wordpress-sdk/LICENSE.txt',

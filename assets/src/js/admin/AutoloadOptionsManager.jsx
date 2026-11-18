@@ -1,26 +1,32 @@
-import { Button, CheckboxControl, Modal, TextControl } from '@wordpress/components';
+import { Button, CheckboxControl, TextControl } from '@wordpress/components';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import '../../css/admin/autoload-manager.css';
 
-const toggleLabel = ( item ) =>
-	item.enabled
-		? sprintf( /* translators: %s: option name. */ __( 'Disable autoload for %s', 'perform' ), item.name )
-		: sprintf( /* translators: %s: option name. */ __( 'Enable autoload for %s', 'perform' ), item.name );
-
 const SETTINGS = window.performwpSettings || {};
 
-const AutoloadOptionsManager = ( { nonce = SETTINGS.autoloadManagerNonce || '' } ) => {
+const AutoloadOptionsManager = ( {
+	nonce = SETTINGS.autoloadManagerNonce || '',
+	audit = {},
+	onMutation = () => {},
+} ) => {
 	const [ search, setSearch ] = useState( '' );
-	const [ query, setQuery ] = useState( { search: '', page: 1, view: 'all', revision: 0 } );
+	const [ query, setQuery ] = useState( {
+		search: '',
+		page: 1,
+		view: 'all',
+		revision: 0,
+	} );
 	const [ listing, setListing ] = useState( null );
 	const [ loading, setLoading ] = useState( false );
-	const [ busy, setBusy ] = useState( false );
+	const [ busyName, setBusyName ] = useState( '' );
 	const [ notice, setNotice ] = useState( null );
-	const [ confirmation, setConfirmation ] = useState( null );
+	const [ listError, setListError ] = useState( null );
 	const alive = useRef( true );
 	const mutation = useRef( null );
 	const listSequence = useRef( 0 );
+	const listRegion = useRef( null );
+	const restoreFocus = useRef( false );
 
 	useEffect( () => {
 		alive.current = true;
@@ -34,7 +40,9 @@ const AutoloadOptionsManager = ( { nonce = SETTINGS.autoloadManagerNonce || '' }
 		const response = await fetch( window.ajaxurl, {
 			method: 'POST',
 			signal,
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+			},
 			body: new URLSearchParams( { action, nonce, ...data } ),
 		} );
 		const result = await response.json();
@@ -52,46 +60,72 @@ const AutoloadOptionsManager = ( { nonce = SETTINGS.autoloadManagerNonce || '' }
 		}
 		const controller = new AbortController();
 		const sequence = ++listSequence.current;
+		let redirecting = false;
 		setLoading( true );
-		setListing( null ); // Do not leave actions bound to the previous query visible.
+		setListing( null );
 		request( 'perform_list_autoload_options', query, controller.signal )
 			.then( ( data ) => {
 				if ( alive.current && sequence === listSequence.current && ! controller.signal.aborted ) {
+					setListError( null );
+					const maxPage = Math.max( 1, Math.ceil( ( data.total || 0 ) / ( data.pageSize || 25 ) ) );
+					if ( query.page > maxPage ) {
+						redirecting = true;
+						setQuery( ( current ) => ( {
+							...current,
+							page: maxPage,
+						} ) );
+						return;
+					}
 					setListing( data );
+					if ( restoreFocus.current ) {
+						restoreFocus.current = false;
+						setTimeout( () => listRegion.current?.focus(), 0 );
+					}
 				}
 			} )
 			.catch( ( error ) => {
 				if ( alive.current && ! controller.signal.aborted ) {
-					setNotice( { error: true, text: error.message } );
+					setListError( error.message );
+					if ( restoreFocus.current ) {
+						restoreFocus.current = false;
+						setTimeout( () => listRegion.current?.focus(), 0 );
+					}
 				}
 			} )
 			.finally( () => {
-				if ( alive.current && sequence === listSequence.current && ! controller.signal.aborted ) {
+				if (
+					alive.current &&
+					sequence === listSequence.current &&
+					! controller.signal.aborted &&
+					! redirecting
+				) {
 					setLoading( false );
 				}
 			} );
 		return () => controller.abort();
-		// The request's nonce is explicitly included in this effect's dependencies.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ query, nonce ] );
 
-	const reload = () => setQuery( ( current ) => ( { ...current, revision: current.revision + 1 } ) );
-	const confirmChange = async () => {
-		if ( mutation.current || ! confirmation ) {
+	const reload = () =>
+		setQuery( ( current ) => ( {
+			...current,
+			revision: current.revision + 1,
+		} ) );
+	const applyChange = async ( item, undo ) => {
+		if ( mutation.current || ! item.token ) {
 			return;
 		}
 		const controller = new AbortController();
 		mutation.current = controller;
-		setBusy( true );
+		setBusyName( item.name );
 		setNotice( null );
 		try {
-			const { item, undo } = confirmation;
 			const result = await request(
 				undo ? 'perform_undo_option_autoload' : 'perform_change_option_autoload',
 				{
 					name: item.name,
 					token: item.token,
-					...( undo ? {} : { autoload: item.enabled ? 'off' : 'on' } ),
+					...( undo ? {} : { autoload: 'off' } ),
 				},
 				controller.signal
 			);
@@ -103,15 +137,28 @@ const AutoloadOptionsManager = ( { nonce = SETTINGS.autoloadManagerNonce || '' }
 								'perform'
 							),
 							result.byteDelta
-					  )
+						)
 					: '';
 				setNotice( {
 					error: false,
-					text: `${ result.message || __( 'Autoload setting updated.', 'perform' ) } ${ delta }`,
+					text: `${ result.message || __( 'Autoload setting updated.', 'perform' ) } ${ delta } ${
+						! undo ? __( 'Showing matching changed options so you can review Undo.', 'perform' ) : ''
+					}`,
 				} );
+				if ( ! undo ) {
+					setSearch( item.name );
+					setQuery( ( current ) => ( {
+						...current,
+						search: item.name,
+						view: 'changed',
+						page: 1,
+					} ) );
+				}
+				onMutation( true );
 			}
 		} catch ( error ) {
 			if ( alive.current && ! controller.signal.aborted ) {
+				onMutation( false );
 				setNotice( {
 					error: true,
 					text: `${ error.message } ${ __(
@@ -123,244 +170,244 @@ const AutoloadOptionsManager = ( { nonce = SETTINGS.autoloadManagerNonce || '' }
 		} finally {
 			mutation.current = null;
 			if ( alive.current ) {
-				setBusy( false );
-				setConfirmation( null );
-				reload(); // Never automatically replay an uncertain or stale write.
+				setBusyName( '' );
+				restoreFocus.current = true;
+				reload(); // Reconcile, never replay an uncertain write.
 			}
 		}
 	};
 
-	if ( ! nonce ) {
-		return null;
-	}
-	const items = listing?.items || [];
-	const pages = Math.max( 1, Math.ceil( ( listing?.total || 0 ) / ( listing?.pageSize || 20 ) ) );
+	const busy = !! busyName;
+	// If management is unavailable, retain the bounded audit snapshot as read-only data.
+	const fallback = ( audit.largestOptions || [] ).map( ( option ) => ( {
+		...option,
+		enabled: true,
+	} ) );
+	const items = listing?.items || ( ! nonce || ( ! loading && ! listing ) ? fallback : [] );
+	const pages = Math.max( 1, Math.ceil( ( listing?.total || 0 ) / ( listing?.pageSize || 25 ) ) );
 	return (
 		<section className="perform-autoload-manager" aria-label={ __( 'Manage option autoload', 'perform' ) }>
-			<h3>{ __( 'Manage option autoload', 'perform' ) }</h3>
+			<h3>{ __( 'Options and autoload actions', 'perform' ) }</h3>
 			<p>
 				{ __(
-					'Change whether WordPress loads an option automatically. Values are never shown or deleted. Size alone does not prove an option is unnecessary; changes can affect plugin behavior. Measured byte changes are not a promise of faster pages.',
+					'Autoloaded options are shown largest first. Use Changed by Perform to review previous changes, including options no longer autoloaded. Values are never shown or deleted. Size alone does not prove an option is unnecessary; disabling autoload can affect plugin behavior. Check the affected plugin afterward. Undo is available only while the recorded change remains unmodified.',
 					'perform'
 				) }
 			</p>
 			{ notice && <p role={ notice.error ? 'alert' : 'status' }>{ notice.text }</p> }
-			{ listing?.supported === false ? (
+			{ listError && <p role="alert">{ listError }</p> }
+			{ busy && <p role="status">{ __( 'Applying the autoload change…', 'perform' ) }</p> }
+			{ listing?.supported === false && (
 				<p role="status">
 					{ listing.reason ||
 						__( 'Autoload changes require WordPress 6.4 or newer and a supported database.', 'perform' ) }
 				</p>
+			) }
+			{ ! listing && ! loading && fallback.length > 0 && (
+				<p>
+					{ __(
+						'Showing the last audit snapshot as read-only; this information may be out of date.',
+						'perform'
+					) }
+				</p>
+			) }
+			{ nonce && (
+				<form
+					className="perform-autoload-manager__filters"
+					onSubmit={ ( event ) => {
+						event.preventDefault();
+						setQuery( ( current ) => ( {
+							...current,
+							search: search.trim(),
+							page: 1,
+						} ) );
+					} }
+				>
+					<TextControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom
+						label={ __( 'Search option names', 'perform' ) }
+						value={ search }
+						onChange={ setSearch }
+						disabled={ busy }
+					/>
+					<Button type="submit" variant="secondary" disabled={ busy }>
+						{ __( 'Search', 'perform' ) }
+					</Button>
+					<CheckboxControl
+						__nextHasNoMarginBottom
+						label={ __( 'Changed by Perform', 'perform' ) }
+						checked={ query.view === 'changed' }
+						disabled={ busy }
+						onChange={ ( checked ) =>
+							setQuery( ( current ) => ( {
+								...current,
+								view: checked ? 'changed' : 'all',
+								page: 1,
+							} ) )
+						}
+					/>
+					<Button variant="tertiary" onClick={ reload } disabled={ busy || loading }>
+						{ __( 'Refresh options', 'perform' ) }
+					</Button>
+				</form>
+			) }
+			{ loading ? (
+				<p role="status">{ __( 'Loading option metadata…', 'perform' ) }</p>
 			) : (
 				<>
-					<form
-						className="perform-autoload-manager__filters"
-						onSubmit={ ( event ) => {
-							event.preventDefault();
-							setQuery( ( current ) => ( { ...current, search: search.trim(), page: 1 } ) );
-						} }
+					<div
+						className="perform-autoload-manager__scroll"
+						ref={ listRegion }
+						role="region"
+						aria-label={ __( 'Option autoload settings', 'perform' ) }
+						tabIndex="0"
 					>
-						<TextControl
-							__next40pxDefaultSize
-							__nextHasNoMarginBottom
-							label={ __( 'Search option names', 'perform' ) }
-							value={ search }
-							onChange={ setSearch }
-							disabled={ busy }
-						/>
-						<Button type="submit" variant="secondary" disabled={ busy }>
-							{ __( 'Search', 'perform' ) }
-						</Button>
-						<CheckboxControl
-							__nextHasNoMarginBottom
-							label={ __( 'Changed by Perform', 'perform' ) }
-							checked={ query.view === 'changed' }
-							disabled={ busy }
-							onChange={ ( checked ) =>
-								setQuery( ( current ) => ( {
-									...current,
-									view: checked ? 'changed' : 'all',
-									page: 1,
-								} ) )
-							}
-						/>
-						<Button variant="tertiary" onClick={ reload } disabled={ busy || loading }>
-							{ __( 'Refresh options', 'perform' ) }
-						</Button>
-					</form>
-					{ loading ? (
-						<p role="status">{ __( 'Loading option metadata…', 'perform' ) }</p>
-					) : (
-						<>
-							<div
-								className="perform-autoload-manager__scroll"
-								role="region"
-								aria-label={ __( 'Option autoload settings', 'perform' ) }
-								tabIndex="0"
-							>
-								<table>
-									<thead>
-										<tr>
-											<th scope="col">{ __( 'Option', 'perform' ) }</th>
-											<th scope="col">{ __( 'Stored size', 'perform' ) }</th>
-											<th scope="col">{ __( 'Autoload', 'perform' ) }</th>
-											<th scope="col">{ __( 'Actions', 'perform' ) }</th>
-										</tr>
-									</thead>
-									<tbody>
-										{ items.map( ( item ) => (
-											<tr key={ item.name }>
-												<th scope="row">
-													<code>{ item.name }</code>
-													{ item.changed && (
-														<span>{ __( 'Changed by Perform', 'perform' ) }</span>
-													) }
-												</th>
-												<td>
-													{ sprintf(
-														/* translators: %d: bytes. */ __( '%d B', 'perform' ),
-														item.sizeBytes
-													) }
-												</td>
-												<td>
-													{ item.enabled
-														? __( 'Enabled', 'perform' )
-														: __( 'Disabled', 'perform' ) }
-												</td>
-												<td>
-													{ item.protected ? (
-														<span>
-															{ __( 'Protected option', 'perform' ) }
-															{ item.protectionReason && `: ${ item.protectionReason }` }
-														</span>
-													) : (
-														<div className="perform-autoload-manager__actions">
+						<table>
+							<thead>
+								<tr>
+									<th scope="col">{ __( 'Option', 'perform' ) }</th>
+									<th scope="col">{ __( 'Stored size', 'perform' ) }</th>
+									<th scope="col">{ __( 'Autoload', 'perform' ) }</th>
+									<th scope="col">{ __( 'Likely owner', 'perform' ) }</th>
+									<th scope="col">{ __( 'Actions', 'perform' ) }</th>
+								</tr>
+							</thead>
+							<tbody>
+								{ items.map( ( item ) => (
+									<tr key={ item.name }>
+										<th scope="row">
+											<code>{ item.name }</code>
+											{ item.changed && <span>{ __( 'Changed by Perform', 'perform' ) }</span> }
+										</th>
+										<td>
+											{ sprintf(
+												/* translators: %d: bytes. */ __( '%d B', 'perform' ),
+												item.sizeBytes
+											) }
+										</td>
+										<td>
+											{ item.enabled ? __( 'Enabled', 'perform' ) : __( 'Disabled', 'perform' ) }
+										</td>
+										<td>
+											{ item.ownership?.label || __( 'Unknown', 'perform' ) }{ ' ' }
+											<span>
+												{ item.ownership?.confidence || __( 'unknown', 'perform' ) }{ ' ' }
+												{ __( 'confidence', 'perform' ) }
+											</span>
+										</td>
+										<td>
+											{ ( ! listing || listing.supported === false ) &&
+												__( 'Read-only', 'perform' ) }
+											{ listing?.supported !== false && listing && item.protected && (
+												<span>
+													{ __( 'Protected option', 'perform' ) }
+													{ item.protectionReason && `: ${ item.protectionReason }` }
+												</span>
+											) }
+											{ listing?.supported !== false &&
+												listing &&
+												! item.protected &&
+												! item.token &&
+												__( 'Action unavailable', 'perform' ) }
+											{ listing?.supported !== false &&
+												listing &&
+												! item.protected &&
+												item.token && (
+													<div className="perform-autoload-manager__actions">
+														{ item.enabled && (
 															<Button
 																variant="secondary"
 																disabled={ busy }
-																onClick={ () =>
-																	setConfirmation( { item, undo: false } )
-																}
-																aria-label={ toggleLabel( item ) }
-															>
-																{ item.enabled
-																	? __( 'Disable autoload', 'perform' )
-																	: __( 'Enable autoload', 'perform' ) }
-															</Button>
-															{ item.changed && ! item.canUndo && (
-																<span>
-																	{ __(
-																		'Changed elsewhere; Undo unavailable',
+																onClick={ () => applyChange( item, false ) }
+																aria-label={ sprintf(
+																	/* translators: %s: option name. */ __(
+																		'Disable autoload for %s',
 																		'perform'
-																	) }
-																</span>
-															) }
-															{ item.canUndo && (
-																<Button
-																	variant="tertiary"
-																	disabled={ busy }
-																	onClick={ () =>
-																		setConfirmation( { item, undo: true } )
-																	}
-																	aria-label={ sprintf(
-																		/* translators: %s: option name. */ __(
-																			'Undo autoload change for %s',
-																			'perform'
-																		),
-																		item.name
-																	) }
-																>
-																	{ __( 'Undo', 'perform' ) }
-																</Button>
-															) }
-														</div>
-													) }
-												</td>
-											</tr>
-										) ) }
-									</tbody>
-								</table>
-							</div>
-							{ ! items.length && <p>{ __( 'No matching options.', 'perform' ) }</p> }
-							<nav
-								className="perform-autoload-manager__pagination"
-								aria-label={ __( 'Options pagination', 'perform' ) }
+																	),
+																	item.name
+																) }
+															>
+																{ busyName === item.name
+																	? __( 'Applying…', 'perform' )
+																	: __( 'Disable autoload', 'perform' ) }
+															</Button>
+														) }
+														{ item.changed && ! item.canUndo && (
+															<span>
+																{ __(
+																	'Changed elsewhere; Undo unavailable',
+																	'perform'
+																) }
+															</span>
+														) }
+														{ item.canUndo && (
+															<Button
+																variant="tertiary"
+																disabled={ busy }
+																onClick={ () => applyChange( item, true ) }
+																aria-label={ sprintf(
+																	/* translators: %s: option name. */ __(
+																		'Undo autoload change for %s',
+																		'perform'
+																	),
+																	item.name
+																) }
+															>
+																{ busyName === item.name
+																	? __( 'Applying…', 'perform' )
+																	: __( 'Undo', 'perform' ) }
+															</Button>
+														) }
+													</div>
+												) }
+										</td>
+									</tr>
+								) ) }
+							</tbody>
+						</table>
+					</div>
+					{ ! items.length && <p>{ __( 'No matching options.', 'perform' ) }</p> }
+					{ listing && (
+						<nav
+							className="perform-autoload-manager__pagination"
+							aria-label={ __( 'Options pagination', 'perform' ) }
+						>
+							<Button
+								disabled={ busy || query.page <= 1 }
+								onClick={ () =>
+									setQuery( ( current ) => ( {
+										...current,
+										page: current.page - 1,
+									} ) )
+								}
 							>
-								<Button
-									disabled={ busy || query.page <= 1 }
-									onClick={ () =>
-										setQuery( ( current ) => ( { ...current, page: current.page - 1 } ) )
-									}
-								>
-									{ __( 'Previous', 'perform' ) }
-								</Button>
-								<span>
-									{ sprintf(
-										/* translators: 1: current page, 2: total pages. */ __(
-											'Page %1$d of %2$d',
-											'perform'
-										),
-										query.page,
-										pages
-									) }
-								</span>
-								<Button
-									disabled={ busy || query.page >= pages }
-									onClick={ () =>
-										setQuery( ( current ) => ( { ...current, page: current.page + 1 } ) )
-									}
-								>
-									{ __( 'Next', 'perform' ) }
-								</Button>
-							</nav>
-						</>
+								{ __( 'Previous', 'perform' ) }
+							</Button>
+							<span>
+								{ sprintf(
+									/* translators: 1: current page, 2: total pages. */ __(
+										'Page %1$d of %2$d',
+										'perform'
+									),
+									query.page,
+									pages
+								) }
+							</span>
+							<Button
+								disabled={ busy || query.page >= pages }
+								onClick={ () =>
+									setQuery( ( current ) => ( {
+										...current,
+										page: current.page + 1,
+									} ) )
+								}
+							>
+								{ __( 'Next', 'perform' ) }
+							</Button>
+						</nav>
 					) }
 				</>
-			) }
-			{ confirmation && (
-				<Modal
-					title={
-						confirmation.undo
-							? __( 'Undo autoload change?', 'perform' )
-							: __( 'Change option autoload?', 'perform' )
-					}
-					onRequestClose={ () => {
-						if ( ! busy ) {
-							setConfirmation( null );
-						}
-					} }
-					isDismissible={ ! busy }
-					shouldCloseOnClickOutside={ ! busy }
-				>
-					<p>
-						<code>{ confirmation.item.name }</code>
-						{ ! confirmation.undo && (
-							<strong>
-								{ confirmation.item.enabled
-									? __( 'Disable autoload', 'perform' )
-									: __( 'Enable autoload', 'perform' ) }
-							</strong>
-						) }
-					</p>
-					<p>
-						{ confirmation.undo
-							? __(
-									'Restore the previous autoload state recorded by Perform. The stored value will not change.',
-									'perform'
-							  )
-							: __(
-									'This changes automatic loading only, not the stored value. Test the affected plugin or workflow afterward. You can undo this change if the option remains unchanged.',
-									'perform'
-							  ) }
-					</p>
-					<div className="perform-autoload-manager__actions">
-						<Button variant="secondary" disabled={ busy } onClick={ () => setConfirmation( null ) }>
-							{ __( 'Cancel', 'perform' ) }
-						</Button>
-						<Button variant="primary" disabled={ busy } isBusy={ busy } onClick={ confirmChange }>
-							{ busy ? __( 'Applying…', 'perform' ) : __( 'Confirm change', 'perform' ) }
-						</Button>
-					</div>
-				</Modal>
 			) }
 		</section>
 	);

@@ -93,7 +93,7 @@ Guidance for AI coding agents working on the Perform WordPress plugin.
 
 ## Build, Lint, and Analysis Commands
 - Node runtime:
-  - Use Node.js 24.x (`.nvmrc` and `.node-version` are authoritative for this release line)
+  - Use Node.js >=24.22.1 <25.0.0 (`.nvmrc` and `.node-version` pin 24.22.1 for this release line)
 - JS/CSS dev build:
   - `npm run start`
 - JS/CSS prod build:
@@ -122,7 +122,7 @@ Guidance for AI coding agents working on the Perform WordPress plugin.
   - verify save flow still works via `perform_save_settings` ajax
   - verify the settings page script path matches built artifact names
 - For tooling/CI changes:
-  - preserve the Node 24 Active LTS policy unless the release plan changes
+  - preserve the Node >=24.22.1 <25.0.0 tooling policy unless the release plan changes
   - keep GitHub Actions on maintained action versions
   - run or document any unrun Composer, npm, PHPUnit, and Playwright validation gates
 

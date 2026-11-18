@@ -1,78 +1,112 @@
-# Copyright (C) 2026 Perform
-# This file is distributed under the same license as the Perform package.
+# Copyright (C) 2026 Mehul Gohil
+# This file is distributed under the GPLv3 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Perform\n"
+"Project-Id-Version: Perform - Optimize Performance 1.8.0-beta.2\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/perform\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language-Team: PerformWP <hello@performwp.com>\n"
-"POT-Creation-Date: 2026-11-15 18:02+0000\n"
-"Report-Msgid-Bugs-To: https://github.com/performwp/perform/issues/new\n"
-"X-Poedit-Basepath: ..\n"
-"X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
-"X-Poedit-SearchPath-0: .\n"
-"X-Poedit-SearchPathExcluded-0: *.js\n"
-"X-Poedit-SourceCharset: UTF-8\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"POT-Creation-Date: 2026-11-18T16:18:09+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: perform\n"
 
-#: src/Admin/Actions.php:106
-msgid "Activity actions"
+#. Plugin Name of the plugin
+#: perform.php
+msgid "Perform - Optimize Performance"
 msgstr ""
 
-#: src/Admin/Actions.php:107
-msgid "Export cache activity for review or clear the collected metrics."
+#. Plugin URI of the plugin
+#: perform.php
+msgid "https://performwp.com/"
 msgstr ""
 
-#: src/Admin/Actions.php:108
-msgid "Export CSV"
+#. Description of the plugin
+#: perform.php
+msgid "This plugin adds toolset for performance and speed improvements to your WordPress sites."
 msgstr ""
 
-#: src/Admin/Actions.php:109
-msgid "Exporting…"
+#. Author of the plugin
+#: perform.php
+msgid "Mehul Gohil"
+msgstr ""
+
+#. Author URI of the plugin
+#: perform.php
+msgid "https://mehulgohil.com/"
 msgstr ""
 
 #: src/Admin/Actions.php:110
-msgid "Cache activity exported."
+msgid "Activity actions"
 msgstr ""
 
 #: src/Admin/Actions.php:111
-msgid "Cache activity could not be exported."
+msgid "Export cache activity for review or clear the collected metrics."
 msgstr ""
 
 #: src/Admin/Actions.php:112
-msgid "Clear activity"
+msgid "Export CSV"
 msgstr ""
 
 #: src/Admin/Actions.php:113
-msgid "Clearing…"
+msgid "Exporting…"
 msgstr ""
 
 #: src/Admin/Actions.php:114
-msgid "Clear all collected cache activity? This does not clear cached pages."
+msgid "Cache activity exported."
 msgstr ""
 
-#: src/Admin/Actions.php:115, src/Modules/Cache/PageCache.php:917, src/Modules/Cache/PageCache.php:1179
-msgid "Cache activity cleared."
+#: src/Admin/Actions.php:115
+msgid "Cache activity could not be exported."
 msgstr ""
 
 #: src/Admin/Actions.php:116
+msgid "Clear activity"
+msgstr ""
+
+#: src/Admin/Actions.php:117
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:156
+#: assets/src/js/admin/AdminAssetAuditPanel.jsx:75
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:103
+#: assets/src/js/admin/CronPressurePanel.jsx:110
+msgid "Clearing…"
+msgstr ""
+
+#: src/Admin/Actions.php:118
+msgid "Clear all collected cache activity? This does not clear cached pages."
+msgstr ""
+
+#: src/Admin/Actions.php:119
+#: src/Modules/Cache/PageCache.php:917
+#: src/Modules/Cache/PageCache.php:1179
+msgid "Cache activity cleared."
+msgstr ""
+
+#: src/Admin/Actions.php:120
 msgid "Cache activity could not be cleared."
 msgstr ""
 
-#: src/Admin/Actions.php:145
-msgid "Close Assets Manager"
-msgstr ""
-
-#: src/Admin/Actions.php:142, src/Modules/Assets/AssetsManager.php:274
+#: src/Admin/Actions.php:146
+#: src/Modules/Assets/AssetsManager.php:274
 msgid "Assets Manager"
 msgstr ""
 
-#: src/Admin/Actions.php:152, src/Admin/Settings/Menu.php:75, src/Admin/Settings/Menu.php:76, src/Modules/Assets/AssetsManager.php:254
+#: src/Admin/Actions.php:149
+msgid "Close Assets Manager"
+msgstr ""
+
+#: src/Admin/Actions.php:156
+#: src/Admin/Settings/Menu.php:75
+#: src/Admin/Settings/Menu.php:76
+#: src/Modules/Assets/AssetsManager.php:254
+#: assets/src/js/admin/SettingsHeader.jsx:46
 msgid "Perform"
 msgstr ""
 
-#: src/Admin/Actions.php:172
+#: src/Admin/Actions.php:176
 msgid "Support Forum"
 msgstr ""
 
@@ -93,6 +127,8 @@ msgid ". It takes a minute and helps a lot. Thanks in advance!"
 msgstr ""
 
 #: src/Admin/Filters.php:78
+#: assets/src/js/admin/navigation.js:9
+#: assets/src/js/admin/PreferencesWorkspace.jsx:28
 msgid "Settings"
 msgstr ""
 
@@ -102,6 +138,689 @@ msgstr ""
 
 #: src/Admin/Filters.php:103
 msgid "Manage Assets"
+msgstr ""
+
+#: src/Admin/Settings/ActionSchedulerAudit.php:53
+msgid "The database is unavailable."
+msgstr ""
+
+#: src/Admin/Settings/ActionSchedulerAudit.php:104
+msgid "The Action Scheduler diagnostic could not be completed."
+msgstr ""
+
+#: src/Admin/Settings/ActionSchedulerAudit.php:281
+msgid "The Action Scheduler diagnostic could not be saved."
+msgstr ""
+
+#: src/Admin/Settings/ActionSchedulerAuditController.php:31
+msgid "The Action Scheduler diagnostic could not be refreshed. Please try again."
+msgstr ""
+
+#: src/Admin/Settings/ActionSchedulerAuditController.php:35
+msgid "Action Scheduler diagnostic refreshed."
+msgstr ""
+
+#: src/Admin/Settings/ActionSchedulerAuditController.php:47
+msgid "Action Scheduler diagnostic cleared."
+msgstr ""
+
+#: src/Admin/Settings/ActionSchedulerAuditController.php:56
+#: src/Admin/Settings/AutoloadOptionsAuditController.php:38
+#: src/Admin/Settings/CronPressureAuditController.php:79
+#: src/Admin/Settings/Menu.php:152
+#: src/Admin/Settings/SiteInventoryController.php:59
+msgid "Insufficient permissions."
+msgstr ""
+
+#: src/Admin/Settings/ActionSchedulerAuditController.php:60
+#: src/Admin/Settings/AdminAssetAuditController.php:29
+#: src/Admin/Settings/AdminPerformanceMonitorController.php:36
+#: src/Admin/Settings/AutoloadOptionsAuditController.php:48
+#: src/Admin/Settings/CronPressureAuditController.php:84
+#: src/Admin/Settings/Menu.php:163
+msgid "Security check failed."
+msgstr ""
+
+#: src/Admin/Settings/AdminAssetAuditController.php:24
+msgid "You are not allowed to clear admin asset audit data."
+msgstr ""
+
+#: src/Admin/Settings/AdminAssetAuditController.php:35
+msgid "Admin asset audit cleared."
+msgstr ""
+
+#: src/Admin/Settings/AdminPerformanceMonitorController.php:31
+msgid "You are not allowed to clear admin performance data."
+msgstr ""
+
+#: src/Admin/Settings/AdminPerformanceMonitorController.php:42
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:70
+msgid "Admin performance data cleared."
+msgstr ""
+
+#: src/Admin/Settings/Api.php:48
+msgid "Save Settings"
+msgstr ""
+
+#: src/Admin/Settings/Api.php:52
+msgid "Saving..."
+msgstr ""
+
+#: src/Admin/Settings/Api.php:145
+msgid "Learn more"
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsAudit.php:55
+msgid "The options table is unavailable."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsAudit.php:81
+msgid "The options audit could not be completed."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsAudit.php:107
+msgid "The audit result could not be saved."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsAudit.php:180
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:214
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:293
+#: assets/src/js/admin/SiteInventoryPanel.jsx:373
+msgid "Unknown"
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsAuditController.php:59
+#: assets/src/js/admin/DatabaseAuditPanel.jsx:76
+msgid "The database audit could not be refreshed. Please try again."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsAuditController.php:67
+#: assets/src/js/admin/DatabaseAuditPanel.jsx:68
+msgid "Database audit refreshed."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:21
+msgid "Autoload management requires WordPress 6.4 or newer."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:24
+msgid "Autoload management requires an InnoDB options table; this database remains read-only."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:27
+msgid "Autoload management requires a verified InnoDB options table."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:69
+msgid "The autoload change journal is unavailable. No change was made."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:73
+msgid "The autoload change journal is invalid. No change was made."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:114
+msgid "Options could not be listed. Please retry."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:127
+msgid "Critical WordPress or internal Perform option."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:127
+msgid "Unrecognized autoload policy."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:151
+msgid "This option cannot be changed."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:158
+msgid "The site autoload policy does not allow this change."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:164
+msgid "An atomic change could not be started."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:170
+msgid "The undo journal could not be created."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:177
+msgid "This option changed or the review expired. Refresh before trying again."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:180
+msgid "Unrecognized autoload policy. No change was made."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:185
+msgid "Undo is stale or unavailable. No change was made."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:189
+msgid "Invalid original policy. No change was made."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:194
+msgid "This option already has the requested policy. No change was made."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:197
+msgid "The undo journal is full. Undo an existing change before adding another."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:200
+msgid "This tracked option changed elsewhere. Its original undo record was preserved."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:213
+msgid "The option and undo record could not both be saved. No change was made."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:216
+msgid "The database did not confirm the change. Refresh to check its state."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:232
+msgid "Original autoload policy restored."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManager.php:232
+msgid "Autoload policy changed. The option value was not modified."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManagerController.php:23
+msgid "Permission or security check failed."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManagerController.php:38
+msgid "Options could not be loaded. Please retry."
+msgstr ""
+
+#: src/Admin/Settings/AutoloadOptionsManagerController.php:67
+msgid "The change could not be confirmed. Refresh before trying again."
+msgstr ""
+
+#: src/Admin/Settings/CronPressureAudit.php:153
+msgid "The scheduled-task diagnostic could not be saved."
+msgstr ""
+
+#: src/Admin/Settings/CronPressureAudit.php:223
+msgid "Large schedule detected"
+msgstr ""
+
+#: src/Admin/Settings/CronPressureAudit.php:224
+msgid "The bounded scan reached its event limit. Review the most frequent hooks with their extension owners."
+msgstr ""
+
+#: src/Admin/Settings/CronPressureAudit.php:231
+msgid "Scheduled-task pressure needs review"
+msgstr ""
+
+#: src/Admin/Settings/CronPressureAudit.php:232
+msgid "Repeated overdue work or a dense upcoming cluster can add request latency. Confirm the responsible hooks and runner configuration before changing schedules."
+msgstr ""
+
+#: src/Admin/Settings/CronPressureAudit.php:239
+msgid "Some scheduled work needs review"
+msgstr ""
+
+#: src/Admin/Settings/CronPressureAudit.php:240
+msgid "A small amount of due or clustered work can be normal. Refresh later and compare repeated snapshots before acting."
+msgstr ""
+
+#: src/Admin/Settings/CronPressureAudit.php:246
+msgid "No immediate schedule pressure detected"
+msgstr ""
+
+#: src/Admin/Settings/CronPressureAudit.php:247
+msgid "The bounded local snapshot does not show overdue or densely clustered work."
+msgstr ""
+
+#: src/Admin/Settings/CronPressureAudit.php:285
+#: assets/src/js/admin/CronPressurePanel.jsx:139
+msgid "Run the first scheduled-task check"
+msgstr ""
+
+#: src/Admin/Settings/CronPressureAudit.php:286
+msgid "The check runs only when requested and does not change scheduled events."
+msgstr ""
+
+#: src/Admin/Settings/CronPressureAuditController.php:42
+msgid "The scheduled-task diagnostic could not be refreshed. Please try again."
+msgstr ""
+
+#: src/Admin/Settings/CronPressureAuditController.php:49
+msgid "Scheduled-task diagnostic refreshed."
+msgstr ""
+
+#: src/Admin/Settings/CronPressureAuditController.php:66
+msgid "Scheduled-task diagnostic cleared."
+msgstr ""
+
+#: src/Admin/Settings/Menu.php:90
+msgid "Site Inventory"
+msgstr ""
+
+#: src/Admin/Settings/Menu.php:91
+#: assets/src/js/admin/SiteInventoryPanel.jsx:204
+msgid "Database"
+msgstr ""
+
+#: src/Admin/Settings/Menu.php:92
+msgid "Admin Monitor"
+msgstr ""
+
+#: src/Admin/Settings/Menu.php:93
+msgid "Admin Assets"
+msgstr ""
+
+#: src/Admin/Settings/Menu.php:94
+msgid "Plugin Impact"
+msgstr ""
+
+#: src/Admin/Settings/Menu.php:95
+msgid "Scheduled Tasks"
+msgstr ""
+
+#: src/Admin/Settings/Menu.php:96
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:123
+msgid "Action Scheduler"
+msgstr ""
+
+#: src/Admin/Settings/Menu.php:97
+msgid "Cache Stats"
+msgstr ""
+
+#: src/Admin/Settings/Menu.php:98
+#: assets/src/js/admin/DiagnosticsPanel.jsx:21
+msgid "Runtime Diagnostics"
+msgstr ""
+
+#: src/Admin/Settings/Menu.php:293
+msgid "Settings saved successfully."
+msgstr ""
+
+#: src/Admin/Settings/Menu.php:301
+msgid "Unable to save the settings. Please try again."
+msgstr ""
+
+#: src/Admin/Settings/Menu.php:316
+msgid "Settings data is invalid. Please try again."
+msgstr ""
+
+#: src/Admin/Settings/Menu.php:330
+msgid "List settings are limited to 100 entries. Please reduce the list and try again."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:70
+#: src/Admin/Settings/RuntimeDiagnostics.php:84
+msgid "Page cache storage"
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:71
+msgid "Page cache is disabled, so no cache storage is required yet."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:72
+msgid "Enable full-page cache when you are ready to test storage prerequisites."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:86
+msgid "Perform can use the cache storage location for generated HTML files."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:87
+msgid "Perform cannot confirm writable cache storage for generated HTML files."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:89
+#: src/Admin/Settings/RuntimeDiagnostics.php:111
+#: src/Admin/Settings/RuntimeDiagnostics.php:143
+#: src/Admin/Settings/RuntimeDiagnostics.php:214
+msgid "No action needed."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:90
+msgid "Ask your host to allow WordPress to write to its cache directory before relying on full-page cache."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:105
+msgid "Page cache drop-in"
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:107
+msgid "A page-cache drop-in is present, so another cache layer may already be active."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:108
+msgid "No page-cache drop-in was detected."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:110
+msgid "Review host or plugin-level page caching before enabling overlapping cache behavior."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:127
+#: src/Admin/Settings/RuntimeDiagnostics.php:138
+msgid "Cache preload schedule"
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:128
+msgid "Adaptive cache preload is disabled."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:129
+msgid "Enable preload only after page cache is working reliably."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:140
+msgid "The cache preload event is scheduled."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:141
+msgid "The cache preload event is not scheduled yet."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:144
+msgid "Save settings again or confirm WordPress cron is running on this site."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:160
+#: src/Admin/Settings/RuntimeDiagnostics.php:175
+msgid "Dynamic request exclusions"
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:161
+msgid "Page cache is disabled, so dynamic request exclusions are not required yet."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:162
+msgid "Add exclusions before enabling page cache on sites with member areas, custom checkouts, or preview tokens."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:177
+msgid "Site-specific cache bypass rules are configured."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:178
+msgid "No site-specific cache bypass rules are configured."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:180
+msgid "Review bypass rules after adding new dynamic workflows."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:181
+msgid "Add path, query, or cookie exclusions for dynamic workflows before broad cache rollout."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:197
+#: src/Admin/Settings/RuntimeDiagnostics.php:209
+msgid "Menu cache theme support"
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:198
+msgid "Menu cache is disabled."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:199
+msgid "Use menu cache primarily with classic themes that render menus through wp_nav_menu()."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:211
+msgid "The active theme is eligible for menu cache."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:212
+msgid "The active block theme is not expected to benefit from menu cache by default."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:215
+msgid "Leave menu cache disabled unless custom theme code opts in through the compatibility filter."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:231
+#: src/Admin/Settings/RuntimeDiagnostics.php:245
+msgid "CDN configuration"
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:232
+msgid "CDN rewriting is disabled."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:233
+msgid "Enable CDN rewriting only after confirming the CDN origin URL and included directories."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:247
+msgid "CDN rewriting has a valid CDN URL."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:248
+msgid "CDN rewriting is enabled but the CDN URL is missing or invalid."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:250
+msgid "Confirm included directories and exclusions before broad rollout."
+msgstr ""
+
+#: src/Admin/Settings/RuntimeDiagnostics.php:251
+msgid "Enter a full CDN URL with http or https before enabling CDN rewriting."
+msgstr ""
+
+#: src/Admin/Settings/SiteInventory.php:88
+msgid "The site inventory could not be saved."
+msgstr ""
+
+#: src/Admin/Settings/SiteInventory.php:173
+msgid "Installed extension"
+msgstr ""
+
+#: src/Admin/Settings/SiteInventory.php:214
+#: assets/src/js/admin/SiteInventoryPanel.jsx:226
+msgid "Active theme"
+msgstr ""
+
+#: src/Admin/Settings/SiteInventory.php:276
+msgid "Custom or extension"
+msgstr ""
+
+#: src/Admin/Settings/SiteInventoryController.php:75
+#: assets/src/js/admin/SiteInventoryPanel.jsx:96
+msgid "The site inventory could not be refreshed. Please try again."
+msgstr ""
+
+#: src/Admin/Settings/SiteInventoryController.php:81
+#: assets/src/js/admin/SiteInventoryPanel.jsx:89
+msgid "Site inventory refreshed."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:103
+msgid "This runtime matches Perform’s actively tested PHP range."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:105
+msgid "Review a supported PHP upgrade with your host before changing production."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:107
+msgid "This runtime is newer than Perform’s current automated PHP test matrix; verify compatibility before rollout."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:110
+msgid "PHP version"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:122
+#: src/Admin/Settings/SystemHealth.php:130
+msgid "WordPress memory limit"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:122
+#: src/Admin/Settings/SystemHealth.php:171
+#: src/Admin/Settings/SystemHealth.php:216
+#: src/Admin/Settings/SystemHealth.php:247
+#: src/Admin/Settings/SystemHealth.php:257
+#: assets/src/js/admin/SiteInventoryPanel.jsx:29
+#: assets/src/js/admin/SiteInventoryPanel.jsx:36
+#: assets/src/js/admin/SiteInventoryPanel.jsx:48
+#: assets/src/js/admin/SiteInventoryPanel.jsx:227
+#: assets/src/js/admin/SystemHealthPanel.jsx:8
+#: assets/src/js/admin/SystemHealthPanel.jsx:48
+msgid "Unavailable"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:122
+msgid "Confirm the effective WordPress memory limit with your host."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:127
+msgid "The configured limit provides reasonable headroom for typical administration."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:128
+msgid "Review memory pressure and hosting limits before increasing this value."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:141
+#: src/Admin/Settings/SystemHealth.php:149
+msgid "Maximum execution time"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:141
+msgid "Unlimited"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:141
+msgid "PHP does not impose a request execution-time limit."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:146
+msgid "The limit supports ordinary WordPress maintenance tasks."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:147
+msgid "Short limits can interrupt imports, updates, or maintenance; review with your host."
+msgstr ""
+
+#. translators: %d: Maximum execution time in seconds.
+#: src/Admin/Settings/SystemHealth.php:149
+#, php-format
+msgid "%d seconds"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:171
+msgid "The runtime did not expose OPcache status."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:177
+#: src/Admin/Settings/SystemHealth.php:284
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:290
+msgid "Enabled"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:177
+#: src/Modules/Assets/AssetsManager.php:242
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:290
+msgid "Disabled"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:179
+msgid "Compiled PHP code is cached by the runtime."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:179
+msgid "Ask your host whether OPcache can be enabled safely."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:193
+#: assets/src/js/admin/CleanupWorkspace.jsx:51
+#: assets/src/js/admin/DatabaseAuditPanel.jsx:146
+msgid "Persistent object cache"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:194
+#: assets/src/js/admin/CleanupWorkspace.jsx:22
+#: assets/src/js/admin/DatabaseAuditPanel.jsx:149
+msgid "Detected"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:194
+#: assets/src/js/admin/CleanupWorkspace.jsx:23
+#: assets/src/js/admin/DatabaseAuditPanel.jsx:150
+msgid "Not detected"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:196
+msgid "WordPress is using an external object cache."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:196
+msgid "Busy or database-heavy sites may benefit; confirm support with your host first."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:215
+msgid "Database version"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:218
+msgid "Version detected locally; compatibility still depends on the database family and host."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:218
+msgid "Confirm the database version with your host."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:247
+msgid "HTTP and server"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:247
+msgid "This is a local runtime hint, not a public response-performance test."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:257
+#: src/Admin/Settings/SystemHealth.php:266
+msgid "Uploads directory"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:257
+msgid "WordPress did not expose upload-directory status."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:267
+msgid "Writable"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:267
+msgid "Needs review"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:269
+msgid "WordPress reports that media storage is writable."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:269
+msgid "Review media storage permissions with your host; the filesystem path is intentionally hidden."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:283
+msgid "Debug logging"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:284
+msgid "Not enabled"
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:286
+msgid "Confirm logging is intentional and monitor its size on production sites."
+msgstr ""
+
+#: src/Admin/Settings/SystemHealth.php:286
+msgid "Perform does not expose or read any debug-log path or contents."
 msgstr ""
 
 #: src/Includes/Helpers.php:273
@@ -121,6 +840,7 @@ msgid "CDN"
 msgstr ""
 
 #: src/Includes/Helpers.php:277
+#: assets/src/js/admin/navigation.js:5
 msgid "Cache"
 msgstr ""
 
@@ -312,7 +1032,10 @@ msgstr ""
 msgid "Disable Heartbeat"
 msgstr ""
 
-#: src/Includes/Helpers.php:547, src/Includes/Helpers.php:564, src/Includes/Helpers.php:582, src/Includes/Helpers.php:608
+#: src/Includes/Helpers.php:547
+#: src/Includes/Helpers.php:564
+#: src/Includes/Helpers.php:582
+#: src/Includes/Helpers.php:608
 msgid "Default"
 msgstr ""
 
@@ -384,7 +1107,8 @@ msgstr ""
 msgid "4 Minutes"
 msgstr ""
 
-#: src/Includes/Helpers.php:612, src/Includes/Helpers.php:748
+#: src/Includes/Helpers.php:612
+#: src/Includes/Helpers.php:748
 msgid "5 Minutes"
 msgstr ""
 
@@ -484,23 +1208,28 @@ msgstr ""
 msgid "Cache TTL"
 msgstr ""
 
-#: src/Includes/Helpers.php:749, src/Includes/Helpers.php:769
+#: src/Includes/Helpers.php:749
+#: src/Includes/Helpers.php:769
 msgid "15 Minutes"
 msgstr ""
 
-#: src/Includes/Helpers.php:750, src/Includes/Helpers.php:770
+#: src/Includes/Helpers.php:750
+#: src/Includes/Helpers.php:770
 msgid "30 Minutes"
 msgstr ""
 
-#: src/Includes/Helpers.php:751, src/Includes/Helpers.php:771
+#: src/Includes/Helpers.php:751
+#: src/Includes/Helpers.php:771
 msgid "1 Hour"
 msgstr ""
 
-#: src/Includes/Helpers.php:752, src/Includes/Helpers.php:772
+#: src/Includes/Helpers.php:752
+#: src/Includes/Helpers.php:772
 msgid "6 Hours"
 msgstr ""
 
-#: src/Includes/Helpers.php:753, src/Includes/Helpers.php:774
+#: src/Includes/Helpers.php:753
+#: src/Includes/Helpers.php:774
 msgid "24 Hours"
 msgstr ""
 
@@ -649,6 +1378,7 @@ msgid "Settings for advanced configurations."
 msgstr ""
 
 #: src/Includes/Helpers.php:956
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:87
 msgid "Admin Performance Monitor"
 msgstr ""
 
@@ -696,643 +1426,6 @@ msgstr ""
 msgid "Enabling this will cache WooCommerce pages for better performance."
 msgstr ""
 
-#: src/Admin/Settings/ActionSchedulerAudit.php:53
-msgid "The database is unavailable."
-msgstr ""
-
-#: src/Admin/Settings/ActionSchedulerAudit.php:104
-msgid "The Action Scheduler diagnostic could not be completed."
-msgstr ""
-
-#: src/Admin/Settings/ActionSchedulerAudit.php:281
-msgid "The Action Scheduler diagnostic could not be saved."
-msgstr ""
-
-#: src/Admin/Settings/ActionSchedulerAuditController.php:31
-msgid "The Action Scheduler diagnostic could not be refreshed. Please try again."
-msgstr ""
-
-#: src/Admin/Settings/ActionSchedulerAuditController.php:35
-msgid "Action Scheduler diagnostic refreshed."
-msgstr ""
-
-#: src/Admin/Settings/ActionSchedulerAuditController.php:47
-msgid "Action Scheduler diagnostic cleared."
-msgstr ""
-
-#: src/Admin/Settings/ActionSchedulerAuditController.php:56, src/Admin/Settings/AutoloadOptionsAuditController.php:38, src/Admin/Settings/CronPressureAuditController.php:79, src/Admin/Settings/Menu.php:151, src/Admin/Settings/SiteInventoryController.php:59
-msgid "Insufficient permissions."
-msgstr ""
-
-#: src/Admin/Settings/ActionSchedulerAuditController.php:60, src/Admin/Settings/AdminAssetAuditController.php:29, src/Admin/Settings/AdminPerformanceMonitorController.php:36, src/Admin/Settings/AutoloadOptionsAuditController.php:48, src/Admin/Settings/CronPressureAuditController.php:84, src/Admin/Settings/Menu.php:162
-msgid "Security check failed."
-msgstr ""
-
-#: src/Admin/Settings/AdminAssetAuditController.php:24
-msgid "You are not allowed to clear admin asset audit data."
-msgstr ""
-
-#: src/Admin/Settings/AdminAssetAuditController.php:35
-msgid "Admin asset audit cleared."
-msgstr ""
-
-#: src/Admin/Settings/AdminPerformanceMonitorController.php:31
-msgid "You are not allowed to clear admin performance data."
-msgstr ""
-
-#: src/Admin/Settings/AdminPerformanceMonitorController.php:42
-msgid "Admin performance data cleared."
-msgstr ""
-
-#: src/Admin/Settings/Api.php:48
-msgid "Save Settings"
-msgstr ""
-
-#: src/Admin/Settings/Api.php:52
-msgid "Saving..."
-msgstr ""
-
-#: src/Admin/Settings/Api.php:145
-msgid "Learn more"
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsAudit.php:55
-msgid "The options table is unavailable."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsAudit.php:81
-msgid "The options audit could not be completed."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsAudit.php:107
-msgid "The audit result could not be saved."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsAudit.php:180
-msgid "Unknown"
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsAuditController.php:59
-msgid "The database audit could not be refreshed. Please try again."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsAuditController.php:67
-msgid "Database audit refreshed."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsManager.php:21
-msgid "Autoload management requires WordPress 6.4 or newer."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsManager.php:24
-msgid "Autoload management requires an InnoDB options table; this database remains read-only."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsManager.php:27
-msgid "Autoload management requires a verified InnoDB options table."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsManager.php:69
-msgid "The autoload change journal is unavailable. No change was made."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsManager.php:73
-msgid "The autoload change journal is invalid. No change was made."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsManager.php:105
-msgid "Options could not be listed. Please retry."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsManager.php:117
-msgid "Critical WordPress or internal Perform option."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsManager.php:117
-msgid "Unrecognized autoload policy."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsManager.php:141
-msgid "This option cannot be changed."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsManager.php:148
-msgid "The site autoload policy does not allow this change."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsManager.php:154
-msgid "An atomic change could not be started."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsManager.php:159
-msgid "The undo journal could not be created."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsManager.php:166
-msgid "This option changed or the review expired. Refresh before trying again."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsManager.php:169
-msgid "Unrecognized autoload policy. No change was made."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsManager.php:183
-msgid "This option already has the requested policy. No change was made."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsManager.php:186
-msgid "The undo journal is full. Undo an existing change before adding another."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsManager.php:189
-msgid "This tracked option changed elsewhere. Its original undo record was preserved."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsManager.php:174
-msgid "Undo is stale or unavailable. No change was made."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsManager.php:178
-msgid "Invalid original policy. No change was made."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsManager.php:202
-msgid "The option and undo record could not both be saved. No change was made."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsManager.php:205
-msgid "The database did not confirm the change. Refresh to check its state."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsManager.php:221
-msgid "Original autoload policy restored."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsManager.php:221
-msgid "Autoload policy changed. The option value was not modified."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsManagerController.php:23
-msgid "Permission or security check failed."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsManagerController.php:38
-msgid "Options could not be loaded. Please retry."
-msgstr ""
-
-#: src/Admin/Settings/AutoloadOptionsManagerController.php:67
-msgid "The change could not be confirmed. Refresh before trying again."
-msgstr ""
-
-#: src/Admin/Settings/CronPressureAudit.php:153
-msgid "The scheduled-task diagnostic could not be saved."
-msgstr ""
-
-#: src/Admin/Settings/CronPressureAudit.php:223
-msgid "Large schedule detected"
-msgstr ""
-
-#: src/Admin/Settings/CronPressureAudit.php:224
-msgid "The bounded scan reached its event limit. Review the most frequent hooks with their extension owners."
-msgstr ""
-
-#: src/Admin/Settings/CronPressureAudit.php:231
-msgid "Scheduled-task pressure needs review"
-msgstr ""
-
-#: src/Admin/Settings/CronPressureAudit.php:232
-msgid "Repeated overdue work or a dense upcoming cluster can add request latency. Confirm the responsible hooks and runner configuration before changing schedules."
-msgstr ""
-
-#: src/Admin/Settings/CronPressureAudit.php:239
-msgid "Some scheduled work needs review"
-msgstr ""
-
-#: src/Admin/Settings/CronPressureAudit.php:240
-msgid "A small amount of due or clustered work can be normal. Refresh later and compare repeated snapshots before acting."
-msgstr ""
-
-#: src/Admin/Settings/CronPressureAudit.php:246
-msgid "No immediate schedule pressure detected"
-msgstr ""
-
-#: src/Admin/Settings/CronPressureAudit.php:247
-msgid "The bounded local snapshot does not show overdue or densely clustered work."
-msgstr ""
-
-#: src/Admin/Settings/CronPressureAudit.php:285
-msgid "Run the first scheduled-task check"
-msgstr ""
-
-#: src/Admin/Settings/CronPressureAudit.php:286
-msgid "The check runs only when requested and does not change scheduled events."
-msgstr ""
-
-#: src/Admin/Settings/CronPressureAuditController.php:42
-msgid "The scheduled-task diagnostic could not be refreshed. Please try again."
-msgstr ""
-
-#: src/Admin/Settings/CronPressureAuditController.php:49
-msgid "Scheduled-task diagnostic refreshed."
-msgstr ""
-
-#: src/Admin/Settings/CronPressureAuditController.php:66
-msgid "Scheduled-task diagnostic cleared."
-msgstr ""
-
-#: src/Admin/Settings/DashboardPayload.php:174
-msgid "Perform 1.7.0 introduced the dashboard, runtime diagnostics, cache activity reporting, and the redesigned settings experience."
-msgstr ""
-
-#: src/Admin/Settings/DashboardPayload.php:175
-msgid "The 1.8.0 diagnostic foundation adds bounded database and site-inventory evidence for safer recommendations."
-msgstr ""
-
-#: src/Admin/Settings/DashboardPayload.php:176
-msgid "Configured rules and cache activity are reported without claiming unmeasured byte or Core Web Vitals savings."
-msgstr ""
-
-#: src/Admin/Settings/Menu.php:90
-msgid "Site Inventory"
-msgstr ""
-
-#: src/Admin/Settings/Menu.php:91
-msgid "Database"
-msgstr ""
-
-#: src/Admin/Settings/Menu.php:92
-msgid "Admin Monitor"
-msgstr ""
-
-#: src/Admin/Settings/Menu.php:93
-msgid "Admin Assets"
-msgstr ""
-
-#: src/Admin/Settings/Menu.php:94
-msgid "Plugin Impact"
-msgstr ""
-
-#: src/Admin/Settings/Menu.php:95
-msgid "Scheduled Tasks"
-msgstr ""
-
-#: src/Admin/Settings/Menu.php:96
-msgid "Action Scheduler"
-msgstr ""
-
-#: src/Admin/Settings/Menu.php:97
-msgid "Cache Stats"
-msgstr ""
-
-#: src/Admin/Settings/Menu.php:300
-msgid "Unable to save the settings. Please try again."
-msgstr ""
-
-#: src/Admin/Settings/Menu.php:292
-msgid "Settings saved successfully."
-msgstr ""
-
-#: src/Admin/Settings/Menu.php:315
-msgid "Settings data is invalid. Please try again."
-msgstr ""
-
-#: src/Admin/Settings/Menu.php:329
-msgid "List settings are limited to 100 entries. Please reduce the list and try again."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:70, src/Admin/Settings/RuntimeDiagnostics.php:84
-msgid "Page cache storage"
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:71
-msgid "Page cache is disabled, so no cache storage is required yet."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:72
-msgid "Enable full-page cache when you are ready to test storage prerequisites."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:86
-msgid "Perform can use the cache storage location for generated HTML files."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:87
-msgid "Perform cannot confirm writable cache storage for generated HTML files."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:89, src/Admin/Settings/RuntimeDiagnostics.php:111, src/Admin/Settings/RuntimeDiagnostics.php:143, src/Admin/Settings/RuntimeDiagnostics.php:214
-msgid "No action needed."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:90
-msgid "Ask your host to allow WordPress to write to its cache directory before relying on full-page cache."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:105
-msgid "Page cache drop-in"
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:107
-msgid "A page-cache drop-in is present, so another cache layer may already be active."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:108
-msgid "No page-cache drop-in was detected."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:110
-msgid "Review host or plugin-level page caching before enabling overlapping cache behavior."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:127, src/Admin/Settings/RuntimeDiagnostics.php:138
-msgid "Cache preload schedule"
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:128
-msgid "Adaptive cache preload is disabled."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:129
-msgid "Enable preload only after page cache is working reliably."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:140
-msgid "The cache preload event is scheduled."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:141
-msgid "The cache preload event is not scheduled yet."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:144
-msgid "Save settings again or confirm WordPress cron is running on this site."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:160, src/Admin/Settings/RuntimeDiagnostics.php:175
-msgid "Dynamic request exclusions"
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:161
-msgid "Page cache is disabled, so dynamic request exclusions are not required yet."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:162
-msgid "Add exclusions before enabling page cache on sites with member areas, custom checkouts, or preview tokens."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:177
-msgid "Site-specific cache bypass rules are configured."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:178
-msgid "No site-specific cache bypass rules are configured."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:180
-msgid "Review bypass rules after adding new dynamic workflows."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:181
-msgid "Add path, query, or cookie exclusions for dynamic workflows before broad cache rollout."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:197, src/Admin/Settings/RuntimeDiagnostics.php:209
-msgid "Menu cache theme support"
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:198
-msgid "Menu cache is disabled."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:199
-msgid "Use menu cache primarily with classic themes that render menus through wp_nav_menu()."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:211
-msgid "The active theme is eligible for menu cache."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:212
-msgid "The active block theme is not expected to benefit from menu cache by default."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:215
-msgid "Leave menu cache disabled unless custom theme code opts in through the compatibility filter."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:231, src/Admin/Settings/RuntimeDiagnostics.php:245
-msgid "CDN configuration"
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:232
-msgid "CDN rewriting is disabled."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:233
-msgid "Enable CDN rewriting only after confirming the CDN origin URL and included directories."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:247
-msgid "CDN rewriting has a valid CDN URL."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:248
-msgid "CDN rewriting is enabled but the CDN URL is missing or invalid."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:250
-msgid "Confirm included directories and exclusions before broad rollout."
-msgstr ""
-
-#: src/Admin/Settings/RuntimeDiagnostics.php:251
-msgid "Enter a full CDN URL with http or https before enabling CDN rewriting."
-msgstr ""
-
-#: src/Admin/Settings/SiteInventory.php:88
-msgid "The site inventory could not be saved."
-msgstr ""
-
-#: src/Admin/Settings/SiteInventory.php:173
-msgid "Installed extension"
-msgstr ""
-
-#: src/Admin/Settings/SiteInventory.php:214
-msgid "Active theme"
-msgstr ""
-
-#: src/Admin/Settings/SiteInventory.php:276
-msgid "Custom or extension"
-msgstr ""
-
-#: src/Admin/Settings/SiteInventoryController.php:75
-msgid "The site inventory could not be refreshed. Please try again."
-msgstr ""
-
-#: src/Admin/Settings/SiteInventoryController.php:81
-msgid "Site inventory refreshed."
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:107
-msgid "This runtime is newer than Perform’s current automated PHP test matrix; verify compatibility before rollout."
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:105
-msgid "Review a supported PHP upgrade with your host before changing production."
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:103
-msgid "This runtime matches Perform’s actively tested PHP range."
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:110
-msgid "PHP version"
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:122, src/Admin/Settings/SystemHealth.php:130
-msgid "WordPress memory limit"
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:122, src/Admin/Settings/SystemHealth.php:171, src/Admin/Settings/SystemHealth.php:216, src/Admin/Settings/SystemHealth.php:247, src/Admin/Settings/SystemHealth.php:257
-msgid "Unavailable"
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:122
-msgid "Confirm the effective WordPress memory limit with your host."
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:127
-msgid "The configured limit provides reasonable headroom for typical administration."
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:128
-msgid "Review memory pressure and hosting limits before increasing this value."
-msgstr ""
-
-#. translators: %d: Maximum execution time in seconds.
-#: src/Admin/Settings/SystemHealth.php:141, src/Admin/Settings/SystemHealth.php:149
-msgid "Maximum execution time"
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:141
-msgid "Unlimited"
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:141
-msgid "PHP does not impose a request execution-time limit."
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:146
-msgid "The limit supports ordinary WordPress maintenance tasks."
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:147
-msgid "Short limits can interrupt imports, updates, or maintenance; review with your host."
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:149
-msgid "%d seconds"
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:171
-msgid "The runtime did not expose OPcache status."
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:177, src/Admin/Settings/SystemHealth.php:284
-msgid "Enabled"
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:177, src/Modules/Assets/AssetsManager.php:242
-msgid "Disabled"
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:179
-msgid "Compiled PHP code is cached by the runtime."
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:179
-msgid "Ask your host whether OPcache can be enabled safely."
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:193
-msgid "Persistent object cache"
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:194
-msgid "Detected"
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:194
-msgid "Not detected"
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:196
-msgid "WordPress is using an external object cache."
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:196
-msgid "Busy or database-heavy sites may benefit; confirm support with your host first."
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:215
-msgid "Database version"
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:218
-msgid "Version detected locally; compatibility still depends on the database family and host."
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:218
-msgid "Confirm the database version with your host."
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:247
-msgid "HTTP and server"
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:247
-msgid "This is a local runtime hint, not a public response-performance test."
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:257, src/Admin/Settings/SystemHealth.php:266
-msgid "Uploads directory"
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:257
-msgid "WordPress did not expose upload-directory status."
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:267
-msgid "Writable"
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:267
-msgid "Needs review"
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:269
-msgid "WordPress reports that media storage is writable."
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:269
-msgid "Review media storage permissions with your host; the filesystem path is intentionally hidden."
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:283
-msgid "Debug logging"
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:284
-msgid "Not enabled"
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:286
-msgid "Confirm logging is intentional and monitor its size on production sites."
-msgstr ""
-
-#: src/Admin/Settings/SystemHealth.php:286
-msgid "Perform does not expose or read any debug-log path or contents."
-msgstr ""
-
 #: src/Modules/Assets/AssetsManager.php:233
 msgid "Search detected assets"
 msgstr ""
@@ -1357,7 +1450,8 @@ msgstr ""
 msgid "Themes"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:239, src/Modules/Assets/AssetsManager.php:657
+#: src/Modules/Assets/AssetsManager.php:239
+#: src/Modules/Assets/AssetsManager.php:657
 msgid "Other"
 msgstr ""
 
@@ -1365,7 +1459,8 @@ msgstr ""
 msgid "JS"
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:241, src/Modules/Assets/AssetsManager.php:292
+#: src/Modules/Assets/AssetsManager.php:241
+#: src/Modules/Assets/AssetsManager.php:292
 msgid "CSS"
 msgstr ""
 
@@ -1425,16 +1520,18 @@ msgstr ""
 msgid "No assets match the current scan filter."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:658
-msgid "WordPress core, CDN, and uncategorized assets"
-msgstr ""
-
 #. translators: %d: number of assets.
-#: src/Modules/Assets/AssetsManager.php:663, src/Modules/Assets/AssetsManager.php:642
+#: src/Modules/Assets/AssetsManager.php:642
+#: src/Modules/Assets/AssetsManager.php:663
+#, php-format
 msgid "%d detected asset"
 msgid_plural "%d detected assets"
 msgstr[0] ""
 msgstr[1] ""
+
+#: src/Modules/Assets/AssetsManager.php:658
+msgid "WordPress core, CDN, and uncategorized assets"
+msgstr ""
 
 #: src/Modules/Assets/AssetsManager.php:677
 msgid "Handle"
@@ -1449,10 +1546,13 @@ msgid "Size"
 msgstr ""
 
 #: src/Modules/Assets/AssetsManager.php:686
+#: assets/src/js/admin/SiteInventoryPanel.jsx:312
 msgid "Status"
 msgstr ""
 
 #: src/Modules/Assets/AssetsManager.php:689
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:32
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:273
 msgid "Actions"
 msgstr ""
 
@@ -1468,7 +1568,8 @@ msgstr ""
 msgid "All assets in this group have been disabled. Enable the group again to manage individual assets."
 msgstr ""
 
-#: src/Modules/Assets/AssetsManager.php:823, src/Modules/Assets/AssetsManager.php:917
+#: src/Modules/Assets/AssetsManager.php:823
+#: src/Modules/Assets/AssetsManager.php:917
 msgid "Current URL"
 msgstr ""
 
@@ -1504,7 +1605,8 @@ msgstr ""
 msgid "Every 5 minutes (Perform Cache)"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:835, src/Modules/Cache/PageCache.php:903
+#: src/Modules/Cache/PageCache.php:835
+#: src/Modules/Cache/PageCache.php:903
 msgid "Perform Cache Observability"
 msgstr ""
 
@@ -1512,7 +1614,8 @@ msgstr ""
 msgid "Perform Cache Stats"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:857, src/Modules/Cache/PageCache.php:882
+#: src/Modules/Cache/PageCache.php:857
+#: src/Modules/Cache/PageCache.php:882
 msgid "Sorry, you are not allowed to access this page."
 msgstr ""
 
@@ -1538,6 +1641,7 @@ msgstr ""
 
 #. translators: 1: Pending cleanup count, 2: Retryable failure count, 3: Old-credential residual count.
 #: src/Modules/Cache/PageCache.php:925
+#, php-format
 msgid "Cloudflare cleanup: %1$d pending, %2$d retryable failures, %3$d old-credential residuals."
 msgstr ""
 
@@ -1565,11 +1669,13 @@ msgstr ""
 msgid "Stale Hits"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:948, src/Modules/Cache/PageCache.php:957
+#: src/Modules/Cache/PageCache.php:948
+#: src/Modules/Cache/PageCache.php:957
 msgid "Misses"
 msgstr ""
 
-#: src/Modules/Cache/PageCache.php:949, src/Modules/Cache/PageCache.php:960
+#: src/Modules/Cache/PageCache.php:949
+#: src/Modules/Cache/PageCache.php:960
 msgid "Bypasses"
 msgstr ""
 
@@ -1635,4 +1741,1880 @@ msgstr ""
 
 #: src/Modules/Cache/PageCache.php:2422
 msgid "Perform could not remove older page-cache files. Ask your site administrator to remove the old Perform page cache before relying on the upgraded cache."
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:10
+msgid "Less than one hour"
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:13
+msgid "hours"
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:15
+msgid "days"
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:31
+msgid "Name"
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:64
+#: assets/src/js/admin/CronPressurePanel.jsx:16
+msgid "Refresh check"
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:64
+#: assets/src/js/admin/CronPressurePanel.jsx:16
+msgid "Run check"
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:66
+msgid "Checking queue…"
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:75
+#: assets/src/js/admin/CronPressurePanel.jsx:28
+msgid "Clearing the saved diagnostic…"
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:76
+msgid "Checking the Action Scheduler queue…"
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:92
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:100
+msgid "The Action Scheduler diagnostic could not be updated."
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:111
+msgid "Clear the saved Action Scheduler diagnostic? No queued actions will be changed."
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:122
+msgid "Background queues"
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:125
+msgid "Review queue pressure used by commerce and other extensions without reading action arguments or changing queued work."
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:156
+#: assets/src/js/admin/CronPressurePanel.jsx:110
+msgid "Clear snapshot"
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:163
+msgid "Read-only and private"
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:165
+msgid "Perform stores aggregate queue counts for one hour. It does not read action arguments, payloads, or log messages, and it never runs, cancels, or deletes queued work."
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:184
+msgid "Run the first queue check"
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:186
+msgid "The check starts only when requested and saves aggregate counts for this site."
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:197
+msgid "Action Scheduler is not available"
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:199
+msgid "No Action Scheduler actions table was found for this site. There is no queue to inspect."
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:212
+msgid "Action Scheduler queue summary"
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:215
+msgid "Pending"
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:219
+msgid "Running"
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:223
+msgid "Failed"
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:227
+msgid "Complete"
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:231
+msgid "Canceled"
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:237
+msgid "Oldest pending action"
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:241
+msgid "None pending"
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:245
+msgid "Stored actions"
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:249
+msgid "Stored log rows"
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:252
+#: assets/src/js/admin/SiteInventoryPanel.jsx:16
+msgid "Not available"
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:258
+msgid "Counts describe the current queue, not whether a hook is harmful. Compare repeated snapshots and consult the responsible extension before changing retention or runner settings."
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:264
+msgid "Failed-action trend is not shown because deriving it reliably would require reading or interpreting private log messages."
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:271
+msgid "Largest hooks"
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:272
+msgid "Aggregate counts only; action arguments are never read."
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:274
+msgid "No hook counts were returned."
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:277
+msgid "Largest groups"
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:278
+msgid "Group names and aggregate counts only."
+msgstr ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:280
+msgid "No group counts were returned."
+msgstr ""
+
+#. translators: %s: number of captured assets.
+#: assets/src/js/admin/AdminAssetAuditPanel.jsx:11
+#, js-format
+msgid "%s captured assets"
+msgstr ""
+
+#: assets/src/js/admin/AdminAssetAuditPanel.jsx:24
+msgid "Clear the collected admin asset audit?"
+msgstr ""
+
+#: assets/src/js/admin/AdminAssetAuditPanel.jsx:28
+msgid "Clearing admin asset audit…"
+msgstr ""
+
+#: assets/src/js/admin/AdminAssetAuditPanel.jsx:40
+#: assets/src/js/admin/AdminAssetAuditPanel.jsx:47
+msgid "Admin asset audit could not be cleared."
+msgstr ""
+
+#: assets/src/js/admin/AdminAssetAuditPanel.jsx:58
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:86
+msgid "Private admin diagnostics"
+msgstr ""
+
+#: assets/src/js/admin/AdminAssetAuditPanel.jsx:59
+msgid "Admin asset audit"
+msgstr ""
+
+#: assets/src/js/admin/AdminAssetAuditPanel.jsx:61
+msgid "See which scripts and styles recur across sampled WordPress admin screens."
+msgstr ""
+
+#: assets/src/js/admin/AdminAssetAuditPanel.jsx:75
+msgid "Clear audit"
+msgstr ""
+
+#: assets/src/js/admin/AdminAssetAuditPanel.jsx:83
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:111
+msgid "Enable in Advanced"
+msgstr ""
+
+#: assets/src/js/admin/AdminAssetAuditPanel.jsx:89
+msgid "Inventory only — nothing is disabled"
+msgstr ""
+
+#. translators: 1: screen limit, 2: asset limit, 3: retention in days.
+#: assets/src/js/admin/AdminAssetAuditPanel.jsx:93
+#, js-format
+msgid "Perform stores handles and likely source labels for up to %1$s screens and %2$s assets per screen for %3$s days. URLs, query strings, nonces, and user data are not stored."
+msgstr ""
+
+#: assets/src/js/admin/AdminAssetAuditPanel.jsx:117
+msgid "Audit mode is off"
+msgstr ""
+
+#: assets/src/js/admin/AdminAssetAuditPanel.jsx:119
+msgid "Disabled mode registers no asset-capture hooks and writes no audit data."
+msgstr ""
+
+#: assets/src/js/admin/AdminAssetAuditPanel.jsx:130
+msgid "Visit a few admin screens"
+msgstr ""
+
+#: assets/src/js/admin/AdminAssetAuditPanel.jsx:132
+msgid "Perform records the final script and style queues as you use WordPress admin normally."
+msgstr ""
+
+#: assets/src/js/admin/AdminAssetAuditPanel.jsx:145
+msgid "Repeated across admin screens"
+msgstr ""
+
+#: assets/src/js/admin/AdminAssetAuditPanel.jsx:147
+msgid "Repeated presence is a review signal, not proof that an asset is unnecessary or safe to disable."
+msgstr ""
+
+#: assets/src/js/admin/AdminAssetAuditPanel.jsx:159
+msgid "Asset"
+msgstr ""
+
+#: assets/src/js/admin/AdminAssetAuditPanel.jsx:160
+#: assets/src/js/admin/AdminAssetAuditPanel.jsx:172
+msgid "Likely source"
+msgstr ""
+
+#: assets/src/js/admin/AdminAssetAuditPanel.jsx:161
+#: assets/src/js/admin/AdminAssetAuditPanel.jsx:173
+#: assets/src/js/admin/PluginImpactPanel.jsx:136
+#: assets/src/js/admin/PluginImpactPanel.jsx:152
+msgid "Screens"
+msgstr ""
+
+#: assets/src/js/admin/AdminAssetAuditPanel.jsx:162
+#: assets/src/js/admin/AdminAssetAuditPanel.jsx:174
+msgid "Confidence"
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:24
+msgid "Admin page"
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:25
+msgid "AJAX"
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:26
+msgid "REST"
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:27
+msgid "Cron-adjacent"
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:31
+msgid "Slow request"
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:32
+msgid "High memory"
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:33
+msgid "High query count"
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:45
+msgid "Clear all collected admin performance aggregates?"
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:50
+msgid "Clearing admin performance data…"
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:63
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:75
+msgid "Admin performance data could not be cleared."
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:89
+msgid "Find repeated slow WordPress admin contexts using bounded aggregate timing, peak memory, and query-count evidence."
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:103
+msgid "Clear collected data"
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:117
+msgid "Aggregate-only and per site"
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:119
+msgid "Perform keeps up to 50 contexts for 14 days. It does not store full URLs, query arguments, request payloads, IP addresses, usernames, emails, or query text, and it does not enable SAVEQUERIES."
+msgstr ""
+
+#. translators: 1: duration in milliseconds, 2: memory size, 3: query count.
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:127
+#, js-format
+msgid "Review thresholds: %1$s ms duration, %2$s peak memory, or %3$s queries."
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:148
+msgid "Monitoring is off"
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:150
+msgid "Disabled mode registers no request-capture hooks and performs no report writes."
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:162
+msgid "Collecting the first admin contexts"
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:164
+msgid "Use WordPress admin normally, then return here to review aggregate evidence."
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:177
+msgid "Measured admin contexts"
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:179
+msgid "Sorted by worst observed duration. A threshold is a review signal, not a root-cause diagnosis."
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:188
+msgid "How to investigate"
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:190
+msgid "Reproduce the same workflow, compare repeated samples, and use a dedicated profiler before changing plugin or query behavior."
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:200
+msgid "Context"
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:201
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:218
+msgid "Requests"
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:202
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:219
+msgid "Duration"
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:203
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:225
+msgid "Peak memory"
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:204
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:228
+msgid "Queries"
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:205
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:229
+msgid "Guidance"
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:222
+msgid "average"
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:232
+#: assets/src/js/admin/DashboardPanel.jsx:17
+#: assets/src/js/admin/InsightsWorkspace.jsx:146
+#: assets/src/js/admin/SystemHealthPanel.jsx:6
+msgid "Review"
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:233
+#: assets/src/js/admin/DashboardPanel.jsx:18
+msgid "Observing"
+msgstr ""
+
+#: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:240
+msgid "Below current review thresholds"
+msgstr ""
+
+#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:27
+#: assets/src/js/admin/navigation.js:6
+msgid "Assets & CDN"
+msgstr ""
+
+#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:28
+msgid "Reduce unnecessary browser work and deliver files from locations closer to your visitors."
+msgstr ""
+
+#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:32
+msgid "asset rules configured"
+msgstr ""
+
+#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:37
+msgid "Frontend optimization"
+msgstr ""
+
+#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:38
+msgid "Control asset loading and prepare trusted third-party connections."
+msgstr ""
+
+#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:49
+msgid "Content delivery"
+msgstr ""
+
+#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:50
+msgid "Connect a CDN and control which public files use it."
+msgstr ""
+
+#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:57
+msgid "Cloudflare cache sync"
+msgstr ""
+
+#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:58
+msgid "Keep Cloudflare in step when Perform clears local cached pages."
+msgstr ""
+
+#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:66
+#: assets/src/js/admin/DashboardPanel.jsx:318
+msgid "Configured coverage"
+msgstr ""
+
+#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:68
+msgid "JavaScript rules"
+msgstr ""
+
+#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:69
+msgid "CSS rules"
+msgstr ""
+
+#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:70
+msgid "Group rules"
+msgstr ""
+
+#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:71
+msgid "URL exceptions"
+msgstr ""
+
+#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:73
+msgid "Configured rules only; Perform does not claim unmeasured byte savings."
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:51
+msgid "The request failed. Refresh the list and try again."
+msgstr ""
+
+#. translators: %d: signed byte change.
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:135
+#, js-format
+msgid "Measured autoload byte change: %d B."
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:144
+msgid "Autoload setting updated."
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:145
+msgid "Showing matching changed options so you can review Undo."
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:164
+msgid "Refreshing the list. Review the current state before trying again."
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:189
+msgid "Manage option autoload"
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:190
+msgid "Options and autoload actions"
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:192
+msgid "Autoloaded options are shown largest first. Use Changed by Perform to review previous changes, including options no longer autoloaded. Values are never shown or deleted. Size alone does not prove an option is unnecessary; disabling autoload can affect plugin behavior. Check the affected plugin afterward. Undo is available only while the recorded change remains unmodified."
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:199
+msgid "Applying the autoload change…"
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:203
+msgid "Autoload changes require WordPress 6.4 or newer and a supported database."
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:208
+msgid "Showing the last audit snapshot as read-only; this information may be out of date."
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:229
+msgid "Search option names"
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:235
+msgid "Search"
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:239
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:281
+msgid "Changed by Perform"
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:251
+msgid "Refresh options"
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:256
+msgid "Loading option metadata…"
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:263
+msgid "Option autoload settings"
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:269
+msgid "Option"
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:270
+msgid "Stored size"
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:271
+msgid "Autoload"
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:272
+#: assets/src/js/admin/SiteInventoryPanel.jsx:359
+msgid "Likely owner"
+msgstr ""
+
+#. translators: %d: bytes.
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:285
+#, js-format
+msgid "%d B"
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:295
+#: assets/src/js/admin/SiteInventoryPanel.jsx:375
+msgid "unknown"
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:296
+#: assets/src/js/admin/SiteInventoryPanel.jsx:376
+msgid "confidence"
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:301
+msgid "Read-only"
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:304
+msgid "Protected option"
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:312
+msgid "Action unavailable"
+msgstr ""
+
+#. translators: %s: option name.
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:324
+#, js-format
+msgid "Disable autoload for %s"
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:332
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:358
+msgid "Applying…"
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:333
+msgid "Disable autoload"
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:338
+msgid "Changed elsewhere; Undo unavailable"
+msgstr ""
+
+#. translators: %s: option name.
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:350
+#, js-format
+msgid "Undo autoload change for %s"
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:359
+msgid "Undo"
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:370
+msgid "No matching options."
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:374
+msgid "Options pagination"
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:385
+msgid "Previous"
+msgstr ""
+
+#. translators: 1: current page, 2: total pages.
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:389
+#, js-format
+msgid "Page %1$d of %2$d"
+msgstr ""
+
+#: assets/src/js/admin/AutoloadOptionsManager.jsx:406
+msgid "Next"
+msgstr ""
+
+#: assets/src/js/admin/CacheWorkspace.jsx:25
+msgid "Back to cache"
+msgstr ""
+
+#: assets/src/js/admin/CacheWorkspace.jsx:27
+#: assets/src/js/admin/PluginImpactPanel.jsx:164
+#: assets/src/js/admin/SiteInventoryPanel.jsx:15
+msgid "Measured locally"
+msgstr ""
+
+#: assets/src/js/admin/CacheWorkspace.jsx:28
+msgid "Cache activity"
+msgstr ""
+
+#: assets/src/js/admin/CacheWorkspace.jsx:29
+msgid "Review how this site uses ready-made pages and where uncached requests need attention."
+msgstr ""
+
+#: assets/src/js/admin/CacheWorkspace.jsx:61
+msgid "Page cache"
+msgstr ""
+
+#: assets/src/js/admin/CacheWorkspace.jsx:62
+msgid "Serve ready-made pages to repeat visitors while Perform refreshes content safely in the background."
+msgstr ""
+
+#: assets/src/js/admin/CacheWorkspace.jsx:66
+#: assets/src/js/admin/SiteInventoryPanel.jsx:322
+msgid "Active"
+msgstr ""
+
+#: assets/src/js/admin/CacheWorkspace.jsx:66
+msgid "Not active"
+msgstr ""
+
+#: assets/src/js/admin/CacheWorkspace.jsx:70
+#: assets/src/js/admin/DashboardPanel.jsx:158
+msgid "View cache activity"
+msgstr ""
+
+#: assets/src/js/admin/CacheWorkspace.jsx:75
+msgid "Cache performance"
+msgstr ""
+
+#: assets/src/js/admin/CacheWorkspace.jsx:79
+msgid "Hit rate"
+msgstr ""
+
+#: assets/src/js/admin/CacheWorkspace.jsx:84
+#: assets/src/js/admin/DashboardPanel.jsx:310
+msgid "Cached visits"
+msgstr ""
+
+#: assets/src/js/admin/CacheWorkspace.jsx:89
+msgid "Slow uncached pages"
+msgstr ""
+
+#: assets/src/js/admin/CacheWorkspace.jsx:95
+msgid "Based on activity observed on this WordPress site."
+msgstr ""
+
+#: assets/src/js/admin/CacheWorkspace.jsx:96
+msgid "Metrics will appear after page caching records local activity."
+msgstr ""
+
+#: assets/src/js/admin/CacheWorkspace.jsx:101
+msgid "Recommended setup"
+msgstr ""
+
+#: assets/src/js/admin/CacheWorkspace.jsx:102
+msgid "The core controls most sites need for safe page caching."
+msgstr ""
+
+#: assets/src/js/admin/CacheWorkspace.jsx:110
+msgid "Pages never cached"
+msgstr ""
+
+#: assets/src/js/admin/CacheWorkspace.jsx:111
+msgid "Protect checkout, account, preview, session, and other dynamic experiences."
+msgstr ""
+
+#: assets/src/js/admin/CacheWorkspace.jsx:121
+msgid "Performance thresholds"
+msgstr ""
+
+#: assets/src/js/admin/CacheWorkspace.jsx:122
+msgid "Choose when an uncached request should be highlighted for review."
+msgstr ""
+
+#: assets/src/js/admin/CleanupWorkspace.jsx:29
+#: assets/src/js/admin/navigation.js:7
+msgid "Cleanup"
+msgstr ""
+
+#: assets/src/js/admin/CleanupWorkspace.jsx:30
+msgid "Remove unnecessary WordPress extras and review database items that may be adding avoidable work."
+msgstr ""
+
+#: assets/src/js/admin/CleanupWorkspace.jsx:36
+msgid "Database evidence is ready"
+msgstr ""
+
+#: assets/src/js/admin/CleanupWorkspace.jsx:37
+msgid "Database check available"
+msgstr ""
+
+#: assets/src/js/admin/CleanupWorkspace.jsx:42
+#: assets/src/js/admin/DashboardPanel.jsx:140
+msgid "Review database"
+msgstr ""
+
+#: assets/src/js/admin/CleanupWorkspace.jsx:42
+msgid "Run database check"
+msgstr ""
+
+#: assets/src/js/admin/CleanupWorkspace.jsx:47
+#: assets/src/js/admin/DatabaseAuditPanel.jsx:89
+msgid "Database health"
+msgstr ""
+
+#: assets/src/js/admin/CleanupWorkspace.jsx:49
+msgid "Autoloaded size"
+msgstr ""
+
+#: assets/src/js/admin/CleanupWorkspace.jsx:50
+#: assets/src/js/admin/DatabaseAuditPanel.jsx:142
+msgid "Autoloaded options"
+msgstr ""
+
+#: assets/src/js/admin/CleanupWorkspace.jsx:53
+msgid "This release audits database pressure but does not remove data automatically."
+msgstr ""
+
+#: assets/src/js/admin/CleanupWorkspace.jsx:59
+msgid "Reduce WordPress extras"
+msgstr ""
+
+#: assets/src/js/admin/CleanupWorkspace.jsx:61
+msgid "Open a category to review each optimization. Existing controls and saved values are unchanged."
+msgstr ""
+
+#: assets/src/js/admin/CleanupWorkspace.jsx:84
+msgid "Review first, then optimize"
+msgstr ""
+
+#: assets/src/js/admin/CleanupWorkspace.jsx:86
+msgid "Perform keeps potentially disruptive controls visible and explained. Database cleanup will require preview and recovery support before it is offered."
+msgstr ""
+
+#: assets/src/js/admin/CronPressurePanel.jsx:19
+#: assets/src/js/admin/CronPressurePanel.jsx:29
+msgid "Checking scheduled tasks…"
+msgstr ""
+
+#: assets/src/js/admin/CronPressurePanel.jsx:45
+#: assets/src/js/admin/CronPressurePanel.jsx:54
+msgid "The scheduled-task diagnostic could not be updated."
+msgstr ""
+
+#: assets/src/js/admin/CronPressurePanel.jsx:65
+msgid "Clear the saved scheduled-task diagnostic? No cron events will be changed."
+msgstr ""
+
+#: assets/src/js/admin/CronPressurePanel.jsx:76
+msgid "Scheduled work"
+msgstr ""
+
+#: assets/src/js/admin/CronPressurePanel.jsx:77
+msgid "Scheduled-task pressure"
+msgstr ""
+
+#: assets/src/js/admin/CronPressurePanel.jsx:79
+msgid "Inspect overdue and clustered WP-Cron work without reading hook arguments or changing third-party schedules."
+msgstr ""
+
+#: assets/src/js/admin/CronPressurePanel.jsx:117
+msgid "Read-only and bounded"
+msgstr ""
+
+#: assets/src/js/admin/CronPressurePanel.jsx:119
+msgid "Perform scans up to 5,000 scheduled events for this site, stores aggregate counts for one hour, and excludes hook arguments, payloads, URLs, and user data."
+msgstr ""
+
+#: assets/src/js/admin/CronPressurePanel.jsx:141
+msgid "The check runs only when requested and does not delete or reschedule events."
+msgstr ""
+
+#: assets/src/js/admin/CronPressurePanel.jsx:152
+msgid "Built-in WP-Cron spawning is disabled"
+msgstr ""
+
+#: assets/src/js/admin/CronPressurePanel.jsx:154
+msgid "Confirm that the host or server calls wp-cron.php on a reliable schedule. Perform cannot verify an external runner from this page."
+msgstr ""
+
+#: assets/src/js/admin/CronPressurePanel.jsx:164
+msgid "Scheduled-task summary"
+msgstr ""
+
+#: assets/src/js/admin/CronPressurePanel.jsx:167
+msgid "Due now"
+msgstr ""
+
+#: assets/src/js/admin/CronPressurePanel.jsx:171
+msgid "Overdue"
+msgstr ""
+
+#: assets/src/js/admin/CronPressurePanel.jsx:173
+msgid "More than 5 minutes late"
+msgstr ""
+
+#: assets/src/js/admin/CronPressurePanel.jsx:176
+msgid "Recurring"
+msgstr ""
+
+#: assets/src/js/admin/CronPressurePanel.jsx:180
+msgid "Peak 5-minute cluster"
+msgstr ""
+
+#: assets/src/js/admin/CronPressurePanel.jsx:182
+msgid "Within the next hour"
+msgstr ""
+
+#: assets/src/js/admin/CronPressurePanel.jsx:195
+msgid "Most frequent scheduled hooks"
+msgstr ""
+
+#: assets/src/js/admin/CronPressurePanel.jsx:198
+msgid "Hook names and aggregate counts only. Frequency does not prove that a hook is harmful."
+msgstr ""
+
+#: assets/src/js/admin/CronPressurePanel.jsx:210
+msgid "Hook"
+msgstr ""
+
+#: assets/src/js/admin/CronPressurePanel.jsx:211
+msgid "Scheduled instances"
+msgstr ""
+
+#: assets/src/js/admin/CronPressurePanel.jsx:218
+msgid "No scheduled hooks were returned."
+msgstr ""
+
+#: assets/src/js/admin/CronPressurePanel.jsx:235
+msgid "The scan reached its 5,000-event safety limit."
+msgstr ""
+
+#: assets/src/js/admin/CronPressurePanel.jsx:236
+msgid "The bounded scan completed without reaching its event limit."
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:16
+#: assets/src/js/admin/DiagnosticsPanel.jsx:5
+msgid "Ready"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:19
+#: assets/src/js/admin/InsightsWorkspace.jsx:140
+#: assets/src/js/admin/InsightsWorkspace.jsx:233
+#: assets/src/js/admin/InsightsWorkspace.jsx:239
+msgid "Not measured"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:63
+msgid "Runtime diagnostics are not available in the current page payload."
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:66
+msgid "Local cache and delivery prerequisites currently report ready."
+msgstr ""
+
+#. translators: %d: diagnostic count requiring review.
+#: assets/src/js/admin/DashboardPanel.jsx:70
+#, js-format
+msgid "%d cache or delivery check needs review."
+msgid_plural "%d cache or delivery checks need review."
+msgstr[0] ""
+msgstr[1] ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:82
+msgid "Page cache is disabled. Enable it only after reviewing dynamic-site exclusions."
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:88
+msgid "Page cache is enabled; more local traffic is needed for a useful activity summary."
+msgstr ""
+
+#. translators: %s: measured cache hit ratio.
+#: assets/src/js/admin/DashboardPanel.jsx:97
+#, js-format
+msgid "%s%% measured cache hit ratio from local activity."
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:112
+msgid "Site context"
+msgstr ""
+
+#. translators: 1: active plugin count, 2: registered content type count, 3: enabled Perform module count.
+#: assets/src/js/admin/DashboardPanel.jsx:117
+#, js-format
+msgid "%1$d active plugins, %2$d content types, and %3$d Perform modules measured locally."
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:125
+msgid "Generate a private local inventory before using site-specific guidance."
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:126
+#: assets/src/js/admin/SiteInventoryPanel.jsx:63
+msgid "Generate inventory"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:130
+#: assets/src/js/admin/InsightsWorkspace.jsx:231
+msgid "Database pressure"
+msgstr ""
+
+#. translators: %s: measured autoloaded option size.
+#: assets/src/js/admin/DashboardPanel.jsx:135
+#, js-format
+msgid "%s of autoloaded options measured against WordPress guidance."
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:138
+msgid "Run the local database audit to measure autoloaded option pressure."
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:140
+msgid "Run database audit"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:146
+msgid "Runtime checks"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:149
+msgid "View runtime checks"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:153
+msgid "Page caching"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:159
+msgid "Review cache settings"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:165
+msgid "Server acceleration"
+msgstr ""
+
+#. translators: 1: OPcache state, 2: persistent object-cache state, 3: compression state.
+#: assets/src/js/admin/DashboardPanel.jsx:169
+#, js-format
+msgid "OPcache: %1$s. Persistent object cache: %2$s. Response compression: %3$s."
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:170
+#: assets/src/js/admin/DashboardPanel.jsx:171
+msgid "detected"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:170
+#: assets/src/js/admin/DashboardPanel.jsx:171
+msgid "not confirmed"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:173
+msgid "detected in PHP"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:174
+msgid "needs a separate response test"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:176
+msgid "Review server evidence"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:186
+msgid "Store safety"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:189
+msgid "A store pattern is present. Review cart, checkout, account, and session exclusions."
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:190
+msgid "A store pattern is present and current cache diagnostics show no unresolved exclusion warning."
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:194
+msgid "Review cache exclusions"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:263
+msgid "Your measured local performance checks are ready."
+msgstr ""
+
+#. translators: %d: number of recommendations requiring review.
+#: assets/src/js/admin/DashboardPanel.jsx:267
+#, js-format
+msgid "%d action needs review."
+msgid_plural "%d actions need review."
+msgstr[0] ""
+msgstr[1] ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:271
+msgid "Finish the local diagnostics to unlock site-specific guidance."
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:277
+msgid "Performance overview"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:279
+msgid "Perform combines private local evidence into clear next steps. It never turns these checks into an unverified speed score."
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:284
+#: assets/src/js/admin/DatabaseAuditPanel.jsx:161
+msgid "Review recommended"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:284
+msgid "Local checks ready"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:290
+msgid "View insights"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:293
+msgid "How Perform works"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:300
+msgid "Measured value"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:304
+msgid "Cache hit rate"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:306
+msgid "Local requests"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:312
+msgid "Hits and stale hits"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:316
+msgid "Asset rules"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:322
+msgid "Areas ready"
+msgstr ""
+
+#. translators: %d: number of diagnostics still available to run.
+#: assets/src/js/admin/DashboardPanel.jsx:325
+#, js-format
+msgid "%d still available"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:328
+msgid "All values are measured or configured on this WordPress site. No estimated time or traffic savings are shown."
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:337
+msgid "How your site is doing"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:339
+msgid "Plain-language status across caching, server readiness, database pressure, and site context."
+msgstr ""
+
+#. translators: %d: number of local checks that need review.
+#: assets/src/js/admin/DashboardPanel.jsx:350
+#, js-format
+msgid "%d item to review"
+msgid_plural "%d items to review"
+msgstr[0] ""
+msgstr[1] ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:365
+msgid "Core Web Vitals need a separate test"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:367
+msgid "Local WordPress diagnostics cannot prove real-user LCP, INP, or CLS. Field data and lab testing remain separate evidence sources."
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:375
+msgid "Core Web Vitals connection status"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:379
+#: assets/src/js/admin/DashboardPanel.jsx:383
+#: assets/src/js/admin/DashboardPanel.jsx:387
+#: assets/src/js/admin/InsightsWorkspace.jsx:257
+#: assets/src/js/admin/InsightsWorkspace.jsx:261
+#: assets/src/js/admin/InsightsWorkspace.jsx:265
+msgid "Not connected"
+msgstr ""
+
+#: assets/src/js/admin/DatabaseAuditPanel.jsx:32
+msgid "Refresh audit"
+msgstr ""
+
+#: assets/src/js/admin/DatabaseAuditPanel.jsx:32
+msgid "Run audit"
+msgstr ""
+
+#: assets/src/js/admin/DatabaseAuditPanel.jsx:34
+msgid "Running audit…"
+msgstr ""
+
+#: assets/src/js/admin/DatabaseAuditPanel.jsx:40
+msgid "Running the database audit…"
+msgstr ""
+
+#: assets/src/js/admin/DatabaseAuditPanel.jsx:57
+msgid "The database audit could not be refreshed."
+msgstr ""
+
+#: assets/src/js/admin/DatabaseAuditPanel.jsx:90
+msgid "Autoloaded options audit"
+msgstr ""
+
+#: assets/src/js/admin/DatabaseAuditPanel.jsx:92
+msgid "The audit shows measured totals and option names and sizes, never stored values. Review each option before changing its autoload policy."
+msgstr ""
+
+#: assets/src/js/admin/DatabaseAuditPanel.jsx:122
+msgid "Run the first local audit"
+msgstr ""
+
+#: assets/src/js/admin/DatabaseAuditPanel.jsx:124
+msgid "The scan runs only when requested, stores a bounded snapshot for this site, and makes no external requests."
+msgstr ""
+
+#: assets/src/js/admin/DatabaseAuditPanel.jsx:135
+msgid "Autoloaded options summary"
+msgstr ""
+
+#: assets/src/js/admin/DatabaseAuditPanel.jsx:138
+msgid "Total autoloaded size"
+msgstr ""
+
+#: assets/src/js/admin/DatabaseAuditPanel.jsx:161
+msgid "Informational"
+msgstr ""
+
+#: assets/src/js/admin/DatabaseAuditPanel.jsx:165
+msgid "The measured total is above WordPress Site Health’s guidance threshold. Review the largest entries with the extension owner before changing autoload behavior."
+msgstr ""
+
+#: assets/src/js/admin/DatabaseAuditPanel.jsx:169
+msgid "The measured total is below WordPress Site Health’s guidance threshold. Size alone does not prove that an option is unnecessary."
+msgstr ""
+
+#: assets/src/js/admin/DatabaseAuditPanel.jsx:177
+#: assets/src/js/admin/SiteInventoryPanel.jsx:396
+msgid "Snapshot generated"
+msgstr ""
+
+#: assets/src/js/admin/DatabaseAuditPanel.jsx:180
+msgid "Totals may be out of date; refresh the audit"
+msgstr ""
+
+#: assets/src/js/admin/DatabaseAuditPanel.jsx:182
+#: assets/src/js/admin/SiteInventoryPanel.jsx:233
+#: assets/src/js/admin/SiteInventoryPanel.jsx:399
+msgid "Current site only"
+msgstr ""
+
+#: assets/src/js/admin/DiagnosticsPanel.jsx:6
+msgid "Warning"
+msgstr ""
+
+#: assets/src/js/admin/DiagnosticsPanel.jsx:7
+msgid "Needs attention"
+msgstr ""
+
+#: assets/src/js/admin/DiagnosticsPanel.jsx:23
+msgid "Read-only checks for cache, CDN, and optimization prerequisites."
+msgstr ""
+
+#: assets/src/js/admin/Footer.jsx:6
+msgid "All changes saved"
+msgstr ""
+
+#: assets/src/js/admin/Footer.jsx:8
+msgid "Changes will save automatically…"
+msgstr ""
+
+#: assets/src/js/admin/Footer.jsx:11
+msgid "Save not confirmed"
+msgstr ""
+
+#: assets/src/js/admin/Footer.jsx:11
+msgid "Settings not saved"
+msgstr ""
+
+#: assets/src/js/admin/Footer.jsx:14
+msgid "Saving settings…"
+msgstr ""
+
+#: assets/src/js/admin/Footer.jsx:31
+msgid "Retry save"
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:31
+#: assets/src/js/admin/InsightsWorkspace.jsx:237
+msgid "Site profile"
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:32
+msgid "WordPress, hosting, plugins, content types, and enabled Perform features."
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:37
+msgid "Database options"
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:38
+msgid "Autoloaded option size, likely ownership, and object-cache evidence."
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:43
+msgid "Admin experience"
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:44
+msgid "Bounded timing, memory, and query-count samples for WordPress admin requests."
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:49
+msgid "Admin assets"
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:50
+msgid "Script and style handles observed across sampled admin screens."
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:55
+#: assets/src/js/admin/PluginImpactPanel.jsx:85
+msgid "Plugin signals"
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:56
+msgid "Evidence-bound relationships between active plugins and observed admin assets."
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:61
+msgid "Scheduled tasks"
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:62
+msgid "Overdue and clustered WordPress cron work."
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:67
+msgid "Action queues"
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:68
+msgid "Aggregate queue pressure used by commerce and other extensions."
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:142
+msgid "Cache and delivery checks are not measured"
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:143
+msgid "Cache checks not measured"
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:148
+msgid "A few cache and delivery checks need review"
+msgstr ""
+
+#. translators: %d: number of cache checks needing review.
+#: assets/src/js/admin/InsightsWorkspace.jsx:151
+#, js-format
+msgid "%d cache check to review"
+msgid_plural "%d cache checks to review"
+msgstr[0] ""
+msgstr[1] ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:155
+#: assets/src/js/admin/SystemHealthPanel.jsx:5
+msgid "Good"
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:157
+msgid "Cache and delivery checks look good"
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:158
+msgid "Cache and delivery checks ready"
+msgstr ""
+
+#. translators: %1$s: measured size, %2$d: number of autoloaded options.
+#: assets/src/js/admin/InsightsWorkspace.jsx:167
+#, js-format
+msgid "%1$s autoloaded across %2$d option"
+msgid_plural "%1$s autoloaded across %2$d options"
+msgstr[0] ""
+msgstr[1] ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:176
+msgid "Run the local database check to measure autoloaded option pressure."
+msgstr ""
+
+#. translators: %1$d: active plugin count, %2$d: content type count.
+#: assets/src/js/admin/InsightsWorkspace.jsx:180
+#, js-format
+msgid "Local counts: %1$d active plugins, %2$d content types."
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:184
+msgid "Generate a private local inventory for site-specific guidance."
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:189
+#: assets/src/js/admin/navigation.js:8
+msgid "Insights"
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:190
+msgid "Understand what is helping, what needs attention, and where Perform has enough evidence to guide you."
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:203
+msgid "Review site profile"
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:204
+msgid "Generate site profile"
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:216
+msgid "This summary uses evidence collected privately on this WordPress site."
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:225
+msgid "Cache and delivery setup"
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:226
+msgid "Page-cache, menu support, and CDN prerequisites"
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:233
+msgid "Measured"
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:239
+msgid "Current"
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:246
+msgid "Core Web Vitals require a separate measurement"
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:248
+msgid "Real-user LCP, INP, and CLS cannot be proven from local WordPress checks. Perform keeps field, lab, and local evidence clearly separated."
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:272
+msgid "Technical reports"
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:274
+msgid "Open detailed evidence only when you need it. Reports stay read-only unless an action clearly says otherwise."
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:305
+msgid "Runtime cache and delivery checks"
+msgstr ""
+
+#: assets/src/js/admin/navigation.js:4
+msgid "Overview"
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:18
+msgid "View admin asset evidence"
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:29
+msgid "Generate site inventory"
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:40
+msgid "Enable admin asset audit"
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:49
+msgid "Measured local evidence"
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:50
+msgid "Plugin impact"
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:52
+msgid "Connect active plugins to admin asset pressure that Perform has actually observed on this site."
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:62
+msgid "Evidence, not a plugin ranking"
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:64
+msgid "Asset presence does not prove a plugin is slow or that its files are safe to disable. Perform does not attribute query, callback, or memory cost to a plugin without a dedicated measurement contract."
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:73
+#: assets/src/js/admin/SiteInventoryPanel.jsx:169
+msgid "Active plugins"
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:75
+msgid "From site inventory"
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:78
+msgid "Sampled admin screens"
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:81
+msgid "Audit enabled"
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:81
+msgid "Audit not enabled"
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:87
+msgid "High-confidence source matches"
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:94
+msgid "Site inventory is required"
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:96
+msgid "Generate the private site inventory before matching measured handles to active plugins."
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:107
+msgid "No active plugins are available in the bounded inventory"
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:108
+msgid "Refresh Site Inventory if the active plugin list has changed."
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:117
+msgid "Observed admin asset presence"
+msgstr ""
+
+#. translators: %d: number of sampled admin screens.
+#: assets/src/js/admin/PluginImpactPanel.jsx:121
+#, js-format
+msgid "Based on %d sampled admin screens. Zero means not observed in this sample, not zero impact."
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:135
+#: assets/src/js/admin/SiteInventoryPanel.jsx:310
+msgid "Plugin"
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:137
+#: assets/src/js/admin/PluginImpactPanel.jsx:155
+msgid "Scripts"
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:138
+#: assets/src/js/admin/PluginImpactPanel.jsx:158
+msgid "Styles"
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:139
+#: assets/src/js/admin/PluginImpactPanel.jsx:161
+msgid "Evidence"
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:165
+msgid "Not observed"
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:180
+msgid "Not attributed in this release"
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:182
+msgid "These signals need dedicated instrumentation before Perform can connect them to a plugin reliably."
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:191
+msgid "Frontend asset ownership and request context"
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:192
+msgid "Database query contribution by plugin"
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:193
+msgid "Callback execution time by plugin"
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:194
+msgid "Memory contribution by plugin"
+msgstr ""
+
+#: assets/src/js/admin/PreferencesWorkspace.jsx:29
+msgid "Choose how Perform behaves, measures activity, and keeps data on this WordPress site."
+msgstr ""
+
+#: assets/src/js/admin/PreferencesWorkspace.jsx:40
+msgid "View documentation"
+msgstr ""
+
+#: assets/src/js/admin/PreferencesWorkspace.jsx:46
+msgid "Site behavior"
+msgstr ""
+
+#: assets/src/js/admin/PreferencesWorkspace.jsx:47
+msgid "Everyday behavior that affects site delivery and repeated WordPress work."
+msgstr ""
+
+#: assets/src/js/admin/PreferencesWorkspace.jsx:58
+msgid "Measurement and privacy"
+msgstr ""
+
+#: assets/src/js/admin/PreferencesWorkspace.jsx:59
+msgid "Temporarily collect private, aggregate evidence when the WordPress admin needs investigation."
+msgstr ""
+
+#: assets/src/js/admin/PreferencesWorkspace.jsx:70
+msgid "Data lifecycle"
+msgstr ""
+
+#: assets/src/js/admin/PreferencesWorkspace.jsx:71
+msgid "Choose what happens to Perform data when the plugin is removed."
+msgstr ""
+
+#: assets/src/js/admin/PreferencesWorkspace.jsx:79
+msgid "Commerce"
+msgstr ""
+
+#: assets/src/js/admin/PreferencesWorkspace.jsx:80
+msgid "WooCommerce performance controls for this store."
+msgstr ""
+
+#: assets/src/js/admin/PreferencesWorkspace.jsx:91
+msgid "Private by default"
+msgstr ""
+
+#: assets/src/js/admin/PreferencesWorkspace.jsx:93
+msgid "Local diagnostics exclude page content, private URLs, credentials, request payloads, and visitor identities."
+msgstr ""
+
+#: assets/src/js/admin/SettingsApp.jsx:123
+msgid "The previous save may have succeeded. Enter the secret again and retry."
+msgstr ""
+
+#: assets/src/js/admin/SettingsApp.jsx:152
+msgid "Save failed. Please try again."
+msgstr ""
+
+#: assets/src/js/admin/SettingsApp.jsx:165
+msgid "Settings saved."
+msgstr ""
+
+#: assets/src/js/admin/SettingsApp.jsx:173
+msgid "Save failed."
+msgstr ""
+
+#: assets/src/js/admin/SettingsApp.jsx:177
+msgid "The save response could not be confirmed. Please retry."
+msgstr ""
+
+#: assets/src/js/admin/SettingsApp.jsx:182
+msgid "The save could not be confirmed and may have succeeded. Please retry."
+msgstr ""
+
+#: assets/src/js/admin/SettingsHeader.jsx:47
+msgid "Perform settings"
+msgstr ""
+
+#: assets/src/js/admin/SettingsHeader.jsx:72
+msgid "Documentation"
+msgstr ""
+
+#. translators: %s: plugin version.
+#: assets/src/js/admin/SettingsHeader.jsx:78
+#, js-format
+msgid "Version %s"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:17
+msgid "Needs a separate test"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:41
+msgid "A static page"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:45
+msgid "Latest posts"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:63
+msgid "Refresh inventory"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:66
+msgid "Generating inventory…"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:71
+msgid "Generating the local site inventory…"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:83
+msgid "The site inventory could not be refreshed."
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:108
+msgid "Local diagnostics"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:109
+msgid "Site inventory"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:111
+msgid "Create a private snapshot of this site’s software and content structure so Perform can give context-aware guidance."
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:129
+msgid "Private and local"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:131
+msgid "This inventory contains no post content, option values, private URLs, customer data, secrets, or telemetry. It does not change the site."
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:153
+msgid "Generate the first inventory"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:155
+msgid "The collection runs only when requested, stays on this WordPress site, and is cached for 24 hours."
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:166
+msgid "Site inventory summary"
+msgstr ""
+
+#. translators: %d: installed plugin count.
+#: assets/src/js/admin/SiteInventoryPanel.jsx:174
+#, js-format
+msgid "%d installed"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:180
+msgid "Content types"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:182
+msgid "Registered locally"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:185
+msgid "Inventory cost"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:187
+msgid "Manual bounded collection"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:194
+msgid "Environment"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:196
+msgid "Versions detected through local WordPress and server APIs."
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:214
+msgid "Site configuration"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:216
+msgid "Facts describe the site; they are not performance judgments."
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:230
+msgid "Multisite"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:234
+msgid "No"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:238
+msgid "Front page"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:242
+msgid "Enabled Perform modules"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:252
+msgid "Measurement coverage"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:254
+msgid "Local facts cannot replace lab or real-user performance data."
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:264
+msgid "Site structure"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:268
+msgid "Plugin identity"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:272
+msgid "Lab performance"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:276
+msgid "Core Web Vitals field data"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:287
+msgid "Installed plugins"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:289
+msgid "Visible only to administrators. No plugin is ranked or labelled harmful."
+msgstr ""
+
+#. translators: 1: active count, 2: collected count.
+#: assets/src/js/admin/SiteInventoryPanel.jsx:301
+#, js-format
+msgid "View %1$d active and %2$d collected plugins"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:311
+msgid "Version"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:323
+msgid "Inactive"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:333
+msgid "The plugin list is truncated to keep collection bounded."
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:342
+msgid "Registered content types"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:344
+msgid "Aggregate readable counts only. No content or private URLs are collected."
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:356
+msgid "Content type"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:357
+msgid "Items"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:358
+msgid "Visibility"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:369
+msgid "Public"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:370
+msgid "Private"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:386
+msgid "The content-type list is truncated to keep collection bounded."
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:398
+msgid "Refresh recommended"
+msgstr ""
+
+#: assets/src/js/admin/SystemHealthPanel.jsx:7
+msgid "Action recommended"
+msgstr ""
+
+#: assets/src/js/admin/SystemHealthPanel.jsx:20
+msgid "System health"
+msgstr ""
+
+#: assets/src/js/admin/SystemHealthPanel.jsx:22
+msgid "Local runtime signals with practical guidance. Perform does not change server configuration."
+msgstr ""
+
+#. translators: %d: number of system signals to review.
+#: assets/src/js/admin/SystemHealthPanel.jsx:32
+#, js-format
+msgid "%d to review"
+msgstr ""
+
+#: assets/src/js/admin/SystemHealthPanel.jsx:35
+msgid "No actions suggested"
+msgstr ""
+
+#: assets/src/js/admin/SystemHealthPanel.jsx:40
+msgid "System health signals are unavailable in this environment."
+msgstr ""
+
+#: assets/src/js/admin/SystemHealthPanel.jsx:60
+msgid "Paths, credentials, request data, log contents, and private configuration values are intentionally excluded."
+msgstr ""
+
+#. translators: 1: configured setting count, 2: total setting count.
+#: assets/src/js/admin/WorkspaceLayout.jsx:98
+#, js-format
+msgid "%1$d of %2$d configured"
+msgstr ""
+
+#: assets/src/js/admin/WorkspaceLayout.jsx:120
+msgid "Back to insights"
 msgstr ""

@@ -31,7 +31,7 @@ const SystemHealthPanel = ( { health = {} } ) => {
 								/* translators: %d: number of system signals to review. */
 								__( '%d to review', 'perform' ),
 								reviewCount
-						  )
+							)
 						: __( 'No actions suggested', 'perform' ) }
 				</span>
 			</CardHeader>

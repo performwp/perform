@@ -1,15 +1,15 @@
 .perform-settings-page {
-	--perform-color-brand: #0046d1;
-	--perform-color-primary: #0046d1;
-	--perform-color-brand-hover: #0037a8;
+	--perform-color-brand: #155eef;
+	--perform-color-primary: #155eef;
+	--perform-color-brand-hover: #004eeb;
 	--perform-color-focus: #2271b1;
-	--perform-color-text: #1d2327;
-	--perform-color-text-muted: #50575e;
-	--perform-color-border: #dcdcde;
+	--perform-color-text: #101828;
+	--perform-color-text-muted: #667085;
+	--perform-color-border: #d0d5dd;
 	--perform-color-surface: #fff;
 	--perform-color-surface-subtle: #f7f8fa;
 	--perform-color-surface-accent: #f3f7ff;
-	--perform-color-canvas: #f0f0f1;
+	--perform-color-canvas: #f8fafc;
 	--perform-color-success: #008a20;
 	--perform-color-warning: #996800;
 	--perform-color-danger: #b32d2e;
@@ -33,6 +33,12 @@
 	stroke-width: 1.75;
 }
 
+/* WordPress buttons fill nested SVGs; Heroicons are stroke-based outline icons. */
+.perform-settings-page .components-button svg[data-slot='icon'] {
+	fill: none;
+	stroke: currentcolor;
+}
+
 .perform-settings-page *,
 .perform-settings-page *::before,
 .perform-settings-page *::after {
@@ -43,15 +49,16 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	min-height: 76px;
-	padding: 8px clamp(20px, 3vw, 44px);
+	gap: 24px;
+	min-height: 50px;
+	padding: 0 clamp(24px, 3.2vw, 52px);
 	border-bottom: 1px solid var(--perform-color-border);
 	background: var(--perform-color-surface);
 }
 
 .perform-settings-header__logo {
 	width: auto;
-	height: 52px;
+	height: 50px;
 }
 
 .perform-settings-header__actions {
@@ -64,7 +71,8 @@
 	min-height: 44px;
 	gap: 6px;
 	color: var(--perform-color-brand);
-	font-weight: 600;
+	font-size: 13px;
+	font-weight: 500;
 	text-decoration: none;
 }
 
@@ -73,13 +81,36 @@
 	height: 18px;
 }
 
+.perform-settings-header__actions .components-button .perform-ui-icon {
+	display: block;
+	flex: 0 0 18px;
+	width: 18px;
+	height: 18px;
+	stroke-width: 1.75;
+}
+
+.perform-settings-notices {
+	padding: 12px clamp(24px, 3.2vw, 52px) 0;
+}
+
+.perform-settings-notices:empty {
+	display: none;
+}
+
+.perform-settings-notices > .notice,
+.perform-settings-notices > .updated,
+.perform-settings-notices > .error {
+	margin: 0;
+}
+
 .perform-plugin-version {
-	padding: 4px 9px;
+	padding: 5px 10px;
+	border: 1px solid #d6e4ff;
 	border-radius: 999px;
 	color: var(--perform-color-brand);
-	background: #edf4ff;
+	background: #f5f8ff;
 	font-size: 11px;
-	font-weight: 600;
+	font-weight: 500;
 	line-height: 1.4;
 }
 
@@ -113,7 +144,7 @@
 
 .perform-settings-tab-panel .components-tab-panel__tabs-item[aria-selected='true'] {
 	color: var(--perform-color-brand);
-	font-weight: 600;
+	font-weight: 500;
 }
 
 .perform-settings-tab-panel .components-tab-panel__tabs-item[aria-selected='true']::after {
@@ -216,7 +247,8 @@
 
 .perform-settings-content {
 	width: 100%;
-	padding: 36px clamp(20px, 3vw, 44px) 48px;
+	padding: 40px clamp(24px, 3.2vw, 52px) 56px;
+	background: var(--perform-color-surface);
 }
 
 .perform-settings-sections {
@@ -353,16 +385,17 @@
 	align-items: center;
 	justify-content: flex-end;
 	gap: 16px;
-	min-height: 68px;
+	min-height: 72px;
 	margin-top: auto;
-	padding: 12px clamp(20px, 3vw, 44px);
+	padding: 12px clamp(24px, 3.2vw, 52px);
 	border-top: 1px solid var(--perform-color-border);
 	background: rgba(255, 255, 255, 0.96);
 	backdrop-filter: blur(8px);
+	box-shadow: 0 -4px 18px rgba(16, 24, 40, 0.04);
 }
 
 .perform-savebar__message {
-	margin-right: auto;
+	margin-right: 0;
 	color: var(--perform-color-success);
 	font-weight: 500;
 }
@@ -688,7 +721,7 @@
 
 .perform-health-card__heading {
 	display: flex;
-	align-items: flex-start;
+	align-items: center;
 	justify-content: space-between;
 	gap: 16px;
 }
@@ -1875,13 +1908,13 @@
 	}
 
 	.perform-settings-header {
-		min-height: 68px;
+		min-height: 50px;
 		padding-right: 16px;
 		padding-left: 16px;
 	}
 
 	.perform-settings-header__logo {
-		height: 44px;
+		height: 50px;
 	}
 
 	.perform-settings-header__actions .components-button {
@@ -2496,5 +2529,796 @@
 		transition-duration: 0.01ms !important;
 		animation-duration: 0.01ms !important;
 		animation-iteration-count: 1 !important;
+	}
+}
+
+/* Perform 1.8 workspace redesign. */
+
+.perform-workspace-nav {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.perform-workspace-nav__items {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+	overflow-x: auto;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	scrollbar-width: none;
+}
+
+.perform-workspace-nav__items::-webkit-scrollbar {
+	display: none;
+}
+
+.perform-workspace-nav__list-item {
+	flex: 0 0 auto;
+	margin-bottom: 0;
+}
+
+.perform-workspace-nav__item {
+	position: relative;
+	display: inline-flex;
+	flex: 0 0 auto;
+	align-items: center;
+	justify-content: center;
+	min-height: 50px;
+	padding: 0 clamp(10px, 1.25vw, 18px);
+	border: 0;
+	border-radius: 6px;
+	color: var(--perform-color-text-muted);
+	background: transparent;
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 1.4;
+	letter-spacing: -0.01em;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+.perform-workspace-nav__item:hover {
+	color: var(--perform-color-brand);
+	background: #f5f8ff;
+}
+
+.perform-workspace-nav__item:visited {
+	color: var(--perform-color-text-muted);
+}
+
+.perform-workspace-nav__item[aria-current='page'] {
+	color: var(--perform-color-brand);
+	font-weight: 600;
+}
+
+.perform-workspace-nav__item[aria-current='page']::after {
+	position: absolute;
+	right: clamp(10px, 1.25vw, 18px);
+	bottom: 0;
+	left: clamp(10px, 1.25vw, 18px);
+	height: 3px;
+	border-radius: 3px 3px 0 0;
+	background: var(--perform-color-brand);
+	content: '';
+}
+
+.perform-workspace-nav__item:focus {
+	outline: 0;
+	box-shadow: none;
+}
+
+.perform-workspace-nav__item:focus-visible {
+	outline: 2px solid var(--perform-color-focus);
+	outline-offset: -3px;
+}
+
+.perform-workspace,
+.perform-dashboard {
+	display: grid;
+	gap: 28px;
+	width: 100%;
+	max-width: 1320px;
+	margin: 0 auto;
+}
+
+.perform-workspace-header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 36px;
+	padding: 2px 0 6px;
+}
+
+.perform-workspace-header__copy {
+	max-width: 780px;
+}
+
+.perform-workspace-eyebrow {
+	margin: 0 0 8px;
+	color: var(--perform-color-brand);
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.perform-workspace-header h1 {
+	margin: 0;
+	color: var(--perform-color-text);
+	font-size: clamp(28px, 2.4vw, 36px);
+	font-weight: 600;
+	letter-spacing: -0.025em;
+	line-height: 1.16;
+}
+
+.perform-workspace-header__copy > p:not(.perform-workspace-eyebrow) {
+	max-width: 720px;
+	margin: 10px 0 0;
+	color: var(--perform-color-text-muted);
+	font-size: 15px;
+	line-height: 1.65;
+}
+
+.perform-workspace-header__copy > .perform-status-badge {
+	margin-top: 16px;
+}
+
+.perform-workspace-header__actions {
+	display: flex;
+	flex: 0 0 auto;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 10px;
+	padding-top: 8px;
+}
+
+.perform-workspace-header__actions .components-button,
+.perform-workspace .components-button.is-primary {
+	min-height: 42px;
+	padding-inline: 16px;
+	border-radius: 7px;
+	font-weight: 600;
+}
+
+.perform-panel,
+.perform-settings-group {
+	border: 1px solid #e4e7ec;
+	border-radius: 12px;
+	background: var(--perform-color-surface);
+	box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+.perform-panel {
+	padding: 24px;
+}
+
+.perform-panel > h2,
+.perform-panel-heading h2,
+.perform-section-heading h2,
+.perform-measurement-callout h2 {
+	margin: 0;
+	font-size: 18px;
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	line-height: 1.35;
+}
+
+.perform-panel-heading {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 24px;
+	margin-bottom: 8px;
+}
+
+.perform-panel-heading p,
+.perform-section-heading p {
+	max-width: 760px;
+	margin: 6px 0 0;
+	color: var(--perform-color-text-muted);
+	font-size: 14px;
+	line-height: 1.55;
+}
+
+.perform-metric-panel > h2 {
+	margin-bottom: 18px;
+}
+
+.perform-metric-strip {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.perform-metric {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	min-width: 0;
+	padding: 4px 22px;
+	border-right: 1px solid #eaecf0;
+}
+
+.perform-metric:first-child {
+	padding-left: 0;
+}
+
+.perform-metric:last-child {
+	padding-right: 0;
+	border-right: 0;
+}
+
+.perform-metric > div {
+	display: grid;
+	gap: 4px;
+	min-width: 0;
+}
+
+.perform-metric span:not(.perform-icon-badge),
+.perform-metric small {
+	color: var(--perform-color-text-muted);
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.perform-metric strong {
+	color: var(--perform-color-text);
+	font-size: 24px;
+	font-weight: 600;
+	line-height: 1.2;
+}
+
+.perform-panel-note {
+	margin: 20px 0 0;
+	padding-top: 16px;
+	border-top: 1px solid #eaecf0;
+	color: var(--perform-color-text-muted);
+	font-size: 12px;
+}
+
+.perform-icon-badge {
+	display: inline-flex;
+	flex: 0 0 38px;
+	align-items: center;
+	justify-content: center;
+	width: 38px;
+	height: 38px;
+	border-radius: 50%;
+	color: var(--perform-color-brand);
+	background: #eef4ff;
+}
+
+.perform-icon-badge svg {
+	width: 20px;
+	height: 20px;
+	stroke-width: 1.8;
+}
+
+.perform-icon-badge[data-status='success'] {
+	color: #067647;
+	background: #ecfdf3;
+}
+
+.perform-icon-badge[data-status='warning'] {
+	color: #b54708;
+	background: #fffaeb;
+}
+
+.perform-status-badge {
+	display: inline-flex;
+	align-items: center;
+	min-height: 26px;
+	padding: 3px 9px;
+	border: 1px solid #eaecf0;
+	border-radius: 999px;
+	color: var(--perform-color-text-muted);
+	background: #f9fafb;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 1.3;
+}
+
+.perform-status-badge[data-status='success'] {
+	border-color: #abefc6;
+	color: #067647;
+	background: #ecfdf3;
+}
+
+.perform-status-badge[data-status='warning'] {
+	border-color: #fedf89;
+	color: #b54708;
+	background: #fffaeb;
+}
+
+.perform-workspace-groups {
+	display: grid;
+	gap: 16px;
+}
+
+.perform-settings-group {
+	overflow: clip;
+}
+
+.perform-settings-group > summary {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 24px;
+	min-height: 88px;
+	padding: 20px 22px;
+	cursor: pointer;
+	list-style: none;
+}
+
+.perform-settings-group > summary::-webkit-details-marker {
+	display: none;
+}
+
+.perform-settings-group > summary:focus-visible {
+	outline: 2px solid var(--perform-color-focus);
+	outline-offset: -3px;
+}
+
+.perform-settings-group__summary-copy {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	min-width: 0;
+}
+
+.perform-settings-group__summary-copy h2 {
+	margin: 0;
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 1.35;
+}
+
+.perform-settings-group__summary-copy p {
+	margin: 4px 0 0;
+	color: var(--perform-color-text-muted);
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+.perform-settings-group__summary-meta {
+	display: flex;
+	flex: 0 0 auto;
+	align-items: center;
+	gap: 12px;
+	color: var(--perform-color-text-muted);
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.perform-settings-group__summary-meta svg {
+	width: 18px;
+	height: 18px;
+	transition: transform 160ms ease;
+}
+
+.perform-settings-group[open] .perform-settings-group__summary-meta svg {
+	transform: rotate(180deg);
+}
+
+.perform-settings-group__fields {
+	padding: 0 22px;
+	border-top: 1px solid #eaecf0;
+}
+
+.perform-settings-group .perform-settings-field {
+	grid-template-columns: minmax(0, 1fr) minmax(260px, 420px);
+	gap: clamp(32px, 5vw, 80px);
+	min-height: 88px;
+	padding: 20px 0;
+	border-color: #eaecf0;
+}
+
+.perform-settings-group .perform-settings-field:last-child {
+	border-bottom: 0;
+}
+
+.perform-settings-group .perform-settings-field__title-row h4 {
+	color: var(--perform-color-text);
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.perform-settings-group .perform-settings-field__copy > p {
+	color: var(--perform-color-text-muted);
+	font-size: 13px;
+	line-height: 1.55;
+}
+
+.perform-section-heading {
+	padding-top: 4px;
+}
+
+.perform-health-list,
+.perform-insight-status-list {
+	display: grid;
+}
+
+.perform-health-row,
+.perform-insight-status-row {
+	display: grid;
+	grid-template-columns: 40px minmax(0, 1fr) auto auto;
+	align-items: center;
+	gap: 14px;
+	min-height: 84px;
+	padding: 16px 0;
+	border-bottom: 1px solid #eaecf0;
+}
+
+.perform-health-row:last-child,
+.perform-insight-status-row:last-child {
+	border-bottom: 0;
+}
+
+.perform-health-row__copy strong,
+.perform-insight-status-row strong {
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.perform-health-row__copy p,
+.perform-insight-status-row p {
+	margin: 4px 0 0;
+	color: var(--perform-color-text-muted);
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+.perform-health-row .components-button.is-link {
+	min-width: 138px;
+	justify-content: flex-end;
+	font-size: 13px;
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.perform-health-panel__attention {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	color: #b54708;
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.perform-health-panel__attention svg {
+	width: 18px;
+	height: 18px;
+}
+
+.perform-measurement-callout,
+.perform-safety-callout,
+.perform-privacy-callout {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 28px;
+	padding: 22px 24px;
+	border: 1px solid #d6e4ff;
+	border-radius: 12px;
+	background: #f5f8ff;
+}
+
+.perform-measurement-callout p,
+.perform-safety-callout p,
+.perform-privacy-callout p {
+	max-width: 720px;
+	margin: 6px 0 0;
+	color: var(--perform-color-text-muted);
+	font-size: 13px;
+	line-height: 1.55;
+}
+
+.perform-safety-callout,
+.perform-privacy-callout {
+	justify-content: flex-start;
+}
+
+.perform-safety-callout > svg,
+.perform-privacy-callout > svg {
+	flex: 0 0 24px;
+	width: 24px;
+	height: 24px;
+	color: var(--perform-color-brand);
+}
+
+.perform-measurement-callout__metrics {
+	display: flex;
+	flex: 0 0 auto;
+	gap: 24px;
+}
+
+.perform-measurement-callout__metrics span {
+	display: grid;
+	gap: 4px;
+	color: var(--perform-color-text-muted);
+	font-size: 11px;
+}
+
+.perform-measurement-callout__metrics strong {
+	color: var(--perform-color-text);
+	font-size: 15px;
+}
+
+.perform-insight-health__summary {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	margin-bottom: 8px;
+	padding-bottom: 20px;
+	border-bottom: 1px solid #eaecf0;
+}
+
+.perform-insight-health__summary h2 {
+	margin: 0;
+	font-size: 18px;
+}
+
+.perform-insight-health__summary p {
+	margin: 5px 0 0;
+	color: var(--perform-color-text-muted);
+}
+
+.perform-insight-status-row {
+	grid-template-columns: 40px minmax(0, 1fr) auto;
+}
+
+.perform-report-list {
+	padding-bottom: 8px;
+}
+
+.perform-report-link.components-button {
+	display: grid;
+	grid-template-columns: 40px minmax(0, 1fr) 20px;
+	align-items: center;
+	gap: 14px;
+	width: 100%;
+	height: auto;
+	min-height: 78px;
+	padding: 14px 0;
+	border-top: 1px solid #eaecf0;
+	border-radius: 0;
+	color: var(--perform-color-text);
+	text-align: left;
+}
+
+.perform-report-link > span:nth-child(2) {
+	display: grid;
+	gap: 4px;
+}
+
+.perform-report-link small {
+	color: var(--perform-color-text-muted);
+	font-size: 13px;
+	font-weight: 400;
+	line-height: 1.45;
+}
+
+.perform-report-link__chevron {
+	width: 18px;
+	height: 18px;
+	color: #98a2b3;
+}
+
+.perform-runtime-disclosure {
+	border-top: 1px solid #eaecf0;
+	border-bottom: 1px solid #eaecf0;
+}
+
+.perform-runtime-disclosure > summary {
+	padding: 16px 0;
+	cursor: pointer;
+	color: var(--perform-color-text);
+	font-weight: 600;
+}
+
+.perform-runtime-disclosure .perform-diagnostics-panel {
+	margin: 0 0 24px;
+}
+
+.perform-report-back.components-button {
+	justify-self: start;
+	gap: 7px;
+	padding: 0;
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.perform-report-back.components-button svg {
+	width: 18px;
+	height: 18px;
+}
+
+.perform-report-workspace > .perform-database-audit,
+.perform-report-workspace > .perform-site-inventory,
+.perform-report-workspace > .perform-admin-performance-monitor,
+.perform-report-workspace > .perform-cron-pressure,
+.perform-report-workspace > .perform-admin-asset-audit,
+.perform-report-workspace > .perform-plugin-impact,
+.perform-report-workspace > .perform-action-scheduler {
+	width: 100%;
+	max-width: none;
+	margin: 0;
+}
+
+.perform-savebar__state {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	margin-right: auto;
+	color: var(--perform-color-text-muted);
+	font-size: 13px;
+	font-weight: 500;
+}
+
+.perform-savebar__state svg {
+	width: 18px;
+	height: 18px;
+	color: #17b26a;
+}
+
+.perform-savebar__state[data-dirty='true'] svg {
+	color: #f79009;
+}
+
+.perform-savebar .components-button.is-primary:disabled {
+	border-color: #e4e7ec;
+	color: #98a2b3;
+	background: #e4e7ec;
+	box-shadow: none;
+}
+
+@media (max-width: 1080px) {
+
+	.perform-settings-header {
+		flex-wrap: wrap;
+		padding-bottom: 0;
+	}
+
+	.perform-workspace-nav {
+		order: 3;
+		flex-basis: calc(100% + clamp(48px, 6.4vw, 104px));
+		width: calc(100% + clamp(48px, 6.4vw, 104px));
+		margin-inline: calc(clamp(24px, 3.2vw, 52px) * -1);
+		border-top: 1px solid #eaecf0;
+	}
+
+	.perform-workspace-nav__items {
+		justify-content: flex-start;
+		padding-inline: clamp(24px, 3.2vw, 52px);
+	}
+
+	.perform-workspace-nav__item {
+		min-height: 46px;
+	}
+
+	.perform-settings-notices {
+		padding-right: 16px;
+		padding-left: 16px;
+	}
+
+	.perform-metric-strip {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		row-gap: 22px;
+	}
+
+	.perform-metric:nth-child(2) {
+		padding-right: 0;
+		border-right: 0;
+	}
+
+	.perform-metric:nth-child(3) {
+		padding-left: 0;
+	}
+}
+
+@media (max-width: 782px) {
+
+	.perform-settings-page {
+		margin-left: -10px;
+	}
+
+	.perform-workspace-nav {
+		flex-basis: calc(100% + 32px);
+		width: calc(100% + 32px);
+		margin-inline: -16px;
+	}
+
+	.perform-workspace-nav__items {
+		padding-inline: 16px;
+	}
+
+	.perform-settings-header {
+		min-height: 50px;
+	}
+
+	.perform-settings-header__logo {
+		height: 50px;
+	}
+
+	.perform-settings-header__actions .components-button {
+		display: none;
+	}
+
+	.perform-settings-content {
+		padding-top: 28px;
+	}
+
+	.perform-workspace,
+	.perform-dashboard {
+		gap: 22px;
+	}
+
+	.perform-workspace-header,
+	.perform-measurement-callout {
+		flex-direction: column;
+		gap: 18px;
+	}
+
+	.perform-workspace-header__actions {
+		width: 100%;
+		justify-content: flex-start;
+		padding-top: 0;
+	}
+
+	.perform-metric-strip {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.perform-metric,
+	.perform-metric:nth-child(2),
+	.perform-metric:nth-child(3) {
+		padding: 14px 0;
+		border-right: 0;
+		border-bottom: 1px solid #eaecf0;
+	}
+
+	.perform-metric:last-child {
+		border-bottom: 0;
+	}
+
+	.perform-settings-group > summary {
+		align-items: flex-start;
+	}
+
+	.perform-settings-group__summary-meta span {
+		display: none;
+	}
+
+	.perform-settings-group .perform-settings-field,
+	.perform-health-row,
+	.perform-insight-status-row {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 10px;
+	}
+
+	.perform-settings-group .perform-settings-field__control {
+		justify-content: flex-start;
+	}
+
+	.perform-health-row .components-button.is-link {
+		min-width: 0;
+		justify-content: flex-start;
+	}
+
+	.perform-measurement-callout__metrics {
+		width: 100%;
+		justify-content: space-between;
+	}
+
+	.perform-savebar {
+		flex-wrap: wrap;
+	}
+
+	.perform-savebar__message {
+		order: -1;
+		width: 100%;
 	}
 }

@@ -48,7 +48,7 @@ const SettingsFieldRow = ( { field, value, onChange } ) => {
 	const labelId = `${ id }-label`;
 	const descriptionId = `${ id }-description`;
 	const sensitive = SENSITIVE_KEYS.includes( id );
-	const visibleValue = sensitive && value === MASKED_SECRET_VALUE ? '' : value ?? '';
+	const visibleValue = sensitive && value === MASKED_SECRET_VALUE ? '' : ( value ?? '' );
 	const controlProps = {
 		...rest,
 		disabled,

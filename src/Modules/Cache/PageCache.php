@@ -2627,6 +2627,19 @@ class PageCache implements ModuleInterface {
 			function ( array $records ) use ( $urls, $limit, $fingerprint, $settings ): array {
 				$pending = $urls;
 				$records = $this->get_cloudflare_queue_records( $records );
+				// Re-enqueueing an in-flight URL must invalidate the consumer's snapshot,
+				// even when the record is full and no URL needs to be added.
+				foreach ( $records as &$record ) {
+					if ( ! empty( $record['source'] ) || ( $record['fingerprint'] ?? '' ) !== $fingerprint || ! empty( $record['failed'] ) ) {
+						continue;
+					}
+					$current = isset( $record['urls'] ) && is_array( $record['urls'] ) ? $record['urls'] : [];
+					if ( array_intersect( $urls, $current ) ) {
+						$record['_revision'] = wp_generate_uuid4();
+						$pending             = array_values( array_diff( $pending, $current ) );
+					}
+				}
+				unset( $record );
 				foreach ( $records as &$record ) {
 					if ( empty( $pending ) ) {
 						break;

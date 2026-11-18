@@ -77,7 +77,7 @@ final class AutoloadOptionsManager {
 	}
 
 	/**
-	 * Search a bounded page, including options currently not autoloaded.
+	 * Search a bounded page of autoloaded options or journaled changes.
 	 * @return array<string,mixed>
 	 */
 	public static function listing( string $search = '', int $page = 1, string $view = 'all' ): array {
@@ -88,17 +88,26 @@ final class AutoloadOptionsManager {
 		$hash        = '' === $reason ? 'SHA2(option_value,256)' : "''";
 		$journal_raw = $wpdb->get_var( $wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name=%s", self::JOURNAL ) );
 		$journal     = null === $journal_raw ? [] : self::journal( $journal_raw );
-		$where       = 'option_name LIKE %s';
-		$params      = [ '%' . $wpdb->esc_like( substr( $search, 0, 191 ) ) . '%' ];
+		$where       = '1=%d';
+		$params      = [ 1 ];
+		if ( '' !== $search ) {
+			$where   .= ' AND option_name LIKE %s';
+			$params[] = '%' . $wpdb->esc_like( substr( $search, 0, 191 ) ) . '%';
+		}
 		if ( 'changed' === $view ) {
 			$where .= empty( $journal ) ? ' AND 1=0' : ' AND option_name IN (' . implode( ',', array_fill( 0, count( $journal ), '%s' ) ) . ')';
 			$params = array_merge( $params, array_keys( $journal ) );
+		} else {
+			$autoload_values = function_exists( 'wp_autoload_values_to_autoload' ) ? wp_autoload_values_to_autoload() : [ 'yes' ];
+			$autoload_values = is_array( $autoload_values ) ? array_values( array_unique( array_map( 'strval', $autoload_values ) ) ) : [];
+			$where          .= $autoload_values ? ' AND autoload IN (' . implode( ',', array_fill( 0, count( $autoload_values ), '%s' ) ) . ')' : ' AND 1=0';
+			$params          = array_merge( $params, $autoload_values );
 		}
 		// Table identity is WordPress-owned; hash and WHERE fragments are fixed SQL with bound input.
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		$total    = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->options} WHERE {$where}", $params ) );
 		$params[] = ( $page - 1 ) * 25;
-		$rows     = $wpdb->get_results( $wpdb->prepare( "SELECT option_id,option_name,autoload,OCTET_LENGTH(option_value) AS size_bytes,{$hash} AS value_hash FROM {$wpdb->options} WHERE {$where} ORDER BY option_name LIMIT 25 OFFSET %d", $params ), ARRAY_A );
+		$rows     = $wpdb->get_results( $wpdb->prepare( "SELECT option_id,option_name,autoload,OCTET_LENGTH(option_value) AS size_bytes,{$hash} AS value_hash FROM {$wpdb->options} WHERE {$where} ORDER BY size_bytes DESC, option_name ASC LIMIT 25 OFFSET %d", $params ), ARRAY_A );
 		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 
 		if ( ! is_array( $rows ) || $wpdb->last_error ) {
@@ -112,6 +121,7 @@ final class AutoloadOptionsManager {
 				'name'             => $name,
 				'sizeBytes'        => (int) $row['size_bytes'],
 				'autoload'         => $row['autoload'],
+				'ownership'        => AutoloadOptionsAudit::get_ownership_hint( $name ),
 				'enabled'          => self::enabled( $row['autoload'] ),
 				'protected'        => (bool) self::is_protected( $name ) || ! in_array( $row['autoload'], self::policies(), true ),
 				'protectionReason' => self::is_protected( $name ) ? __( 'Critical WordPress or internal Perform option.', 'perform' ) : ( in_array( $row['autoload'], self::policies(), true ) ? '' : __( 'Unrecognized autoload policy.', 'perform' ) ),

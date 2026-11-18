@@ -19,6 +19,18 @@ async function openAdminPage( page, path ) {
 	}
 }
 
+const workspace = ( page, name ) =>
+	page.getByRole( 'navigation', { name: 'Perform settings' } ).getByRole( 'link', { name, exact: true } );
+
+const autosaveState = ( page ) => page.locator( '.perform-savebar__state' );
+
+async function openSiteProfile( page ) {
+	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=inventory' );
+	await workspace( page, 'Insights' ).waitFor();
+	await page.getByRole( 'button', { name: /Generate site profile|Review site profile/ } ).click();
+	await expect( page.getByRole( 'button', { name: 'Back to insights' } ) ).toBeVisible();
+}
+
 async function login(
 	page,
 	username = process.env.WP_USERNAME || 'admin',
@@ -45,32 +57,34 @@ test( 'settings save, Assets Manager, and page cache smoke paths work', async ( 
 
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings' );
 	await expect( page.locator( '#perform-settings-page' ) ).toBeVisible();
-	await expect( page.getByRole( 'tab', { name: 'Dashboard' } ) ).toBeVisible();
-	await expect( page.getByText( 'Performance health' ) ).toBeVisible();
+	await expect( workspace( page, 'Overview' ) ).toHaveAttribute( 'aria-current', 'page' );
+	await expect( page.getByRole( 'heading', { name: 'How your site is doing' } ) ).toBeVisible();
 	await expect( page.getByText( 'Core Web Vitals need a separate test' ) ).toBeVisible();
 	await expect( page.getByText( /unverified speed score/ ) ).toBeVisible();
-	await expect( page.getByRole( 'heading', { name: 'Runtime Diagnostics' } ) ).toBeVisible();
-	await expect( page.getByRole( 'button', { name: 'Save Settings' } ) ).toHaveCount( 0 );
+	await expect( page.getByRole( 'heading', { name: 'Runtime Diagnostics' } ) ).toHaveCount( 0 );
+	await expect( autosaveState( page ) ).toHaveCount( 0 );
 	await mkdir( 'test-results/proof', { recursive: true } );
 	await page.screenshot( { path: 'test-results/proof/performance-health-dashboard-desktop.png', fullPage: true } );
 
-	await page.getByRole( 'tab', { name: 'General' } ).click();
-	await expect( page.getByText( 'General Settings' ) ).toBeVisible();
+	await workspace( page, 'Insights' ).click();
+	await page.locator( '#perform-runtime-diagnostics > summary' ).click();
+	await expect( page.getByRole( 'heading', { name: 'Runtime Diagnostics' } ) ).toBeVisible();
+	await expect( autosaveState( page ) ).toHaveCount( 0 );
+
+	await workspace( page, 'Settings' ).click();
+	await expect( page.getByRole( 'heading', { name: 'Site behavior' } ) ).toBeVisible();
 	await expect( page.getByRole( 'heading', { name: 'Runtime Diagnostics' } ) ).toHaveCount( 0 );
-	await expect( page.getByRole( 'button', { name: 'Save Settings' } ) ).toBeVisible();
+	await expect( autosaveState( page ) ).toHaveText( 'All changes saved' );
 	await expect( page ).toHaveURL( /[?&]tab=general(?:&|$)/ );
 
-	await page.getByRole( 'tab', { name: 'Assets', exact: true } ).click();
+	await workspace( page, 'Assets & CDN' ).click();
 	await page.getByRole( 'checkbox', { name: 'Enable Assets Manager' } ).check();
 	await page.getByRole( 'textbox', { name: 'Preconnect' } ).fill( `//ci-${ Date.now() }.example.com` );
 
-	await page.getByRole( 'tab', { name: 'Cache', exact: true } ).click();
+	await workspace( page, 'Cache' ).click();
 	await page.getByRole( 'checkbox', { name: 'Enable Full-Page Cache' } ).check();
 
-	const saveButton = page.getByRole( 'button', { name: 'Save Settings' } );
-	await expect( saveButton ).toBeEnabled();
-	await saveButton.click();
-	await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
+	await expect( autosaveState( page ) ).toHaveText( 'All changes saved' );
 	await expect( page ).toHaveURL( /[?&]tab=cache(?:&|$)/ );
 	await page.reload();
 	await expect( page.getByLabel( 'Cache TTL' ) ).toHaveValue( '3600' );
@@ -128,9 +142,35 @@ test( 'settings field rows stack beneath their descriptions at narrow widths', a
 		() => document.documentElement.scrollWidth > document.documentElement.clientWidth
 	);
 	expect( dashboardHasHorizontalOverflow ).toBeFalsy();
+	for ( const width of [ 320, 390, 768 ] ) {
+		await page.setViewportSize( { width, height: 844 } );
+		const layout = await page.evaluate( () => {
+			const nav = document.querySelector( '.perform-workspace-nav' );
+			const items = nav.querySelector( '.perform-workspace-nav__items' );
+			const bounds = nav.getBoundingClientRect();
+			return {
+				viewportWidth: document.documentElement.clientWidth,
+				documentWidth: document.documentElement.scrollWidth,
+				left: bounds.left,
+				right: bounds.right,
+				scrollWidth: items.scrollWidth,
+				clientWidth: items.clientWidth,
+			};
+		} );
+		expect( layout.documentWidth ).toBeLessThanOrEqual( layout.viewportWidth + 1 );
+		expect( layout.left ).toBeGreaterThanOrEqual( -1 );
+		expect( layout.right ).toBeLessThanOrEqual( layout.viewportWidth + 1 );
+		if ( width <= 390 ) {
+			expect( layout.scrollWidth ).toBeGreaterThan( layout.clientWidth );
+		}
+		const finalTab = workspace( page, 'Settings' );
+		await finalTab.scrollIntoViewIfNeeded();
+		await expect( finalTab ).toBeInViewport();
+	}
+	await page.setViewportSize( { width: 390, height: 844 } );
 
-	for ( const tabName of [ 'General', 'Bloat', 'Assets', 'CDN', 'Cache', 'Advanced' ] ) {
-		await page.getByRole( 'tab', { name: tabName, exact: true } ).click();
+	for ( const workspaceName of [ 'Settings', 'Cleanup', 'Assets & CDN', 'Cache' ] ) {
+		await workspace( page, workspaceName ).click();
 		const row = page.locator( '.perform-settings-field' ).first();
 		await expect( row ).toBeVisible();
 		const isStacked = await row.evaluate( ( element ) => {
@@ -145,9 +185,9 @@ test( 'settings field rows stack beneath their descriptions at narrow widths', a
 
 test( 'Site Inventory refresh is private, bounded, and responsive', async ( { page } ) => {
 	await login( page );
-	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=inventory' );
+	await openSiteProfile( page );
 
-	await expect( page.getByLabel( 'Current report' ) ).toHaveValue( 'inventory' );
+	await expect( workspace( page, 'Insights' ) ).toHaveAttribute( 'aria-current', 'page' );
 	await expect( page.getByText( 'Private and local' ) ).toBeVisible();
 	await expect( page.getByText( /no post content, option values, private URLs/i ) ).toBeVisible();
 	await expect( page.getByRole( 'heading', { name: 'System health' } ) ).toBeVisible();
@@ -162,7 +202,7 @@ test( 'Site Inventory refresh is private, bounded, and responsive', async ( { pa
 	await expect( page.getByRole( 'heading', { name: 'Registered content types' } ) ).toBeVisible();
 	await expect( page.getByText( 'Core Web Vitals field data' ) ).toBeVisible();
 	await expect( page.getByText( 'Needs a separate test' ).last() ).toBeVisible();
-	await expect( page.getByRole( 'button', { name: 'Save Settings' } ) ).toHaveCount( 0 );
+	await expect( autosaveState( page ) ).toHaveCount( 0 );
 
 	await mkdir( 'test-results/proof', { recursive: true } );
 	await page.screenshot( { path: 'test-results/proof/site-inventory-desktop.png', fullPage: true } );
@@ -180,14 +220,16 @@ test( 'Scheduled-task pressure is bounded, private, resettable, and responsive',
 	await login( page );
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=scheduled-tasks' );
 
-	await expect( page.getByLabel( 'Current report' ) ).toHaveValue( 'scheduled-tasks' );
+	await expect( workspace( page, 'Insights' ) ).toHaveAttribute( 'aria-current', 'page' );
+	await expect( page.getByRole( 'button', { name: 'Back to insights' } ) ).toBeVisible();
+	await expect( page.getByRole( 'heading', { name: 'Scheduled-task pressure' } ) ).toBeVisible();
 	await expect( page.getByText( 'Read-only and bounded' ) ).toBeVisible();
 	await expect( page.getByText( /excludes hook arguments, payloads, URLs, and user data/ ) ).toBeVisible();
 	await page.getByRole( 'button', { name: /Run check|Refresh check/ } ).click();
 	await expect( page.getByRole( 'status' ) ).toContainText( 'Scheduled-task diagnostic refreshed.' );
 	await expect( page.getByText( 'Most frequent scheduled hooks' ) ).toBeVisible();
 	await expect( page.getByText( /Frequency does not prove that a hook is harmful/ ) ).toBeVisible();
-	await expect( page.getByRole( 'button', { name: 'Save Settings' } ) ).toHaveCount( 0 );
+	await expect( autosaveState( page ) ).toHaveCount( 0 );
 
 	await mkdir( 'test-results/proof', { recursive: true } );
 	await page.screenshot( { path: 'test-results/proof/cron-pressure-desktop.png', fullPage: true } );
@@ -208,13 +250,14 @@ test( 'Action Scheduler diagnostic handles an absent queue without mutation', as
 	await login( page );
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=action-scheduler' );
 
-	await expect( page.getByLabel( 'Current report' ) ).toHaveValue( 'action-scheduler' );
+	await expect( workspace( page, 'Insights' ) ).toHaveAttribute( 'aria-current', 'page' );
+	await expect( page.getByRole( 'button', { name: 'Back to insights' } ) ).toBeVisible();
 	await expect( page.getByText( 'Read-only and private' ) ).toBeVisible();
 	await expect( page.getByText( /never runs, cancels, or deletes queued work/ ) ).toBeVisible();
 	await page.getByRole( 'button', { name: /Run check|Refresh check/ } ).click();
 	await expect( page.getByRole( 'status' ) ).toContainText( 'Action Scheduler diagnostic refreshed.' );
 	await expect( page.getByRole( 'heading', { name: 'Action Scheduler is not available' } ) ).toBeVisible();
-	await expect( page.getByRole( 'button', { name: 'Save Settings' } ) ).toHaveCount( 0 );
+	await expect( autosaveState( page ) ).toHaveCount( 0 );
 
 	await mkdir( 'test-results/proof', { recursive: true } );
 	await page.screenshot( { path: 'test-results/proof/action-scheduler-desktop.png', fullPage: true } );
@@ -238,16 +281,16 @@ test( 'Admin Performance Monitor is opt-in, bounded, private, clearable, and res
 	if ( ! ( await monitorToggle.isChecked() ) ) {
 		await monitorToggle.check();
 	}
-	await page.getByRole( 'button', { name: 'Save Settings' } ).click();
-	await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
+	await expect( autosaveState( page ) ).toHaveText( 'All changes saved' );
 
 	await page.goto( '/wp-admin/edit.php' );
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=admin-monitor' );
-	await expect( page.getByLabel( 'Current report' ) ).toHaveValue( 'admin-monitor' );
+	await expect( workspace( page, 'Insights' ) ).toHaveAttribute( 'aria-current', 'page' );
+	await expect( page.getByRole( 'button', { name: 'Back to insights' } ) ).toBeVisible();
 	await expect( page.getByText( 'Aggregate-only and per site' ) ).toBeVisible();
 	await expect( page.getByText( /does not store full URLs, query arguments, request payloads/ ) ).toBeVisible();
 	await expect( page.getByText( 'edit-post' ) ).toBeVisible();
-	await expect( page.getByRole( 'button', { name: 'Save Settings' } ) ).toHaveCount( 0 );
+	await expect( autosaveState( page ) ).toHaveCount( 0 );
 
 	await mkdir( 'test-results/proof', { recursive: true } );
 	await page.screenshot( { path: 'test-results/proof/admin-performance-monitor-desktop.png', fullPage: true } );
@@ -263,10 +306,9 @@ test( 'Admin Performance Monitor is opt-in, bounded, private, clearable, and res
 	await expect( page.getByRole( 'status' ) ).toContainText( 'Admin performance data cleared.' );
 	await expect( page.getByText( 'Collecting the first admin contexts' ) ).toBeVisible();
 
-	await page.getByRole( 'tab', { name: 'Advanced' } ).click();
+	await workspace( page, 'Settings' ).click();
 	await page.getByRole( 'checkbox', { name: 'Admin Performance Monitor' } ).uncheck();
-	await page.getByRole( 'button', { name: 'Save Settings' } ).click();
-	await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
+	await expect( autosaveState( page ) ).toHaveText( 'All changes saved' );
 } );
 
 test( 'Admin asset audit is opt-in, bounded, private, clearable, and responsive', async ( { page } ) => {
@@ -276,8 +318,7 @@ test( 'Admin asset audit is opt-in, bounded, private, clearable, and responsive'
 	const auditToggle = page.getByRole( 'checkbox', { name: 'Admin Asset Audit' } );
 	if ( ! ( await auditToggle.isChecked() ) ) {
 		await auditToggle.check();
-		await page.getByRole( 'button', { name: 'Save Settings' } ).click();
-		await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
+		await expect( autosaveState( page ) ).toHaveText( 'All changes saved' );
 	}
 
 	await page.goto( '/wp-admin/index.php' );
@@ -285,12 +326,13 @@ test( 'Admin asset audit is opt-in, bounded, private, clearable, and responsive'
 	await page.goto( '/wp-admin/plugins.php' );
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=admin-assets' );
 
-	await expect( page.getByLabel( 'Current report' ) ).toHaveValue( 'admin-assets' );
+	await expect( workspace( page, 'Insights' ) ).toHaveAttribute( 'aria-current', 'page' );
+	await expect( page.getByRole( 'button', { name: 'Back to insights' } ) ).toBeVisible();
 	await expect( page.getByText( 'Inventory only — nothing is disabled' ) ).toBeVisible();
 	await expect( page.getByText( /URLs, query strings, nonces, and user data are not stored/ ) ).toBeVisible();
 	await expect( page.getByText( 'Repeated across admin screens' ) ).toBeVisible();
 	await expect( page.getByText( /not proof that an asset is unnecessary/ ) ).toBeVisible();
-	await expect( page.getByRole( 'button', { name: 'Save Settings' } ) ).toHaveCount( 0 );
+	await expect( autosaveState( page ) ).toHaveCount( 0 );
 
 	await mkdir( 'test-results/proof', { recursive: true } );
 	await page.screenshot( { path: 'test-results/proof/admin-asset-audit-desktop.png', fullPage: true } );
@@ -306,10 +348,9 @@ test( 'Admin asset audit is opt-in, bounded, private, clearable, and responsive'
 	await expect( page.getByRole( 'status' ) ).toContainText( 'Admin asset audit cleared.' );
 	await expect( page.getByText( 'Visit a few admin screens' ) ).toBeVisible();
 
-	await page.getByRole( 'tab', { name: 'Advanced' } ).click();
+	await workspace( page, 'Settings' ).click();
 	await page.getByRole( 'checkbox', { name: 'Admin Asset Audit' } ).uncheck();
-	await page.getByRole( 'button', { name: 'Save Settings' } ).click();
-	await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
+	await expect( autosaveState( page ) ).toHaveText( 'All changes saved' );
 } );
 
 test( 'Plugin impact report separates measured local evidence from unavailable attribution', async ( { page } ) => {
@@ -318,19 +359,19 @@ test( 'Plugin impact report separates measured local evidence from unavailable a
 	const auditToggle = page.getByRole( 'checkbox', { name: 'Admin Asset Audit' } );
 	if ( ! ( await auditToggle.isChecked() ) ) {
 		await auditToggle.check();
-		await page.getByRole( 'button', { name: 'Save Settings' } ).click();
-		await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
+		await expect( autosaveState( page ) ).toHaveText( 'All changes saved' );
 	}
 
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=general' );
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=plugin-impact' );
-	await expect( page.getByLabel( 'Current report' ) ).toHaveValue( 'plugin-impact' );
+	await expect( workspace( page, 'Insights' ) ).toHaveAttribute( 'aria-current', 'page' );
+	await expect( page.getByRole( 'button', { name: 'Back to insights' } ) ).toBeVisible();
 	await expect( page.getByText( 'Evidence, not a plugin ranking' ) ).toBeVisible();
 	await expect( page.getByText( /does not attribute query, callback, or memory cost/ ) ).toBeVisible();
 	await expect( page.getByText( /Zero means not observed in this sample/ ) ).toBeVisible();
 	await expect( page.getByText( 'Database query contribution by plugin' ) ).toBeVisible();
 	await expect( page.getByText( 'Callback execution time by plugin' ) ).toBeVisible();
-	await expect( page.getByRole( 'button', { name: 'Save Settings' } ) ).toHaveCount( 0 );
+	await expect( autosaveState( page ) ).toHaveCount( 0 );
 
 	await mkdir( 'test-results/proof', { recursive: true } );
 	await page.screenshot( { path: 'test-results/proof/plugin-impact-desktop.png', fullPage: true } );
@@ -341,10 +382,9 @@ test( 'Plugin impact report separates measured local evidence from unavailable a
 	);
 	expect( hasHorizontalOverflow ).toBeFalsy();
 
-	await page.getByRole( 'tab', { name: 'Advanced' } ).click();
+	await workspace( page, 'Settings' ).click();
 	await page.getByRole( 'checkbox', { name: 'Admin Asset Audit' } ).uncheck();
-	await page.getByRole( 'button', { name: 'Save Settings' } ).click();
-	await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
+	await expect( autosaveState( page ) ).toHaveText( 'All changes saved' );
 } );
 
 test( 'Classic menu cache stays functional across unrelated query variables', async ( { page } ) => {
@@ -353,8 +393,7 @@ test( 'Classic menu cache stays functional across unrelated query variables', as
 	const menuCacheToggle = page.getByRole( 'checkbox', { name: 'Enable Menu Cache' } );
 	if ( ! ( await menuCacheToggle.isChecked() ) ) {
 		await menuCacheToggle.check();
-		await page.getByRole( 'button', { name: 'Save Settings' } ).click();
-		await expect( page.getByText( /Settings saved/ ) ).toBeVisible();
+		await expect( autosaveState( page ) ).toHaveText( 'All changes saved' );
 	}
 
 	await page.context().clearCookies( { name: /^wordpress_/ } );
@@ -370,20 +409,25 @@ test( 'Cache Stats report preserves legacy routing, actions, and keyboard access
 	await login( page );
 
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings' );
-	await page.getByRole( 'tab', { name: 'Diagnostics' } ).click();
-	const reportSelector = page.getByLabel( 'Current report' );
-	await reportSelector.focus();
-	await expect( reportSelector ).toBeFocused();
-	await expect( reportSelector ).toHaveCSS( 'outline-style', 'solid' );
-	await reportSelector.selectOption( 'cache-stats' );
-
-	await expect( reportSelector ).toHaveValue( 'cache-stats' );
+	const cacheWorkspace = workspace( page, 'Cache' );
+	await workspace( page, 'Overview' ).focus();
+	await page.keyboard.press( 'Tab' );
+	await expect( cacheWorkspace ).toBeFocused();
+	await expect( cacheWorkspace ).toHaveCSS( 'outline-style', 'solid' );
+	await page.keyboard.press( 'Enter' );
+	await expect( cacheWorkspace ).toHaveAttribute( 'aria-current', 'page' );
+	const activityButton = page.getByRole( 'button', { name: 'View cache activity' } );
+	await activityButton.focus();
+	await expect( activityButton ).toBeFocused();
+	await page.keyboard.press( 'Enter' );
+	await expect( page.getByRole( 'button', { name: 'Back to cache' } ) ).toBeVisible();
 	await expect( page ).toHaveURL( /[?&]tab=cache-stats(?:&|$)/ );
+	await expect( page.getByRole( 'heading', { name: 'Cache activity' } ) ).toBeVisible();
 	await expect( page.getByRole( 'heading', { name: 'Perform Cache Observability' } ) ).toBeVisible();
 	await expect( page.getByRole( 'button', { name: 'Purge Site Page Cache' } ) ).toBeVisible();
 	await expect( page.getByRole( 'button', { name: 'Export CSV' } ) ).toBeVisible();
 	await expect( page.getByRole( 'button', { name: 'Clear activity' } ) ).toBeVisible();
-	await expect( page.getByRole( 'button', { name: 'Save Settings' } ) ).toHaveCount( 0 );
+	await expect( autosaveState( page ) ).toHaveCount( 0 );
 
 	const downloadPromise = page.waitForEvent( 'download' );
 	await page.getByRole( 'button', { name: 'Export CSV' } ).click();
@@ -454,7 +498,7 @@ test( 'lower-privilege users cannot access the legacy or canonical Cache Stats r
 	expect( canonicalResponse.status() ).not.toBe( 302 );
 	await expect( page ).toHaveURL( /page=perform_settings&tab=cache-stats$/ );
 	await expect( page.getByText( 'Sorry, you are not allowed to access this page.' ) ).toBeVisible();
-	await expect( page.getByLabel( 'Current report' ) ).toHaveCount( 0 );
+	await expect( workspace( page, 'Cache' ) ).toHaveCount( 0 );
 
 	const protectedActions = [
 		[ 'perform_purge_page_cache', 'You are not allowed to purge the page cache.' ],
@@ -511,19 +555,17 @@ test( 'lower-privilege users cannot access the legacy or canonical Cache Stats r
 	expect( adminAssetResponse.status() ).toBe( 403 );
 	expect( await adminAssetResponse.json() ).toMatchObject( { success: false } );
 } );
-test( 'primary tabs retain focus through consecutive keyboard navigation', async ( { page } ) => {
+test( 'workspace navigation retains keyboard focus across navigation', async ( { page } ) => {
 	await login( page );
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=general' );
-	await page.getByRole( 'tab', { name: 'General', exact: true } ).focus();
-	await page.keyboard.press( 'ArrowRight' );
-	await expect( page.getByRole( 'tab', { name: 'Bloat', exact: true } ) ).toBeFocused();
-	await page.keyboard.press( 'ArrowRight' );
-	await expect( page.getByRole( 'tab', { name: 'Assets', exact: true } ) ).toBeFocused();
-	await page.keyboard.press( 'ArrowLeft' );
-	await expect( page.getByRole( 'tab', { name: 'Bloat', exact: true } ) ).toBeFocused();
-	await page.keyboard.press( 'End' );
-	await expect( page.getByRole( 'tab', { name: 'Diagnostics', exact: true } ) ).toBeFocused();
-	await expect( page.getByLabel( 'Current report' ) ).toBeVisible();
+	const navigation = page.getByRole( 'navigation', { name: 'Perform settings' } );
+	const cache = navigation.getByRole( 'link', { name: 'Cache', exact: true } );
+	await cache.focus();
+	await page.keyboard.press( 'Enter' );
+	await expect( cache ).toBeFocused();
+	await expect( cache ).toHaveAttribute( 'aria-current', 'page' );
+	await page.keyboard.press( 'Tab' );
+	await expect( navigation.getByRole( 'link', { name: 'Assets & CDN', exact: true } ) ).toBeFocused();
 } );
 
 test( 'Database report stays within a 320px viewport and its table scrolls by keyboard', async ( { page } ) => {
@@ -531,13 +573,15 @@ test( 'Database report stays within a 320px viewport and its table scrolls by ke
 	await login( page );
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=database' );
 	await page.getByRole( 'button', { name: /Run audit|Refresh audit/ } ).click();
-	await expect( page.getByRole( 'status' ) ).toContainText( 'Database audit refreshed.' );
-	const tableRegion = page.getByRole( 'region', { name: 'Largest autoloaded options' } );
+	await expect( page.getByText( 'Database audit refreshed.', { exact: true } ) ).toBeVisible();
+	const tableRegion = page.getByRole( 'region', { name: 'Option autoload settings' } );
 	await expect( tableRegion ).toBeVisible();
+	await expect( page.locator( '.perform-database-audit table' ) ).toHaveCount( 1 );
+	await expect( tableRegion.getByRole( 'columnheader', { name: 'Actions', exact: true } ) ).toBeVisible();
 	const bounds = await page.evaluate( () => ( {
 		viewport: document.documentElement.clientWidth,
 		document: document.documentElement.scrollWidth,
-		table: document.querySelector( '.perform-database-audit__table' ).getBoundingClientRect().width,
+		table: document.querySelector( '.perform-autoload-manager table' ).getBoundingClientRect().width,
 	} ) );
 	expect( bounds.document ).toBeLessThanOrEqual( bounds.viewport );
 	expect( bounds.table ).toBeGreaterThanOrEqual( 560 );
@@ -550,12 +594,8 @@ test( 'settings retain edits during pending saves, success notices, and interrup
 	page,
 } ) => {
 	await login( page );
-	await openAdminPage(
-		page,
-		'/wp-admin/options-general.php?page=perform_settings&tab=assets'
-	);
+	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=assets' );
 	const preconnect = page.getByRole( 'textbox', { name: 'Preconnect' } );
-	const saveButton = page.getByRole( 'button', { name: 'Save Settings' } );
 	const submitted = `//submitted-${ Date.now() }.example.test`;
 	const later = `//later-${ Date.now() }.example.test`;
 	let releaseRequest;
@@ -567,48 +607,36 @@ test( 'settings retain edits during pending saves, success notices, and interrup
 		requestStarted = resolve;
 	} );
 	await page.route( '**/admin-ajax.php', async ( route ) => {
-		if (
-			route
-				.request()
-				.postData()
-				?.includes( 'action=perform_save_settings' )
-		) {
+		if ( route.request().postData()?.includes( 'action=perform_save_settings' ) ) {
 			requestStarted();
 			await pending;
 		}
 		await route.continue();
 	} );
 	await preconnect.fill( submitted );
-	await saveButton.click();
 	await started;
 	await preconnect.fill( later );
 	releaseRequest();
-	await expect( page.getByRole( 'status' ) ).toContainText(
-		'Settings saved'
-	);
-	await expect( saveButton ).toBeEnabled();
+	await expect( autosaveState( page ) ).toHaveText( 'All changes saved' );
 	await page.unroute( '**/admin-ajax.php' );
-	await saveButton.focus();
-	await page.keyboard.press( 'Enter' );
-	await expect( saveButton ).toBeDisabled();
+	await page.route( '**/admin-ajax.php', async ( route ) => {
+		if ( ! route.request().postData()?.includes( 'action=perform_save_settings' ) ) {
+			await route.continue();
+			return;
+		}
+		const result = await route.fetch();
+		expect( await result.json() ).toMatchObject( { success: true } );
+		await route.abort( 'failed' );
+	} );
 	await preconnect.fill( `${ later }\n//notice.example.test` );
-	await expect( saveButton ).toBeEnabled();
-	await page.route( '**/admin-ajax.php', ( route ) =>
-		route.abort( 'failed' )
-	);
-	await saveButton.click();
-	await expect( page.getByRole( 'alert' ) ).toBeVisible();
-	await expect( saveButton ).toBeEnabled();
+	await expect( page.getByRole( 'alert' ) ).toContainText( 'may have succeeded' );
+	await preconnect.fill( later );
+	await expect( autosaveState( page ) ).toHaveText( 'Save not confirmed' );
 	await page.unroute( '**/admin-ajax.php' );
-	await saveButton.click();
-	await expect( page.getByRole( 'status' ) ).toContainText(
-		'Settings saved'
-	);
-	await expect( saveButton ).toBeDisabled();
+	await page.getByRole( 'button', { name: 'Retry save' } ).click();
+	await expect( autosaveState( page ) ).toHaveText( 'All changes saved' );
 	await page.reload();
-	await expect( preconnect ).toHaveValue(
-		`${ later }\n//notice.example.test`
-	);
+	await expect( preconnect ).toHaveValue( later );
 } );
 
 test( 'outline icons retain their strokes across settings and diagnostic screens', async ( { page } ) => {
@@ -631,6 +659,15 @@ test( 'outline icons retain their strokes across settings and diagnostic screens
 				return style.fill !== 'none' || style.stroke !== style.color;
 			} ).map( ( icon ) => icon.outerHTML ) );
 			expect( invalidIcons, `${ tab } at ${ width }px must retain outline SVG paint` ).toEqual( [] );
+			if ( 'dashboard' === tab ) {
+				const metrics = page.locator( '.perform-metric' );
+				await expect( metrics ).toHaveCount( 4 );
+				const misaligned = await metrics.evaluateAll( ( rows ) => rows.filter( ( row ) => {
+					const [ icon, text ] = Array.from( row.children, ( child ) => child.getBoundingClientRect() );
+					return Math.abs( icon.top + icon.height / 2 - ( text.top + text.height / 2 ) ) > 1;
+				} ).length );
+				expect( misaligned, `Dashboard icon and copy centers at ${ width }px` ).toBe( 0 );
+			}
 		}
 	}
 

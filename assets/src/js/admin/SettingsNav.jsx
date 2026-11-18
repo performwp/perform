@@ -1,33 +1,17 @@
-import { TabPanel } from '@wordpress/components';
-import { WrenchScrewdriverIcon } from '@heroicons/react/24/outline';
-import { useLayoutEffect, useMemo, useRef, useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
-import CacheStatsPanel from './CacheStatsPanel';
-import AdminPerformanceMonitorPanel from './AdminPerformanceMonitorPanel';
+import { useMemo, useState } from '@wordpress/element';
+import AssetsDeliveryWorkspace from './AssetsDeliveryWorkspace';
+import CacheWorkspace from './CacheWorkspace';
+import CleanupWorkspace from './CleanupWorkspace';
 import DashboardPanel from './DashboardPanel';
-import DatabaseAuditPanel from './DatabaseAuditPanel';
-import SiteInventoryPanel from './SiteInventoryPanel';
-import CronPressurePanel from './CronPressurePanel';
-import AdminAssetAuditPanel from './AdminAssetAuditPanel';
-import PluginImpactPanel from './PluginImpactPanel';
-import ActionSchedulerPanel from './ActionSchedulerPanel';
-import SettingsFieldRow from './settings/SettingsFieldRow';
+import InsightsWorkspace from './InsightsWorkspace';
+import PreferencesWorkspace from './PreferencesWorkspace';
+import { getWorkspaceForTab, INSIGHT_REPORTS } from './navigation';
 
 const SETTINGS = window.performwpSettings || {};
-const DIAGNOSTIC_TAB_KEYS = [
-	'inventory',
-	'database',
-	'admin-monitor',
-	'admin-assets',
-	'plugin-impact',
-	'scheduled-tasks',
-	'action-scheduler',
-	'cache-stats',
-];
 
 const SettingsNav = ( {
-	tabs: propTabs,
 	fields: propFields,
+	tabs: propTabs,
 	dashboard,
 	diagnostics,
 	databaseAudit,
@@ -39,30 +23,18 @@ const SettingsNav = ( {
 	pluginImpact,
 	actionScheduler,
 	activeTab: propActiveTab,
+	insightsNavigation,
 	onTabChange: propOnTabChange,
 	fieldValues: propFieldValues,
 	onFieldChange: propOnFieldChange,
 } ) => {
-	const tabs = useMemo( () => propTabs || SETTINGS.tabs || {}, [ propTabs ] );
 	const fields = useMemo( () => propFields || SETTINGS.fields || {}, [ propFields ] );
-	const diagnosticTabKeys = useMemo(
-		() => DIAGNOSTIC_TAB_KEYS.filter( ( slug ) => Object.prototype.hasOwnProperty.call( tabs, slug ) ),
-		[ tabs ]
-	);
-	const tabKeys = useMemo( () => {
-		const keys = [
-			'dashboard',
-			...Object.keys( tabs ).filter( ( slug ) => ! DIAGNOSTIC_TAB_KEYS.includes( slug ) ),
-		];
-		if ( diagnosticTabKeys.length > 0 ) {
-			keys.push( 'diagnostics' );
-		}
-		return keys;
-	}, [ tabs, diagnosticTabKeys ] );
-	const [ internalActiveTab, setInternalActiveTab ] = useState( tabKeys[ 0 ] || '' );
+	const tabs = useMemo( () => propTabs || SETTINGS.tabs || {}, [ propTabs ] );
+	const commerceAvailable = Object.prototype.hasOwnProperty.call( tabs, 'woocommerce' );
+	const [ internalActiveTab, setInternalActiveTab ] = useState( 'dashboard' );
 	const activeTab = propActiveTab ?? internalActiveTab;
-	const activePrimaryTab = diagnosticTabKeys.includes( activeTab ) ? 'diagnostics' : activeTab;
 	const onTabChange = propOnTabChange ?? setInternalActiveTab;
+	const activeWorkspace = getWorkspaceForTab( activeTab );
 	const [ internalFieldValues, setInternalFieldValues ] = useState( {} );
 	const fieldValues = propFieldValues ?? internalFieldValues;
 	const onFieldChange =
@@ -72,171 +44,89 @@ const SettingsNav = ( {
 				...previous,
 				[ id ]: value,
 			} ) ) );
-	const tabPanelRef = useRef( null );
-	const restoreTabFocusRef = useRef( false );
-	useLayoutEffect( () => {
-		const selectedTab = tabPanelRef.current?.querySelector( '[role="tab"][aria-selected="true"]' );
-		if ( restoreTabFocusRef.current ) {
-			selectedTab?.focus( { preventScroll: true } );
-			restoreTabFocusRef.current = false;
-		}
-		selectedTab?.scrollIntoView?.( { block: 'nearest', inline: 'nearest' } );
-	}, [ activeTab ] );
+	let activeReport = null;
+	if ( 'inventory' !== activeTab && INSIGHT_REPORTS.includes( activeTab ) ) {
+		activeReport = activeTab;
+	}
 
-	const tabPanelTabs = useMemo(
-		() =>
-			tabKeys.map( ( slug ) => {
-				let title = tabs[ slug ];
-				if ( 'dashboard' === slug ) {
-					title = 'Dashboard';
-				} else if ( 'diagnostics' === slug ) {
-					title = __( 'Diagnostics', 'perform' );
-				}
-				return { name: slug, title };
-			} ),
-		[ tabKeys, tabs ]
-	);
-
-	if ( ! tabKeys.length ) {
-		return null;
+	let content;
+	if ( 'dashboard' === activeWorkspace ) {
+		content = (
+			<DashboardPanel
+				dashboard={ dashboard }
+				diagnostics={ diagnostics }
+				databaseAudit={ databaseAudit }
+				siteInventory={ siteInventory }
+				onNavigate={ onTabChange }
+			/>
+		);
+	} else if ( 'cache' === activeWorkspace ) {
+		content = (
+			<CacheWorkspace
+				sections={ fields.cache || [] }
+				dashboard={ dashboard }
+				fieldValues={ fieldValues }
+				onFieldChange={ onFieldChange }
+				onNavigate={ onTabChange }
+				showActivity={ 'cache-stats' === activeTab }
+			/>
+		);
+	} else if ( 'assets' === activeWorkspace ) {
+		content = (
+			<AssetsDeliveryWorkspace
+				assetSections={ fields.assets || [] }
+				cdnSections={ fields.cdn || [] }
+				cacheSections={ fields.cache || [] }
+				dashboard={ dashboard }
+				fieldValues={ fieldValues }
+				onFieldChange={ onFieldChange }
+			/>
+		);
+	} else if ( 'bloat' === activeWorkspace ) {
+		content = (
+			<CleanupWorkspace
+				sections={ fields.bloat || [] }
+				databaseAudit={ databaseAudit }
+				fieldValues={ fieldValues }
+				onFieldChange={ onFieldChange }
+				onNavigate={ onTabChange }
+			/>
+		);
+	} else if ( 'inventory' === activeWorkspace ) {
+		content = (
+			<InsightsWorkspace
+				key={ insightsNavigation }
+				activeReport={ activeReport }
+				showRuntime={ 'diagnostics' === activeTab }
+				diagnostics={ diagnostics }
+				databaseAudit={ databaseAudit }
+				siteInventory={ siteInventory }
+				systemHealth={ systemHealth }
+				adminPerformance={ adminPerformance }
+				cronPressure={ cronPressure }
+				adminAssetAudit={ adminAssetAudit }
+				pluginImpact={ pluginImpact }
+				actionScheduler={ actionScheduler }
+				onNavigate={ onTabChange }
+			/>
+		);
+	} else {
+		content = (
+			<PreferencesWorkspace
+				generalSections={ fields.general || [] }
+				advancedSections={ fields.advanced || [] }
+				commerceSections={ fields.woocommerce || [] }
+				commerceAvailable={ commerceAvailable }
+				fieldValues={ fieldValues }
+				onFieldChange={ onFieldChange }
+			/>
+		);
 	}
 
 	return (
-		<div ref={ tabPanelRef }>
-			<TabPanel
-				key={ activePrimaryTab }
-				className="perform-settings-tab-panel"
-				tabs={ tabPanelTabs }
-				initialTabName={ activePrimaryTab }
-				onSelect={ ( tabName ) => {
-					let nextTab = tabName;
-					if ( 'diagnostics' === tabName ) {
-						nextTab = diagnosticTabKeys.includes( activeTab ) ? activeTab : diagnosticTabKeys[ 0 ];
-					}
-					if ( nextTab && nextTab !== activeTab ) {
-						const focusedElement = tabPanelRef.current?.ownerDocument.activeElement;
-						restoreTabFocusRef.current =
-							'tab' === focusedElement?.getAttribute( 'role' ) &&
-							tabPanelRef.current.contains( focusedElement );
-						onTabChange( nextTab );
-					}
-				} }
-			>
-				{ ( selectedTab ) => {
-					let selectedTabName = selectedTab?.name || activeTab;
-					if ( 'diagnostics' === selectedTab?.name ) {
-						selectedTabName = diagnosticTabKeys.includes( activeTab ) ? activeTab : diagnosticTabKeys[ 0 ];
-					}
-					const sections = fields[ selectedTabName ] || [];
-					let content = (
-						<div className="perform-settings-sections">
-							{ sections.map( ( section, index ) => (
-								<section
-									key={ `${ selectedTabName }-${ index }` }
-									className="perform-settings-section"
-									aria-labelledby={ `${ selectedTabName }-section-${ index }` }
-								>
-									<header className="perform-settings-section__header">
-										<h2 id={ `${ selectedTabName }-section-${ index }` }>{ section.title }</h2>
-										{ section.description && <p>{ section.description }</p> }
-									</header>
-									{ section.fields?.length > 0 && (
-										<div className="perform-settings-section__fields">
-											{ section.fields.map( ( field ) => (
-												<SettingsFieldRow
-													key={ field.id }
-													field={ field }
-													value={ fieldValues[ field.id ] }
-													onChange={ onFieldChange }
-												/>
-											) ) }
-										</div>
-									) }
-								</section>
-							) ) }
-						</div>
-					);
-
-					if ( 'dashboard' === selectedTabName ) {
-						content = (
-							<DashboardPanel
-								dashboard={ dashboard }
-								diagnostics={ diagnostics }
-								databaseAudit={ databaseAudit }
-								siteInventory={ siteInventory }
-								onNavigate={ onTabChange }
-							/>
-						);
-					} else if ( 'database' === selectedTabName ) {
-						content = <DatabaseAuditPanel initialAudit={ databaseAudit } />;
-					} else if ( 'inventory' === selectedTabName ) {
-						content = (
-							<SiteInventoryPanel initialInventory={ siteInventory } systemHealth={ systemHealth } />
-						);
-					} else if ( 'admin-monitor' === selectedTabName ) {
-						content = (
-							<AdminPerformanceMonitorPanel
-								initialSnapshot={ adminPerformance }
-								onNavigate={ onTabChange }
-							/>
-						);
-					} else if ( 'scheduled-tasks' === selectedTabName ) {
-						content = <CronPressurePanel initialAudit={ cronPressure } />;
-					} else if ( 'admin-assets' === selectedTabName ) {
-						content = (
-							<AdminAssetAuditPanel initialSnapshot={ adminAssetAudit } onNavigate={ onTabChange } />
-						);
-					} else if ( 'plugin-impact' === selectedTabName ) {
-						content = <PluginImpactPanel report={ pluginImpact } onNavigate={ onTabChange } />;
-					} else if ( 'action-scheduler' === selectedTabName ) {
-						content = <ActionSchedulerPanel initialAudit={ actionScheduler } />;
-					} else if ( 'cache-stats' === selectedTabName ) {
-						content = <CacheStatsPanel />;
-					}
-
-					return (
-						<>
-							{ diagnosticTabKeys.includes( selectedTabName ) && (
-								<section
-									className="perform-diagnostic-switcher"
-									aria-label={ __( 'Diagnostics workspace', 'perform' ) }
-								>
-									<div className="perform-diagnostic-switcher__context">
-										<span className="perform-diagnostic-switcher__icon" aria-hidden="true">
-											<WrenchScrewdriverIcon className="perform-ui-icon" />
-										</span>
-										<span>
-											<strong>{ __( 'Diagnostics workspace', 'perform' ) }</strong>
-											<small>
-												{ __( 'Private, local reports for this WordPress site', 'perform' ) }
-											</small>
-										</span>
-									</div>
-									<label
-										className="perform-diagnostic-switcher__control"
-										htmlFor="perform-diagnostic-report"
-									>
-										<span>{ __( 'Current report', 'perform' ) }</span>
-										<select
-											id="perform-diagnostic-report"
-											value={ selectedTabName }
-											onChange={ ( event ) => onTabChange( event.target.value ) }
-										>
-											{ diagnosticTabKeys.map( ( slug ) => (
-												<option key={ slug } value={ slug }>
-													{ tabs[ slug ] }
-												</option>
-											) ) }
-										</select>
-									</label>
-								</section>
-							) }
-							<div className="perform-settings-content">{ content }</div>
-						</>
-					);
-				} }
-			</TabPanel>
-		</div>
+		<main className="perform-settings-content" id="perform-settings-content">
+			{ content }
+		</main>
 	);
 };
 

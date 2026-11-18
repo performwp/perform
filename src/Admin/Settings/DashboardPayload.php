@@ -28,7 +28,6 @@ final class DashboardPayload {
 			'cache'         => self::get_cache_summary(),
 			'assetsManager' => self::get_assets_manager_summary(),
 			'server'        => self::get_server_summary(),
-			'changelog'     => self::get_changelog_items(),
 		];
 	}
 
@@ -111,7 +110,6 @@ final class DashboardPayload {
 			'support'       => esc_url( 'https://wordpress.org/support/plugin/perform/' ),
 			'assetsManager' => esc_url( $docs_url . 'assets-manager/' ),
 			'cache'         => esc_url( $docs_url . 'page-cache/' ),
-			'releaseNotes'  => esc_url( 'https://performwp.com/' ),
 		];
 	}
 
@@ -161,19 +159,6 @@ final class DashboardPayload {
 			'groupDisabledRules'       => self::count_group_rules( $disabled ),
 			'currentPageExceptions'    => self::count_current_page_exceptions( $enabled ),
 			'currentPageDisabledRules' => self::count_current_page_exceptions( $disabled ),
-		];
-	}
-
-	/**
-	 * Get local release notes for the current bundled line.
-	 *
-	 * @return array<int, string>
-	 */
-	private static function get_changelog_items() {
-		return [
-			__( 'Perform 1.7.0 introduced the dashboard, runtime diagnostics, cache activity reporting, and the redesigned settings experience.', 'perform' ),
-			__( 'The 1.8.0 diagnostic foundation adds bounded database and site-inventory evidence for safer recommendations.', 'perform' ),
-			__( 'Configured rules and cache activity are reported without claiming unmeasured byte or Core Web Vitals savings.', 'perform' ),
 		];
 	}
 

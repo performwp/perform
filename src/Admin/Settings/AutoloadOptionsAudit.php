@@ -160,7 +160,7 @@ final class AutoloadOptionsAudit {
 	 *
 	 * @return array<string, string>
 	 */
-	private static function get_ownership_hint( $option_name ) {
+	public static function get_ownership_hint( $option_name ) {
 		if ( 0 === strpos( $option_name, 'perform_' ) ) {
 			return [
 				'label'      => 'Perform',

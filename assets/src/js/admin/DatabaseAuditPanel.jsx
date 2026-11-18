@@ -1,5 +1,5 @@
-import { Button, Card, CardBody, CardHeader } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+import { Button, Card, CardBody } from '@wordpress/components';
+import { useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 
@@ -26,7 +26,8 @@ const DatabaseAuditPanel = ( { initialAudit = SETTINGS.databaseAudit || {} } ) =
 	const [ message, setMessage ] = useState( null );
 	const hasAudit = 'ready' === audit.status;
 	const totals = audit.totals || {};
-	const largestOptions = audit.largestOptions || [];
+	const [ needsRefresh, setNeedsRefresh ] = useState( false );
+	const auditSequence = useRef( 0 );
 	const needsReview = hasAudit && ( totals.sizeBytes || 0 ) > ( audit.thresholdBytes || 800000 );
 	let refreshLabel = hasAudit ? __( 'Refresh audit', 'perform' ) : __( 'Run audit', 'perform' );
 	if ( refreshing ) {
@@ -34,6 +35,7 @@ const DatabaseAuditPanel = ( { initialAudit = SETTINGS.databaseAudit || {} } ) =
 	}
 
 	const refreshAudit = async () => {
+		const sequence = ++auditSequence.current;
 		setRefreshing( true );
 		setMessage( { type: 'status', text: __( 'Running the database audit…', 'perform' ) } );
 
@@ -56,18 +58,27 @@ const DatabaseAuditPanel = ( { initialAudit = SETTINGS.databaseAudit || {} } ) =
 				);
 			}
 
+			if ( sequence !== auditSequence.current ) {
+				return;
+			}
 			setAudit( result.data.audit );
+			setNeedsRefresh( false );
 			setMessage( {
 				type: 'success',
 				text: result.data.message || __( 'Database audit refreshed.', 'perform' ),
 			} );
 		} catch ( error ) {
+			if ( sequence !== auditSequence.current ) {
+				return;
+			}
 			setMessage( {
 				type: 'error',
 				text: error?.message || __( 'The database audit could not be refreshed. Please try again.', 'perform' ),
 			} );
 		} finally {
-			setRefreshing( false );
+			if ( sequence === auditSequence.current ) {
+				setRefreshing( false );
+			}
 		}
 	};
 
@@ -79,14 +90,14 @@ const DatabaseAuditPanel = ( { initialAudit = SETTINGS.databaseAudit || {} } ) =
 					<h2>{ __( 'Autoloaded options audit', 'perform' ) }</h2>
 					<p>
 						{ __(
-							'This audit snapshot shows option names and sizes, never stored values. Refresh the audit to update its totals. Autoload changes below require explicit confirmation.',
+							'The audit shows measured totals and option names and sizes, never stored values. Review each option before changing its autoload policy.',
 							'perform'
 						) }
 					</p>
 				</div>
 				<Button
 					variant="primary"
-					onClick={ refreshAudit }
+					onClick={ () => refreshAudit() }
 					disabled={ refreshing }
 					isBusy={ refreshing }
 					icon={ refreshing ? undefined : <ArrowPathIcon className="perform-ui-icon" aria-hidden="true" /> }
@@ -154,86 +165,36 @@ const DatabaseAuditPanel = ( { initialAudit = SETTINGS.databaseAudit || {} } ) =
 								? __(
 										'The measured total is above WordPress Site Health’s guidance threshold. Review the largest entries with the extension owner before changing autoload behavior.',
 										'perform'
-								  )
+									)
 								: __(
 										'The measured total is below WordPress Site Health’s guidance threshold. Size alone does not prove that an option is unnecessary.',
 										'perform'
-								  ) }
+									) }
 						</p>
 					</div>
-
-					<Card>
-						<CardHeader>
-							<div>
-								<h3 className="perform-card-title">
-									{ __( 'Largest autoloaded options', 'perform' ) }
-								</h3>
-								<p className="perform-card-description">
-									{ __(
-										'Showing up to 20 option names and stored sizes. Values remain private.',
-										'perform'
-									) }
-								</p>
-							</div>
-						</CardHeader>
-						<CardBody>
-							<div
-								className="perform-database-audit__table-wrap"
-								role="region"
-								aria-label={ __( 'Largest autoloaded options', 'perform' ) }
-								tabIndex={ 0 }
-							>
-								<table className="perform-database-audit__table">
-									<thead>
-										<tr>
-											<th scope="col">{ __( 'Option', 'perform' ) }</th>
-											<th scope="col">{ __( 'Size', 'perform' ) }</th>
-											<th scope="col">{ __( 'Autoload state', 'perform' ) }</th>
-											<th scope="col">{ __( 'Likely owner', 'perform' ) }</th>
-										</tr>
-									</thead>
-									<tbody>
-										{ 0 === largestOptions.length && (
-											<tr>
-												<td colSpan="4">
-													{ __(
-														'No autoloaded options were returned for this site.',
-														'perform'
-													) }
-												</td>
-											</tr>
-										) }
-										{ largestOptions.map( ( option ) => (
-											<tr key={ option.name }>
-												<th scope="row">
-													<code>{ option.name }</code>
-												</th>
-												<td>{ formatBytes( option.sizeBytes ) }</td>
-												<td>{ option.autoload }</td>
-												<td>
-													{ option.ownership?.label || __( 'Unknown', 'perform' ) }
-													<span className="perform-database-audit__confidence">
-														{ option.ownership?.confidence || __( 'unknown', 'perform' ) }{ ' ' }
-														{ __( 'confidence', 'perform' ) }
-													</span>
-												</td>
-											</tr>
-										) ) }
-									</tbody>
-								</table>
-							</div>
-						</CardBody>
-					</Card>
 
 					<p className="perform-database-audit__meta">
 						{ __( 'Snapshot generated', 'perform' ) }{ ' ' }
 						{ new Date( ( audit.generatedAt || 0 ) * 1000 ).toLocaleString() }
-						{ audit.isStale ? ` · ${ __( 'Refresh recommended', 'perform' ) }` : '' }
+						{ audit.isStale || needsRefresh
+							? ` · ${ __( 'Totals may be out of date; refresh the audit', 'perform' ) }`
+							: '' }
 						{ audit.isMultisite ? ` · ${ __( 'Current site only', 'perform' ) }` : '' }
 					</p>
 				</>
 			) }
-			<AutoloadOptionsManager />
+			<AutoloadOptionsManager
+				audit={ audit }
+				onMutation={ ( success ) => {
+					auditSequence.current++;
+					setRefreshing( false );
+					setMessage( ( current ) => ( current?.type === 'status' ? null : current ) );
+					setNeedsRefresh( true );
+					if ( success ) {
+						refreshAudit();
+					}
+				} }
+			/>
 		</div>
 	);
 };

@@ -1072,7 +1072,8 @@ final class Tests_Page_Cache extends TestCase {
 	}
 
 	public function test_cloudflare_batch_keeps_same_url_reenqueued_during_purge() {
-		$page_cache                                   = new PageCache();
+		$page_cache = new PageCache();
+		$this->set_private_property( $page_cache, 'cloudflare_batch_size', 1 );
 		$settings                                     = [
 			'enable_cloudflare_cache_sync' => true,
 			'cloudflare_zone_id'           => 'zone',
@@ -1327,6 +1328,33 @@ final class Tests_Page_Cache extends TestCase {
 			)
 		);
 		$this->assertCount( 1, $GLOBALS['perform_test_scheduled_single_events'] );
+	}
+
+	public function test_inline_reenqueue_deduplicates_full_and_later_records_and_refreshes_revision() {
+		$page_cache = new PageCache();
+		$this->set_private_property( $page_cache, 'cloudflare_batch_size', 2 );
+		$GLOBALS['perform_test_options']['perform_settings'] = [
+			'enable_cloudflare_cache_sync' => true,
+			'cloudflare_zone_id'           => 'zone',
+			'cloudflare_api_token'         => 'token',
+		];
+		$this->invoke_private_with_argument( $page_cache, 'queue_cloudflare_inline_urls', [ 'https://example.com/a/', 'https://example.com/b/', 'https://example.com/c/' ] );
+		$before = $GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'];
+		$this->invoke_private_with_argument( $page_cache, 'queue_cloudflare_inline_urls', [ 'https://example.com/a/', 'https://example.com/c/' ] );
+		$after = $GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'];
+
+		$this->assertCount( 2, $after );
+		$this->assertSame( $before[0]['urls'], $after[0]['urls'] );
+		$this->assertSame( $before[1]['urls'], $after[1]['urls'] );
+		$this->assertNotSame( $before[0]['_revision'], $after[0]['_revision'] );
+		$this->assertNotSame( $before[1]['_revision'], $after[1]['_revision'] );
+
+		// A matching URL in a later record must not be copied into earlier spare capacity.
+		$GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'][0]['urls'] = [ 'https://example.com/a/' ];
+		$this->invoke_private_with_argument( $page_cache, 'queue_cloudflare_inline_urls', [ 'https://example.com/c/' ] );
+		$after = $GLOBALS['perform_test_options']['perform_cache_cloudflare_queue_1'];
+		$this->assertSame( [ 'https://example.com/a/' ], $after[0]['urls'] );
+		$this->assertSame( [ 'https://example.com/c/' ], $after[1]['urls'] );
 	}
 
 	public function test_cleanup_waits_for_metadata_inventory_then_removes_retired_files() {

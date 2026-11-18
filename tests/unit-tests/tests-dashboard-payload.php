@@ -94,8 +94,7 @@ final class Tests_Dashboard_Payload extends TestCase {
 		$this->assertSame( 0, $payload['assetsManager']['disabledCssHandles'] );
 		$this->assertContains( $payload['server']['opcache']['state'], [ 'ready', 'warning', 'not-available' ] );
 		$this->assertContains( $payload['server']['compression']['state'], [ 'ready', 'needs-separate-test' ] );
-		$this->assertNotEmpty( $payload['changelog'] );
-		$this->assertStringNotContainsString( 'release-candidate', implode( ' ', $payload['changelog'] ) );
+		$this->assertArrayNotHasKey( 'changelog', $payload );
 	}
 
 	public function test_server_summary_normalizes_filtered_local_signals() {

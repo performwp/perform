@@ -1,6 +1,6 @@
 # Autoload options
 
-The Database screen separates a cached, manually refreshed audit from current option metadata and explicit autoload controls. The audit totals are a dated snapshot, not live totals after every change.
+The Database screen shows a dated audit summary and a single paginated table of current autoloaded option metadata and applicable actions, largest first. The **Changed by Perform** view also includes options no longer autoloaded. After a successful change or undo, Perform refreshes the measured audit totals. If that refresh fails, or a write has an uncertain outcome, the previous totals are marked as potentially out of date; refresh the audit to measure again.
 
 ## Review before changing
 
@@ -8,7 +8,7 @@ Search option names, move between pages, or use **Changed by Perform** to see op
 
 Management requires WordPress 6.4 or later and a verified InnoDB options table. Other database engines and older WordPress versions remain read-only. Core bootstrap/security options, transient data, theme/widget configuration, and Perform's own options are protected. Unrecognized policies are also protected. Protection is a conservative guardrail, not a guarantee that every other option is safe to change.
 
-Each enable/disable action requires confirmation. The reported signed byte delta is the stored option's contribution to autoloaded bytes under the current WordPress policy, not a measured page-speed improvement or a reduction in total database size. WordPress before 6.6 uses `yes`/`no`; newer versions use `on`/`off` and may also contain automatic policies.
+The labeled **Disable autoload** action applies immediately; review the option before selecting it. The reported signed byte delta is the stored option's contribution to autoloaded bytes under the current WordPress policy, not a measured page-speed improvement or a reduction in total database size. WordPress before 6.6 uses `yes`/`no`; newer versions use `on`/`off` and may also contain automatic policies.
 
 ## Undo and conflicts
 

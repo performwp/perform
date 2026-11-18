@@ -1,8 +1,10 @@
 import SettingsHeader from './SettingsHeader';
 import SettingsNav from './SettingsNav';
 import Footer from './Footer';
-import DiagnosticsPanel from './DiagnosticsPanel';
-import { useState, useEffect, useMemo, useRef } from '@wordpress/element';
+import { useState, useEffect, useLayoutEffect, useMemo, useRef, useCallback } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import { isSettingsWorkspace } from './navigation';
+import { buildInitialFieldValues } from './settings/fieldValues';
 
 const SETTINGS = window.performwpSettings || {};
 const SETTINGS_TABS = SETTINGS.tabs || {};
@@ -18,7 +20,8 @@ const CRON_PRESSURE = SETTINGS.cronPressure || {};
 const ADMIN_ASSET_AUDIT = SETTINGS.adminAssetAudit || {};
 const PLUGIN_IMPACT = SETTINGS.pluginImpact || {};
 const ACTION_SCHEDULER = SETTINGS.actionScheduler || {};
-const TAB_KEYS = [ 'dashboard', ...Object.keys( SETTINGS_TABS ) ];
+const TAB_KEYS = [ 'dashboard', 'diagnostics', ...Object.keys( SETTINGS_TABS ) ];
+const AUTOSAVE_DELAY = 600;
 
 const normalizeTab = ( tab ) => ( TAB_KEYS.includes( tab ) ? tab : 'dashboard' );
 
@@ -28,23 +31,16 @@ const SettingsApp = () => {
 	const tabs = SETTINGS_TABS;
 	const fields = SETTINGS_FIELDS;
 	const initialValues = useMemo( () => {
-		// Build a map of field id => saved value (if present) or default value (empty string or false)
-		const values = {};
-		Object.keys( fields ).forEach( ( tab ) => {
-			fields[ tab ].forEach( ( card ) => {
-				( card.fields || [] ).forEach( ( f ) => {
-					const savedVal =
-						SAVED_SETTINGS && Object.prototype.hasOwnProperty.call( SAVED_SETTINGS, f.id )
-							? SAVED_SETTINGS[ f.id ]
-							: undefined;
-					if ( typeof savedVal !== 'undefined' && ! ( 'select' === f.type && '' === savedVal ) ) {
-						values[ f.id ] = savedVal;
-					} else if ( typeof f.default !== 'undefined' ) {
-						values[ f.id ] = f.default;
-					} else if ( 'select' === f.type ) {
-						values[ f.id ] = Object.keys( f.options || {} )[ 0 ] || '';
-					} else {
-						values[ f.id ] = f.type === 'toggle' ? false : '';
+		const values = buildInitialFieldValues( fields, SAVED_SETTINGS );
+		Object.values( fields ).forEach( ( cards ) => {
+			cards.forEach( ( card ) => {
+				( card.fields || [] ).forEach( ( field ) => {
+					if ( 'select' !== field.type ) {
+						return;
+					}
+					const saved = SAVED_SETTINGS[ field.id ];
+					if ( '' === saved || ( typeof saved === 'undefined' && typeof field.default === 'undefined' ) ) {
+						values[ field.id ] = String( field.default ?? Object.keys( field.options || {} )[ 0 ] ?? '' );
 					}
 				} );
 			} );
@@ -56,9 +52,43 @@ const SettingsApp = () => {
 	const [ savedSnapshot, setSavedSnapshot ] = useState( initialValues );
 	const [ saving, setSaving ] = useState( false );
 	const [ message, setMessage ] = useState( null );
+	const [ uncertainKeys, setUncertainKeys ] = useState( [] );
 	const [ diagnostics, setDiagnostics ] = useState( INITIAL_DIAGNOSTICS );
-	const [ activeTab, setActiveTab ] = useState( () => normalizeTab( SETTINGS.activeTab ) );
-	const messageTimerRef = useRef( null );
+	const [ activeTab, setActiveTab ] = useState( getTabFromUrl );
+	const [ insightsNavigation, setInsightsNavigation ] = useState( 0 );
+	const noticesRef = useRef( null );
+	const inFlightRef = useRef( false );
+
+	useLayoutEffect( () => {
+		const page = document.getElementById( 'perform-settings-page' );
+		const noticeSlot = noticesRef.current;
+		if ( ! page || ! noticeSlot ) {
+			return undefined;
+		}
+
+		const movedNotices = [];
+		document
+			.querySelectorAll( '#wpbody-content .notice, #wpbody-content > .updated, #wpbody-content > .error' )
+			.forEach( ( notice ) => {
+				if ( page.contains( notice ) ) {
+					return;
+				}
+				movedNotices.push( {
+					notice,
+					parent: notice.parentNode,
+					nextSibling: notice.nextSibling,
+				} );
+				noticeSlot.appendChild( notice );
+			} );
+
+		return () => {
+			movedNotices.reverse().forEach( ( { notice, parent, nextSibling } ) => {
+				if ( parent ) {
+					parent.insertBefore( notice, nextSibling?.parentNode === parent ? nextSibling : null );
+				}
+			} );
+		};
+	}, [] );
 
 	const handleTabChange = ( tab ) => {
 		const nextTab = normalizeTab( tab );
@@ -73,14 +103,37 @@ const SettingsApp = () => {
 		window.history.pushState( { performTab: nextTab }, '', url );
 	};
 
-	// dirty detection
-
 	const handleFieldChange = ( id, value ) => {
-		setFieldValues( ( prev ) => ( { ...prev, [ id ]: value } ) );
+		setFieldValues( ( prev ) => ( prev[ id ] === value ? prev : { ...prev, [ id ]: value } ) );
+		// An ambiguous response requires an explicit retry, even after another edit.
+		if ( ! uncertainKeys.length ) {
+			setMessage( null );
+		}
 	};
 
-	const handleSave = async () => {
+	const handleSave = useCallback( async () => {
+		if ( inFlightRef.current ) {
+			return;
+		}
 		const submittedSnapshot = { ...fieldValues };
+		const maskedSecret = SETTINGS.maskedSecretValue || '__PERFORM_MASKED_SECRET__';
+		if ( uncertainKeys.some( ( key ) => submittedSnapshot[ key ] === maskedSecret ) ) {
+			setMessage( {
+				type: 'error',
+				text: __( 'The previous save may have succeeded. Enter the secret again and retry.', 'perform' ),
+			} );
+			return;
+		}
+		// Submit only edits: rendering a default must not persist it or rewrite unrelated legacy values.
+		const changedValues = Object.fromEntries(
+			Object.entries( submittedSnapshot ).filter(
+				( [ key, value ] ) => value !== savedSnapshot[ key ] || uncertainKeys.includes( key )
+			)
+		);
+		if ( ! Object.keys( changedValues ).length ) {
+			return;
+		}
+		inFlightRef.current = true;
 		setSaving( true );
 		setMessage( null );
 		try {
@@ -92,72 +145,72 @@ const SettingsApp = () => {
 				body: new URLSearchParams( {
 					action: 'perform_save_settings',
 					nonce: SETTINGS.nonce || '',
-					data: JSON.stringify( submittedSnapshot ),
+					data: JSON.stringify( changedValues ),
 				} ),
 			} );
+			if ( res.ok === false ) {
+				throw new Error( __( 'Save failed. Please try again.', 'perform' ) );
+			}
 			const json = await res.json();
-			if ( json && json.success ) {
+			if ( json?.success === true ) {
 				// Later edits remain dirty until their own submission is acknowledged.
-				setSavedSnapshot( submittedSnapshot );
-				setMessage( { text: json.data?.message || 'Settings saved.', type: 'success' } );
+				setSavedSnapshot( ( previous ) => ( {
+					...previous,
+					...changedValues,
+				} ) );
+				setUncertainKeys( ( previous ) =>
+					previous.filter( ( key ) => ! Object.prototype.hasOwnProperty.call( changedValues, key ) )
+				);
+				setMessage( {
+					text: json.data?.message || __( 'Settings saved.', 'perform' ),
+					type: 'success',
+				} );
 				if ( json.data?.diagnostics ) {
 					setDiagnostics( json.data.diagnostics );
 				}
+			} else if ( json?.success === false ) {
+				setMessage( {
+					text: ( json && json.data && json.data.message ) || __( 'Save failed.', 'perform' ),
+					type: 'error',
+				} );
 			} else {
-				setMessage( { text: ( json && json.data && json.data.message ) || 'Save failed.', type: 'error' } );
+				throw new Error( __( 'The save response could not be confirmed. Please retry.', 'perform' ) );
 			}
-		} catch ( e ) {
-			setMessage( { text: e.message || 'Save failed.', type: 'error' } );
+		} catch {
+			setUncertainKeys( ( previous ) => [ ...new Set( [ ...previous, ...Object.keys( changedValues ) ] ) ] );
+			setMessage( {
+				text: __( 'The save could not be confirmed and may have succeeded. Please retry.', 'perform' ),
+				type: 'error',
+			} );
 		} finally {
+			inFlightRef.current = false;
 			setSaving( false );
 		}
-	};
+	}, [ fieldValues, savedSnapshot, uncertainKeys ] );
 
-	useEffect( () => {
-		// when initialValues changes (first render) set snapshot
-		setSavedSnapshot( initialValues );
-		setFieldValues( initialValues );
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ initialValues ] );
-
-	// recompute dirty based on savedSnapshot
 	const isDirty = useMemo( () => {
 		return Object.keys( fieldValues ).some( ( k ) => fieldValues[ k ] !== savedSnapshot[ k ] );
 	}, [ fieldValues, savedSnapshot ] );
 
-	// Keep errors visible until the next save attempt so rejected input is actionable.
 	useEffect( () => {
-		if ( ! message || ! message.text || 'error' === message.type ) {
-			return;
+		if ( ! isDirty || saving || uncertainKeys.length || 'error' === message?.type ) {
+			return undefined;
 		}
-		// Clear previous timer
-		if ( messageTimerRef.current ) {
-			clearTimeout( messageTimerRef.current );
-			messageTimerRef.current = null;
-		}
-		messageTimerRef.current = setTimeout( () => {
-			setMessage( null );
-			messageTimerRef.current = null;
-		}, 5000 );
+		const timer = setTimeout( handleSave, AUTOSAVE_DELAY );
+		return () => clearTimeout( timer );
+	}, [ handleSave, isDirty, saving, message, uncertainKeys ] );
 
-		return () => {
-			if ( messageTimerRef.current ) {
-				clearTimeout( messageTimerRef.current );
-				messageTimerRef.current = null;
-			}
+	useEffect( () => {
+		if ( ! isDirty && ! saving && ! uncertainKeys.length ) {
+			return undefined;
+		}
+		const warnBeforeUnload = ( event ) => {
+			event.preventDefault();
+			event.returnValue = '';
 		};
-	}, [ message ] );
-
-	// Clear timer on unmount
-	useEffect(
-		() => () => {
-			if ( messageTimerRef.current ) {
-				clearTimeout( messageTimerRef.current );
-				messageTimerRef.current = null;
-			}
-		},
-		[]
-	);
+		window.addEventListener( 'beforeunload', warnBeforeUnload );
+		return () => window.removeEventListener( 'beforeunload', warnBeforeUnload );
+	}, [ isDirty, saving, uncertainKeys ] );
 
 	useEffect( () => {
 		const handlePopState = () => setActiveTab( getTabFromUrl() );
@@ -168,7 +221,16 @@ const SettingsApp = () => {
 
 	return (
 		<>
-			<SettingsHeader />
+			<SettingsHeader
+				activeTab={ activeTab }
+				onTabChange={ ( tab ) => {
+					if ( 'inventory' === tab ) {
+						setInsightsNavigation( ( previous ) => previous + 1 );
+					}
+					handleTabChange( tab );
+				} }
+			/>
+			<div ref={ noticesRef } className="perform-settings-notices" />
 			<SettingsNav
 				fields={ fields }
 				tabs={ tabs }
@@ -183,23 +245,22 @@ const SettingsApp = () => {
 				pluginImpact={ PLUGIN_IMPACT }
 				actionScheduler={ ACTION_SCHEDULER }
 				activeTab={ activeTab }
+				insightsNavigation={ insightsNavigation }
 				onTabChange={ handleTabChange }
 				fieldValues={ fieldValues }
 				onFieldChange={ handleFieldChange }
 			/>
-			{ 'dashboard' === activeTab && <DiagnosticsPanel diagnostics={ diagnostics } /> }
-			{ ! [
-				'dashboard',
-				'cache-stats',
-				'database',
-				'inventory',
-				'admin-monitor',
-				'scheduled-tasks',
-				'admin-assets',
-				'plugin-impact',
-				'action-scheduler',
-			].includes( activeTab ) && (
-				<Footer dirty={ isDirty } saving={ saving } message={ message } onSave={ handleSave } />
+			{ ( ( isSettingsWorkspace( activeTab ) && 'cache-stats' !== activeTab ) ||
+				isDirty ||
+				saving ||
+				'error' === message?.type ) && (
+				<Footer
+					dirty={ isDirty || 0 < uncertainKeys.length }
+					saving={ saving }
+					uncertain={ 0 < uncertainKeys.length }
+					message={ message }
+					onRetry={ handleSave }
+				/>
 			) }
 		</>
 	);

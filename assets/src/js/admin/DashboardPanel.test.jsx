@@ -1,5 +1,3 @@
-/* eslint-env jest */
-
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
 import DashboardPanel, { buildHealthCards } from './DashboardPanel';
@@ -15,7 +13,6 @@ const dashboard = {
 		opcache: { state: 'not-available', enabled: null },
 		compression: { state: 'needs-separate-test', phpEnabled: false },
 	},
-	changelog: [ 'Measured product update.' ],
 };
 
 const diagnostics = {
@@ -67,11 +64,19 @@ describe( 'DashboardPanel', () => {
 			/>
 		);
 
+		expect( screen.queryByText( 'What this build includes' ) ).not.toBeInTheDocument();
+		expect( container.querySelector( '.perform-release-notes' ) ).toBeNull();
 		expect( screen.getByText( /3 active plugins, 8 content types, and 2 Perform modules/ ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Core Web Vitals need a separate test' ) ).toBeInTheDocument();
 		expect( screen.getByText( /never turns these checks into an unverified speed score/i ) ).toBeInTheDocument();
 		expect( screen.getByText( /Response compression: needs a separate response test/ ) ).toBeInTheDocument();
-		expect( container.querySelectorAll( 'svg.perform-ui-icon[aria-hidden="true"]' ).length ).toBeGreaterThan( 8 );
+		const decorativeIcons = container.querySelectorAll(
+			'.perform-icon-badge[aria-hidden="true"] svg, svg[aria-hidden="true"]'
+		);
+		expect( decorativeIcons.length ).toBeGreaterThan( 8 );
+		decorativeIcons.forEach( ( icon ) => {
+			expect( icon.closest( '[aria-hidden="true"]' ) ).not.toBeNull();
+		} );
 	} );
 
 	it( 'shows store-safety guidance only when a store pattern is measured', () => {
@@ -106,5 +111,24 @@ describe( 'DashboardPanel', () => {
 
 		fireEvent.click( screen.getByRole( 'button', { name: 'Generate inventory' } ) );
 		expect( onNavigate ).toHaveBeenCalledWith( 'inventory' );
+	} );
+
+	it( 'routes runtime and server evidence to the runtime diagnostics view', () => {
+		const onNavigate = jest.fn();
+		render(
+			<DashboardPanel
+				dashboard={ dashboard }
+				diagnostics={ diagnostics }
+				databaseAudit={ { status: 'ready', totals: { sizeBytes: 1000 }, objectCache: {} } }
+				siteInventory={ readyInventory }
+				onNavigate={ onNavigate }
+			/>
+		);
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'View runtime checks' } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Review server evidence' } ) );
+
+		expect( onNavigate ).toHaveBeenNthCalledWith( 1, 'diagnostics' );
+		expect( onNavigate ).toHaveBeenNthCalledWith( 2, 'diagnostics' );
 	} );
 } );

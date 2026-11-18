@@ -47,7 +47,7 @@ To get started developing on the Perform WordPress Plugin you will need to perfo
 
 3. Clone this repository from GitHub into your plugins directory: `https://github.com/performwp/perform.git`
 
-4. Use Node.js 24.x for project tooling. The repository includes `.nvmrc` and `.node-version` so local version managers can select the supported Active LTS line.
+4. Use Node.js 24.22.1 or newer within the 24.x line for project tooling. The repository pins 24.22.1 in `.nvmrc` and `.node-version` for local version managers.
 
 5. Run Composer to set up dependencies: `composer install`
 
@@ -65,7 +65,7 @@ The published plugin currently targets WordPress `4.8+`, PHP `7.4+`, and is test
 
 Local contributor tooling intentionally uses newer runtimes for build and validation work:
 
-* Node.js `24.x` for npm, `@wordpress/scripts`, and Playwright tasks
+* Node.js `>=24.22.1 <25.0.0` for npm, `@wordpress/scripts`, and Playwright tasks
 * Composer platform PHP `8.1` for local dependency resolution and static analysis consistency
 
 ### NPM Commands
@@ -107,5 +107,5 @@ Use these commands before opening a pull request:
     define( 'SCRIPT_DEBUG', true );
     ```
 * Commit the `package.lock` file. Read more about why [here](https://docs.npmjs.com/files/package-lock.json). 
-* Your editor should recognize the `.eslintrc` and `.editorconfig` files within the Repo's root directory. Please only submit PRs following those coding style rulesets. 
+* Your editor should recognize the `eslint.config.cjs` and `.editorconfig` files within the Repo's root directory. Please only submit PRs following those coding style rulesets.
 * Use the [GitHub issue tracker](https://github.com/performwp/perform/issues) for validated bugs and feature proposals, and open pull requests against the current repository when contributing code.

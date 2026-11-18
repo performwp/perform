@@ -63,7 +63,11 @@ class Actions {
 		wp_register_style( 'perform-admin', PERFORM_PLUGIN_URL . 'assets/dist/css/admin.css', '', PERFORM_VERSION );
 		wp_enqueue_style( 'perform-admin' );
 
-		wp_register_script( 'perform-admin', PERFORM_PLUGIN_URL . 'assets/dist/js/admin.min.js', [ 'wp-element', 'wp-components', 'wp-i18n' ], PERFORM_VERSION, true );
+		wp_register_script( 'perform-admin', PERFORM_PLUGIN_URL . 'assets/dist/js/perform-settings.js', [ 'wp-element', 'wp-components', 'wp-i18n' ], PERFORM_VERSION, true );
+		// JavaScript translation loading was introduced in WordPress 5.0.
+		if ( function_exists( 'wp_set_script_translations' ) ) {
+			wp_set_script_translations( 'perform-admin', 'perform', PERFORM_PLUGIN_DIR . 'languages' );
+		}
 		wp_enqueue_script( 'perform-admin' );
 
 			wp_localize_script(
