@@ -679,7 +679,9 @@ test( 'workspace icon rows stay beside their labels without overflowing the page
 	await login( page );
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings' );
 	const rowSelector = [
-		'.perform-metric', '.perform-settings-group__summary-copy', '.perform-health-row',
+		// A strip may be text-only. If one metric has a badge, all siblings must align.
+		'.perform-metric-strip:has(.perform-icon-badge) > .perform-metric',
+		'.perform-settings-group__summary-copy', '.perform-health-row',
 		'.perform-insight-status-row', '.perform-report-link', '.perform-insight-health__summary',
 	].join( ', ' );
 	for ( const width of [ 320, 768, 1440 ] ) {
