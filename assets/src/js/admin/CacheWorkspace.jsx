@@ -60,7 +60,7 @@ const CacheWorkspace = ( {
 			<WorkspaceHeader
 				title={ __( 'Page cache', 'perform' ) }
 				description={ __(
-					'Serve ready-made pages to repeat visitors while Perform refreshes content safely in the background.',
+					'Serve cached pages to eligible visitors and configure when cached content is refreshed.',
 					'perform'
 				) }
 				status={ isEnabled ? __( 'Active', 'perform' ) : __( 'Not active', 'perform' ) }
@@ -107,9 +107,9 @@ const CacheWorkspace = ( {
 					defaultOpen
 				/>
 				<SettingsGroup
-					title={ __( 'Pages never cached', 'perform' ) }
+					title={ __( 'Cache exclusions', 'perform' ) }
 					description={ __(
-						'Protect checkout, account, preview, session, and other dynamic experiences.',
+						'Configure bypass rules for checkout, account, preview, session, and other dynamic requests.',
 						'perform'
 					) }
 					fields={ exclusions }

@@ -44,7 +44,7 @@ describe( 'AdminPerformanceMonitorPanel', () => {
 
 		expect( screen.getByText( 'Monitoring is off' ) ).toBeInTheDocument();
 		expect( screen.getByText( /registers no request-capture hooks/ ) ).toBeInTheDocument();
-		fireEvent.click( screen.getByRole( 'button', { name: 'Enable in Advanced' } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Open measurement settings' } ) );
 		expect( onNavigate ).toHaveBeenCalledWith( 'advanced' );
 	} );
 

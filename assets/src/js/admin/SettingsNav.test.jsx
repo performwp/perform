@@ -37,7 +37,7 @@ describe( 'SettingsNav', () => {
 				insightsNavigation={ 0 }
 			/>
 		);
-		fireEvent.click( screen.getByRole( 'button', { name: 'Generate site profile' } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Open site profile' } ) );
 		expect( screen.getByRole( 'button', { name: 'Back to insights' } ) ).toBeInTheDocument();
 		view.rerender(
 			<SettingsNav

@@ -69,7 +69,8 @@ const SettingsHeader = ( { activeTab, onTabChange } ) => {
 					icon={ <ArrowTopRightOnSquareIcon className="perform-ui-icon" aria-hidden="true" /> }
 					iconPosition="right"
 				>
-					{ __( 'Documentation', 'perform' ) }
+					<span className="perform-docs-label">{ __( 'Documentation', 'perform' ) }</span>
+					<span className="perform-docs-label-short">{ __( 'Docs', 'perform' ) }</span>
 				</Button>
 				{ VERSION && (
 					<div className="perform-plugin-version">

@@ -312,8 +312,8 @@ class Helpers {
 						[
 							'id'        => 'enable_ssl',
 							'type'      => 'toggle',
-							'name'      => esc_html__( 'Force SSL', 'perform' ),
-							'desc'      => esc_html__( 'Enabling this will force all traffic to use SSL.', 'perform' ),
+							'name'      => esc_html__( 'Redirect visitors to HTTPS', 'perform' ),
+							'desc'      => esc_html__( 'Redirect public page requests from HTTP to HTTPS. Check that your site works over HTTPS before turning this on.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -325,7 +325,7 @@ class Helpers {
 							'id'        => 'enable_navigation_menu_cache',
 							'type'      => 'toggle',
 							'name'      => esc_html__( 'Enable Menu Cache', 'perform' ),
-							'desc'      => esc_html__( 'Enabling this will cache your menu items for better performance.', 'perform' ),
+							'desc'      => esc_html__( 'Reuse the HTML for navigation menus instead of rebuilding them on each eligible page request.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -339,13 +339,13 @@ class Helpers {
 			'bloat'       => [
 				[
 					'title'       => esc_html__( 'Frontend Optimization', 'perform' ),
-					'description' => esc_html__( 'Remove unnecessary frontend scripts and tags that add extra requests or bytes to every page. These optimizations reduce file requests, improve cacheability, and clean up redundant page elements.', 'perform' ),
+					'description' => esc_html__( 'Choose which scripts, styles, and metadata WordPress includes on your public pages.', 'perform' ),
 					'fields'      => [
 						[
 							'id'        => 'disable_emojis',
 							'type'      => 'toggle',
 							'name'      => __( 'Disable Emojis', 'perform' ),
-							'desc'      => __( 'Prevents WordPress from loading the emoji detection script and related styles, reducing one extra HTTP request.', 'perform' ),
+							'desc'      => __( 'Remove WordPress emoji support scripts and styles. Devices can still display the emoji they support.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -357,7 +357,7 @@ class Helpers {
 							'id'        => 'disable_embeds',
 							'type'      => 'toggle',
 							'name'      => esc_html__( 'Disable Embeds', 'perform' ),
-							'desc'      => esc_html__( 'Removes the WordPress Embed script (wp-embed.min.js) used for embedding posts and media across sites.', 'perform' ),
+							'desc'      => esc_html__( 'Turn off WordPress embed discovery and related scripts. Check any posts or sites that rely on embedded previews.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -369,7 +369,7 @@ class Helpers {
 							'id'        => 'remove_query_strings',
 							'type'      => 'toggle',
 							'name'      => esc_html__( 'Remove Query Strings', 'perform' ),
-							'desc'      => esc_html__( 'Strips version query strings from static resources (?ver=) to improve caching efficiency on CDNs and browsers.', 'perform' ),
+							'desc'      => esc_html__( 'Remove the version parameter and anything after it from public script and stylesheet URLs. Visitors may keep an older file after an update.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -381,7 +381,7 @@ class Helpers {
 							'id'        => 'remove_jquery_migrate',
 							'type'      => 'toggle',
 							'name'      => esc_html__( 'Remove jQuery Migrate', 'perform' ),
-							'desc'      => esc_html__( 'Prevents loading of the legacy jquery-migrate.min.js file, used mainly for backward compatibility with outdated scripts.', 'perform' ),
+							'desc'      => esc_html__( 'Stop loading jQuery Migrate on public pages. Test older themes and plugins that rely on it.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -453,7 +453,7 @@ class Helpers {
 				],
 				[
 					'title'       => esc_html__( 'Network Requests and Endpoints', 'perform' ),
-					'description' => esc_html__( 'Disable unused services that generate background or external HTTP requests. Ideal for sites that don\'t rely on remote publishing or REST-based integrations.', 'perform' ),
+					'description' => esc_html__( 'Control XML-RPC publishing and REST API discovery links. Check which integrations your site uses first.', 'perform' ),
 					'fields'      => [
 						[
 							'id'        => 'disable_xmlrpc',
@@ -483,13 +483,13 @@ class Helpers {
 				],
 				[
 					'title'       => esc_html__( 'Feed and Discovery Optimization', 'perform' ),
-					'description' => esc_html__( 'Stop generating feed files and related discovery tags that most modern sites don\'t need. Helps reduce crawl requests and prevents unnecessary feed generation.', 'perform' ),
+					'description' => esc_html__( 'Choose whether readers can subscribe to feeds and whether browsers can discover them.', 'perform' ),
 					'fields'      => [
 						[
 							'id'        => 'disable_rss_feeds',
 							'type'      => 'toggle',
 							'name'      => esc_html__( 'Disable RSS Feeds', 'perform' ),
-							'desc'      => esc_html__( 'Disables WordPress-generated RSS feeds and redirects feed URLs back to the homepage.', 'perform' ),
+							'desc'      => esc_html__( 'Show a feed-unavailable message instead of a feed. Subscribers will no longer receive updates.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -513,7 +513,7 @@ class Helpers {
 				],
 				[
 					'title'       => esc_html__( 'Editor and Backend Performance', 'perform' ),
-					'description' => esc_html__( 'Limit WordPress background activity during content editing to reduce CPU and database usage. These controls keep your admin fast, reduce CPU cycles, and optimize database performance.', 'perform' ),
+					'description' => esc_html__( 'Adjust background requests, revisions, and autosaves. These changes can affect people editing posts.', 'perform' ),
 					'fields'      => [
 						[
 							'id'        => 'disable_self_pingbacks',
@@ -531,7 +531,7 @@ class Helpers {
 							'id'        => 'disable_password_strength_meter',
 							'type'      => 'toggle',
 							'name'      => esc_html__( 'Disable Password Strength Meter', 'perform' ),
-							'desc'      => esc_html__( 'Prevents loading of the password strength meter script (zxcvbn.js) on non-essential admin pages.', 'perform' ),
+							'desc'      => esc_html__( 'Stop loading the WordPress password strength meter. Check password forms on your site and in the admin before enabling.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -561,12 +561,12 @@ class Helpers {
 							'type'      => 'select',
 							'name'      => esc_html__( 'Heartbeat Frequency', 'perform' ),
 							'options'   => [
-								''   => esc_html__( '15 Seconds', 'perform' ) . ' (' . esc_html__( 'Default', 'perform' ) . ')',
+								''   => esc_html__( 'WordPress default', 'perform' ),
 								'30' => esc_html__( '30 Seconds', 'perform' ),
 								'45' => esc_html__( '45 Seconds', 'perform' ),
 								'60' => esc_html__( '60 Seconds', 'perform' ),
 							],
-							'desc'      => esc_html__( 'Adjusts how often the Heartbeat API runs (lower frequency = fewer background requests).', 'perform' ),
+							'desc'      => esc_html__( 'A longer interval sends fewer background requests. The default leaves WordPress in control.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -631,7 +631,7 @@ class Helpers {
 							'id'        => 'enable_assets_manager',
 							'type'      => 'toggle',
 							'name'      => esc_html__( 'Enable Assets Manager', 'perform' ),
-							'desc'      => esc_html__( 'Enabling this will allow you to manage your assets more effectively.', 'perform' ),
+							'desc'      => esc_html__( 'Choose which scripts and styles to unload on specific pages using the Assets Manager.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -643,7 +643,7 @@ class Helpers {
 							'id'        => 'dns_prefetch',
 							'type'      => 'textarea',
 							'name'      => esc_html__( 'DNS Prefetch', 'perform' ),
-							'desc'      => esc_html__( 'Resolve domain names before a user clicks. Format: //domain.tld (one per line)', 'perform' ),
+							'desc'      => esc_html__( 'Ask browsers to look up external domains early. Enter one domain per line, for example //cdn.example.com.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -655,7 +655,7 @@ class Helpers {
 							'id'        => 'preconnect',
 							'type'      => 'textarea',
 							'name'      => esc_html__( 'Preconnect', 'perform' ),
-							'desc'      => esc_html__( 'Establish a connection to another origin before a user clicks. Format: //domain.tld (one per line)', 'perform' ),
+							'desc'      => esc_html__( 'Ask browsers to connect early to servers your pages use. Enter one origin per line, for example https://cdn.example.com.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -675,7 +675,7 @@ class Helpers {
 							'id'        => 'enable_cdn',
 							'type'      => 'toggle',
 							'name'      => esc_html__( 'Enable CDN', 'perform' ),
-							'desc'      => esc_html__( 'Enabling this will allow you to use a CDN for your static assets.', 'perform' ),
+							'desc'      => esc_html__( 'Rewrite eligible file URLs to use the CDN address below.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -687,7 +687,7 @@ class Helpers {
 							'id'        => 'cdn_url',
 							'type'      => 'text',
 							'name'      => esc_html__( 'CDN URL', 'perform' ),
-							'desc'      => esc_html__( 'Enter the URL of your CDN provider.', 'perform' ),
+							'desc'      => esc_html__( 'Enter the address that serves your files, for example https://cdn.example.com.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -743,7 +743,7 @@ class Helpers {
 							'id'        => 'page_cache_ttl',
 							'type'      => 'select',
 							'default'   => '3600',
-							'name'      => esc_html__( 'Cache TTL', 'perform' ),
+							'name'      => esc_html__( 'Cache lifetime', 'perform' ),
 							'options'   => [
 								'300'   => esc_html__( '5 Minutes', 'perform' ),
 								'900'   => esc_html__( '15 Minutes', 'perform' ),
@@ -764,7 +764,7 @@ class Helpers {
 							'id'        => 'page_cache_swr_ttl',
 							'type'      => 'select',
 							'default'   => '21600',
-							'name'      => esc_html__( 'Stale Revalidate Window', 'perform' ),
+							'name'      => esc_html__( 'Serve expired pages for', 'perform' ),
 							'options'   => [
 								'900'   => esc_html__( '15 Minutes', 'perform' ),
 								'1800'  => esc_html__( '30 Minutes', 'perform' ),
@@ -773,7 +773,7 @@ class Helpers {
 								'43200' => esc_html__( '12 Hours', 'perform' ),
 								'86400' => esc_html__( '24 Hours', 'perform' ),
 							],
-							'desc'      => esc_html__( 'Serve stale pages while refreshing them in the background.', 'perform' ),
+							'desc'      => esc_html__( 'After a cached page expires, choose how long visitors can receive the previous copy while it refreshes.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -892,7 +892,7 @@ class Helpers {
 								'1200' => esc_html__( '1200ms', 'perform' ),
 								'2000' => esc_html__( '2000ms', 'perform' ),
 							],
-							'desc'      => esc_html__( 'Tracks uncached requests slower than this value in observability stats.', 'perform' ),
+							'desc'      => esc_html__( 'Show uncached requests that exceed this time in the cache activity report.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -954,7 +954,7 @@ class Helpers {
 							'id'   => 'enable_admin_performance_monitor',
 							'type' => 'toggle',
 							'name' => esc_html__( 'Admin Performance Monitor', 'perform' ),
-							'desc' => esc_html__( 'Collect bounded, private aggregate timing, memory, and query-count diagnostics for WordPress admin requests.', 'perform' ),
+							'desc' => esc_html__( 'Record timing, memory use, and database query counts for sampled admin requests on this site.', 'perform' ),
 						],
 						[
 							'id'   => 'enable_admin_asset_audit',
@@ -966,7 +966,7 @@ class Helpers {
 							'id'        => 'remove_data_on_uninstall',
 							'type'      => 'toggle',
 							'name'      => esc_html__( 'Remove Data on Uninstall', 'perform' ),
-							'desc'      => esc_html__( 'Enabling this will remove all plugin data upon uninstallation.', 'perform' ),
+							'desc'      => esc_html__( 'Delete Perform settings and stored reports when you uninstall the plugin. Deactivating it does not delete them.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -986,7 +986,7 @@ class Helpers {
 							'id'        => 'enable_woocommerce_manager',
 							'type'      => 'toggle',
 							'name'      => esc_html__( 'Enable WooCommerce Manager', 'perform' ),
-							'desc'      => esc_html__( 'Enabling this will allow you to manage WooCommerce specific settings.', 'perform' ),
+							'desc'      => esc_html__( 'Saved for compatibility. This switch does not turn on WooCommerce optimizations.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,
@@ -998,7 +998,7 @@ class Helpers {
 							'id'        => 'woocommerce_cache',
 							'type'      => 'toggle',
 							'name'      => esc_html__( 'Enable WooCommerce Cache', 'perform' ),
-							'desc'      => esc_html__( 'Enabling this will cache WooCommerce pages for better performance.', 'perform' ),
+							'desc'      => esc_html__( 'Saved for compatibility. To manage page caching, use the Cache tab.', 'perform' ),
 							'help_link' => esc_url(
 								add_query_arg(
 									$utm_args,

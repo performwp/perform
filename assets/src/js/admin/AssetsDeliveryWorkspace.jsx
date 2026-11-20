@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { BoltIcon, CloudIcon, CodeBracketIcon } from '@heroicons/react/24/outline';
 import { MetricStrip, SettingsGroup, WorkspaceHeader } from './WorkspaceLayout';
 
@@ -26,10 +26,14 @@ const AssetsDeliveryWorkspace = ( {
 			<WorkspaceHeader
 				title={ __( 'Assets & CDN', 'perform' ) }
 				description={ __(
-					'Reduce unnecessary browser work and deliver files from locations closer to your visitors.',
+					'Choose how frontend assets load and configure content delivery for your site.',
 					'perform'
 				) }
-				status={ `${ configuredRules } ${ __( 'asset rules configured', 'perform' ) }` }
+				status={ sprintf(
+					/* translators: %d: number of configured asset rules. */
+					_n( '%d asset rule configured', '%d asset rules configured', configuredRules, 'perform' ),
+					configuredRules
+				) }
 				statusType={ 0 < configuredRules ? 'success' : 'neutral' }
 			/>
 			<div className="perform-workspace-groups">
@@ -68,7 +72,7 @@ const AssetsDeliveryWorkspace = ( {
 					{ label: __( 'JavaScript rules', 'perform' ), value: assets.disabledJsHandles || 0 },
 					{ label: __( 'CSS rules', 'perform' ), value: assets.disabledCssHandles || 0 },
 					{ label: __( 'Group rules', 'perform' ), value: assets.groupDisabledRules || 0 },
-					{ label: __( 'URL exceptions', 'perform' ), value: assets.currentPageExceptions || 0 },
+					{ label: __( 'Page-specific exceptions', 'perform' ), value: assets.currentPageExceptions || 0 },
 				] }
 				note={ __( 'Configured rules only; Perform does not claim unmeasured byte savings.', 'perform' ) }
 			/>

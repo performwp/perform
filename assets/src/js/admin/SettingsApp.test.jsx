@@ -186,6 +186,7 @@ describe( 'settings acknowledged baseline', () => {
 		render( <SettingsApp /> );
 		edit( '//rejected.example.test' );
 		expect( await screen.findByRole( 'alert' ) ).toHaveTextContent( 'Rejected save.' );
+		expect( screen.getByRole( 'status' ) ).toHaveAttribute( 'data-state', 'error' );
 		await new Promise( ( resolve ) => setTimeout( resolve, 700 ) );
 		expect( window.fetch ).toHaveBeenCalledTimes( 1 );
 		fireEvent.click( retry() );
@@ -201,6 +202,7 @@ describe( 'settings acknowledged baseline', () => {
 		expect( retry() ).toBeEnabled();
 		edit( '//original.example.test' );
 		expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Save not confirmed' );
+		expect( screen.getByRole( 'status' ) ).toHaveAttribute( 'data-state', 'error' );
 		const pendingEvent = new Event( 'beforeunload', { cancelable: true } );
 		window.dispatchEvent( pendingEvent );
 		expect( pendingEvent.defaultPrevented ).toBe( true );

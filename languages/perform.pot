@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-18T16:18:09+00:00\n"
+"POT-Creation-Date: 2026-11-20T17:40:36+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: perform\n"
@@ -68,7 +68,7 @@ msgid "Clear activity"
 msgstr ""
 
 #: src/Admin/Actions.php:117
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:156
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:160
 #: assets/src/js/admin/AdminAssetAuditPanel.jsx:75
 #: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:103
 #: assets/src/js/admin/CronPressurePanel.jsx:110
@@ -128,7 +128,7 @@ msgstr ""
 
 #: src/Admin/Filters.php:78
 #: assets/src/js/admin/navigation.js:9
-#: assets/src/js/admin/PreferencesWorkspace.jsx:28
+#: assets/src/js/admin/PreferencesWorkspace.jsx:27
 msgid "Settings"
 msgstr ""
 
@@ -207,6 +207,7 @@ msgid "Saving..."
 msgstr ""
 
 #: src/Admin/Settings/Api.php:145
+#: assets/src/js/admin/settings/SettingsFieldRow.jsx:140
 msgid "Learn more"
 msgstr ""
 
@@ -225,7 +226,7 @@ msgstr ""
 #: src/Admin/Settings/AutoloadOptionsAudit.php:180
 #: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:214
 #: assets/src/js/admin/AutoloadOptionsManager.jsx:293
-#: assets/src/js/admin/SiteInventoryPanel.jsx:373
+#: assets/src/js/admin/SiteInventoryPanel.jsx:376
 msgid "Unknown"
 msgstr ""
 
@@ -405,7 +406,7 @@ msgid "Site Inventory"
 msgstr ""
 
 #: src/Admin/Settings/Menu.php:91
-#: assets/src/js/admin/SiteInventoryPanel.jsx:204
+#: assets/src/js/admin/SiteInventoryPanel.jsx:207
 msgid "Database"
 msgstr ""
 
@@ -426,7 +427,7 @@ msgid "Scheduled Tasks"
 msgstr ""
 
 #: src/Admin/Settings/Menu.php:96
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:123
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:127
 msgid "Action Scheduler"
 msgstr ""
 
@@ -620,7 +621,7 @@ msgid "Installed extension"
 msgstr ""
 
 #: src/Admin/Settings/SiteInventory.php:214
-#: assets/src/js/admin/SiteInventoryPanel.jsx:226
+#: assets/src/js/admin/SiteInventoryPanel.jsx:229
 msgid "Active theme"
 msgstr ""
 
@@ -629,12 +630,12 @@ msgid "Custom or extension"
 msgstr ""
 
 #: src/Admin/Settings/SiteInventoryController.php:75
-#: assets/src/js/admin/SiteInventoryPanel.jsx:96
+#: assets/src/js/admin/SiteInventoryPanel.jsx:99
 msgid "The site inventory could not be refreshed. Please try again."
 msgstr ""
 
 #: src/Admin/Settings/SiteInventoryController.php:81
-#: assets/src/js/admin/SiteInventoryPanel.jsx:89
+#: assets/src/js/admin/SiteInventoryPanel.jsx:92
 msgid "Site inventory refreshed."
 msgstr ""
 
@@ -666,8 +667,9 @@ msgstr ""
 #: src/Admin/Settings/SystemHealth.php:257
 #: assets/src/js/admin/SiteInventoryPanel.jsx:29
 #: assets/src/js/admin/SiteInventoryPanel.jsx:36
-#: assets/src/js/admin/SiteInventoryPanel.jsx:48
-#: assets/src/js/admin/SiteInventoryPanel.jsx:227
+#: assets/src/js/admin/SiteInventoryPanel.jsx:39
+#: assets/src/js/admin/SiteInventoryPanel.jsx:51
+#: assets/src/js/admin/SiteInventoryPanel.jsx:230
 #: assets/src/js/admin/SystemHealthPanel.jsx:8
 #: assets/src/js/admin/SystemHealthPanel.jsx:48
 msgid "Unavailable"
@@ -737,19 +739,19 @@ msgid "Ask your host whether OPcache can be enabled safely."
 msgstr ""
 
 #: src/Admin/Settings/SystemHealth.php:193
-#: assets/src/js/admin/CleanupWorkspace.jsx:51
+#: assets/src/js/admin/CleanupWorkspace.jsx:53
 #: assets/src/js/admin/DatabaseAuditPanel.jsx:146
 msgid "Persistent object cache"
 msgstr ""
 
 #: src/Admin/Settings/SystemHealth.php:194
-#: assets/src/js/admin/CleanupWorkspace.jsx:22
+#: assets/src/js/admin/CleanupWorkspace.jsx:28
 #: assets/src/js/admin/DatabaseAuditPanel.jsx:149
 msgid "Detected"
 msgstr ""
 
 #: src/Admin/Settings/SystemHealth.php:194
-#: assets/src/js/admin/CleanupWorkspace.jsx:23
+#: assets/src/js/admin/CleanupWorkspace.jsx:29
 #: assets/src/js/admin/DatabaseAuditPanel.jsx:150
 msgid "Not detected"
 msgstr ""
@@ -861,11 +863,11 @@ msgid "Configure general performance settings for your WordPress site."
 msgstr ""
 
 #: src/Includes/Helpers.php:315
-msgid "Force SSL"
+msgid "Redirect visitors to HTTPS"
 msgstr ""
 
 #: src/Includes/Helpers.php:316
-msgid "Enabling this will force all traffic to use SSL."
+msgid "Redirect public page requests from HTTP to HTTPS. Check that your site works over HTTPS before turning this on."
 msgstr ""
 
 #: src/Includes/Helpers.php:327
@@ -873,7 +875,7 @@ msgid "Enable Menu Cache"
 msgstr ""
 
 #: src/Includes/Helpers.php:328
-msgid "Enabling this will cache your menu items for better performance."
+msgid "Reuse the HTML for navigation menus instead of rebuilding them on each eligible page request."
 msgstr ""
 
 #: src/Includes/Helpers.php:341
@@ -881,7 +883,7 @@ msgid "Frontend Optimization"
 msgstr ""
 
 #: src/Includes/Helpers.php:342
-msgid "Remove unnecessary frontend scripts and tags that add extra requests or bytes to every page. These optimizations reduce file requests, improve cacheability, and clean up redundant page elements."
+msgid "Choose which scripts, styles, and metadata WordPress includes on your public pages."
 msgstr ""
 
 #: src/Includes/Helpers.php:347
@@ -889,7 +891,7 @@ msgid "Disable Emojis"
 msgstr ""
 
 #: src/Includes/Helpers.php:348
-msgid "Prevents WordPress from loading the emoji detection script and related styles, reducing one extra HTTP request."
+msgid "Remove WordPress emoji support scripts and styles. Devices can still display the emoji they support."
 msgstr ""
 
 #: src/Includes/Helpers.php:359
@@ -897,7 +899,7 @@ msgid "Disable Embeds"
 msgstr ""
 
 #: src/Includes/Helpers.php:360
-msgid "Removes the WordPress Embed script (wp-embed.min.js) used for embedding posts and media across sites."
+msgid "Turn off WordPress embed discovery and related scripts. Check any posts or sites that rely on embedded previews."
 msgstr ""
 
 #: src/Includes/Helpers.php:371
@@ -905,7 +907,7 @@ msgid "Remove Query Strings"
 msgstr ""
 
 #: src/Includes/Helpers.php:372
-msgid "Strips version query strings from static resources (?ver=) to improve caching efficiency on CDNs and browsers."
+msgid "Remove the version parameter and anything after it from public script and stylesheet URLs. Visitors may keep an older file after an update."
 msgstr ""
 
 #: src/Includes/Helpers.php:383
@@ -913,7 +915,7 @@ msgid "Remove jQuery Migrate"
 msgstr ""
 
 #: src/Includes/Helpers.php:384
-msgid "Prevents loading of the legacy jquery-migrate.min.js file, used mainly for backward compatibility with outdated scripts."
+msgid "Stop loading jQuery Migrate on public pages. Test older themes and plugins that rely on it."
 msgstr ""
 
 #: src/Includes/Helpers.php:395
@@ -961,7 +963,7 @@ msgid "Network Requests and Endpoints"
 msgstr ""
 
 #: src/Includes/Helpers.php:456
-msgid "Disable unused services that generate background or external HTTP requests. Ideal for sites that don't rely on remote publishing or REST-based integrations."
+msgid "Control XML-RPC publishing and REST API discovery links. Check which integrations your site uses first."
 msgstr ""
 
 #: src/Includes/Helpers.php:461
@@ -985,7 +987,7 @@ msgid "Feed and Discovery Optimization"
 msgstr ""
 
 #: src/Includes/Helpers.php:486
-msgid "Stop generating feed files and related discovery tags that most modern sites don't need. Helps reduce crawl requests and prevents unnecessary feed generation."
+msgid "Choose whether readers can subscribe to feeds and whether browsers can discover them."
 msgstr ""
 
 #: src/Includes/Helpers.php:491
@@ -993,7 +995,7 @@ msgid "Disable RSS Feeds"
 msgstr ""
 
 #: src/Includes/Helpers.php:492
-msgid "Disables WordPress-generated RSS feeds and redirects feed URLs back to the homepage."
+msgid "Show a feed-unavailable message instead of a feed. Subscribers will no longer receive updates."
 msgstr ""
 
 #: src/Includes/Helpers.php:503
@@ -1009,7 +1011,7 @@ msgid "Editor and Backend Performance"
 msgstr ""
 
 #: src/Includes/Helpers.php:516
-msgid "Limit WordPress background activity during content editing to reduce CPU and database usage. These controls keep your admin fast, reduce CPU cycles, and optimize database performance."
+msgid "Adjust background requests, revisions, and autosaves. These changes can affect people editing posts."
 msgstr ""
 
 #: src/Includes/Helpers.php:521
@@ -1025,7 +1027,7 @@ msgid "Disable Password Strength Meter"
 msgstr ""
 
 #: src/Includes/Helpers.php:534
-msgid "Prevents loading of the password strength meter script (zxcvbn.js) on non-essential admin pages."
+msgid "Stop loading the WordPress password strength meter. Check password forms on your site and in the admin before enabling."
 msgstr ""
 
 #: src/Includes/Helpers.php:545
@@ -1033,7 +1035,6 @@ msgid "Disable Heartbeat"
 msgstr ""
 
 #: src/Includes/Helpers.php:547
-#: src/Includes/Helpers.php:564
 #: src/Includes/Helpers.php:582
 #: src/Includes/Helpers.php:608
 msgid "Default"
@@ -1056,7 +1057,7 @@ msgid "Heartbeat Frequency"
 msgstr ""
 
 #: src/Includes/Helpers.php:564
-msgid "15 Seconds"
+msgid "WordPress default"
 msgstr ""
 
 #: src/Includes/Helpers.php:565
@@ -1072,7 +1073,7 @@ msgid "60 Seconds"
 msgstr ""
 
 #: src/Includes/Helpers.php:569
-msgid "Adjusts how often the Heartbeat API runs (lower frequency = fewer background requests)."
+msgid "A longer interval sends fewer background requests. The default leaves WordPress in control."
 msgstr ""
 
 #: src/Includes/Helpers.php:580
@@ -1129,7 +1130,7 @@ msgid "Enable Assets Manager"
 msgstr ""
 
 #: src/Includes/Helpers.php:634
-msgid "Enabling this will allow you to manage your assets more effectively."
+msgid "Choose which scripts and styles to unload on specific pages using the Assets Manager."
 msgstr ""
 
 #: src/Includes/Helpers.php:645
@@ -1137,7 +1138,7 @@ msgid "DNS Prefetch"
 msgstr ""
 
 #: src/Includes/Helpers.php:646
-msgid "Resolve domain names before a user clicks. Format: //domain.tld (one per line)"
+msgid "Ask browsers to look up external domains early. Enter one domain per line, for example //cdn.example.com."
 msgstr ""
 
 #: src/Includes/Helpers.php:657
@@ -1145,7 +1146,7 @@ msgid "Preconnect"
 msgstr ""
 
 #: src/Includes/Helpers.php:658
-msgid "Establish a connection to another origin before a user clicks. Format: //domain.tld (one per line)"
+msgid "Ask browsers to connect early to servers your pages use. Enter one origin per line, for example https://cdn.example.com."
 msgstr ""
 
 #: src/Includes/Helpers.php:671
@@ -1161,7 +1162,7 @@ msgid "Enable CDN"
 msgstr ""
 
 #: src/Includes/Helpers.php:678
-msgid "Enabling this will allow you to use a CDN for your static assets."
+msgid "Rewrite eligible file URLs to use the CDN address below."
 msgstr ""
 
 #: src/Includes/Helpers.php:689
@@ -1169,7 +1170,7 @@ msgid "CDN URL"
 msgstr ""
 
 #: src/Includes/Helpers.php:690
-msgid "Enter the URL of your CDN provider."
+msgid "Enter the address that serves your files, for example https://cdn.example.com."
 msgstr ""
 
 #: src/Includes/Helpers.php:701
@@ -1205,7 +1206,7 @@ msgid "Caches full HTML responses for anonymous visitors."
 msgstr ""
 
 #: src/Includes/Helpers.php:746
-msgid "Cache TTL"
+msgid "Cache lifetime"
 msgstr ""
 
 #: src/Includes/Helpers.php:749
@@ -1238,7 +1239,7 @@ msgid "How long a page remains fresh before becoming stale."
 msgstr ""
 
 #: src/Includes/Helpers.php:767
-msgid "Stale Revalidate Window"
+msgid "Serve expired pages for"
 msgstr ""
 
 #: src/Includes/Helpers.php:773
@@ -1246,7 +1247,7 @@ msgid "12 Hours"
 msgstr ""
 
 #: src/Includes/Helpers.php:776
-msgid "Serve stale pages while refreshing them in the background."
+msgid "After a cached page expires, choose how long visitors can receive the previous copy while it refreshes."
 msgstr ""
 
 #: src/Includes/Helpers.php:787
@@ -1334,7 +1335,7 @@ msgid "2000ms"
 msgstr ""
 
 #: src/Includes/Helpers.php:895
-msgid "Tracks uncached requests slower than this value in observability stats."
+msgid "Show uncached requests that exceed this time in the cache activity report."
 msgstr ""
 
 #: src/Includes/Helpers.php:906
@@ -1383,7 +1384,7 @@ msgid "Admin Performance Monitor"
 msgstr ""
 
 #: src/Includes/Helpers.php:957
-msgid "Collect bounded, private aggregate timing, memory, and query-count diagnostics for WordPress admin requests."
+msgid "Record timing, memory use, and database query counts for sampled admin requests on this site."
 msgstr ""
 
 #: src/Includes/Helpers.php:962
@@ -1399,7 +1400,7 @@ msgid "Remove Data on Uninstall"
 msgstr ""
 
 #: src/Includes/Helpers.php:969
-msgid "Enabling this will remove all plugin data upon uninstallation."
+msgid "Delete Perform settings and stored reports when you uninstall the plugin. Deactivating it does not delete them."
 msgstr ""
 
 #: src/Includes/Helpers.php:982
@@ -1415,7 +1416,7 @@ msgid "Enable WooCommerce Manager"
 msgstr ""
 
 #: src/Includes/Helpers.php:989
-msgid "Enabling this will allow you to manage WooCommerce specific settings."
+msgid "Saved for compatibility. This switch does not turn on WooCommerce optimizations."
 msgstr ""
 
 #: src/Includes/Helpers.php:1000
@@ -1423,7 +1424,7 @@ msgid "Enable WooCommerce Cache"
 msgstr ""
 
 #: src/Includes/Helpers.php:1001
-msgid "Enabling this will cache WooCommerce pages for better performance."
+msgid "Saved for compatibility. To manage page caching, use the Cache tab."
 msgstr ""
 
 #: src/Modules/Assets/AssetsManager.php:233
@@ -1546,12 +1547,12 @@ msgid "Size"
 msgstr ""
 
 #: src/Modules/Assets/AssetsManager.php:686
-#: assets/src/js/admin/SiteInventoryPanel.jsx:312
+#: assets/src/js/admin/SiteInventoryPanel.jsx:315
 msgid "Status"
 msgstr ""
 
 #: src/Modules/Assets/AssetsManager.php:689
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:32
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:36
 #: assets/src/js/admin/AutoloadOptionsManager.jsx:273
 msgid "Actions"
 msgstr ""
@@ -1747,161 +1748,169 @@ msgstr ""
 msgid "Less than one hour"
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:13
-msgid "hours"
-msgstr ""
-
+#. translators: %d: number of hours.
 #: assets/src/js/admin/ActionSchedulerPanel.jsx:15
-msgid "days"
-msgstr ""
+#, js-format
+msgid "%d hour"
+msgid_plural "%d hours"
+msgstr[0] ""
+msgstr[1] ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:31
+#. translators: %d: number of days.
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:19
+#, js-format
+msgid "%d day"
+msgid_plural "%d days"
+msgstr[0] ""
+msgstr[1] ""
+
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:35
 msgid "Name"
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:64
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:68
 #: assets/src/js/admin/CronPressurePanel.jsx:16
 msgid "Refresh check"
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:64
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:68
 #: assets/src/js/admin/CronPressurePanel.jsx:16
 msgid "Run check"
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:66
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:70
 msgid "Checking queue…"
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:75
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:79
 #: assets/src/js/admin/CronPressurePanel.jsx:28
 msgid "Clearing the saved diagnostic…"
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:76
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:80
 msgid "Checking the Action Scheduler queue…"
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:92
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:100
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:96
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:104
 msgid "The Action Scheduler diagnostic could not be updated."
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:111
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:115
 msgid "Clear the saved Action Scheduler diagnostic? No queued actions will be changed."
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:122
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:126
 msgid "Background queues"
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:125
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:129
 msgid "Review queue pressure used by commerce and other extensions without reading action arguments or changing queued work."
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:156
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:160
 #: assets/src/js/admin/CronPressurePanel.jsx:110
 msgid "Clear snapshot"
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:163
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:167
 msgid "Read-only and private"
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:165
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:169
 msgid "Perform stores aggregate queue counts for one hour. It does not read action arguments, payloads, or log messages, and it never runs, cancels, or deletes queued work."
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:184
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:188
 msgid "Run the first queue check"
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:186
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:190
 msgid "The check starts only when requested and saves aggregate counts for this site."
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:197
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:201
 msgid "Action Scheduler is not available"
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:199
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:203
 msgid "No Action Scheduler actions table was found for this site. There is no queue to inspect."
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:212
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:216
 msgid "Action Scheduler queue summary"
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:215
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:219
 msgid "Pending"
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:219
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:223
 msgid "Running"
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:223
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:227
 msgid "Failed"
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:227
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:231
 msgid "Complete"
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:231
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:235
 msgid "Canceled"
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:237
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:241
 msgid "Oldest pending action"
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:241
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:245
 msgid "None pending"
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:245
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:249
 msgid "Stored actions"
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:249
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:253
 msgid "Stored log rows"
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:252
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:256
 #: assets/src/js/admin/SiteInventoryPanel.jsx:16
 msgid "Not available"
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:258
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:262
 msgid "Counts describe the current queue, not whether a hook is harmful. Compare repeated snapshots and consult the responsible extension before changing retention or runner settings."
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:264
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:268
 msgid "Failed-action trend is not shown because deriving it reliably would require reading or interpreting private log messages."
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:271
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:275
 msgid "Largest hooks"
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:272
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:276
 msgid "Aggregate counts only; action arguments are never read."
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:274
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:278
 msgid "No hook counts were returned."
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:277
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:281
 msgid "Largest groups"
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:278
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:282
 msgid "Group names and aggregate counts only."
 msgstr ""
 
-#: assets/src/js/admin/ActionSchedulerPanel.jsx:280
+#: assets/src/js/admin/ActionSchedulerPanel.jsx:284
 msgid "No group counts were returned."
 msgstr ""
 
@@ -1943,7 +1952,7 @@ msgstr ""
 
 #: assets/src/js/admin/AdminAssetAuditPanel.jsx:83
 #: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:111
-msgid "Enable in Advanced"
+msgid "Open measurement settings"
 msgstr ""
 
 #: assets/src/js/admin/AdminAssetAuditPanel.jsx:89
@@ -1991,8 +2000,8 @@ msgstr ""
 
 #: assets/src/js/admin/AdminAssetAuditPanel.jsx:161
 #: assets/src/js/admin/AdminAssetAuditPanel.jsx:173
-#: assets/src/js/admin/PluginImpactPanel.jsx:136
-#: assets/src/js/admin/PluginImpactPanel.jsx:152
+#: assets/src/js/admin/PluginImpactPanel.jsx:150
+#: assets/src/js/admin/PluginImpactPanel.jsx:166
 msgid "Screens"
 msgstr ""
 
@@ -2131,7 +2140,7 @@ msgstr ""
 
 #: assets/src/js/admin/AdminPerformanceMonitorPanel.jsx:232
 #: assets/src/js/admin/DashboardPanel.jsx:17
-#: assets/src/js/admin/InsightsWorkspace.jsx:146
+#: assets/src/js/admin/InsightsWorkspace.jsx:145
 #: assets/src/js/admin/SystemHealthPanel.jsx:6
 msgid "Review"
 msgstr ""
@@ -2151,59 +2160,62 @@ msgid "Assets & CDN"
 msgstr ""
 
 #: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:28
-msgid "Reduce unnecessary browser work and deliver files from locations closer to your visitors."
+msgid "Choose how frontend assets load and configure content delivery for your site."
 msgstr ""
 
-#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:32
-msgid "asset rules configured"
-msgstr ""
+#. translators: %d: number of configured asset rules.
+#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:34
+#, js-format
+msgid "%d asset rule configured"
+msgid_plural "%d asset rules configured"
+msgstr[0] ""
+msgstr[1] ""
 
-#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:37
+#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:41
 msgid "Frontend optimization"
 msgstr ""
 
-#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:38
+#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:42
 msgid "Control asset loading and prepare trusted third-party connections."
 msgstr ""
 
-#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:49
+#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:53
 msgid "Content delivery"
 msgstr ""
 
-#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:50
+#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:54
 msgid "Connect a CDN and control which public files use it."
 msgstr ""
 
-#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:57
+#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:61
 msgid "Cloudflare cache sync"
 msgstr ""
 
-#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:58
+#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:62
 msgid "Keep Cloudflare in step when Perform clears local cached pages."
 msgstr ""
 
-#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:66
-#: assets/src/js/admin/DashboardPanel.jsx:318
+#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:70
 msgid "Configured coverage"
 msgstr ""
 
-#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:68
+#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:72
 msgid "JavaScript rules"
 msgstr ""
 
-#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:69
+#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:73
 msgid "CSS rules"
 msgstr ""
 
-#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:70
+#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:74
 msgid "Group rules"
 msgstr ""
 
-#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:71
-msgid "URL exceptions"
+#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:75
+msgid "Page-specific exceptions"
 msgstr ""
 
-#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:73
+#: assets/src/js/admin/AssetsDeliveryWorkspace.jsx:77
 msgid "Configured rules only; Perform does not claim unmeasured byte savings."
 msgstr ""
 
@@ -2291,7 +2303,7 @@ msgid "Autoload"
 msgstr ""
 
 #: assets/src/js/admin/AutoloadOptionsManager.jsx:272
-#: assets/src/js/admin/SiteInventoryPanel.jsx:359
+#: assets/src/js/admin/SiteInventoryPanel.jsx:362
 msgid "Likely owner"
 msgstr ""
 
@@ -2302,12 +2314,12 @@ msgid "%d B"
 msgstr ""
 
 #: assets/src/js/admin/AutoloadOptionsManager.jsx:295
-#: assets/src/js/admin/SiteInventoryPanel.jsx:375
+#: assets/src/js/admin/SiteInventoryPanel.jsx:378
 msgid "unknown"
 msgstr ""
 
 #: assets/src/js/admin/AutoloadOptionsManager.jsx:296
-#: assets/src/js/admin/SiteInventoryPanel.jsx:376
+#: assets/src/js/admin/SiteInventoryPanel.jsx:379
 msgid "confidence"
 msgstr ""
 
@@ -2379,7 +2391,7 @@ msgid "Back to cache"
 msgstr ""
 
 #: assets/src/js/admin/CacheWorkspace.jsx:27
-#: assets/src/js/admin/PluginImpactPanel.jsx:164
+#: assets/src/js/admin/PluginImpactPanel.jsx:11
 #: assets/src/js/admin/SiteInventoryPanel.jsx:15
 msgid "Measured locally"
 msgstr ""
@@ -2397,11 +2409,11 @@ msgid "Page cache"
 msgstr ""
 
 #: assets/src/js/admin/CacheWorkspace.jsx:62
-msgid "Serve ready-made pages to repeat visitors while Perform refreshes content safely in the background."
+msgid "Serve cached pages to eligible visitors and configure when cached content is refreshed."
 msgstr ""
 
 #: assets/src/js/admin/CacheWorkspace.jsx:66
-#: assets/src/js/admin/SiteInventoryPanel.jsx:322
+#: assets/src/js/admin/SiteInventoryPanel.jsx:325
 msgid "Active"
 msgstr ""
 
@@ -2410,7 +2422,7 @@ msgid "Not active"
 msgstr ""
 
 #: assets/src/js/admin/CacheWorkspace.jsx:70
-#: assets/src/js/admin/DashboardPanel.jsx:158
+#: assets/src/js/admin/DashboardPanel.jsx:165
 msgid "View cache activity"
 msgstr ""
 
@@ -2423,7 +2435,7 @@ msgid "Hit rate"
 msgstr ""
 
 #: assets/src/js/admin/CacheWorkspace.jsx:84
-#: assets/src/js/admin/DashboardPanel.jsx:310
+#: assets/src/js/admin/DashboardPanel.jsx:337
 msgid "Cached visits"
 msgstr ""
 
@@ -2448,11 +2460,11 @@ msgid "The core controls most sites need for safe page caching."
 msgstr ""
 
 #: assets/src/js/admin/CacheWorkspace.jsx:110
-msgid "Pages never cached"
+msgid "Cache exclusions"
 msgstr ""
 
 #: assets/src/js/admin/CacheWorkspace.jsx:111
-msgid "Protect checkout, account, preview, session, and other dynamic experiences."
+msgid "Configure bypass rules for checkout, account, preview, session, and other dynamic requests."
 msgstr ""
 
 #: assets/src/js/admin/CacheWorkspace.jsx:121
@@ -2463,64 +2475,67 @@ msgstr ""
 msgid "Choose when an uncached request should be highlighted for review."
 msgstr ""
 
-#: assets/src/js/admin/CleanupWorkspace.jsx:29
+#: assets/src/js/admin/CleanupWorkspace.jsx:22
+msgid "Database not checked"
+msgstr ""
+
+#: assets/src/js/admin/CleanupWorkspace.jsx:25
+#: assets/src/js/admin/InsightsWorkspace.jsx:162
+#: assets/src/js/admin/InsightsWorkspace.jsx:163
+#: assets/src/js/admin/SiteInventoryPanel.jsx:401
+msgid "Refresh recommended"
+msgstr ""
+
+#: assets/src/js/admin/CleanupWorkspace.jsx:26
+msgid "Database checked"
+msgstr ""
+
+#: assets/src/js/admin/CleanupWorkspace.jsx:35
 #: assets/src/js/admin/navigation.js:7
 msgid "Cleanup"
 msgstr ""
 
-#: assets/src/js/admin/CleanupWorkspace.jsx:30
-msgid "Remove unnecessary WordPress extras and review database items that may be adding avoidable work."
-msgstr ""
-
 #: assets/src/js/admin/CleanupWorkspace.jsx:36
-msgid "Database evidence is ready"
+msgid "Choose which WordPress features to keep and review the options loaded on each request."
 msgstr ""
 
-#: assets/src/js/admin/CleanupWorkspace.jsx:37
-msgid "Database check available"
+#: assets/src/js/admin/CleanupWorkspace.jsx:44
+#: assets/src/js/admin/DashboardPanel.jsx:147
+msgid "Open database audit"
 msgstr ""
 
-#: assets/src/js/admin/CleanupWorkspace.jsx:42
-#: assets/src/js/admin/DashboardPanel.jsx:140
-msgid "Review database"
-msgstr ""
-
-#: assets/src/js/admin/CleanupWorkspace.jsx:42
-msgid "Run database check"
-msgstr ""
-
-#: assets/src/js/admin/CleanupWorkspace.jsx:47
+#: assets/src/js/admin/CleanupWorkspace.jsx:49
 #: assets/src/js/admin/DatabaseAuditPanel.jsx:89
 msgid "Database health"
 msgstr ""
 
-#: assets/src/js/admin/CleanupWorkspace.jsx:49
+#: assets/src/js/admin/CleanupWorkspace.jsx:51
 msgid "Autoloaded size"
 msgstr ""
 
-#: assets/src/js/admin/CleanupWorkspace.jsx:50
+#: assets/src/js/admin/CleanupWorkspace.jsx:52
 #: assets/src/js/admin/DatabaseAuditPanel.jsx:142
 msgid "Autoloaded options"
 msgstr ""
 
-#: assets/src/js/admin/CleanupWorkspace.jsx:53
-msgid "This release audits database pressure but does not remove data automatically."
-msgstr ""
-
-#: assets/src/js/admin/CleanupWorkspace.jsx:59
-msgid "Reduce WordPress extras"
+#: assets/src/js/admin/CleanupWorkspace.jsx:55
+msgid "The audit shows which options WordPress loads on each request. Running it does not change or delete them."
 msgstr ""
 
 #: assets/src/js/admin/CleanupWorkspace.jsx:61
-msgid "Open a category to review each optimization. Existing controls and saved values are unchanged."
+msgid "Reduce WordPress extras"
 msgstr ""
 
-#: assets/src/js/admin/CleanupWorkspace.jsx:84
+#: assets/src/js/admin/CleanupWorkspace.jsx:62
+msgid "Open a category to review its settings before changing them."
+msgstr ""
+
+#: assets/src/js/admin/CleanupWorkspace.jsx:81
 msgid "Review first, then optimize"
 msgstr ""
 
-#: assets/src/js/admin/CleanupWorkspace.jsx:86
-msgid "Perform keeps potentially disruptive controls visible and explained. Database cleanup will require preview and recovery support before it is offered."
+#: assets/src/js/admin/CleanupWorkspace.jsx:83
+msgid "Review an option and its owner before changing its autoload setting. Check the affected plugin afterward."
 msgstr ""
 
 #: assets/src/js/admin/CronPressurePanel.jsx:19
@@ -2631,253 +2646,274 @@ msgid "Ready"
 msgstr ""
 
 #: assets/src/js/admin/DashboardPanel.jsx:19
-#: assets/src/js/admin/InsightsWorkspace.jsx:140
-#: assets/src/js/admin/InsightsWorkspace.jsx:233
-#: assets/src/js/admin/InsightsWorkspace.jsx:239
+#: assets/src/js/admin/InsightsWorkspace.jsx:139
+#: assets/src/js/admin/InsightsWorkspace.jsx:235
+#: assets/src/js/admin/InsightsWorkspace.jsx:241
+#: assets/src/js/admin/PluginImpactPanel.jsx:9
+#: assets/src/js/admin/PluginImpactPanel.jsx:83
+#: assets/src/js/admin/PluginImpactPanel.jsx:99
+#: assets/src/js/admin/PluginImpactPanel.jsx:169
+#: assets/src/js/admin/PluginImpactPanel.jsx:174
+#: assets/src/js/admin/PluginImpactPanel.jsx:179
 msgid "Not measured"
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:63
-msgid "Runtime diagnostics are not available in the current page payload."
+#: assets/src/js/admin/DashboardPanel.jsx:66
+msgid "No cache or delivery checks are available yet."
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:66
+#: assets/src/js/admin/DashboardPanel.jsx:69
 msgid "Local cache and delivery prerequisites currently report ready."
 msgstr ""
 
 #. translators: %d: diagnostic count requiring review.
-#: assets/src/js/admin/DashboardPanel.jsx:70
+#: assets/src/js/admin/DashboardPanel.jsx:73
 #, js-format
 msgid "%d cache or delivery check needs review."
 msgid_plural "%d cache or delivery checks need review."
 msgstr[0] ""
 msgstr[1] ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:82
-msgid "Page cache is disabled. Enable it only after reviewing dynamic-site exclusions."
+#: assets/src/js/admin/DashboardPanel.jsx:85
+msgid "Generate a site profile to check whether page caching is enabled."
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:88
+#: assets/src/js/admin/DashboardPanel.jsx:87
+msgid "Page cache is disabled. Review dynamic-site exclusions before enabling it."
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:93
 msgid "Page cache is enabled; more local traffic is needed for a useful activity summary."
 msgstr ""
 
 #. translators: %s: measured cache hit ratio.
-#: assets/src/js/admin/DashboardPanel.jsx:97
+#: assets/src/js/admin/DashboardPanel.jsx:102
 #, js-format
 msgid "%s%% measured cache hit ratio from local activity."
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:112
+#: assets/src/js/admin/DashboardPanel.jsx:117
 msgid "Site context"
 msgstr ""
 
 #. translators: 1: active plugin count, 2: registered content type count, 3: enabled Perform module count.
-#: assets/src/js/admin/DashboardPanel.jsx:117
+#: assets/src/js/admin/DashboardPanel.jsx:122
 #, js-format
 msgid "%1$d active plugins, %2$d content types, and %3$d Perform modules measured locally."
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:125
+#: assets/src/js/admin/DashboardPanel.jsx:130
 msgid "Generate a private local inventory before using site-specific guidance."
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:126
-#: assets/src/js/admin/SiteInventoryPanel.jsx:63
-msgid "Generate inventory"
+#: assets/src/js/admin/DashboardPanel.jsx:133
+msgid "Find site profile in Insights"
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:130
-#: assets/src/js/admin/InsightsWorkspace.jsx:231
+#: assets/src/js/admin/DashboardPanel.jsx:137
+#: assets/src/js/admin/InsightsWorkspace.jsx:233
 msgid "Database pressure"
 msgstr ""
 
 #. translators: %s: measured autoloaded option size.
-#: assets/src/js/admin/DashboardPanel.jsx:135
+#: assets/src/js/admin/DashboardPanel.jsx:142
 #, js-format
 msgid "%s of autoloaded options measured against WordPress guidance."
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:138
+#: assets/src/js/admin/DashboardPanel.jsx:145
 msgid "Run the local database audit to measure autoloaded option pressure."
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:140
-msgid "Run database audit"
-msgstr ""
-
-#: assets/src/js/admin/DashboardPanel.jsx:146
+#: assets/src/js/admin/DashboardPanel.jsx:153
 msgid "Runtime checks"
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:149
+#: assets/src/js/admin/DashboardPanel.jsx:156
 msgid "View runtime checks"
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:153
+#: assets/src/js/admin/DashboardPanel.jsx:160
 msgid "Page caching"
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:159
+#: assets/src/js/admin/DashboardPanel.jsx:166
 msgid "Review cache settings"
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:165
+#: assets/src/js/admin/DashboardPanel.jsx:172
 msgid "Server acceleration"
 msgstr ""
 
 #. translators: 1: OPcache state, 2: persistent object-cache state, 3: compression state.
-#: assets/src/js/admin/DashboardPanel.jsx:169
+#: assets/src/js/admin/DashboardPanel.jsx:176
 #, js-format
 msgid "OPcache: %1$s. Persistent object cache: %2$s. Response compression: %3$s."
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:170
-#: assets/src/js/admin/DashboardPanel.jsx:171
+#: assets/src/js/admin/DashboardPanel.jsx:177
+#: assets/src/js/admin/DashboardPanel.jsx:178
 msgid "detected"
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:170
-#: assets/src/js/admin/DashboardPanel.jsx:171
+#: assets/src/js/admin/DashboardPanel.jsx:177
+#: assets/src/js/admin/DashboardPanel.jsx:178
 msgid "not confirmed"
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:173
+#: assets/src/js/admin/DashboardPanel.jsx:180
 msgid "detected in PHP"
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:174
+#: assets/src/js/admin/DashboardPanel.jsx:181
 msgid "needs a separate response test"
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:176
+#: assets/src/js/admin/DashboardPanel.jsx:183
 msgid "Review server evidence"
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:186
-msgid "Store safety"
+#: assets/src/js/admin/DashboardPanel.jsx:190
+msgid "Cache exclusions are configured. Review them whenever your store workflows change."
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:189
+#: assets/src/js/admin/DashboardPanel.jsx:195
+msgid "A store pattern is present. Review cart, checkout, account, and session exclusions before enabling page cache."
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:200
 msgid "A store pattern is present. Review cart, checkout, account, and session exclusions."
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:190
-msgid "A store pattern is present and current cache diagnostics show no unresolved exclusion warning."
+#: assets/src/js/admin/DashboardPanel.jsx:208
+msgid "Store safety"
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:194
+#: assets/src/js/admin/DashboardPanel.jsx:211
 msgid "Review cache exclusions"
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:263
+#: assets/src/js/admin/DashboardPanel.jsx:281
 msgid "Your measured local performance checks are ready."
 msgstr ""
 
 #. translators: %d: number of recommendations requiring review.
-#: assets/src/js/admin/DashboardPanel.jsx:267
+#: assets/src/js/admin/DashboardPanel.jsx:285
 #, js-format
 msgid "%d action needs review."
 msgid_plural "%d actions need review."
 msgstr[0] ""
 msgstr[1] ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:271
-msgid "Finish the local diagnostics to unlock site-specific guidance."
+#: assets/src/js/admin/DashboardPanel.jsx:289
+msgid "Some areas have not been measured yet."
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:277
-msgid "Performance overview"
+#: assets/src/js/admin/DashboardPanel.jsx:291
+msgid "Some areas need more activity before they can be assessed."
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:279
-msgid "Perform combines private local evidence into clear next steps. It never turns these checks into an unverified speed score."
+#: assets/src/js/admin/DashboardPanel.jsx:293
+msgid "Local checks ready"
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:284
+#: assets/src/js/admin/DashboardPanel.jsx:296
 #: assets/src/js/admin/DatabaseAuditPanel.jsx:161
 msgid "Review recommended"
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:284
-msgid "Local checks ready"
-msgstr ""
-
-#: assets/src/js/admin/DashboardPanel.jsx:290
-msgid "View insights"
-msgstr ""
-
-#: assets/src/js/admin/DashboardPanel.jsx:293
-msgid "How Perform works"
-msgstr ""
-
-#: assets/src/js/admin/DashboardPanel.jsx:300
-msgid "Measured value"
-msgstr ""
-
-#: assets/src/js/admin/DashboardPanel.jsx:304
-msgid "Cache hit rate"
+#: assets/src/js/admin/DashboardPanel.jsx:299
+msgid "More evidence needed"
 msgstr ""
 
 #: assets/src/js/admin/DashboardPanel.jsx:306
+msgid "Performance overview"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:308
+msgid "Review cache activity and site checks below. These checks do not measure the speed visitors experience."
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:317
+msgid "View insights"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:320
+msgid "How Perform works"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:327
+msgid "Site at a glance"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:331
+msgid "Cache hit rate"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:333
 msgid "Local requests"
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:312
+#: assets/src/js/admin/DashboardPanel.jsx:339
 msgid "Hits and stale hits"
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:316
+#: assets/src/js/admin/DashboardPanel.jsx:343
 msgid "Asset rules"
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:322
+#: assets/src/js/admin/DashboardPanel.jsx:345
+msgid "Script and style rules"
+msgstr ""
+
+#: assets/src/js/admin/DashboardPanel.jsx:349
 msgid "Areas ready"
 msgstr ""
 
-#. translators: %d: number of diagnostics still available to run.
-#: assets/src/js/admin/DashboardPanel.jsx:325
+#. translators: %d: number of areas not yet measured.
+#: assets/src/js/admin/DashboardPanel.jsx:352
 #, js-format
-msgid "%d still available"
+msgid "%d not measured"
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:328
+#: assets/src/js/admin/DashboardPanel.jsx:355
 msgid "All values are measured or configured on this WordPress site. No estimated time or traffic savings are shown."
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:337
+#: assets/src/js/admin/DashboardPanel.jsx:364
 msgid "How your site is doing"
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:339
-msgid "Plain-language status across caching, server readiness, database pressure, and site context."
+#: assets/src/js/admin/DashboardPanel.jsx:365
+msgid "See which checks need attention and open a report for details."
 msgstr ""
 
 #. translators: %d: number of local checks that need review.
-#: assets/src/js/admin/DashboardPanel.jsx:350
+#: assets/src/js/admin/DashboardPanel.jsx:372
 #, js-format
 msgid "%d item to review"
 msgid_plural "%d items to review"
 msgstr[0] ""
 msgstr[1] ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:365
+#: assets/src/js/admin/DashboardPanel.jsx:387
 msgid "Core Web Vitals need a separate test"
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:367
-msgid "Local WordPress diagnostics cannot prove real-user LCP, INP, or CLS. Field data and lab testing remain separate evidence sources."
+#: assets/src/js/admin/DashboardPanel.jsx:389
+msgid "These checks run on your site. To see how quickly pages load, respond, and stay visually stable for visitors, use real-user Core Web Vitals data."
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:375
+#: assets/src/js/admin/DashboardPanel.jsx:397
 msgid "Core Web Vitals connection status"
 msgstr ""
 
-#: assets/src/js/admin/DashboardPanel.jsx:379
-#: assets/src/js/admin/DashboardPanel.jsx:383
-#: assets/src/js/admin/DashboardPanel.jsx:387
-#: assets/src/js/admin/InsightsWorkspace.jsx:257
-#: assets/src/js/admin/InsightsWorkspace.jsx:261
-#: assets/src/js/admin/InsightsWorkspace.jsx:265
+#: assets/src/js/admin/DashboardPanel.jsx:401
+#: assets/src/js/admin/DashboardPanel.jsx:405
+#: assets/src/js/admin/DashboardPanel.jsx:409
+#: assets/src/js/admin/InsightsWorkspace.jsx:259
+#: assets/src/js/admin/InsightsWorkspace.jsx:263
+#: assets/src/js/admin/InsightsWorkspace.jsx:267
 msgid "Not connected"
 msgstr ""
 
@@ -2938,7 +2974,7 @@ msgid "The measured total is below WordPress Site Health’s guidance threshold.
 msgstr ""
 
 #: assets/src/js/admin/DatabaseAuditPanel.jsx:177
-#: assets/src/js/admin/SiteInventoryPanel.jsx:396
+#: assets/src/js/admin/SiteInventoryPanel.jsx:399
 msgid "Snapshot generated"
 msgstr ""
 
@@ -2947,8 +2983,8 @@ msgid "Totals may be out of date; refresh the audit"
 msgstr ""
 
 #: assets/src/js/admin/DatabaseAuditPanel.jsx:182
-#: assets/src/js/admin/SiteInventoryPanel.jsx:233
-#: assets/src/js/admin/SiteInventoryPanel.jsx:399
+#: assets/src/js/admin/SiteInventoryPanel.jsx:236
+#: assets/src/js/admin/SiteInventoryPanel.jsx:402
 msgid "Current site only"
 msgstr ""
 
@@ -2968,193 +3004,189 @@ msgstr ""
 msgid "All changes saved"
 msgstr ""
 
-#: assets/src/js/admin/Footer.jsx:8
+#: assets/src/js/admin/Footer.jsx:10
 msgid "Changes will save automatically…"
 msgstr ""
 
-#: assets/src/js/admin/Footer.jsx:11
+#: assets/src/js/admin/Footer.jsx:15
 msgid "Save not confirmed"
 msgstr ""
 
-#: assets/src/js/admin/Footer.jsx:11
+#: assets/src/js/admin/Footer.jsx:15
 msgid "Settings not saved"
 msgstr ""
 
-#: assets/src/js/admin/Footer.jsx:14
+#: assets/src/js/admin/Footer.jsx:20
 msgid "Saving settings…"
 msgstr ""
 
-#: assets/src/js/admin/Footer.jsx:31
+#: assets/src/js/admin/Footer.jsx:37
 msgid "Retry save"
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:31
-#: assets/src/js/admin/InsightsWorkspace.jsx:237
+#: assets/src/js/admin/InsightsWorkspace.jsx:30
+#: assets/src/js/admin/InsightsWorkspace.jsx:239
 msgid "Site profile"
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:32
+#: assets/src/js/admin/InsightsWorkspace.jsx:31
 msgid "WordPress, hosting, plugins, content types, and enabled Perform features."
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:37
+#: assets/src/js/admin/InsightsWorkspace.jsx:36
 msgid "Database options"
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:38
+#: assets/src/js/admin/InsightsWorkspace.jsx:37
 msgid "Autoloaded option size, likely ownership, and object-cache evidence."
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:43
+#: assets/src/js/admin/InsightsWorkspace.jsx:42
 msgid "Admin experience"
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:44
-msgid "Bounded timing, memory, and query-count samples for WordPress admin requests."
+#: assets/src/js/admin/InsightsWorkspace.jsx:43
+msgid "Timing, memory, and query counts sampled from WordPress admin requests."
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:49
+#: assets/src/js/admin/InsightsWorkspace.jsx:48
 msgid "Admin assets"
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:50
+#: assets/src/js/admin/InsightsWorkspace.jsx:49
 msgid "Script and style handles observed across sampled admin screens."
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:55
-#: assets/src/js/admin/PluginImpactPanel.jsx:85
+#: assets/src/js/admin/InsightsWorkspace.jsx:54
+#: assets/src/js/admin/PluginImpactPanel.jsx:95
 msgid "Plugin signals"
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:56
-msgid "Evidence-bound relationships between active plugins and observed admin assets."
+#: assets/src/js/admin/InsightsWorkspace.jsx:55
+msgid "Admin assets observed for active plugins in sampled screens."
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:61
+#: assets/src/js/admin/InsightsWorkspace.jsx:60
 msgid "Scheduled tasks"
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:62
+#: assets/src/js/admin/InsightsWorkspace.jsx:61
 msgid "Overdue and clustered WordPress cron work."
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:67
+#: assets/src/js/admin/InsightsWorkspace.jsx:66
 msgid "Action queues"
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:68
-msgid "Aggregate queue pressure used by commerce and other extensions."
+#: assets/src/js/admin/InsightsWorkspace.jsx:67
+msgid "Action Scheduler queue counts for commerce and other extensions."
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:142
+#: assets/src/js/admin/InsightsWorkspace.jsx:141
 msgid "Cache and delivery checks are not measured"
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:143
+#: assets/src/js/admin/InsightsWorkspace.jsx:142
 msgid "Cache checks not measured"
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:148
-msgid "A few cache and delivery checks need review"
+#: assets/src/js/admin/InsightsWorkspace.jsx:147
+msgid "Some cache and delivery checks need review"
 msgstr ""
 
 #. translators: %d: number of cache checks needing review.
-#: assets/src/js/admin/InsightsWorkspace.jsx:151
+#: assets/src/js/admin/InsightsWorkspace.jsx:150
 #, js-format
 msgid "%d cache check to review"
 msgid_plural "%d cache checks to review"
 msgstr[0] ""
 msgstr[1] ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:155
+#: assets/src/js/admin/InsightsWorkspace.jsx:154
 #: assets/src/js/admin/SystemHealthPanel.jsx:5
 msgid "Good"
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:157
+#: assets/src/js/admin/InsightsWorkspace.jsx:156
 msgid "Cache and delivery checks look good"
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:158
+#: assets/src/js/admin/InsightsWorkspace.jsx:157
 msgid "Cache and delivery checks ready"
 msgstr ""
 
+#: assets/src/js/admin/InsightsWorkspace.jsx:162
+msgid "Measured"
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:163
+msgid "Current"
+msgstr ""
+
 #. translators: %1$s: measured size, %2$d: number of autoloaded options.
-#: assets/src/js/admin/InsightsWorkspace.jsx:167
+#: assets/src/js/admin/InsightsWorkspace.jsx:168
 #, js-format
 msgid "%1$s autoloaded across %2$d option"
 msgid_plural "%1$s autoloaded across %2$d options"
 msgstr[0] ""
 msgstr[1] ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:176
-msgid "Run the local database check to measure autoloaded option pressure."
+#: assets/src/js/admin/InsightsWorkspace.jsx:177
+msgid "Open Database options and run a check to see how much data WordPress loads on each request."
 msgstr ""
 
 #. translators: %1$d: active plugin count, %2$d: content type count.
-#: assets/src/js/admin/InsightsWorkspace.jsx:180
+#: assets/src/js/admin/InsightsWorkspace.jsx:184
 #, js-format
 msgid "Local counts: %1$d active plugins, %2$d content types."
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:184
+#: assets/src/js/admin/InsightsWorkspace.jsx:188
 msgid "Generate a private local inventory for site-specific guidance."
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:189
+#: assets/src/js/admin/InsightsWorkspace.jsx:193
 #: assets/src/js/admin/navigation.js:8
 msgid "Insights"
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:190
-msgid "Understand what is helping, what needs attention, and where Perform has enough evidence to guide you."
+#: assets/src/js/admin/InsightsWorkspace.jsx:194
+msgid "Check your cache setup, review database options, and open reports on your WordPress installation."
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:203
-msgid "Review site profile"
+#: assets/src/js/admin/InsightsWorkspace.jsx:206
+msgid "Open site profile"
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:204
-msgid "Generate site profile"
-msgstr ""
-
-#: assets/src/js/admin/InsightsWorkspace.jsx:216
+#: assets/src/js/admin/InsightsWorkspace.jsx:218
 msgid "This summary uses evidence collected privately on this WordPress site."
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:225
+#: assets/src/js/admin/InsightsWorkspace.jsx:227
 msgid "Cache and delivery setup"
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:226
+#: assets/src/js/admin/InsightsWorkspace.jsx:228
 msgid "Page-cache, menu support, and CDN prerequisites"
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:233
-msgid "Measured"
-msgstr ""
-
-#: assets/src/js/admin/InsightsWorkspace.jsx:239
-msgid "Current"
-msgstr ""
-
-#: assets/src/js/admin/InsightsWorkspace.jsx:246
+#: assets/src/js/admin/InsightsWorkspace.jsx:248
 msgid "Core Web Vitals require a separate measurement"
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:248
-msgid "Real-user LCP, INP, and CLS cannot be proven from local WordPress checks. Perform keeps field, lab, and local evidence clearly separated."
-msgstr ""
-
-#: assets/src/js/admin/InsightsWorkspace.jsx:272
-msgid "Technical reports"
+#: assets/src/js/admin/InsightsWorkspace.jsx:250
+msgid "These checks do not measure visitors’ load times, responsiveness, or layout shifts. Use real-user data to assess Core Web Vitals."
 msgstr ""
 
 #: assets/src/js/admin/InsightsWorkspace.jsx:274
-msgid "Open detailed evidence only when you need it. Reports stay read-only unless an action clearly says otherwise."
+msgid "Technical reports"
 msgstr ""
 
-#: assets/src/js/admin/InsightsWorkspace.jsx:305
+#: assets/src/js/admin/InsightsWorkspace.jsx:276
+msgid "Choose a report to inspect its findings. Opening a report does not change your settings."
+msgstr ""
+
+#: assets/src/js/admin/InsightsWorkspace.jsx:307
 msgid "Runtime cache and delivery checks"
 msgstr ""
 
@@ -3162,183 +3194,193 @@ msgstr ""
 msgid "Overview"
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:18
+#: assets/src/js/admin/PluginImpactPanel.jsx:11
+msgid "Not observed"
+msgstr ""
+
+#: assets/src/js/admin/PluginImpactPanel.jsx:26
 msgid "View admin asset evidence"
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:29
-msgid "Generate site inventory"
+#: assets/src/js/admin/PluginImpactPanel.jsx:37
+msgid "Open insights"
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:40
-msgid "Enable admin asset audit"
+#: assets/src/js/admin/PluginImpactPanel.jsx:48
+msgid "Open audit settings"
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:49
+#: assets/src/js/admin/PluginImpactPanel.jsx:57
 msgid "Measured local evidence"
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:50
+#: assets/src/js/admin/PluginImpactPanel.jsx:58
 msgid "Plugin impact"
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:52
-msgid "Connect active plugins to admin asset pressure that Perform has actually observed on this site."
+#: assets/src/js/admin/PluginImpactPanel.jsx:60
+msgid "See which active plugins were linked to admin assets observed on this site."
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:62
+#: assets/src/js/admin/PluginImpactPanel.jsx:70
 msgid "Evidence, not a plugin ranking"
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:64
-msgid "Asset presence does not prove a plugin is slow or that its files are safe to disable. Perform does not attribute query, callback, or memory cost to a plugin without a dedicated measurement contract."
+#: assets/src/js/admin/PluginImpactPanel.jsx:72
+msgid "Asset presence does not prove a plugin is slow or that its files are safe to disable. Perform does not measure a plugin’s query, callback, or memory costs."
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:73
-#: assets/src/js/admin/SiteInventoryPanel.jsx:169
+#: assets/src/js/admin/PluginImpactPanel.jsx:81
+#: assets/src/js/admin/SiteInventoryPanel.jsx:172
 msgid "Active plugins"
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:75
+#: assets/src/js/admin/PluginImpactPanel.jsx:85
 msgid "From site inventory"
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:78
+#: assets/src/js/admin/PluginImpactPanel.jsx:88
 msgid "Sampled admin screens"
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:81
+#: assets/src/js/admin/PluginImpactPanel.jsx:91
 msgid "Audit enabled"
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:81
+#: assets/src/js/admin/PluginImpactPanel.jsx:91
 msgid "Audit not enabled"
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:87
+#: assets/src/js/admin/PluginImpactPanel.jsx:101
 msgid "High-confidence source matches"
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:94
+#: assets/src/js/admin/PluginImpactPanel.jsx:108
 msgid "Site inventory is required"
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:96
+#: assets/src/js/admin/PluginImpactPanel.jsx:110
 msgid "Generate the private site inventory before matching measured handles to active plugins."
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:107
+#: assets/src/js/admin/PluginImpactPanel.jsx:121
 msgid "No active plugins are available in the bounded inventory"
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:108
+#: assets/src/js/admin/PluginImpactPanel.jsx:122
 msgid "Refresh Site Inventory if the active plugin list has changed."
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:117
+#: assets/src/js/admin/PluginImpactPanel.jsx:131
 msgid "Observed admin asset presence"
 msgstr ""
 
 #. translators: %d: number of sampled admin screens.
-#: assets/src/js/admin/PluginImpactPanel.jsx:121
+#: assets/src/js/admin/PluginImpactPanel.jsx:135
 #, js-format
 msgid "Based on %d sampled admin screens. Zero means not observed in this sample, not zero impact."
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:135
-#: assets/src/js/admin/SiteInventoryPanel.jsx:310
+#: assets/src/js/admin/PluginImpactPanel.jsx:149
+#: assets/src/js/admin/SiteInventoryPanel.jsx:313
 msgid "Plugin"
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:137
-#: assets/src/js/admin/PluginImpactPanel.jsx:155
+#: assets/src/js/admin/PluginImpactPanel.jsx:151
+#: assets/src/js/admin/PluginImpactPanel.jsx:171
 msgid "Scripts"
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:138
-#: assets/src/js/admin/PluginImpactPanel.jsx:158
+#: assets/src/js/admin/PluginImpactPanel.jsx:152
+#: assets/src/js/admin/PluginImpactPanel.jsx:176
 msgid "Styles"
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:139
-#: assets/src/js/admin/PluginImpactPanel.jsx:161
+#: assets/src/js/admin/PluginImpactPanel.jsx:153
+#: assets/src/js/admin/PluginImpactPanel.jsx:181
 msgid "Evidence"
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:165
-msgid "Not observed"
-msgstr ""
-
-#: assets/src/js/admin/PluginImpactPanel.jsx:180
+#: assets/src/js/admin/PluginImpactPanel.jsx:198
 msgid "Not attributed in this release"
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:182
+#: assets/src/js/admin/PluginImpactPanel.jsx:200
 msgid "These signals need dedicated instrumentation before Perform can connect them to a plugin reliably."
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:191
+#: assets/src/js/admin/PluginImpactPanel.jsx:209
 msgid "Frontend asset ownership and request context"
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:192
+#: assets/src/js/admin/PluginImpactPanel.jsx:210
 msgid "Database query contribution by plugin"
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:193
+#: assets/src/js/admin/PluginImpactPanel.jsx:211
 msgid "Callback execution time by plugin"
 msgstr ""
 
-#: assets/src/js/admin/PluginImpactPanel.jsx:194
+#: assets/src/js/admin/PluginImpactPanel.jsx:212
 msgid "Memory contribution by plugin"
 msgstr ""
 
-#: assets/src/js/admin/PreferencesWorkspace.jsx:29
-msgid "Choose how Perform behaves, measures activity, and keeps data on this WordPress site."
+#: assets/src/js/admin/PreferencesWorkspace.jsx:28
+msgid "Manage site behavior, admin monitoring, and what to keep when you uninstall Perform."
 msgstr ""
 
-#: assets/src/js/admin/PreferencesWorkspace.jsx:40
-msgid "View documentation"
-msgstr ""
-
-#: assets/src/js/admin/PreferencesWorkspace.jsx:46
+#: assets/src/js/admin/PreferencesWorkspace.jsx:35
 msgid "Site behavior"
 msgstr ""
 
-#: assets/src/js/admin/PreferencesWorkspace.jsx:47
-msgid "Everyday behavior that affects site delivery and repeated WordPress work."
+#: assets/src/js/admin/PreferencesWorkspace.jsx:36
+msgid "Set up HTTPS redirects and navigation menu caching."
 msgstr ""
 
-#: assets/src/js/admin/PreferencesWorkspace.jsx:58
+#: assets/src/js/admin/PreferencesWorkspace.jsx:44
 msgid "Measurement and privacy"
 msgstr ""
 
-#: assets/src/js/admin/PreferencesWorkspace.jsx:59
-msgid "Temporarily collect private, aggregate evidence when the WordPress admin needs investigation."
+#: assets/src/js/admin/PreferencesWorkspace.jsx:45
+msgid "Choose whether to record admin request times and the scripts and styles loaded on admin screens."
 msgstr ""
 
-#: assets/src/js/admin/PreferencesWorkspace.jsx:70
-msgid "Data lifecycle"
+#: assets/src/js/admin/PreferencesWorkspace.jsx:56
+msgid "When you uninstall Perform"
 msgstr ""
 
-#: assets/src/js/admin/PreferencesWorkspace.jsx:71
+#: assets/src/js/admin/PreferencesWorkspace.jsx:57
 msgid "Choose what happens to Perform data when the plugin is removed."
 msgstr ""
 
-#: assets/src/js/admin/PreferencesWorkspace.jsx:79
+#: assets/src/js/admin/PreferencesWorkspace.jsx:65
 msgid "Commerce"
 msgstr ""
 
-#: assets/src/js/admin/PreferencesWorkspace.jsx:80
-msgid "WooCommerce performance controls for this store."
+#: assets/src/js/admin/PreferencesWorkspace.jsx:66
+msgid "WooCommerce preferences retained for compatibility."
 msgstr ""
 
-#: assets/src/js/admin/PreferencesWorkspace.jsx:91
-msgid "Private by default"
+#: assets/src/js/admin/PreferencesWorkspace.jsx:77
+msgid "Local admin monitoring"
 msgstr ""
 
-#: assets/src/js/admin/PreferencesWorkspace.jsx:93
-msgid "Local diagnostics exclude page content, private URLs, credentials, request payloads, and visitor identities."
+#: assets/src/js/admin/PreferencesWorkspace.jsx:79
+msgid "Admin performance and asset monitoring use screen IDs and aggregate samples rather than request URLs."
+msgstr ""
+
+#: assets/src/js/admin/settings/SettingsFieldRow.jsx:118
+msgid "This setting cannot be edited here."
+msgstr ""
+
+#. translators: %s: setting name.
+#: assets/src/js/admin/settings/SettingsFieldRow.jsx:136
+#, js-format
+msgid "Learn more about %s (opens in a new tab)"
+msgstr ""
+
+#: assets/src/js/admin/settings/SettingsFieldRow.jsx:149
+msgid "A value is already saved. Enter a new value to replace it."
 msgstr ""
 
 #: assets/src/js/admin/SettingsApp.jsx:123
@@ -3373,8 +3415,12 @@ msgstr ""
 msgid "Documentation"
 msgstr ""
 
+#: assets/src/js/admin/SettingsHeader.jsx:73
+msgid "Docs"
+msgstr ""
+
 #. translators: %s: plugin version.
-#: assets/src/js/admin/SettingsHeader.jsx:78
+#: assets/src/js/admin/SettingsHeader.jsx:79
 #, js-format
 msgid "Version %s"
 msgstr ""
@@ -3383,200 +3429,200 @@ msgstr ""
 msgid "Needs a separate test"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:41
+#: assets/src/js/admin/SiteInventoryPanel.jsx:44
 msgid "A static page"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:45
+#: assets/src/js/admin/SiteInventoryPanel.jsx:48
 msgid "Latest posts"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:63
+#: assets/src/js/admin/SiteInventoryPanel.jsx:66
 msgid "Refresh inventory"
 msgstr ""
 
 #: assets/src/js/admin/SiteInventoryPanel.jsx:66
+msgid "Generate inventory"
+msgstr ""
+
+#: assets/src/js/admin/SiteInventoryPanel.jsx:69
 msgid "Generating inventory…"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:71
+#: assets/src/js/admin/SiteInventoryPanel.jsx:74
 msgid "Generating the local site inventory…"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:83
+#: assets/src/js/admin/SiteInventoryPanel.jsx:86
 msgid "The site inventory could not be refreshed."
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:108
+#: assets/src/js/admin/SiteInventoryPanel.jsx:111
 msgid "Local diagnostics"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:109
+#: assets/src/js/admin/SiteInventoryPanel.jsx:112
 msgid "Site inventory"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:111
+#: assets/src/js/admin/SiteInventoryPanel.jsx:114
 msgid "Create a private snapshot of this site’s software and content structure so Perform can give context-aware guidance."
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:129
+#: assets/src/js/admin/SiteInventoryPanel.jsx:132
 msgid "Private and local"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:131
+#: assets/src/js/admin/SiteInventoryPanel.jsx:134
 msgid "This inventory contains no post content, option values, private URLs, customer data, secrets, or telemetry. It does not change the site."
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:153
+#: assets/src/js/admin/SiteInventoryPanel.jsx:156
 msgid "Generate the first inventory"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:155
+#: assets/src/js/admin/SiteInventoryPanel.jsx:158
 msgid "The collection runs only when requested, stays on this WordPress site, and is cached for 24 hours."
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:166
+#: assets/src/js/admin/SiteInventoryPanel.jsx:169
 msgid "Site inventory summary"
 msgstr ""
 
 #. translators: %d: installed plugin count.
-#: assets/src/js/admin/SiteInventoryPanel.jsx:174
+#: assets/src/js/admin/SiteInventoryPanel.jsx:177
 #, js-format
 msgid "%d installed"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:180
+#: assets/src/js/admin/SiteInventoryPanel.jsx:183
 msgid "Content types"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:182
+#: assets/src/js/admin/SiteInventoryPanel.jsx:185
 msgid "Registered locally"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:185
+#: assets/src/js/admin/SiteInventoryPanel.jsx:188
 msgid "Inventory cost"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:187
+#: assets/src/js/admin/SiteInventoryPanel.jsx:190
 msgid "Manual bounded collection"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:194
+#: assets/src/js/admin/SiteInventoryPanel.jsx:197
 msgid "Environment"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:196
+#: assets/src/js/admin/SiteInventoryPanel.jsx:199
 msgid "Versions detected through local WordPress and server APIs."
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:214
+#: assets/src/js/admin/SiteInventoryPanel.jsx:217
 msgid "Site configuration"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:216
+#: assets/src/js/admin/SiteInventoryPanel.jsx:219
 msgid "Facts describe the site; they are not performance judgments."
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:230
+#: assets/src/js/admin/SiteInventoryPanel.jsx:233
 msgid "Multisite"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:234
+#: assets/src/js/admin/SiteInventoryPanel.jsx:237
 msgid "No"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:238
+#: assets/src/js/admin/SiteInventoryPanel.jsx:241
 msgid "Front page"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:242
+#: assets/src/js/admin/SiteInventoryPanel.jsx:245
 msgid "Enabled Perform modules"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:252
+#: assets/src/js/admin/SiteInventoryPanel.jsx:255
 msgid "Measurement coverage"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:254
+#: assets/src/js/admin/SiteInventoryPanel.jsx:257
 msgid "Local facts cannot replace lab or real-user performance data."
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:264
+#: assets/src/js/admin/SiteInventoryPanel.jsx:267
 msgid "Site structure"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:268
+#: assets/src/js/admin/SiteInventoryPanel.jsx:271
 msgid "Plugin identity"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:272
+#: assets/src/js/admin/SiteInventoryPanel.jsx:275
 msgid "Lab performance"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:276
+#: assets/src/js/admin/SiteInventoryPanel.jsx:279
 msgid "Core Web Vitals field data"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:287
+#: assets/src/js/admin/SiteInventoryPanel.jsx:290
 msgid "Installed plugins"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:289
+#: assets/src/js/admin/SiteInventoryPanel.jsx:292
 msgid "Visible only to administrators. No plugin is ranked or labelled harmful."
 msgstr ""
 
 #. translators: 1: active count, 2: collected count.
-#: assets/src/js/admin/SiteInventoryPanel.jsx:301
+#: assets/src/js/admin/SiteInventoryPanel.jsx:304
 #, js-format
 msgid "View %1$d active and %2$d collected plugins"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:311
+#: assets/src/js/admin/SiteInventoryPanel.jsx:314
 msgid "Version"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:323
+#: assets/src/js/admin/SiteInventoryPanel.jsx:326
 msgid "Inactive"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:333
+#: assets/src/js/admin/SiteInventoryPanel.jsx:336
 msgid "The plugin list is truncated to keep collection bounded."
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:342
+#: assets/src/js/admin/SiteInventoryPanel.jsx:345
 msgid "Registered content types"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:344
+#: assets/src/js/admin/SiteInventoryPanel.jsx:347
 msgid "Aggregate readable counts only. No content or private URLs are collected."
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:356
+#: assets/src/js/admin/SiteInventoryPanel.jsx:359
 msgid "Content type"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:357
+#: assets/src/js/admin/SiteInventoryPanel.jsx:360
 msgid "Items"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:358
+#: assets/src/js/admin/SiteInventoryPanel.jsx:361
 msgid "Visibility"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:369
+#: assets/src/js/admin/SiteInventoryPanel.jsx:372
 msgid "Public"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:370
+#: assets/src/js/admin/SiteInventoryPanel.jsx:373
 msgid "Private"
 msgstr ""
 
-#: assets/src/js/admin/SiteInventoryPanel.jsx:386
+#: assets/src/js/admin/SiteInventoryPanel.jsx:389
 msgid "The content-type list is truncated to keep collection bounded."
-msgstr ""
-
-#: assets/src/js/admin/SiteInventoryPanel.jsx:398
-msgid "Refresh recommended"
 msgstr ""
 
 #: assets/src/js/admin/SystemHealthPanel.jsx:7
@@ -3609,12 +3655,14 @@ msgstr ""
 msgid "Paths, credentials, request data, log contents, and private configuration values are intentionally excluded."
 msgstr ""
 
-#. translators: 1: configured setting count, 2: total setting count.
-#: assets/src/js/admin/WorkspaceLayout.jsx:98
+#. translators: %d: number of settings in this group.
+#: assets/src/js/admin/WorkspaceLayout.jsx:90
 #, js-format
-msgid "%1$d of %2$d configured"
-msgstr ""
+msgid "%d setting"
+msgid_plural "%d settings"
+msgstr[0] ""
+msgstr[1] ""
 
-#: assets/src/js/admin/WorkspaceLayout.jsx:120
+#: assets/src/js/admin/WorkspaceLayout.jsx:111
 msgid "Back to insights"
 msgstr ""

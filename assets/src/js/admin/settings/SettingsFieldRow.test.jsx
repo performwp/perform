@@ -3,6 +3,19 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import SettingsFieldRow, { normalizeOptions } from './SettingsFieldRow';
 
 describe( 'SettingsFieldRow', () => {
+	it( 'names each help link for the setting it explains', () => {
+		render(
+			<SettingsFieldRow
+				field={ { id: 'cache', type: 'toggle', name: 'Cache', help_link: '/docs/cache' } }
+				onChange={ jest.fn() }
+			/>
+		);
+		expect( screen.getByRole( 'link', { name: 'Learn more about Cache (opens in a new tab)' } ) ).toHaveAttribute(
+			'href',
+			'/docs/cache'
+		);
+	} );
+
 	it( 'renders a shared accessible toggle row', () => {
 		const onChange = jest.fn();
 

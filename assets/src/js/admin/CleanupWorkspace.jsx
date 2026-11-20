@@ -5,6 +5,8 @@ import {
 	CloudIcon,
 	ComputerDesktopIcon,
 	GlobeAltIcon,
+	ListBulletIcon,
+	ServerStackIcon,
 	ShieldCheckIcon,
 } from '@heroicons/react/24/outline';
 import { formatBytes } from './DashboardPanel';
@@ -17,7 +19,11 @@ const CleanupWorkspace = ( { sections = [], databaseAudit = {}, fieldValues, onF
 	const totalSize = auditReady ? formatBytes( databaseAudit.totals?.sizeBytes || 0 ) : '—';
 	const optionCount = auditReady ? databaseAudit.totals?.count || 0 : '—';
 	let objectCache = '—';
+	let auditStatus = __( 'Database not checked', 'perform' );
 	if ( auditReady ) {
+		auditStatus = databaseAudit.isStale
+			? __( 'Refresh recommended', 'perform' )
+			: __( 'Database checked', 'perform' );
 		objectCache = databaseAudit.objectCache?.persistent
 			? __( 'Detected', 'perform' )
 			: __( 'Not detected', 'perform' );
@@ -28,18 +34,14 @@ const CleanupWorkspace = ( { sections = [], databaseAudit = {}, fieldValues, onF
 			<WorkspaceHeader
 				title={ __( 'Cleanup', 'perform' ) }
 				description={ __(
-					'Remove unnecessary WordPress extras and review database items that may be adding avoidable work.',
+					'Choose which WordPress features to keep and review the options loaded on each request.',
 					'perform'
 				) }
-				status={
-					auditReady
-						? __( 'Database evidence is ready', 'perform' )
-						: __( 'Database check available', 'perform' )
-				}
-				statusType={ auditReady ? 'success' : 'neutral' }
+				status={ auditStatus }
+				statusType={ auditReady && ! databaseAudit.isStale ? 'success' : 'neutral' }
 				actions={
 					<Button variant="primary" onClick={ () => onNavigate( 'database' ) }>
-						{ auditReady ? __( 'Review database', 'perform' ) : __( 'Run database check', 'perform' ) }
+						{ __( 'Open database audit', 'perform' ) }
 					</Button>
 				}
 			/>
@@ -47,22 +49,17 @@ const CleanupWorkspace = ( { sections = [], databaseAudit = {}, fieldValues, onF
 				label={ __( 'Database health', 'perform' ) }
 				metrics={ [
 					{ icon: CircleStackIcon, label: __( 'Autoloaded size', 'perform' ), value: totalSize },
-					{ label: __( 'Autoloaded options', 'perform' ), value: optionCount },
-					{ label: __( 'Persistent object cache', 'perform' ), value: objectCache },
+					{ icon: ListBulletIcon, label: __( 'Autoloaded options', 'perform' ), value: optionCount },
+					{ icon: ServerStackIcon, label: __( 'Persistent object cache', 'perform' ), value: objectCache },
 				] }
 				note={ __(
-					'This release audits database pressure but does not remove data automatically.',
+					'The audit shows which options WordPress loads on each request. Running it does not change or delete them.',
 					'perform'
 				) }
 			/>
 			<section className="perform-section-heading">
 				<h2>{ __( 'Reduce WordPress extras', 'perform' ) }</h2>
-				<p>
-					{ __(
-						'Open a category to review each optimization. Existing controls and saved values are unchanged.',
-						'perform'
-					) }
-				</p>
+				<p>{ __( 'Open a category to review its settings before changing them.', 'perform' ) }</p>
 			</section>
 			<div className="perform-workspace-groups">
 				{ sections.map( ( section, index ) => (
@@ -84,7 +81,7 @@ const CleanupWorkspace = ( { sections = [], databaseAudit = {}, fieldValues, onF
 					<strong>{ __( 'Review first, then optimize', 'perform' ) }</strong>
 					<p>
 						{ __(
-							'Perform keeps potentially disruptive controls visible and explained. Database cleanup will require preview and recovery support before it is offered.',
+							'Review an option and its owner before changing its autoload setting. Check the affected plugin afterward.',
 							'perform'
 						) }
 					</p>

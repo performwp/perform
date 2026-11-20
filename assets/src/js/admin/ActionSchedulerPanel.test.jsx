@@ -34,6 +34,22 @@ describe( 'ActionSchedulerPanel', () => {
 		expect( screen.queryByRole( 'button', { name: /delete|cleanup|cancel/i } ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'uses singular units for a one-hour or one-day pending age', () => {
+		const { rerender } = render(
+			<ActionSchedulerPanel
+				initialAudit={ { status: 'ready', oldestPending: { available: true, ageSeconds: 3600 } } }
+			/>
+		);
+		expect( screen.getByText( '1 hour' ) ).toBeInTheDocument();
+		rerender(
+			<ActionSchedulerPanel
+				key="day"
+				initialAudit={ { status: 'ready', oldestPending: { available: true, ageSeconds: 86400 } } }
+			/>
+		);
+		expect( screen.getByText( '1 day' ) ).toBeInTheDocument();
+	} );
+
 	it( 'surfaces refresh failures and restores actions', async () => {
 		global.fetch = jest.fn( () =>
 			Promise.resolve( {

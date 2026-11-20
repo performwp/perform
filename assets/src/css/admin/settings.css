@@ -18,7 +18,7 @@
 	display: flex;
 	flex-direction: column;
 	min-height: calc(100vh - 32px);
-	margin-left: -20px;
+	margin-inline-start: -20px;
 	color: var(--perform-color-text);
 	background: var(--perform-color-surface);
 }
@@ -35,6 +35,8 @@
 
 /* WordPress buttons fill nested SVGs; Heroicons are stroke-based outline icons. */
 .perform-settings-page .components-button svg[data-slot='icon'] {
+	display: block;
+	flex-shrink: 0;
 	fill: none;
 	stroke: currentcolor;
 }
@@ -87,6 +89,10 @@
 	width: 18px;
 	height: 18px;
 	stroke-width: 1.75;
+}
+
+.perform-docs-label-short {
+	display: none;
 }
 
 .perform-settings-notices {
@@ -337,7 +343,7 @@
 	text-decoration: underline;
 }
 
-.perform-settings-field__learn-more svg {
+.perform-settings-field__learn-more .perform-ui-icon {
 	width: 14px;
 	height: 14px;
 }
@@ -1904,7 +1910,7 @@
 
 	.perform-settings-page {
 		min-height: calc(100vh - 46px);
-		margin-left: -10px;
+		margin-inline-start: -10px;
 	}
 
 	.perform-settings-header {
@@ -1920,7 +1926,6 @@
 	.perform-settings-header__actions .components-button {
 		padding-right: 6px;
 		padding-left: 6px;
-		font-size: 0;
 	}
 
 	.perform-settings-header__actions .components-button svg {
@@ -2542,7 +2547,7 @@
 .perform-workspace-nav__items {
 	display: flex;
 	align-items: center;
-	justify-content: center;
+	justify-content: safe center;
 	gap: 4px;
 	overflow-x: auto;
 	margin: 0;
@@ -2668,7 +2673,8 @@
 
 .perform-workspace-header__actions {
 	display: flex;
-	flex: 0 0 auto;
+	min-width: 0;
+	max-width: 100%;
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: flex-end;
@@ -2678,7 +2684,9 @@
 
 .perform-workspace-header__actions .components-button,
 .perform-workspace .components-button.is-primary {
-	min-height: 42px;
+	min-height: 44px;
+	height: auto;
+	white-space: normal;
 	padding-inline: 16px;
 	border-radius: 7px;
 	font-weight: 600;
@@ -2730,7 +2738,8 @@
 
 .perform-metric-strip {
 	display: grid;
-	grid-template-columns: repeat(4, minmax(0, 1fr));
+	grid-auto-flow: column;
+	grid-auto-columns: minmax(0, 1fr);
 }
 
 .perform-metric {
@@ -2739,16 +2748,16 @@
 	gap: 12px;
 	min-width: 0;
 	padding: 4px 22px;
-	border-right: 1px solid #eaecf0;
+	border-inline-end: 1px solid #eaecf0;
 }
 
 .perform-metric:first-child {
-	padding-left: 0;
+	padding-inline-start: 0;
 }
 
 .perform-metric:last-child {
-	padding-right: 0;
-	border-right: 0;
+	padding-inline-end: 0;
+	border-inline-end: 0;
 }
 
 .perform-metric > div {
@@ -2792,6 +2801,7 @@
 }
 
 .perform-icon-badge svg {
+	display: block;
 	width: 20px;
 	height: 20px;
 	stroke-width: 1.8;
@@ -2869,6 +2879,16 @@
 	min-width: 0;
 }
 
+.perform-settings-group__summary-copy > div,
+.perform-workspace-header__copy,
+.perform-report-link > span,
+.perform-health-row__copy,
+.perform-insight-status-row > div,
+.perform-metric > div {
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
 .perform-settings-group__summary-copy h2 {
 	margin: 0;
 	font-size: 16px;
@@ -2894,6 +2914,7 @@
 }
 
 .perform-settings-group__summary-meta svg {
+	flex-shrink: 0;
 	width: 18px;
 	height: 18px;
 	transition: transform 160ms ease;
@@ -2989,6 +3010,7 @@
 }
 
 .perform-health-panel__attention svg {
+	flex-shrink: 0;
 	width: 18px;
 	height: 18px;
 }
@@ -3019,6 +3041,7 @@
 .perform-safety-callout,
 .perform-privacy-callout {
 	justify-content: flex-start;
+	gap: 12px;
 }
 
 .perform-safety-callout > svg,
@@ -3086,7 +3109,8 @@
 	border-top: 1px solid #eaecf0;
 	border-radius: 0;
 	color: var(--perform-color-text);
-	text-align: left;
+	text-align: start;
+	white-space: normal;
 }
 
 .perform-report-link > span:nth-child(2) {
@@ -3105,6 +3129,11 @@
 	width: 18px;
 	height: 18px;
 	color: #98a2b3;
+}
+
+.perform-settings-page:dir(rtl) .perform-report-link__chevron,
+.perform-settings-page:dir(rtl) .perform-report-back svg {
+	transform: scaleX(-1);
 }
 
 .perform-runtime-disclosure {
@@ -3152,20 +3181,28 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
-	margin-right: auto;
+	margin-inline-end: auto;
 	color: var(--perform-color-text-muted);
 	font-size: 13px;
 	font-weight: 500;
 }
 
 .perform-savebar__state svg {
+	flex: none;
 	width: 18px;
 	height: 18px;
-	color: #17b26a;
 }
 
-.perform-savebar__state[data-dirty='true'] svg {
-	color: #f79009;
+.perform-savebar__state[data-state='saved'] svg {
+	color: var(--perform-color-success);
+}
+
+.perform-savebar__state[data-state='error'] svg {
+	color: var(--perform-color-danger);
+}
+
+.perform-savebar__state .components-spinner {
+	margin: 0;
 }
 
 .perform-savebar .components-button.is-primary:disabled {
@@ -3179,6 +3216,7 @@
 
 	.perform-settings-header {
 		flex-wrap: wrap;
+		row-gap: 0;
 		padding-bottom: 0;
 	}
 
@@ -3205,25 +3243,22 @@
 	}
 
 	.perform-metric-strip {
+		grid-auto-flow: row;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 		row-gap: 22px;
 	}
 
 	.perform-metric:nth-child(2) {
-		padding-right: 0;
-		border-right: 0;
+		padding-inline-end: 0;
+		border-inline-end: 0;
 	}
 
 	.perform-metric:nth-child(3) {
-		padding-left: 0;
+		padding-inline-start: 0;
 	}
 }
 
 @media (max-width: 782px) {
-
-	.perform-settings-page {
-		margin-left: -10px;
-	}
 
 	.perform-workspace-nav {
 		flex-basis: calc(100% + 32px);
@@ -3241,10 +3276,6 @@
 
 	.perform-settings-header__logo {
 		height: 50px;
-	}
-
-	.perform-settings-header__actions .components-button {
-		display: none;
 	}
 
 	.perform-settings-content {
@@ -3276,7 +3307,7 @@
 	.perform-metric:nth-child(2),
 	.perform-metric:nth-child(3) {
 		padding: 14px 0;
-		border-right: 0;
+		border-inline-end: 0;
 		border-bottom: 1px solid #eaecf0;
 	}
 
@@ -3284,19 +3315,26 @@
 		border-bottom: 0;
 	}
 
-	.perform-settings-group > summary {
-		align-items: flex-start;
-	}
-
 	.perform-settings-group__summary-meta span {
 		display: none;
 	}
 
-	.perform-settings-group .perform-settings-field,
-	.perform-health-row,
-	.perform-insight-status-row {
+	.perform-settings-group .perform-settings-field {
 		grid-template-columns: minmax(0, 1fr);
 		gap: 10px;
+	}
+
+	.perform-health-row,
+	.perform-insight-status-row {
+		grid-template-columns: 38px minmax(0, 1fr);
+		gap: 8px 12px;
+	}
+
+	.perform-health-row > .perform-status-badge,
+	.perform-health-row > .components-button,
+	.perform-insight-status-row > .perform-status-badge {
+		grid-column: 2;
+		justify-self: start;
 	}
 
 	.perform-settings-group .perform-settings-field__control {
@@ -3320,5 +3358,40 @@
 	.perform-savebar__message {
 		order: -1;
 		width: 100%;
+	}
+}
+
+@media (max-width: 480px) {
+
+	.perform-settings-header {
+		column-gap: 8px;
+	}
+
+	.perform-settings-header__logo {
+		width: clamp(80px, 24vw, 108px);
+		object-fit: contain;
+	}
+
+	.perform-settings-header__actions {
+		gap: 4px;
+		max-width: 100%;
+	}
+
+	.perform-settings-header__actions .components-button {
+		white-space: normal;
+		height: auto;
+	}
+
+	.perform-plugin-version {
+		padding-inline: 6px;
+		overflow-wrap: anywhere;
+	}
+
+	.perform-docs-label {
+		display: none;
+	}
+
+	.perform-docs-label-short {
+		display: inline;
 	}
 }

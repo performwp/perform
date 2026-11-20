@@ -48,8 +48,11 @@ const buildHealthCards = ( { dashboard, diagnostics, databaseAudit, siteInventor
 	const auditReady = 'ready' === audit.status;
 	const enabledModules = inventory.perform?.items || [];
 	const pageCacheEnabled = enabledModules.some( ( module ) => 'enable_page_cache' === module.id );
-	const hasDiagnostics = ( diagnostics?.items || [] ).length > 0;
 	const diagnosticSummary = diagnostics?.summary || {};
+	const hasDiagnostics =
+		Array.isArray( diagnostics?.items ) &&
+		diagnostics.items.length > 0 &&
+		[ 'ready', 'warning', 'needs-attention' ].every( ( key ) => Number.isFinite( diagnosticSummary[ key ] ) );
 	const runtimeAttention = ( diagnosticSummary.warning ?? 0 ) + ( diagnosticSummary[ 'needs-attention' ] ?? 0 );
 	const autoloadSize = audit.totals?.sizeBytes ?? 0;
 	const autoloadThreshold = audit.thresholdBytes ?? 0;
@@ -60,7 +63,7 @@ const buildHealthCards = ( { dashboard, diagnostics, databaseAudit, siteInventor
 	}
 
 	let runtimeStatus = 'not-measured';
-	let runtimeDescription = __( 'Runtime diagnostics are not available in the current page payload.', 'perform' );
+	let runtimeDescription = __( 'No cache or delivery checks are available yet.', 'perform' );
 	if ( hasDiagnostics ) {
 		runtimeStatus = runtimeAttention > 0 ? 'review' : 'ready';
 		runtimeDescription = __( 'Local cache and delivery prerequisites currently report ready.', 'perform' );
@@ -79,18 +82,20 @@ const buildHealthCards = ( { dashboard, diagnostics, databaseAudit, siteInventor
 	}
 
 	let cacheStatus = 'not-measured';
-	let cacheDescription = __(
-		'Page cache is disabled. Enable it only after reviewing dynamic-site exclusions.',
-		'perform'
-	);
-	if ( pageCacheEnabled ) {
+	let cacheDescription = __( 'Generate a site profile to check whether page caching is enabled.', 'perform' );
+	if ( inventoryReady && ! pageCacheEnabled ) {
+		cacheDescription = __(
+			'Page cache is disabled. Review dynamic-site exclusions before enabling it.',
+			'perform'
+		);
+	} else if ( pageCacheEnabled ) {
 		cacheStatus = 'observe';
 		cacheDescription = __(
 			'Page cache is enabled; more local traffic is needed for a useful activity summary.',
 			'perform'
 		);
 	}
-	if ( cache.hasStats ) {
+	if ( pageCacheEnabled && cache.hasStats ) {
 		cacheStatus = 'ready';
 		cacheDescription = sprintf(
 			/* translators: %s: measured cache hit ratio. */
@@ -123,7 +128,9 @@ const buildHealthCards = ( { dashboard, diagnostics, databaseAudit, siteInventor
 						enabledModules.length
 					)
 				: __( 'Generate a private local inventory before using site-specific guidance.', 'perform' ),
-			action: inventoryReady ? null : { label: __( 'Generate inventory', 'perform' ), tab: 'inventory' },
+			action: inventoryReady
+				? null
+				: { label: __( 'Find site profile in Insights', 'perform' ), tab: 'inventory' },
 		},
 		{
 			id: 'database',
@@ -137,7 +144,7 @@ const buildHealthCards = ( { dashboard, diagnostics, databaseAudit, siteInventor
 					)
 				: __( 'Run the local database audit to measure autoloaded option pressure.', 'perform' ),
 			action: {
-				label: auditReady ? __( 'Review database', 'perform' ) : __( 'Run database audit', 'perform' ),
+				label: __( 'Open database audit', 'perform' ),
 				tab: 'database',
 			},
 		},
@@ -180,17 +187,27 @@ const buildHealthCards = ( { dashboard, diagnostics, databaseAudit, siteInventor
 	if ( inventoryReady && inventory.patterns?.store ) {
 		const dynamicExclusions = findDiagnostic( diagnostics, 'dynamic-cache-exclusions' );
 		const needsReview = pageCacheEnabled && 'ready' !== dynamicExclusions?.status;
+		let storeDescription = __(
+			'Cache exclusions are configured. Review them whenever your store workflows change.',
+			'perform'
+		);
+		if ( ! pageCacheEnabled ) {
+			storeDescription = __(
+				'A store pattern is present. Review cart, checkout, account, and session exclusions before enabling page cache.',
+				'perform'
+			);
+		} else if ( needsReview ) {
+			storeDescription = __(
+				'A store pattern is present. Review cart, checkout, account, and session exclusions.',
+				'perform'
+			);
+		}
 
 		cards.push( {
 			id: 'store',
 			title: __( 'Store safety', 'perform' ),
 			status: needsReview ? 'review' : 'ready',
-			description: needsReview
-				? __( 'A store pattern is present. Review cart, checkout, account, and session exclusions.', 'perform' )
-				: __(
-						'A store pattern is present and current cache diagnostics show no unresolved exclusion warning.',
-						'perform'
-					),
+			description: storeDescription,
 			action: { label: __( 'Review cache exclusions', 'perform' ), tab: 'cache' },
 		} );
 	}
@@ -245,6 +262,7 @@ const DashboardPanel = ( { dashboard, diagnostics, databaseAudit, siteInventory,
 	const cards = buildHealthCards( { dashboard: data, diagnostics, databaseAudit, siteInventory } );
 	const reviewCount = cards.filter( ( card ) => 'review' === card.status ).length;
 	const notMeasuredCount = cards.filter( ( card ) => 'not-measured' === card.status ).length;
+	const observingCount = cards.filter( ( card ) => 'observe' === card.status ).length;
 	const readyCount = cards.filter( ( card ) => 'ready' === card.status ).length;
 	const cachedVisits = ( cache.hits || 0 ) + ( cache.staleHits || 0 );
 	const configuredAssetRules =
@@ -268,7 +286,18 @@ const DashboardPanel = ( { dashboard, diagnostics, databaseAudit, siteInventory,
 			reviewCount
 		);
 	} else if ( notMeasuredCount > 0 ) {
-		summary = __( 'Finish the local diagnostics to unlock site-specific guidance.', 'perform' );
+		summary = __( 'Some areas have not been measured yet.', 'perform' );
+	} else if ( observingCount > 0 ) {
+		summary = __( 'Some areas need more activity before they can be assessed.', 'perform' );
+	}
+	let summaryStatus = __( 'Local checks ready', 'perform' );
+	let summaryStatusType = 'success';
+	if ( 0 < reviewCount ) {
+		summaryStatus = __( 'Review recommended', 'perform' );
+		summaryStatusType = 'warning';
+	} else if ( 0 < notMeasuredCount || 0 < observingCount ) {
+		summaryStatus = __( 'More evidence needed', 'perform' );
+		summaryStatusType = 'neutral';
 	}
 
 	return (
@@ -277,13 +306,11 @@ const DashboardPanel = ( { dashboard, diagnostics, databaseAudit, siteInventory,
 				eyebrow={ __( 'Performance overview', 'perform' ) }
 				title={ summary }
 				description={ __(
-					'Perform combines private local evidence into clear next steps. It never turns these checks into an unverified speed score.',
+					'Review cache activity and site checks below. These checks do not measure the speed visitors experience.',
 					'perform'
 				) }
-				status={
-					0 < reviewCount ? __( 'Review recommended', 'perform' ) : __( 'Local checks ready', 'perform' )
-				}
-				statusType={ 0 < reviewCount ? 'warning' : 'success' }
+				status={ summaryStatus }
+				statusType={ summaryStatusType }
 				actions={
 					<>
 						<Button variant="primary" onClick={ () => onNavigate?.( 'inventory' ) }>
@@ -297,7 +324,7 @@ const DashboardPanel = ( { dashboard, diagnostics, databaseAudit, siteInventory,
 			/>
 
 			<MetricStrip
-				label={ __( 'Measured value', 'perform' ) }
+				label={ __( 'Site at a glance', 'perform' ) }
 				metrics={ [
 					{
 						icon: ChartBarIcon,
@@ -315,14 +342,14 @@ const DashboardPanel = ( { dashboard, diagnostics, databaseAudit, siteInventory,
 						icon: CpuChipIcon,
 						label: __( 'Asset rules', 'perform' ),
 						value: configuredAssetRules,
-						description: __( 'Configured coverage', 'perform' ),
+						description: __( 'Script and style rules', 'perform' ),
 					},
 					{
 						icon: CheckCircleIcon,
 						label: __( 'Areas ready', 'perform' ),
 						value: readyCount,
-						/* translators: %d: number of diagnostics still available to run. */
-						description: sprintf( __( '%d still available', 'perform' ), notMeasuredCount ),
+						/* translators: %d: number of areas not yet measured. */
+						description: sprintf( __( '%d not measured', 'perform' ), notMeasuredCount ),
 					},
 				] }
 				note={ __(
@@ -335,12 +362,7 @@ const DashboardPanel = ( { dashboard, diagnostics, databaseAudit, siteInventory,
 				<div className="perform-panel-heading">
 					<div>
 						<h2 id="perform-health-title">{ __( 'How your site is doing', 'perform' ) }</h2>
-						<p>
-							{ __(
-								'Plain-language status across caching, server readiness, database pressure, and site context.',
-								'perform'
-							) }
-						</p>
+						<p>{ __( 'See which checks need attention and open a report for details.', 'perform' ) }</p>
 					</div>
 					{ 0 < reviewCount && (
 						<span className="perform-health-panel__attention">
@@ -365,7 +387,7 @@ const DashboardPanel = ( { dashboard, diagnostics, databaseAudit, siteInventory,
 					<h2>{ __( 'Core Web Vitals need a separate test', 'perform' ) }</h2>
 					<p>
 						{ __(
-							'Local WordPress diagnostics cannot prove real-user LCP, INP, or CLS. Field data and lab testing remain separate evidence sources.',
+							'These checks run on your site. To see how quickly pages load, respond, and stay visually stable for visitors, use real-user Core Web Vitals data.',
 							'perform'
 						) }
 					</p>

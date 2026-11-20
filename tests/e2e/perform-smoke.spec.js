@@ -27,7 +27,7 @@ const autosaveState = ( page ) => page.locator( '.perform-savebar__state' );
 async function openSiteProfile( page ) {
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=inventory' );
 	await workspace( page, 'Insights' ).waitFor();
-	await page.getByRole( 'button', { name: /Generate site profile|Review site profile/ } ).click();
+	await page.getByRole( 'button', { name: 'Open site profile' } ).click();
 	await expect( page.getByRole( 'button', { name: 'Back to insights' } ) ).toBeVisible();
 }
 
@@ -60,7 +60,7 @@ test( 'settings save, Assets Manager, and page cache smoke paths work', async ( 
 	await expect( workspace( page, 'Overview' ) ).toHaveAttribute( 'aria-current', 'page' );
 	await expect( page.getByRole( 'heading', { name: 'How your site is doing' } ) ).toBeVisible();
 	await expect( page.getByText( 'Core Web Vitals need a separate test' ) ).toBeVisible();
-	await expect( page.getByText( /unverified speed score/ ) ).toBeVisible();
+	await expect( page.getByText( /do not measure the speed visitors experience/ ) ).toBeVisible();
 	await expect( page.getByRole( 'heading', { name: 'Runtime Diagnostics' } ) ).toHaveCount( 0 );
 	await expect( autosaveState( page ) ).toHaveCount( 0 );
 	await mkdir( 'test-results/proof', { recursive: true } );
@@ -87,8 +87,8 @@ test( 'settings save, Assets Manager, and page cache smoke paths work', async ( 
 	await expect( autosaveState( page ) ).toHaveText( 'All changes saved' );
 	await expect( page ).toHaveURL( /[?&]tab=cache(?:&|$)/ );
 	await page.reload();
-	await expect( page.getByLabel( 'Cache TTL' ) ).toHaveValue( '3600' );
-	await expect( page.getByLabel( 'Stale Revalidate Window' ) ).toHaveValue( '21600' );
+	await expect( page.getByLabel( 'Cache lifetime' ) ).toHaveValue( '3600' );
+	await expect( page.getByLabel( 'Serve expired pages for' ) ).toHaveValue( '21600' );
 	await expect( page.getByLabel( 'Slow Request Threshold' ) ).toHaveValue( '1200' );
 
 	await page.goto( '/?perform' );
@@ -121,9 +121,9 @@ test( 'settings rejects oversized bypass lists with a visible actionable error',
 	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings&tab=cache' );
 
 	const bypassPaths = Array.from( { length: 300 }, ( _, index ) => `/private-${ index + 1 }` ).join( '\n' );
+	await page.locator( '.perform-settings-group > summary' ).filter( { hasText: 'Cache exclusions' } ).click();
 	const textarea = page.getByRole( 'textbox', { name: 'Bypass Exact Paths' } );
 	await textarea.fill( bypassPaths );
-	await page.getByRole( 'button', { name: 'Save Settings' } ).click();
 
 	await expect( page.getByRole( 'alert' ) ).toHaveText(
 		'List settings are limited to 100 entries. Please reduce the list and try again.'
@@ -673,4 +673,35 @@ test( 'outline icons retain their strokes across settings and diagnostic screens
 
 	await page.emulateMedia( { forcedColors: 'active' } );
 	await expect( page.locator( '.perform-settings-header .perform-ui-icon' ) ).toHaveCSS( 'fill', 'none' );
+} );
+
+test( 'workspace icon rows stay beside their labels without overflowing the page', async ( { page } ) => {
+	await login( page );
+	await openAdminPage( page, '/wp-admin/options-general.php?page=perform_settings' );
+	const rowSelector = [
+		'.perform-metric', '.perform-settings-group__summary-copy', '.perform-health-row',
+		'.perform-insight-status-row', '.perform-report-link', '.perform-insight-health__summary',
+	].join( ', ' );
+	for ( const width of [ 320, 768, 1440 ] ) {
+		await page.setViewportSize( { width, height: 900 } );
+		for ( const name of [ 'Overview', 'Cache', 'Assets & CDN', 'Cleanup', 'Insights', 'Settings' ] ) {
+			await workspace( page, name ).click();
+			await expect( workspace( page, name ) ).toHaveAttribute( 'aria-current', 'page' );
+			const rows = page.locator( rowSelector );
+			await expect( rows.first() ).toBeVisible();
+			const failures = await rows.evaluateAll( ( elements ) => elements.flatMap( ( row ) => {
+				const badge = row.querySelector( ':scope > .perform-icon-badge' );
+				if ( ! badge ) {
+					return [ 'Missing icon: ' + row.textContent ];
+				}
+				const icon = badge.getBoundingClientRect();
+				const text = badge.nextElementSibling.getBoundingClientRect();
+				const aligned = Math.abs( icon.top + icon.height / 2 - text.top - text.height / 2 ) <= 1;
+				const separated = icon.right <= text.left || text.right <= icon.left;
+				return aligned && separated ? [] : [ row.textContent ];
+			} ) );
+			expect( failures, name + ' at ' + width ).toEqual( [] );
+			expect( await page.evaluate( () => document.documentElement.scrollWidth - document.documentElement.clientWidth ) ).toBeLessThanOrEqual( 1 );
+		}
+	}
 } );

@@ -4,10 +4,18 @@ import { ArrowRightIcon } from '@heroicons/react/24/outline';
 
 const SETTINGS = window.performwpSettings || {};
 
+const evidenceLabel = ( evidenceAvailable, hasEvidence ) => {
+	if ( ! evidenceAvailable ) {
+		return __( 'Not measured', 'perform' );
+	}
+	return hasEvidence ? __( 'Measured locally', 'perform' ) : __( 'Not observed', 'perform' );
+};
+
 const PluginImpactPanel = ( { report = SETTINGS.pluginImpact || {}, onNavigate } ) => {
 	const items = report.items || [];
 	const audit = report.adminAssetAudit || {};
 	const inventoryReady = 'ready' === report.status;
+	const evidenceAvailable = audit.enabled && Number( audit.sampledScreens ) > 0;
 	let primaryAction = (
 		<Button
 			variant="secondary"
@@ -26,7 +34,7 @@ const PluginImpactPanel = ( { report = SETTINGS.pluginImpact || {}, onNavigate }
 				icon={ <ArrowRightIcon className="perform-ui-icon" aria-hidden="true" /> }
 				iconPosition="right"
 			>
-				{ __( 'Generate site inventory', 'perform' ) }
+				{ __( 'Open insights', 'perform' ) }
 			</Button>
 		);
 	} else if ( ! audit.enabled ) {
@@ -37,7 +45,7 @@ const PluginImpactPanel = ( { report = SETTINGS.pluginImpact || {}, onNavigate }
 				icon={ <ArrowRightIcon className="perform-ui-icon" aria-hidden="true" /> }
 				iconPosition="right"
 			>
-				{ __( 'Enable admin asset audit', 'perform' ) }
+				{ __( 'Open audit settings', 'perform' ) }
 			</Button>
 		);
 	}
@@ -50,7 +58,7 @@ const PluginImpactPanel = ( { report = SETTINGS.pluginImpact || {}, onNavigate }
 					<h2>{ __( 'Plugin impact', 'perform' ) }</h2>
 					<p>
 						{ __(
-							'Connect active plugins to admin asset pressure that Perform has actually observed on this site.',
+							'See which active plugins were linked to admin assets observed on this site.',
 							'perform'
 						) }
 					</p>
@@ -62,7 +70,7 @@ const PluginImpactPanel = ( { report = SETTINGS.pluginImpact || {}, onNavigate }
 				<strong>{ __( 'Evidence, not a plugin ranking', 'perform' ) }</strong>
 				<p>
 					{ __(
-						'Asset presence does not prove a plugin is slow or that its files are safe to disable. Perform does not attribute query, callback, or memory cost to a plugin without a dedicated measurement contract.',
+						'Asset presence does not prove a plugin is slow or that its files are safe to disable. Perform does not measure a plugin’s query, callback, or memory costs.',
 						'perform'
 					) }
 				</p>
@@ -71,7 +79,9 @@ const PluginImpactPanel = ( { report = SETTINGS.pluginImpact || {}, onNavigate }
 			<div className="perform-plugin-impact__summary">
 				<div>
 					<span>{ __( 'Active plugins', 'perform' ) }</span>
-					<strong>{ report.activeCount ?? items.length }</strong>
+					<strong>
+						{ inventoryReady ? ( report.activeCount ?? items.length ) : __( 'Not measured', 'perform' ) }
+					</strong>
 					<small>{ __( 'From site inventory', 'perform' ) }</small>
 				</div>
 				<div>
@@ -83,7 +93,11 @@ const PluginImpactPanel = ( { report = SETTINGS.pluginImpact || {}, onNavigate }
 				</div>
 				<div>
 					<span>{ __( 'Plugin signals', 'perform' ) }</span>
-					<strong>{ items.filter( ( item ) => item.hasEvidence ).length }</strong>
+					<strong>
+						{ inventoryReady && evidenceAvailable
+							? items.filter( ( item ) => item.hasEvidence ).length
+							: __( 'Not measured', 'perform' ) }
+					</strong>
 					<small>{ __( 'High-confidence source matches', 'perform' ) }</small>
 				</div>
 			</div>
@@ -150,19 +164,23 @@ const PluginImpactPanel = ( { report = SETTINGS.pluginImpact || {}, onNavigate }
 												</small>
 											</th>
 											<td data-label={ __( 'Screens', 'perform' ) }>
-												{ item.adminAssets?.screenCount || 0 }
+												{ evidenceAvailable
+													? item.adminAssets?.screenCount || 0
+													: __( 'Not measured', 'perform' ) }
 											</td>
 											<td data-label={ __( 'Scripts', 'perform' ) }>
-												{ item.adminAssets?.scriptCount || 0 }
+												{ evidenceAvailable
+													? item.adminAssets?.scriptCount || 0
+													: __( 'Not measured', 'perform' ) }
 											</td>
 											<td data-label={ __( 'Styles', 'perform' ) }>
-												{ item.adminAssets?.styleCount || 0 }
+												{ evidenceAvailable
+													? item.adminAssets?.styleCount || 0
+													: __( 'Not measured', 'perform' ) }
 											</td>
 											<td data-label={ __( 'Evidence', 'perform' ) }>
 												<span className={ item.hasEvidence ? 'is-measured' : 'is-unobserved' }>
-													{ item.hasEvidence
-														? __( 'Measured locally', 'perform' )
-														: __( 'Not observed', 'perform' ) }
+													{ evidenceLabel( evidenceAvailable, item.hasEvidence ) }
 												</span>
 											</td>
 										</tr>

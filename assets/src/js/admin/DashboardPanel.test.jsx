@@ -47,6 +47,42 @@ describe( 'DashboardPanel', () => {
 		expect( cards.find( ( card ) => 'database' === card.id ).status ).toBe( 'not-measured' );
 		expect( cards.find( ( card ) => 'runtime' === card.id ).status ).toBe( 'not-measured' );
 		expect( cards.find( ( card ) => 'server' === card.id ).status ).toBe( 'not-measured' );
+		expect( cards.find( ( card ) => 'cache' === card.id ).description ).toMatch( /Generate a site profile/ );
+	} );
+
+	it( 'does not treat old cache activity as evidence that disabled caching is ready', () => {
+		const cards = buildHealthCards( {
+			dashboard: { ...dashboard, cache: { hasStats: true, hitRatio: 90 } },
+			diagnostics,
+			databaseAudit: { status: 'not-run' },
+			siteInventory: { ...readyInventory, perform: { items: [] }, patterns: { store: true } },
+		} );
+
+		expect( cards.find( ( card ) => 'cache' === card.id ) ).toMatchObject( {
+			status: 'not-measured',
+			description: expect.stringMatching( /Page cache is disabled/ ),
+		} );
+		expect( cards.find( ( card ) => 'store' === card.id ).description ).toMatch( /before enabling page cache/ );
+	} );
+
+	it( 'does not claim unmeasured checks are ready', () => {
+		render(
+			<DashboardPanel dashboard={ dashboard } diagnostics={ {} } databaseAudit={ {} } siteInventory={ {} } />
+		);
+
+		expect( screen.getByText( 'More evidence needed' ) ).toBeVisible();
+		expect( screen.queryByText( 'Local checks ready' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'does not treat an incomplete diagnostics summary as ready', () => {
+		const cards = buildHealthCards( {
+			dashboard,
+			diagnostics: { items: [ { id: 'page-cache-storage', status: 'warning' } ] },
+			databaseAudit: {},
+			siteInventory: {},
+		} );
+
+		expect( cards.find( ( card ) => 'runtime' === card.id ).status ).toBe( 'not-measured' );
 	} );
 
 	it( 'uses measured local evidence for status and avoids an invented score', () => {
@@ -68,7 +104,7 @@ describe( 'DashboardPanel', () => {
 		expect( container.querySelector( '.perform-release-notes' ) ).toBeNull();
 		expect( screen.getByText( /3 active plugins, 8 content types, and 2 Perform modules/ ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Core Web Vitals need a separate test' ) ).toBeInTheDocument();
-		expect( screen.getByText( /never turns these checks into an unverified speed score/i ) ).toBeInTheDocument();
+		expect( screen.getByText( /do not measure the speed visitors experience/i ) ).toBeInTheDocument();
 		expect( screen.getByText( /Response compression: needs a separate response test/ ) ).toBeInTheDocument();
 		const decorativeIcons = container.querySelectorAll(
 			'.perform-icon-badge[aria-hidden="true"] svg, svg[aria-hidden="true"]'
@@ -109,7 +145,7 @@ describe( 'DashboardPanel', () => {
 			/>
 		);
 
-		fireEvent.click( screen.getByRole( 'button', { name: 'Generate inventory' } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Find site profile in Insights' } ) );
 		expect( onNavigate ).toHaveBeenCalledWith( 'inventory' );
 	} );
 

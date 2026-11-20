@@ -13,8 +13,23 @@ describe( 'PluginImpactPanel', () => {
 			/>
 		);
 		expect( screen.getByText( 'Site inventory is required' ) ).toBeInTheDocument();
-		fireEvent.click( screen.getByRole( 'button', { name: 'Generate site inventory' } ) );
+		expect( screen.getAllByText( 'Not measured' ).length ).toBeGreaterThanOrEqual( 2 );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Open insights' } ) );
 		expect( navigate ).toHaveBeenCalledWith( 'inventory' );
+	} );
+
+	it( 'does not report zero or unobserved evidence when no screens have been sampled', () => {
+		render(
+			<PluginImpactPanel
+				report={ {
+					status: 'ready',
+					items: [ { slug: 'sample', name: 'Sample' } ],
+					adminAssetAudit: { enabled: true, sampledScreens: 0 },
+				} }
+			/>
+		);
+		expect( screen.queryByText( 'Not observed' ) ).not.toBeInTheDocument();
+		expect( screen.getAllByText( 'Not measured' ).length ).toBeGreaterThanOrEqual( 4 );
 	} );
 
 	it( 'separates measured asset presence from unavailable attribution', () => {

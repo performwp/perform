@@ -1,6 +1,6 @@
 import { Button, Card, CardBody, CardHeader } from '@wordpress/components';
 import { useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { ArrowPathIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 const SETTINGS = window.performwpSettings || {};
@@ -10,9 +10,13 @@ const formatAge = ( seconds ) => {
 		return __( 'Less than one hour', 'perform' );
 	}
 	if ( seconds < 86400 ) {
-		return `${ Math.floor( seconds / 3600 ) } ${ __( 'hours', 'perform' ) }`;
+		const hours = Math.floor( seconds / 3600 );
+		/* translators: %d: number of hours. */
+		return sprintf( _n( '%d hour', '%d hours', hours, 'perform' ), hours );
 	}
-	return `${ Math.floor( seconds / 86400 ) } ${ __( 'days', 'perform' ) }`;
+	const days = Math.floor( seconds / 86400 );
+	/* translators: %d: number of days. */
+	return sprintf( _n( '%d day', '%d days', days, 'perform' ), days );
 };
 
 const CountTable = ( { title, description, items, emptyLabel } ) => (

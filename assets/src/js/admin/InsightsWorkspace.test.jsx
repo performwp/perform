@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import InsightsWorkspace from './InsightsWorkspace';
 
 const readyDiagnostics = {
@@ -51,5 +51,19 @@ describe( 'InsightsWorkspace cache and delivery status', () => {
 			'data-status',
 			'warning'
 		);
+	} );
+
+	it( 'labels opening a profile accurately and warns when saved reports are stale', () => {
+		render(
+			<InsightsWorkspace
+				siteInventory={ { status: 'ready', isStale: true } }
+				databaseAudit={ { status: 'ready', isStale: true } }
+			/>
+		);
+		const rows = screen.getAllByText( 'Refresh recommended' );
+		expect( rows ).toHaveLength( 2 );
+		rows.forEach( ( row ) => expect( row ).toHaveAttribute( 'data-status', 'warning' ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Open site profile' } ) );
+		expect( screen.getByRole( 'button', { name: 'Refresh inventory' } ) ).toBeInTheDocument();
 	} );
 } );

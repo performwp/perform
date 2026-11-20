@@ -76,6 +76,13 @@ describe( 'SiteInventoryPanel', () => {
 		expect( screen.queryByText( /harmful/i ) ).toBeInTheDocument();
 	} );
 
+	it( 'does not show a zero duration when collection time is unavailable', () => {
+		render( <SiteInventoryPanel initialInventory={ { ...readyInventory, collection: { durationMs: null } } } /> );
+		const duration = screen.getByText( 'Inventory cost' ).closest( 'div' );
+		expect( duration ).toHaveTextContent( 'Unavailable' );
+		expect( duration ).not.toHaveTextContent( '0.00 ms' );
+	} );
+
 	it( 'announces progress and replaces the snapshot after refresh', async () => {
 		global.fetch = jest.fn().mockResolvedValue( {
 			ok: true,

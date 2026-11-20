@@ -2,7 +2,6 @@ import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import {
-	ArrowPathIcon,
 	ChartBarIcon,
 	CheckCircleIcon,
 	ChevronRightIcon,
@@ -41,7 +40,7 @@ const REPORTS = [
 	{
 		slug: 'admin-monitor',
 		title: __( 'Admin experience', 'perform' ),
-		description: __( 'Bounded timing, memory, and query-count samples for WordPress admin requests.', 'perform' ),
+		description: __( 'Timing, memory, and query counts sampled from WordPress admin requests.', 'perform' ),
 		icon: ChartBarIcon,
 	},
 	{
@@ -53,7 +52,7 @@ const REPORTS = [
 	{
 		slug: 'plugin-impact',
 		title: __( 'Plugin signals', 'perform' ),
-		description: __( 'Evidence-bound relationships between active plugins and observed admin assets.', 'perform' ),
+		description: __( 'Admin assets observed for active plugins in sampled screens.', 'perform' ),
 		icon: CpuChipIcon,
 	},
 	{
@@ -65,7 +64,7 @@ const REPORTS = [
 	{
 		slug: 'action-scheduler',
 		title: __( 'Action queues', 'perform' ),
-		description: __( 'Aggregate queue pressure used by commerce and other extensions.', 'perform' ),
+		description: __( 'Action Scheduler queue counts for commerce and other extensions.', 'perform' ),
 		icon: ServerStackIcon,
 	},
 ];
@@ -145,7 +144,7 @@ const InsightsWorkspace = ( {
 		if ( 0 < reviewCount ) {
 			diagnosticsStatus = __( 'Review', 'perform' );
 			diagnosticsStatusType = 'warning';
-			diagnosticsHeading = __( 'A few cache and delivery checks need review', 'perform' );
+			diagnosticsHeading = __( 'Some cache and delivery checks need review', 'perform' );
 			diagnosticsBadge = sprintf(
 				/* translators: %d: number of cache checks needing review. */
 				_n( '%d cache check to review', '%d cache checks to review', reviewCount, 'perform' ),
@@ -160,6 +159,8 @@ const InsightsWorkspace = ( {
 	}
 	const inventoryReady = 'ready' === siteInventory.status;
 	const databaseReady = 'ready' === databaseAudit.status;
+	const databaseStatus = databaseAudit.isStale ? __( 'Refresh recommended', 'perform' ) : __( 'Measured', 'perform' );
+	const inventoryStatus = siteInventory.isStale ? __( 'Refresh recommended', 'perform' ) : __( 'Current', 'perform' );
 	const optionCount = databaseAudit.totals?.count || 0;
 	const databaseDescription = databaseReady
 		? sprintf(
@@ -173,7 +174,10 @@ const InsightsWorkspace = ( {
 				formatBytes( databaseAudit.totals?.sizeBytes || 0 ),
 				optionCount
 			)
-		: __( 'Run the local database check to measure autoloaded option pressure.', 'perform' );
+		: __(
+				'Open Database options and run a check to see how much data WordPress loads on each request.',
+				'perform'
+			);
 	const siteDescription = inventoryReady
 		? sprintf(
 				/* translators: %1$d: active plugin count, %2$d: content type count. */
@@ -188,7 +192,7 @@ const InsightsWorkspace = ( {
 			<WorkspaceHeader
 				title={ __( 'Insights', 'perform' ) }
 				description={ __(
-					'Understand what is helping, what needs attention, and where Perform has enough evidence to guide you.',
+					'Check your cache setup, review database options, and open reports on your WordPress installation.',
 					'perform'
 				) }
 				status={ diagnosticsBadge }
@@ -196,19 +200,17 @@ const InsightsWorkspace = ( {
 				actions={
 					<Button
 						variant="primary"
-						icon={ <ArrowPathIcon aria-hidden="true" /> }
+						icon={ <Squares2X2Icon className="perform-ui-icon" aria-hidden="true" /> }
 						onClick={ () => setLocalReport( 'inventory' ) }
 					>
-						{ inventoryReady
-							? __( 'Review site profile', 'perform' )
-							: __( 'Generate site profile', 'perform' ) }
+						{ __( 'Open site profile', 'perform' ) }
 					</Button>
 				}
 			/>
 			<section className="perform-panel perform-insight-health">
 				<div className="perform-insight-health__summary">
-					<span className="perform-icon-badge" aria-hidden="true">
-						<CheckCircleIcon />
+					<span className="perform-icon-badge" data-status={ diagnosticsStatusType } aria-hidden="true">
+						{ 'success' === diagnosticsStatusType ? <CheckCircleIcon /> : <ExclamationTriangleIcon /> }
 					</span>
 					<div>
 						<h2>{ diagnosticsHeading }</h2>
@@ -230,14 +232,14 @@ const InsightsWorkspace = ( {
 					<InsightStatusRow
 						title={ __( 'Database pressure', 'perform' ) }
 						description={ databaseDescription }
-						status={ databaseReady ? __( 'Measured', 'perform' ) : __( 'Not measured', 'perform' ) }
-						statusType={ databaseReady ? 'success' : 'warning' }
+						status={ databaseReady ? databaseStatus : __( 'Not measured', 'perform' ) }
+						statusType={ databaseReady && ! databaseAudit.isStale ? 'success' : 'warning' }
 					/>
 					<InsightStatusRow
 						title={ __( 'Site profile', 'perform' ) }
 						description={ siteDescription }
-						status={ inventoryReady ? __( 'Current', 'perform' ) : __( 'Not measured', 'perform' ) }
-						statusType={ inventoryReady ? 'success' : 'warning' }
+						status={ inventoryReady ? inventoryStatus : __( 'Not measured', 'perform' ) }
+						statusType={ inventoryReady && ! siteInventory.isStale ? 'success' : 'warning' }
 					/>
 				</div>
 			</section>
@@ -246,7 +248,7 @@ const InsightsWorkspace = ( {
 					<h2>{ __( 'Core Web Vitals require a separate measurement', 'perform' ) }</h2>
 					<p>
 						{ __(
-							'Real-user LCP, INP, and CLS cannot be proven from local WordPress checks. Perform keeps field, lab, and local evidence clearly separated.',
+							'These checks do not measure visitors’ load times, responsiveness, or layout shifts. Use real-user data to assess Core Web Vitals.',
 							'perform'
 						) }
 					</p>
@@ -272,7 +274,7 @@ const InsightsWorkspace = ( {
 						<h2>{ __( 'Technical reports', 'perform' ) }</h2>
 						<p>
 							{ __(
-								'Open detailed evidence only when you need it. Reports stay read-only unless an action clearly says otherwise.',
+								'Choose a report to inspect its findings. Opening a report does not change your settings.',
 								'perform'
 							) }
 						</p>

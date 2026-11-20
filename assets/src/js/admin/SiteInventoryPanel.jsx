@@ -32,6 +32,9 @@ const Fact = ( { label, fact } ) => (
 );
 
 const formatDuration = ( duration ) => {
+	if ( null === duration || undefined === duration || '' === duration ) {
+		return __( 'Unavailable', 'perform' );
+	}
 	const milliseconds = Number( duration );
 	return Number.isFinite( milliseconds ) ? `${ milliseconds.toFixed( 2 ) } ms` : __( 'Unavailable', 'perform' );
 };

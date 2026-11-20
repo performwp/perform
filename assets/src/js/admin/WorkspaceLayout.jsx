@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { ArrowLeftIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import SettingsFieldRow from './settings/SettingsFieldRow';
 
@@ -48,12 +48,6 @@ export const MetricStrip = ( { label, metrics, note } ) => (
 	</section>
 );
 
-const getEnabledCount = ( fields, values ) =>
-	fields.filter( ( field ) => {
-		const value = values[ field.id ];
-		return 'toggle' === field.type ? Boolean( value ) : '' !== value && undefined !== value && null !== value;
-	} ).length;
-
 export const SettingsGroup = ( {
 	title,
 	description,
@@ -69,8 +63,6 @@ export const SettingsGroup = ( {
 	if ( ! fields.length ) {
 		return null;
 	}
-
-	const enabledCount = getEnabledCount( fields, fieldValues );
 
 	return (
 		<details
@@ -94,9 +86,8 @@ export const SettingsGroup = ( {
 					<span>
 						{ badge ||
 							sprintf(
-								/* translators: 1: configured setting count, 2: total setting count. */
-								__( '%1$d of %2$d configured', 'perform' ),
-								enabledCount,
+								/* translators: %d: number of settings in this group. */
+								_n( '%d setting', '%d settings', fields.length, 'perform' ),
 								fields.length
 							) }
 					</span>

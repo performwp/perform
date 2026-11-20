@@ -1,4 +1,5 @@
 import { FormToggle, SelectControl, TextareaControl, TextControl } from '@wordpress/components';
+import { __, sprintf } from '@wordpress/i18n';
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
 
 const SENSITIVE_KEYS = window.performwpSettings?.sensitiveKeys || [];
@@ -112,7 +113,11 @@ const SettingsFieldRow = ( { field, value, onChange } ) => {
 			/>
 		);
 	} else {
-		control = <p className="perform-settings-field__unsupported">{ `Unsupported field type: ${ type }` }</p>;
+		control = (
+			<p className="perform-settings-field__unsupported">
+				{ __( 'This setting cannot be edited here.', 'perform' ) }
+			</p>
+		);
 	}
 
 	return (
@@ -126,8 +131,13 @@ const SettingsFieldRow = ( { field, value, onChange } ) => {
 							target="_blank"
 							rel="noopener noreferrer"
 							className="perform-settings-field__learn-more"
+							aria-label={ sprintf(
+								/* translators: %s: setting name. */
+								__( 'Learn more about %s (opens in a new tab)', 'perform' ),
+								name
+							) }
 						>
-							Learn more
+							{ __( 'Learn more', 'perform' ) }
 							<ArrowTopRightOnSquareIcon className="perform-ui-icon" aria-hidden="true" />
 						</a>
 					) }
@@ -136,7 +146,7 @@ const SettingsFieldRow = ( { field, value, onChange } ) => {
 					{ desc }
 					{ sensitive && value === MASKED_SECRET_VALUE && (
 						<span className="perform-settings-field__saved-secret">
-							Existing secret is saved. Enter a new value only to replace it.
+							{ __( 'A value is already saved. Enter a new value to replace it.', 'perform' ) }
 						</span>
 					) }
 				</p>

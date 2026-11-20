@@ -1,4 +1,3 @@
-import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { CircleStackIcon, Cog6ToothIcon, LockClosedIcon, ShoppingBagIcon } from '@heroicons/react/24/outline';
 import { SettingsGroup, WorkspaceHeader } from './WorkspaceLayout';
@@ -27,27 +26,14 @@ const PreferencesWorkspace = ( {
 			<WorkspaceHeader
 				title={ __( 'Settings', 'perform' ) }
 				description={ __(
-					'Choose how Perform behaves, measures activity, and keeps data on this WordPress site.',
+					'Manage site behavior, admin monitoring, and what to keep when you uninstall Perform.',
 					'perform'
 				) }
-				actions={
-					<Button
-						variant="link"
-						href={ window.performwpSettings?.docsUrl || '#' }
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						{ __( 'View documentation', 'perform' ) }
-					</Button>
-				}
 			/>
 			<div className="perform-workspace-groups">
 				<SettingsGroup
 					title={ __( 'Site behavior', 'perform' ) }
-					description={ __(
-						'Everyday behavior that affects site delivery and repeated WordPress work.',
-						'perform'
-					) }
+					description={ __( 'Set up HTTPS redirects and navigation menu caching.', 'perform' ) }
 					fields={ generalFields }
 					fieldValues={ fieldValues }
 					onFieldChange={ onFieldChange }
@@ -57,7 +43,7 @@ const PreferencesWorkspace = ( {
 				<SettingsGroup
 					title={ __( 'Measurement and privacy', 'perform' ) }
 					description={ __(
-						'Temporarily collect private, aggregate evidence when the WordPress admin needs investigation.',
+						'Choose whether to record admin request times and the scripts and styles loaded on admin screens.',
 						'perform'
 					) }
 					fields={ measurementFields }
@@ -67,7 +53,7 @@ const PreferencesWorkspace = ( {
 					defaultOpen
 				/>
 				<SettingsGroup
-					title={ __( 'Data lifecycle', 'perform' ) }
+					title={ __( 'When you uninstall Perform', 'perform' ) }
 					description={ __( 'Choose what happens to Perform data when the plugin is removed.', 'perform' ) }
 					fields={ lifecycleFields }
 					fieldValues={ fieldValues }
@@ -77,7 +63,7 @@ const PreferencesWorkspace = ( {
 				{ commerceAvailable && commerceFields.length > 0 && (
 					<SettingsGroup
 						title={ __( 'Commerce', 'perform' ) }
-						description={ __( 'WooCommerce performance controls for this store.', 'perform' ) }
+						description={ __( 'WooCommerce preferences retained for compatibility.', 'perform' ) }
 						fields={ commerceFields }
 						fieldValues={ fieldValues }
 						onFieldChange={ onFieldChange }
@@ -88,10 +74,10 @@ const PreferencesWorkspace = ( {
 			<div className="perform-privacy-callout">
 				<LockClosedIcon aria-hidden="true" />
 				<div>
-					<strong>{ __( 'Private by default', 'perform' ) }</strong>
+					<strong>{ __( 'Local admin monitoring', 'perform' ) }</strong>
 					<p>
 						{ __(
-							'Local diagnostics exclude page content, private URLs, credentials, request payloads, and visitor identities.',
+							'Admin performance and asset monitoring use screen IDs and aggregate samples rather than request URLs.',
 							'perform'
 						) }
 					</p>

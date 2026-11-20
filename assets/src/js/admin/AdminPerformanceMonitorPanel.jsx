@@ -108,7 +108,7 @@ const AdminPerformanceMonitorPanel = ( { initialSnapshot = SETTINGS.adminPerform
 						onClick={ () => onNavigate?.( 'advanced' ) }
 						icon={ <AdjustmentsHorizontalIcon className="perform-ui-icon" aria-hidden="true" /> }
 					>
-						{ __( 'Enable in Advanced', 'perform' ) }
+						{ __( 'Open measurement settings', 'perform' ) }
 					</Button>
 				) }
 			</div>
