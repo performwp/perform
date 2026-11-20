@@ -2553,11 +2553,8 @@
 	margin: 0;
 	padding: 0;
 	list-style: none;
-	scrollbar-width: none;
-}
-
-.perform-workspace-nav__items::-webkit-scrollbar {
-	display: none;
+	scrollbar-width: thin;
+	scrollbar-color: var(--perform-color-text-muted) transparent;
 }
 
 .perform-workspace-nav__list-item {
@@ -3082,6 +3079,7 @@
 .perform-insight-health__summary h2 {
 	margin: 0;
 	font-size: 18px;
+	line-height: 1.35;
 }
 
 .perform-insight-health__summary p {
